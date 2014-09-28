@@ -51,33 +51,36 @@
 
 #ifdef __GNUC__
 
-#define __ws_always_inline__       __attribute__((always_inline))
-#define __ws_no_inline__           __attribute__((noinline))
-#define __ws_cold__                __attribute__((cold))
-#define __ws_hot__                 __attribute__((hot))
-#define __ws_pure__                __attribute__((pure))
-#define __ws_const__               __attribute__((const))
-#define __ws_weak__                __attribute__((weak))
-#define __ws_alias__(x)            __attribute__((alias(x)))
-#define __ws_deprecated__          __attribute__((deprecated))
-#define __ws_fastcall__            __attribute__((fastcall))
-#define __ws_format__(x,y,z)       __attribute__((format(x,y,z)))
-#define __ws_format_arg__(n)       __attribute__((format_arg(n)))
-#define __ws_malloc__              __attribute__((malloc))
-#define __ws_nonnull__(...)        __attribute__((nonnull (__VA_ARGS__)))
-#define __ws_returns_nonnull__     __attribute__((returns_nonnull))
-#define __ws_noreturn__            __attribute__((noreturn))
-#define __ws_unused__              __attribute__((unused))
-#define __ws_visibility__(x)       __attribute__((visibility(x)))
+#define __ws_always_inline__        __attribute__((always_inline))
+#define __ws_no_inline__            __attribute__((noinline))
+#define __ws_cold__                 __attribute__((cold))
+#define __ws_hot__                  __attribute__((hot))
+#define __ws_pure__                 __attribute__((pure))
+#define __ws_const__                __attribute__((const))
+#define __ws_weak__                 __attribute__((weak))
+#define __ws_alias__(x)             __attribute__((alias(x)))
+#define __ws_deprecated__           __attribute__((deprecated))
+#define __ws_fastcall__             __attribute__((fastcall))
+#define __ws_format__(x,y,z)        __attribute__((format(x,y,z)))
+#define __ws_format_arg__(n)        __attribute__((format_arg(n)))
+#define __ws_malloc__               __attribute__((malloc))
+#define __ws_nonnull__(...)         __attribute__((nonnull (__VA_ARGS__)))
+#define __ws_returns_nonnull__      __attribute__((returns_nonnull))
+#define __ws_noreturn__             __attribute__((noreturn))
+#define __ws_unused__               __attribute__((unused))
+#define __ws_visibility__(x)        __attribute__((visibility(x)))
 
-#define __ws_vis_default__     __ws_visibility__(default)
-#define __ws_vis_hidden__      __ws_visibility__(hidden)
-#define __ws_vis_internal__    __ws_visibility__(internal)
-#define __ws_vis_protected__   __ws_visibility__(protected)
+#define __ws_vis_default__          __ws_visibility__(default)
+#define __ws_vis_hidden__           __ws_visibility__(hidden)
+#define __ws_vis_internal__         __ws_visibility__(internal)
+#define __ws_vis_protected__        __ws_visibility__(protected)
 
-#define __ws_warn_unused_result__  __attribute__((warn_unused_result))
+#define __ws_alloc_size__(x,y)        __attribute__((alloc_size(x,y)))
+#define __ws_alloc_size__(x)          __attribute__((alloc_size(x)))
 
-#define WS_FORCE_INLINE         inline __ws_always_inline__
+#define __ws_warn_unused_result__   __attribute__((warn_unused_result))
+
+#define WS_FORCE_INLINE             inline __ws_always_inline__
 
 #else // __GNUC__
 
@@ -104,6 +107,9 @@
 #define __ws_hidden__
 #define __ws_internal__
 #define __ws_protected__
+
+#define __ws_alloc_size__(x,y)
+#define __ws_alloc_size__(x)
 
 #define __ws_warn_unused_result__
 
