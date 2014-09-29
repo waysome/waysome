@@ -83,9 +83,7 @@ ws_object_new(
     if (o) {
         o->id = &WS_OBJECT_TYPE_ID_OBJECT;
         o->settings = WS_OBJ_NO_SETTINGS;
-        // atomic_store(&o->refcnt, 1);
-
-        // pthread_rwlock_init(&o->rw_lock, NULL);
+        pthread_rwlock_init(&o->rw_lock, NULL);
     }
 
     return o;
@@ -132,10 +130,9 @@ ws_object_init(
     struct ws_object* self
 ) {
     if (self) {
-        // atomic_store(&self->refcnt, 1);
         self->settings = WS_OBJ_NO_SETTINGS;
 
-        // pthread_rwlock_init(&self->rw_lock, NULL);
+        pthread_rwlock_init(&self->rw_lock, NULL);
 
         if (self->id) {
             self->id->init_callback(self);
