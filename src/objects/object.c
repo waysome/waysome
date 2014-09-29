@@ -32,6 +32,37 @@
 #include "objects/object.h"
 
 /*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Alias: `pthread_rwlock_rdlock(&obj->rw_lock);
+ */
+static inline void
+rdlock(
+    struct ws_object* const obj //!< The object to read-lock
+);
+
+/**
+ * Alias: `pthread_rwlock_wrlock(&obj->rw_lock);
+ */
+static inline void
+wrlock(
+    struct ws_object* const obj //!< The object to write-lock
+);
+
+/**
+ * Alias: `pthread_rwlock_unlock(&obj->rw_lock);
+ */
+static inline void
+unlock(
+    struct ws_object* const obj //!< The object to unlock
+);
+
+
+/*
  * Type information
  */
 ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
@@ -208,4 +239,31 @@ ws_object_is_write_locked(
 ) {
     /** @todo implement */
     return false;
+}
+
+/*
+ *
+ * static function implementations
+ *
+ */
+
+static inline void
+rdlock(
+    struct ws_object* const obj
+) {
+    pthread_rwlock_rdlock(&obj->rw_lock);
+}
+
+static inline void
+wrlock(
+    struct ws_object* const obj //!< The object to write-lock
+) {
+    pthread_rwlock_wrlock(&obj->rw_lock);
+}
+
+static inline void
+unlock(
+    struct ws_object* const obj
+) {
+    pthread_rwlock_unlock(&obj->rw_lock);
 }
