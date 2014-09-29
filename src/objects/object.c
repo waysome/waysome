@@ -70,7 +70,9 @@ ws_object_id*
 ws_object_get_id(
     struct ws_object const* const self
 ) {
-    /** @todo implement */
+    if (self) {
+        return self->id;
+    }
     return NULL;
 }
 
