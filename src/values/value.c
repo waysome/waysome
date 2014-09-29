@@ -26,4 +26,28 @@
  */
 
 #include "values/value.h"
+#include "values/value_type.h"
 
+void
+ws_value_init(
+    struct ws_value* self
+) {
+    if (self) {
+        self->type = WS_VALUE_TYPE_VALUE;
+        self->deinit_callback = ws_value_deinit;
+    }
+}
+
+void
+ws_value_deinit(
+    struct ws_value* self
+) {
+    return;
+}
+
+enum ws_value_type
+ws_value_get_type(
+    struct ws_value* self
+) {
+    return self->deinit_callback;
+}
