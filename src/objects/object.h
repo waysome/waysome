@@ -62,11 +62,6 @@ typedef bool (*ws_object_init_callback)(struct ws_object* const);
 typedef bool (*ws_object_free_callback)(struct ws_object* const);
 
 /**
- * unref callback
- */
-typedef bool (*ws_object_unref_callback)(struct ws_object* const);
-
-/**
  * log callback
  *
  * @todo Implement second parameter: struct ws_log_context*
@@ -93,7 +88,6 @@ struct ws_object_type {
 
     ws_object_init_callback init_callback; //!< Init callback for the type
     ws_object_free_callback free_callback; //!< Free callback for the type
-    ws_object_unref_callback unref_callback; //!< Unref callback for the type
     ws_object_log_callback log_callback; //!< Log callback for the type
     ws_object_run_callback run_callback; //!< Run callback for the type
 };
