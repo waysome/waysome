@@ -9,13 +9,13 @@ find_package(PkgConfig)
 pkg_check_modules(PC_ICU_UC QUIET icu-uc)
 set(ICU_UC_DEFINITIONS ${PC_ICU_UC_CFLAGS_OTHER})
 
-find_path(ICU_UC_INCLUDE_DIR unicode/usctring.h
+find_path(ICU_UC_INCLUDE_DIR unicode/ustring.h
     HINTS ${PC_ICU_UC_INCLUDEDIR} ${PC_ICU_UC_INCLUDE_DIRS})
 
 find_library(ICU_UC_LIBRARY icuuc
         HINTS ${PC_ICU_UC_LIBDIR} ${PC_ICU_UC_LIBRARY_DIRS})
 
-find_library(ICU_DATA_LIBRARY ucudata
+find_library(ICU_DATA_LIBRARY icudata
         HINTS ${PC_ICU_UC_LIBDIR} ${PC_ICU_UC_LIBRARY_DIRS})
 
 set(ICU_UC_INCLUDE_DIRS ${ICU_UC_INCLUDE_DIR})
