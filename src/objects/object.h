@@ -115,8 +115,7 @@ struct ws_object {
     ws_object_id* id;        //!< Object id, identifies the actual type
     atomic_size_t refcnt;   //!< Reference counter
     enum ws_object_settings settings; //!< Object settings
-    pthread_mutex_t read_lock;  //!< Read lock mutex
-    pthread_mutex_t write_lock; //!< Write lock mutex
+    pthread_rwlock_t rw_lock; //!< Read/Write lock
 };
 
 /**
