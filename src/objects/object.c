@@ -178,8 +178,7 @@ bool
 ws_object_unlock_read(
     struct ws_object* self
 ) {
-    /** @todo implement */
-    return false;
+    return 0 == pthread_mutex_unlock(&self->read_lock);
 }
 
 bool
