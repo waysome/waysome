@@ -30,6 +30,7 @@ add_definitions(
 #
 set(SOURCE_FILES
     main.c
+    objects/object.c
 )
 
 #
