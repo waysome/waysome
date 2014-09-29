@@ -201,8 +201,16 @@ bool
 ws_object_run(
     struct ws_object* self
 ) {
-    if (self && self->id && self->id->run_callback) {
-        return self->id->run_callback(self);
+    if (self) {
+        bool b = false;
+
+        rdlock(self);
+        if (self->id && self->id->run_callback) {
+            b = self->id->run_callback(self);
+        }
+        unlock(self);
+
+        return b;
     }
 
     return false;
