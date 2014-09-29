@@ -25,3 +25,5 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "connection/manager.h"
+
