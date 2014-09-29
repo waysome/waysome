@@ -25,6 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+
 #include "objects/object.h"
 
 /*
@@ -34,3 +36,139 @@ ws_object_id WS_OBJECT_ID_OBJECT = {
     .supertype  = &WS_OBJECT_ID_OBJECT,
     .typestr    = "ws_object",
 };
+
+struct ws_object*
+ws_object_new(
+    size_t s
+) {
+    /** @todo implement */
+    return NULL;
+}
+
+struct ws_object*
+ws_object_new_raw(void) {
+    /** @todo implement */
+    return NULL;
+}
+
+ws_object_id*
+ws_object_get_id(
+    struct ws_object const* const self
+) {
+    /** @todo implement */
+    return NULL;
+}
+
+enum ws_object_settings
+ws_object_get_settings(
+    struct ws_object const* const self
+) {
+    /** @todo implement */
+    return 0;
+}
+
+void
+ws_object_set_settings(
+    struct ws_object* self,
+    enum ws_object_settings settings
+) {
+    /** @todo implement */
+    return;
+}
+
+bool
+ws_object_init(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+struct ws_object*
+ws_object_getref(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return NULL;
+}
+
+void
+ws_object_unref(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return;
+}
+
+bool
+ws_object_log(
+    struct ws_object const* const self,
+    void* log_context /*!< @todo ws_log_context* */
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_run(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_lock_read(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_lock_write(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_unlock_read(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_unlock_write(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_is_locked(
+    struct ws_object const* const self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_is_read_locked(
+    struct ws_object const* const self
+) {
+    /** @todo implement */
+    return false;
+}
+
+bool
+ws_object_is_write_locked(
+    struct ws_object const* const self
+) {
+    /** @todo implement */
+    return false;
+}
