@@ -19,6 +19,7 @@ option(HARD_MODE "Enables extra checks for use during development" OFF)
 #
 # Dependencies
 #
+find_package(Libudev)
 find_package(PNG REQUIRED 1.6)
 find_package(WaylandEgl REQUIRED)
 find_package(WaylandServer REQUIRED)

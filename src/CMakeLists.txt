@@ -5,13 +5,23 @@
 #
 # Set include directories
 #
-include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PNG_INCLUDE_DIRS})
+include_directories(
+    ${PROJECT_SOURCE_DIR}/src
+    ${PNG_INCLUDE_DIRS}
+    ${UDEV_INCLUDE_DIRS}
+    ${WAYLAND_CURSOR_INCLUDE_DIRS}
+    ${WAYLAND_SERVER_INCLUDE_DIRS}
+)
 
 #
 # Add definitions
 #
-add_definitions(${PNG_DEFINITIONS})
+add_definitions(
+    ${PNG_DEFINITIONS}
+    ${UDEV_DEFINITIONS}
+    ${WAYLAND_CURSOR_DEFINITIONS}
+    ${WAYLAND_SERVER_DEFINITIONS}
+)
 
 
 #
@@ -27,7 +37,7 @@ set(SOURCE_FILES
 #
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wunused -Wformat")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter -pedantic")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -pthread")
 
 if(${HARD_MODE})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-error=unused-function")
@@ -43,6 +53,11 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 #
 add_executable(waysome ${SOURCE_FILES})
 
-target_link_libraries(waysome ${PNG_LIBRARIES})
+target_link_libraries(waysome
+    ${PNG_LIBRARIES}
+    ${UDEV_LIBRARIES}
+    ${WAYLAND_CURSOR_LIBRARIES}
+    ${WAYLAND_SERVER_LIBRARIES}
+)
 
 
