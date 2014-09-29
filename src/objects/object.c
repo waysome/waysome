@@ -167,8 +167,18 @@ void
 ws_object_unref(
     struct ws_object* self
 ) {
-    /** @todo implement */
-    return;
+    if (self) {
+        wrlock(self);
+        self->ref_counting.refcnt--;
+        self->id->unref_callback(self);
+
+        if (self->ref_counting.refcnt == 0) {
+            self->id->free_callback(self);
+            free(self);
+        } else {
+            unlock(self);
+        }
+    }
 }
 
 bool
