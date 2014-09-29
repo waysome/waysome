@@ -84,6 +84,7 @@ ws_object_new(
         o->id = &WS_OBJECT_TYPE_ID_OBJECT;
         o->settings = WS_OBJ_NO_SETTINGS;
         pthread_rwlock_init(&o->rw_lock, NULL);
+        pthread_rwlock_init(&o->ref_counting.rwl, NULL);
     }
 
     return o;
@@ -143,6 +144,8 @@ ws_object_init(
         self->settings = WS_OBJ_NO_SETTINGS;
 
         pthread_rwlock_init(&self->rw_lock, NULL);
+        pthread_rwlock_init(&self->ref_counting.rwl, NULL);
+        self->ref_counting.refcnt = 0;
 
         if (self->id) {
             self->id->init_callback(self);
