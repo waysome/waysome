@@ -110,10 +110,14 @@ ws_object_get_id(
 
 enum ws_object_settings
 ws_object_get_settings(
-    struct ws_object const* const self
+    struct ws_object* const self
 ) {
     if (self) {
-        return self->settings;
+        enum ws_object_settings s;
+        rdlock(self);
+        s = self->settings;
+        unlock(self);
+        return s;
     }
 
     return WS_OBJ_NO_SETTINGS;

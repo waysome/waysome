@@ -184,7 +184,7 @@ ws_object_get_id(
  */
 enum ws_object_settings
 ws_object_get_settings(
-    struct ws_object const* const self //!< The object
+    struct ws_object* const self //!< The object
 );
 
 /**
