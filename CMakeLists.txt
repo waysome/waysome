@@ -21,3 +21,8 @@ option(HARD_MODE "Enables extra checks for use during development" OFF)
 #
 enable_testing()
 
+#
+# Add subdirectories for the project
+#
+add_subdirectory(src)
+
