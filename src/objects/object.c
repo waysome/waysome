@@ -89,8 +89,9 @@ ws_object_set_settings(
     struct ws_object* self,
     enum ws_object_settings settings
 ) {
-    /** @todo implement */
-    return;
+    if (self) {
+        self->settings = settings;
+    }
 }
 
 bool
