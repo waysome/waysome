@@ -96,10 +96,14 @@ ws_object_new_raw(void) {
 
 ws_object_type_id*
 ws_object_get_id(
-    struct ws_object const* const self
+    struct ws_object* const self
 ) {
     if (self) {
-        return self->id;
+        ws_object_type_id* id;
+        rdlock(self);
+        id = self->id;
+        unlock(self);
+        return id;
     }
     return NULL;
 }
