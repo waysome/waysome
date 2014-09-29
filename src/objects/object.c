@@ -62,8 +62,7 @@ ws_object_new(
 
 struct ws_object*
 ws_object_new_raw(void) {
-    /** @todo implement */
-    return NULL;
+    return ws_object_new(sizeof(struct ws_object));
 }
 
 ws_object_id*
