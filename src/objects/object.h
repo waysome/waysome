@@ -54,24 +54,24 @@ typedef const struct ws_object_type const ws_object_type_id;
 /**
  * Constructor callback
  */
-typedef bool (*ws_object_init_callback)(const struct ws_object*);
+typedef bool (*ws_object_init_callback)(struct ws_object* const);
 
 /**
  * unref callback
  */
-typedef bool (*ws_object_unref_callback)(const struct ws_object*);
+typedef bool (*ws_object_unref_callback)(struct ws_object* const);
 
 /**
  * log callback
  *
  * @todo Implement second parameter: struct ws_log_context*
  */
-typedef bool (*ws_object_log_callback)(const struct ws_object*, void*);
+typedef bool (*ws_object_log_callback)(struct ws_object* const, void*);
 
 /**
  * run callback
  */
-typedef bool (*ws_object_run_callback)(const struct ws_object*);
+typedef bool (*ws_object_run_callback)(struct ws_object* const);
 
 /*
  *
