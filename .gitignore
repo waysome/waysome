@@ -1,0 +1,50 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+.ycm_extra_conf.py*
+
+*.backup
+
+# Other build environment related stuff
+CMakeCache.txt
+CMakeFiles
+Makefile
+CTestTestfile.cmake
+cmake_install.cmake
+*.stamp
+
+# Test related stuff
+Testing
+
+#
+# Directory where the gentle programmer can put her/his utility snippets when
+# working with the codebase.
+#
+# For example, you can put vim scripts in there when working with vim, so you
+# can load them into your vim session and do work for you.
+#
+./u
+./u/*
+
+*.todo
