@@ -15,7 +15,7 @@ find_path(ICU_UC_INCLUDE_DIR unicode/ustring.h
 find_library(ICU_UC_LIBRARY icuuc
         HINTS ${PC_ICU_UC_LIBDIR} ${PC_ICU_UC_LIBRARY_DIRS})
 
-find_library(ICU_DATA_LIBRARY ucudata
+find_library(ICU_DATA_LIBRARY icudata
         HINTS ${PC_ICU_UC_LIBDIR} ${PC_ICU_UC_LIBRARY_DIRS})
 
 set(ICU_UC_INCLUDE_DIRS ${ICU_UC_INCLUDE_DIR})
