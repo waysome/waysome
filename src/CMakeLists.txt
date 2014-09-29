@@ -37,7 +37,7 @@ set(SOURCE_FILES
 #
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wunused -Wformat")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter -pedantic")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -pthread")
 
 if(${HARD_MODE})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-error=unused-function")
