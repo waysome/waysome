@@ -26,6 +26,7 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "objects/object.h"
 
@@ -41,8 +42,22 @@ struct ws_object*
 ws_object_new(
     size_t s
 ) {
-    /** @todo implement */
-    return NULL;
+    if (s < sizeof(struct ws_object)) {
+        return NULL;
+    }
+
+    struct ws_object* o = calloc(1, s);
+
+    if (o) {
+        o->id = &WS_OBJECT_ID_OBJECT;
+        o->settings = WS_OBJ_NO_SETTINGS;
+        atomic_store(&o->refcnt, 1);
+
+        pthread_mutex_init(&o->read_lock, NULL);
+        pthread_mutex_init(&o->write_lock, NULL);
+    }
+
+    return o;
 }
 
 struct ws_object*
