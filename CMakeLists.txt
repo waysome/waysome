@@ -17,6 +17,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 option(HARD_MODE "Enables extra checks for use during development" OFF)
 
 #
+# Dependencies
+#
+find_package(PNG REQUIRED 1.6)
+
+#
 # Enable testing
 #
 enable_testing()
