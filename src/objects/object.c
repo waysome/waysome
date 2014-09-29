@@ -182,7 +182,7 @@ ws_object_unref(
         self->ref_counting.refcnt--;
 
         if (self->ref_counting.refcnt == 0) {
-            self->id->free_callback(self);
+            self->id->deinit_callback(self);
             free(self);
         } else {
             unlock(self);

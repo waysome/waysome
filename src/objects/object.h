@@ -59,7 +59,7 @@ typedef bool (*ws_object_init_callback)(struct ws_object* const);
 /**
  * Destructor callback
  */
-typedef bool (*ws_object_free_callback)(struct ws_object* const);
+typedef bool (*ws_object_deinit_callback)(struct ws_object* const);
 
 /**
  * log callback
@@ -87,7 +87,7 @@ struct ws_object_type {
     const char* const typestr;  //!< string which represents the type
 
     ws_object_init_callback init_callback; //!< Init callback for the type
-    ws_object_free_callback free_callback; //!< Free callback for the type
+    ws_object_deinit_callback deinit_callback; //!< Free callback for the type
     ws_object_log_callback log_callback; //!< Log callback for the type
     ws_object_run_callback run_callback; //!< Run callback for the type
 };
