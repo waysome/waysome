@@ -129,7 +129,9 @@ ws_object_set_settings(
     enum ws_object_settings settings
 ) {
     if (self) {
+        wrlock(self);
         self->settings = settings;
+        unlock(self);
     }
 }
 
