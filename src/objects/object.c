@@ -151,7 +151,10 @@ bool
 ws_object_run(
     struct ws_object* self
 ) {
-    /** @todo implement */
+    if (self && self->id && self->id->run_callback) {
+        return self->id->run_callback(self);
+    }
+
     return false;
 }
 
