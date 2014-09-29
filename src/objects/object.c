@@ -122,7 +122,11 @@ struct ws_object*
 ws_object_getref(
     struct ws_object* self
 ) {
-    /** @todo implement */
+    if (self) {
+        atomic_fetch_add(&self->refcnt, 1);
+        return self;
+    }
+
     return NULL;
 }
 
