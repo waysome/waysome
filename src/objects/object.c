@@ -25,8 +25,6 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <pthread.h>
-#include <stdatomic.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -53,9 +51,9 @@ ws_object_new(
     if (o) {
         o->id = &WS_OBJECT_ID_OBJECT;
         o->settings = WS_OBJ_NO_SETTINGS;
-        atomic_store(&o->refcnt, 1);
+        // atomic_store(&o->refcnt, 1);
 
-        pthread_rwlock_init(&o->rw_lock, NULL);
+        // pthread_rwlock_init(&o->rw_lock, NULL);
     }
 
     return o;
@@ -102,10 +100,10 @@ ws_object_init(
     struct ws_object* self
 ) {
     if (self) {
-        atomic_store(&self->refcnt, 1);
+        // atomic_store(&self->refcnt, 1);
         self->settings = WS_OBJ_NO_SETTINGS;
 
-        pthread_rwlock_init(&self->rw_lock, NULL);
+        // pthread_rwlock_init(&self->rw_lock, NULL);
 
         if (self->id) {
             self->id->init_callback(self);
@@ -124,7 +122,7 @@ ws_object_getref(
     struct ws_object* self
 ) {
     if (self) {
-        atomic_fetch_add(&self->refcnt, 1);
+        // atomic_fetch_add(&self->refcnt, 1);
         return self;
     }
 
@@ -163,28 +161,32 @@ bool
 ws_object_lock_read(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_rdlock(&self->rw_lock);
+    // return 0 == pthread_rwlock_rdlock(&self->rw_lock);
+    return false;
 }
 
 bool
 ws_object_lock_write(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_wrlock(&self->rw_lock);
+    // return 0 == pthread_rwlock_wrlock(&self->rw_lock);
+    return false;
 }
 
 bool
 ws_object_unlock_read(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_unlock(&self->rw_lock);
+    // return 0 == pthread_rwlock_unlock(&self->rw_lock);
+    return false;
 }
 
 bool
 ws_object_unlock_write(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_unlock(&self->rw_lock);
+    // return 0 == pthread_rwlock_unlock(&self->rw_lock);
+    return false;
 }
 
 bool

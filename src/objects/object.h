@@ -28,9 +28,7 @@
 #ifndef __WS_OBJECTS_OBJECT_H__
 #define __WS_OBJECTS_OBJECT_H__
 
-#include <stdatomic.h>
 #include <stdbool.h>
-#include <pthread.h>
 
 /*
  * Type names
@@ -109,13 +107,15 @@ enum ws_object_settings {
 /**
  * Object type
  *
+ * @todo implement locking and refcounting
+ *
  * The object type is the root class for all classes
  */
 struct ws_object {
     ws_object_id* id;        //!< Object id, identifies the actual type
-    atomic_size_t refcnt;   //!< Reference counter
+    // atomic_size_t refcnt;   //!< Reference counter
     enum ws_object_settings settings; //!< Object settings
-    pthread_rwlock_t rw_lock; //!< Read/Write lock
+    // pthread_rwlock_t rw_lock; //!< Read/Write lock
 };
 
 /**
