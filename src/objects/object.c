@@ -27,3 +27,10 @@
 
 #include "objects/object.h"
 
+/*
+ * Type information
+ */
+ws_object_id WS_OBJECT_ID_OBJECT = {
+    .supertype  = &WS_OBJECT_ID_OBJECT,
+    .typestr    = "ws_object",
+};
