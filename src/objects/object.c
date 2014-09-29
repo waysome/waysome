@@ -154,7 +154,9 @@ ws_object_getref(
     struct ws_object* self
 ) {
     if (self) {
-        // atomic_fetch_add(&self->refcnt, 1);
+        wrlock(self);
+        self->ref_counting.refcnt++;
+        unlock(self);
         return self;
     }
 
