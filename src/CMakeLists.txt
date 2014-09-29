@@ -2,7 +2,16 @@
 # Building the waysome exetuable
 #
 
+#
+# Set include directories
+#
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PNG_INCLUDE_DIRS})
+
+#
+# Add definitions
+#
+add_definitions(${PNG_DEFINITIONS})
 
 
 #
@@ -33,5 +42,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 # Libreset will be a shared object
 #
 add_executable(waysome ${SOURCE_FILES})
+
+target_link_libraries(waysome ${PNG_LIBRARIES})
 
 
