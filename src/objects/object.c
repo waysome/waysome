@@ -27,8 +27,40 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "objects/object.h"
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Alias: `pthread_rwlock_rdlock(&obj->rw_lock);
+ */
+static inline void
+rdlock(
+    struct ws_object* const obj //!< The object to read-lock
+);
+
+/**
+ * Alias: `pthread_rwlock_wrlock(&obj->rw_lock);
+ */
+static inline void
+wrlock(
+    struct ws_object* const obj //!< The object to write-lock
+);
+
+/**
+ * Alias: `pthread_rwlock_unlock(&obj->rw_lock);
+ */
+static inline void
+unlock(
+    struct ws_object* const obj //!< The object to unlock
+);
+
 
 /*
  * Type information
@@ -51,9 +83,8 @@ ws_object_new(
     if (o) {
         o->id = &WS_OBJECT_TYPE_ID_OBJECT;
         o->settings = WS_OBJ_NO_SETTINGS;
-        // atomic_store(&o->refcnt, 1);
-
-        // pthread_rwlock_init(&o->rw_lock, NULL);
+        pthread_rwlock_init(&o->rw_lock, NULL);
+        pthread_rwlock_init(&o->ref_counting.rwl, NULL);
     }
 
     return o;
@@ -66,20 +97,28 @@ ws_object_new_raw(void) {
 
 ws_object_type_id*
 ws_object_get_id(
-    struct ws_object const* const self
+    struct ws_object* const self
 ) {
     if (self) {
-        return self->id;
+        ws_object_type_id* id;
+        rdlock(self);
+        id = self->id;
+        unlock(self);
+        return id;
     }
     return NULL;
 }
 
 enum ws_object_settings
 ws_object_get_settings(
-    struct ws_object const* const self
+    struct ws_object* const self
 ) {
     if (self) {
-        return self->settings;
+        enum ws_object_settings s;
+        rdlock(self);
+        s = self->settings;
+        unlock(self);
+        return s;
     }
 
     return WS_OBJ_NO_SETTINGS;
@@ -91,7 +130,9 @@ ws_object_set_settings(
     enum ws_object_settings settings
 ) {
     if (self) {
+        wrlock(self);
         self->settings = settings;
+        unlock(self);
     }
 }
 
@@ -100,10 +141,11 @@ ws_object_init(
     struct ws_object* self
 ) {
     if (self) {
-        // atomic_store(&self->refcnt, 1);
         self->settings = WS_OBJ_NO_SETTINGS;
 
-        // pthread_rwlock_init(&self->rw_lock, NULL);
+        pthread_rwlock_init(&self->rw_lock, NULL);
+        pthread_rwlock_init(&self->ref_counting.rwl, NULL);
+        self->ref_counting.refcnt = 0;
 
         if (self->id) {
             self->id->init_callback(self);
@@ -122,7 +164,9 @@ ws_object_getref(
     struct ws_object* self
 ) {
     if (self) {
-        // atomic_fetch_add(&self->refcnt, 1);
+        wrlock(self);
+        self->ref_counting.refcnt++;
+        unlock(self);
         return self;
     }
 
@@ -133,8 +177,18 @@ void
 ws_object_unref(
     struct ws_object* self
 ) {
-    /** @todo implement */
-    return;
+    if (self) {
+        wrlock(self);
+        self->ref_counting.refcnt--;
+
+        if (self->ref_counting.refcnt == 0) {
+            self->id->deinit_callback(self);
+            pthread_rwlock_destroy(&self->ref_counting.rwl);
+            free(self);
+        } else {
+            unlock(self);
+        }
+    }
 }
 
 bool
@@ -150,8 +204,16 @@ bool
 ws_object_run(
     struct ws_object* self
 ) {
-    if (self && self->id && self->id->run_callback) {
-        return self->id->run_callback(self);
+    if (self) {
+        bool b = false;
+
+        rdlock(self);
+        if (self->id && self->id->run_callback) {
+            b = self->id->run_callback(self);
+        }
+        unlock(self);
+
+        return b;
     }
 
     return false;
@@ -161,54 +223,53 @@ bool
 ws_object_lock_read(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_rdlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_rdlock(&self->rw_lock);
 }
 
 bool
 ws_object_lock_write(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_wrlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_wrlock(&self->rw_lock);
 }
 
 bool
 ws_object_unlock_read(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_unlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
 bool
 ws_object_unlock_write(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_unlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
-bool
-ws_object_is_locked(
-    struct ws_object const* const self
+/*
+ *
+ * static function implementations
+ *
+ */
+
+static inline void
+rdlock(
+    struct ws_object* const obj
 ) {
-    /** @todo implement */
-    return false;
+    pthread_rwlock_rdlock(&obj->rw_lock);
 }
 
-bool
-ws_object_is_read_locked(
-    struct ws_object const* const self
+static inline void
+wrlock(
+    struct ws_object* const obj //!< The object to write-lock
 ) {
-    /** @todo implement */
-    return false;
+    pthread_rwlock_wrlock(&obj->rw_lock);
 }
 
-bool
-ws_object_is_write_locked(
-    struct ws_object const* const self
+static inline void
+unlock(
+    struct ws_object* const obj
 ) {
-    /** @todo implement */
-    return false;
+    pthread_rwlock_unlock(&obj->rw_lock);
 }

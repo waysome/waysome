@@ -47,7 +47,16 @@ set(SOURCE_FILES
 #
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wunused -Wformat")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter -pedantic")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -pthread")
+
+#
+# Because those idiotic fucking morons from glibc neither ship the C11 standard
+# nor the pthreads library as fallback with C11, we have to use gnu99 as C
+# standard we compile with. This also prevents us from using the new features
+# from C11, namingly the atomic types.
+#
+# With a _real_ libc, we wound't have this problem.
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pthread")
 
 if(${HARD_MODE})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wno-error=unused-function")
