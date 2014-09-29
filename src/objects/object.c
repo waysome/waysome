@@ -185,8 +185,7 @@ bool
 ws_object_unlock_write(
     struct ws_object* self
 ) {
-    /** @todo implement */
-    return false;
+    return 0 == pthread_mutex_unlock(&self->write_lock);
 }
 
 bool
