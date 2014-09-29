@@ -20,6 +20,7 @@ option(HARD_MODE "Enables extra checks for use during development" OFF)
 # Dependencies
 #
 find_package(EGL REQUIRED)
+find_package(EV REQUIRED)
 find_package(IcuIO REQUIRED)
 find_package(IcuUC REQUIRED)
 find_package(Libudev)
