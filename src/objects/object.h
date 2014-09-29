@@ -29,6 +29,7 @@
 #define __WS_OBJECTS_OBJECT_H__
 
 #include <stdbool.h>
+#include <pthread.h>
 
 /*
  * Type names
@@ -115,7 +116,7 @@ struct ws_object {
     ws_object_type_id* id;        //!< Object id, identifies the actual type
     // atomic_size_t refcnt;   //!< Reference counter
     enum ws_object_settings settings; //!< Object settings
-    // pthread_rwlock_t rw_lock; //!< Read/Write lock
+    pthread_rwlock_t rw_lock; //!< Read/Write lock
 };
 
 /**

@@ -27,6 +27,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "objects/object.h"
 
@@ -161,32 +162,28 @@ bool
 ws_object_lock_read(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_rdlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_rdlock(&self->rw_lock);
 }
 
 bool
 ws_object_lock_write(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_wrlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_wrlock(&self->rw_lock);
 }
 
 bool
 ws_object_unlock_read(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_unlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
 bool
 ws_object_unlock_write(
     struct ws_object* self
 ) {
-    // return 0 == pthread_rwlock_unlock(&self->rw_lock);
-    return false;
+    return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
 bool
