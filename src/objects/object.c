@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdatomic.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -98,7 +99,22 @@ bool
 ws_object_init(
     struct ws_object* self
 ) {
-    /** @todo implement */
+    if (self) {
+        atomic_store(&self->refcnt, 1);
+        self->settings = WS_OBJ_NO_SETTINGS;
+
+        pthread_mutex_init(&self->read_lock, NULL);
+        pthread_mutex_init(&self->write_lock, NULL);
+
+        if (self->id) {
+            self->id->init_callback(self);
+        } else {
+            self->id = &WS_OBJECT_ID_OBJECT;
+        }
+
+        return true;
+    }
+
     return false;
 }
 
