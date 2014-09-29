@@ -183,6 +183,7 @@ ws_object_unref(
 
         if (self->ref_counting.refcnt == 0) {
             self->id->deinit_callback(self);
+            pthread_rwlock_destroy(&self->ref_counting.rwl);
             free(self);
         } else {
             unlock(self);
