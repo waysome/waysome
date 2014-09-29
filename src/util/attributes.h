@@ -25,8 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WAYSOME_ATTRIBUTES_H__
-#define __WAYSOME_ATTRIBUTES_H__
+#ifndef __WS_UTIL_ATTRIBUTES_H__
+#define __WS_UTIL_ATTRIBUTES_H__
 
 /*
  * @file attributes.h
@@ -117,4 +117,4 @@
 
 #endif // __GNUC__
 
-#endif // __WAYSOME_ATTRIBUTES_H__
+#endif // __WS_UTIL_ATTRIBUTES_H__

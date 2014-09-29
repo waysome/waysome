@@ -25,3 +25,9 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __WS_OBJECTS_QUEUE_H__
+#define __WS_OBJECTS_QUEUE_H__
+
+
+
+#endif // __WS_OBJECTS_QUEUE_H__

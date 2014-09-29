@@ -25,3 +25,9 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __WS_SESSION_MANAGER_H__
+#define __WS_SESSION_MANAGER_H__
+
+
+
+#endif // __WS_SESSION_MANAGER_H__

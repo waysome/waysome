@@ -25,3 +25,9 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __WS_VALUES_NIL_H__
+#define __WS_VALUES_NIL_H__
+
+
+
+#endif // __WS_VALUES_NIL_H__

@@ -25,3 +25,9 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __WS_UTIL_LOGICAL_H__
+#define __WS_UTIL_LOGICAL_H__
+
+
+
+#endif // __WS_UTIL_LOGICAL_H__
