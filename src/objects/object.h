@@ -37,12 +37,12 @@ struct ws_object_type;
 struct ws_object;
 
 /**
- * ws_object_id definition
+ * object type identification
  *
  * References to a single ws_object_type. Used for indicating an object type by
  * a single pointer.
  */
-typedef const struct ws_object_type const ws_object_id;
+typedef const struct ws_object_type const ws_object_type_id;
 
 /*
  *
@@ -82,7 +82,7 @@ typedef bool (*ws_object_run_callback)(const struct ws_object*);
  * Object type identifier for identifiying an object type
  */
 struct ws_object_type {
-    ws_object_id* supertype;     //!< supertype. Ref to itself if there is none
+    ws_object_type_id* supertype;     //!< supertype. Ref to itself if there is none
     const char* const typestr;  //!< string which represents the type
 
     ws_object_init_callback init_callback; //!< Init callback for the type
@@ -112,7 +112,7 @@ enum ws_object_settings {
  * The object type is the root class for all classes
  */
 struct ws_object {
-    ws_object_id* id;        //!< Object id, identifies the actual type
+    ws_object_type_id* id;        //!< Object id, identifies the actual type
     // atomic_size_t refcnt;   //!< Reference counter
     enum ws_object_settings settings; //!< Object settings
     // pthread_rwlock_t rw_lock; //!< Read/Write lock
@@ -121,7 +121,7 @@ struct ws_object {
 /**
  * Variable which holds type information about the ws_object type
  */
-extern ws_object_id WS_OBJECT_ID_OBJECT;
+extern ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT;
 
 /**
  * Allocate an object with a given size
@@ -158,7 +158,7 @@ ws_object_new_raw(void);
  *
  * @return The id of the object or NULL on failure
  */
-ws_object_id*
+ws_object_type_id*
 ws_object_get_id(
     struct ws_object const* const self //!< The object
 );

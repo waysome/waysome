@@ -33,8 +33,8 @@
 /*
  * Type information
  */
-ws_object_id WS_OBJECT_ID_OBJECT = {
-    .supertype  = &WS_OBJECT_ID_OBJECT,
+ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
+    .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_object",
 };
 
@@ -49,7 +49,7 @@ ws_object_new(
     struct ws_object* o = calloc(1, s);
 
     if (o) {
-        o->id = &WS_OBJECT_ID_OBJECT;
+        o->id = &WS_OBJECT_TYPE_ID_OBJECT;
         o->settings = WS_OBJ_NO_SETTINGS;
         // atomic_store(&o->refcnt, 1);
 
@@ -64,7 +64,7 @@ ws_object_new_raw(void) {
     return ws_object_new(sizeof(struct ws_object));
 }
 
-ws_object_id*
+ws_object_type_id*
 ws_object_get_id(
     struct ws_object const* const self
 ) {
@@ -108,7 +108,7 @@ ws_object_init(
         if (self->id) {
             self->id->init_callback(self);
         } else {
-            self->id = &WS_OBJECT_ID_OBJECT;
+            self->id = &WS_OBJECT_TYPE_ID_OBJECT;
         }
 
         return true;
