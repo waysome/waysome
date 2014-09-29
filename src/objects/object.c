@@ -77,8 +77,11 @@ enum ws_object_settings
 ws_object_get_settings(
     struct ws_object const* const self
 ) {
-    /** @todo implement */
-    return 0;
+    if (self) {
+        return self->settings;
+    }
+
+    return WS_OBJ_NO_SETTINGS;
 }
 
 void
