@@ -229,30 +229,6 @@ ws_object_unlock_write(
     return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
-bool
-ws_object_is_locked(
-    struct ws_object const* const self
-) {
-    /** @todo implement */
-    return false;
-}
-
-bool
-ws_object_is_read_locked(
-    struct ws_object const* const self
-) {
-    /** @todo implement */
-    return false;
-}
-
-bool
-ws_object_is_write_locked(
-    struct ws_object const* const self
-) {
-    /** @todo implement */
-    return false;
-}
-
 /*
  *
  * static function implementations

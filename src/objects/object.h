@@ -315,40 +315,4 @@ ws_object_unlock_write(
     struct ws_object* self //!< The object
 );
 
-/**
- * Check if the object is locked
- *
- * @memberof ws_object
- *
- * @return true if the object is either read or write locked, else false
- */
-bool
-ws_object_is_locked(
-    struct ws_object const* const self //!< The object
-);
-
-/**
- * Check if the object is read-locked
- *
- * @memberof ws_object
- *
- * @return true if the object is read-locked
- */
-bool
-ws_object_is_read_locked(
-    struct ws_object const* const self //!< The object
-);
-
-/**
- * Check if the object is write-locked
- *
- * @memberof ws_object
- *
- * @return true if the object is write-locked
- */
-bool
-ws_object_is_write_locked(
-    struct ws_object const* const self //!< The object
-);
-
 #endif // __WS_OBJECTS_OBJECT_H__
