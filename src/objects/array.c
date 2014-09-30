@@ -25,6 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
 #include "objects/array.h"
 
 #include "objects/object.h"
@@ -72,7 +74,23 @@ bool
 ws_array_init(
     struct ws_array* self
 ) {
-    /** @todo implement */
+    if (self) {
+        self->len = 2; // initialize with two elements
+        self->ary = calloc(self->len, sizeof(*self->ary));
+
+        if (!self->ary) {
+            return false;
+        }
+
+        ws_object_init(&self->obj);
+        self->obj.id = &WS_OBJECT_TYPE_ID_ARRAY;
+
+        self->nused = 0;
+        self->sorted = false;
+
+        return true;
+    }
+
     return false;
 }
 
