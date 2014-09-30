@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <pthread.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -68,7 +69,7 @@ cleanup_logger(
  *
  */
 
-struct logger*
+int
 ws_logger_new(void)
 {
     if (!logger) {
@@ -76,11 +77,13 @@ ws_logger_new(void)
 
         if (logger) {
             pthread_mutex_init(&logger->loglock, NULL);
+        } else {
+            return -ENOMEM;
         }
         ws_cleaner_add(cleanup_logger, logger);
     }
 
-    return logger;
+    return 0;
 }
 
 void

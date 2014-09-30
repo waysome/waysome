@@ -43,9 +43,9 @@ struct ws_logger_context {
  *
  * @warning Singleton. Returns old logger object if there already is one.
  *
- * @return New `struct ws_logger` object or NULL on failure
+ * @return zero on success, else error code from errno.h
  */
-struct ws_logger*
+int
 ws_logger_new(void);
 
 /**
