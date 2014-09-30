@@ -34,6 +34,29 @@
 
 static struct ws_logger* logger = NULL;
 
+/**
+ * Cleanup function for the logger singleton
+ *
+ * Does the cleanup on exit of the software.
+ */
+static void
+cleanup_logger(
+    void* logger
+) {
+    struct ws_logger* l = (struct ws_logger*) logger;
+
+    if (l) {
+        pthread_mutex_destroy(&l->loglock);
+        free(l);
+    }
+}
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
 struct ws_logger*
 ws_logger_new(void)
 {
