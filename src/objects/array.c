@@ -27,3 +27,130 @@
 
 #include "objects/array.h"
 
+#include "objects/object.h"
+
+/*
+ *
+ *
+ * Forward declarations
+ *
+ *
+ */
+
+/*
+ *
+ *
+ * v-table
+ *
+ *
+ */
+
+ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY = {
+    .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
+    .typestr    = "ws_array",
+};
+
+/*
+ *
+ *
+ * Interface implementation
+ *
+ *
+ */
+
+bool
+ws_array_init(
+    struct ws_array* self
+) {
+    /** @todo implement */
+    return false;
+}
+
+struct ws_array*
+ws_array_new(void)
+{
+    /** @todo implement */
+    return NULL;
+}
+
+size_t
+ws_array_get_len(
+    struct ws_array* const self
+) {
+    /** @todo implement */
+    return 0;
+}
+
+void
+ws_array_sort(
+    struct ws_array* self,
+    signed int (*cmp)(const void*, const void*)
+) {
+    /** @todo implement */
+    return;
+}
+
+bool
+ws_array_has(
+    struct ws_array* const self,
+    void* const obj
+) {
+    /** @todo implement */
+    return false;
+}
+
+void*
+ws_array_find(
+    struct ws_array* const self,
+    bool (*cmp)(void* const)
+) {
+    /** @todo implement */
+    return NULL;
+}
+
+void*
+ws_array_get_at(
+    struct ws_array* const self,
+    unsigned int i
+) {
+    /** @todo implement */
+    return NULL;
+}
+
+void*
+ws_array_set_at(
+    struct ws_array* self,
+    void* obj,
+    unsigned int i
+) {
+    /** @todo implement */
+    return NULL;
+}
+
+bool
+ws_array_foreach(
+    struct ws_array* const self,
+    bool (*iter)(void* etc, void* entry),
+    void* etc
+) {
+    /** @todo implement */
+    return false;
+}
+
+int
+ws_array_append(
+    struct ws_array* const self,
+    void* element
+) {
+    /** @todo implement */
+    return false;
+}
+
+/*
+ *
+ *
+ * static function implementations
+ *
+ *
+ */
+
