@@ -29,6 +29,8 @@
 #include <stdlib.h>
 #include <ev.h>
 
+#include "util/cleaner.h"
+
 static void
 handle_sig(
     struct ev_loop* loop,
@@ -53,6 +55,8 @@ main(
      * I  N   N  I     T
      */
     int retval = 1;
+
+    ws_cleaner_init();
 
     // initialize main loop
     struct ev_loop* default_loop = ev_default_loop(EVFLAG_AUTO);
@@ -90,6 +94,7 @@ main(
      */
 cleanup:
 
+    ws_cleaner_run();
 
     return retval;
 }
