@@ -30,12 +30,23 @@
 #include <stdlib.h>
 
 #include "logger/module.h"
+#include "util/cleaner.h"
+
+static struct ws_logger* logger = NULL;
 
 struct ws_logger*
 ws_logger_new(void)
 {
-    /** @todo implement */
-    return NULL;
+    if (!logger) {
+        logger = calloc(1, sizeof(*logger));
+
+        if (logger) {
+            pthread_mutex_init(&logger->loglock, NULL);
+        }
+        ws_cleaner_add(cleanup_logger, logger);
+    }
+
+    return logger;
 }
 
 void
