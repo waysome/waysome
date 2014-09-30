@@ -34,17 +34,15 @@
 #include <string.h>
 
 #include "logger/module.h"
+#include "util/attributes.h"
 #include "util/cleaner.h"
 
 /**
  * Logger type
  */
-struct logger {
+static struct {
     pthread_mutex_t loglock; //!< Log mutex for synchronizing logging
-};
-
-
-static struct logger* logger = NULL;
+} logger;
 
 /**
  * Cleanup function for the logger singleton
@@ -53,14 +51,9 @@ static struct logger* logger = NULL;
  */
 static void
 cleanup_logger(
-    void* logger
+    void* etc __ws_unused__
 ) {
-    struct logger* l = (struct logger*) logger;
-
-    if (l) {
-        pthread_mutex_destroy(&l->loglock);
-        free(l);
-    }
+    pthread_mutex_destroy(&logger.loglock);
 }
 
 /*
@@ -72,16 +65,15 @@ cleanup_logger(
 int
 ws_logger_new(void)
 {
-    if (!logger) {
-        logger = calloc(1, sizeof(*logger));
+    static bool is_used = false;
 
-        if (logger) {
-            pthread_mutex_init(&logger->loglock, NULL);
-        } else {
-            return -ENOMEM;
-        }
-        ws_cleaner_add(cleanup_logger, logger);
+    if (is_used) {
+        return 0;
     }
+
+    pthread_mutex_init(&logger.loglock, NULL);
+    ws_cleaner_add(cleanup_logger, NULL);
+    is_used = true;
 
     return 0;
 }
@@ -92,9 +84,6 @@ ws_log(
     char* fmt,
     ...
 ) {
-    if (!logger) {
-        return;
-    }
     char* __fmt = fmt;
     va_list list;
     va_start(list, fmt);
@@ -110,9 +99,9 @@ ws_log(
         }
     }
 
-    pthread_mutex_lock(&logger->loglock);
+    pthread_mutex_lock(&logger.loglock);
     fprintf(stderr, __fmt, list);
-    pthread_mutex_unlock(&logger->loglock);
+    pthread_mutex_unlock(&logger.loglock);
 
     va_end(list);
 
