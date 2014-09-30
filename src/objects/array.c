@@ -228,8 +228,20 @@ ws_array_foreach(
     bool (*iter)(void* etc, void* entry),
     void* etc
 ) {
-    /** @todo implement */
-    return false;
+    bool res = false;
+
+    if (self) {
+        ws_object_lock_write(&self->obj);
+
+        size_t i;
+        for (i = 0, res = true; i < self->len && res; i++) {
+            res = iter(etc, self->ary[i]);
+        }
+
+        ws_object_unlock_write(&self->obj);
+    }
+
+    return res;
 }
 
 int
