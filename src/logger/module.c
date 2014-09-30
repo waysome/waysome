@@ -27,7 +27,10 @@
 
 #include <pthread.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "logger/module.h"
 #include "util/cleaner.h"
@@ -74,13 +77,36 @@ ws_logger_new(void)
 
 void
 ws_log(
-    struct ws_logger* const logger,
     struct ws_logger_context* const ctx,
     char* fmt,
     ...
 ) {
-    /** @todo implement */
-    return;
+    if (logger) {
+        char* __fmt = fmt;
+        va_list list;
+        va_start(list, fmt);
+
+        bool used_prefix = false;
+
+        if (ctx) {
+            __fmt = calloc(1, strlen(ctx->prefix) + strlen(fmt) + 1);
+
+            if (__fmt) {
+                sprintf(__fmt, "%s%s", ctx->prefix, fmt);
+                used_prefix = true;
+            }
+        }
+
+        pthread_mutex_lock(&logger->loglock);
+        fprintf(stderr, __fmt, list);
+        pthread_mutex_unlock(&logger->loglock);
+
+        va_end(list);
+
+        if (used_prefix) {
+            free(__fmt);
+        }
+    }
 }
 
 /*

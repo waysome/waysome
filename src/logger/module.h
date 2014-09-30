@@ -62,7 +62,6 @@ ws_logger_new(void);
  */
 void
 ws_log(
-    struct ws_logger* const logger, //!< The logger to use
     struct ws_logger_context* const ctx, //!< The logging context
     char* fmt,  //!< Format string
     ...         //!< Additional parameters
