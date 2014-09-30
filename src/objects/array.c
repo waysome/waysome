@@ -158,8 +158,22 @@ ws_array_find(
     struct ws_array* const self,
     bool (*cmp)(void* const)
 ) {
-    /** @todo implement */
-    return NULL;
+    void* res = NULL;
+
+    if (self) {
+        ws_object_lock_read(&self->obj);
+
+        size_t i;
+        for (i = 0; i < self->len && res == NULL; i++) {
+            if (cmp(self->ary[i])) {
+                res = self->ary[i];
+            }
+        }
+
+        ws_object_unlock_read(&self->obj);
+    }
+
+    return res;
 }
 
 void*
