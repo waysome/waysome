@@ -43,7 +43,7 @@ struct ws_object;
  * References to a single ws_object_type. Used for indicating an object type by
  * a single pointer.
  */
-typedef const struct ws_object_type const ws_object_type_id;
+typedef struct ws_object_type const ws_object_type_id;
 
 /*
  *
