@@ -28,6 +28,40 @@
 #ifndef __WS_UTIL_CLEANER_H__
 #define __WS_UTIL_CLEANER_H__
 
+#include <stdbool.h>
 
+/**
+ * Initialize the cleaner
+ */
+void
+ws_cleaner_init(void);
+
+/**
+ * Add a function to the cleaner
+ *
+ * @note Does not allow the argument to be NULL.
+ *
+ * @note Threadsafe!
+ *
+ * @return zero or negative error code from errno.h
+ */
+int
+ws_cleaner_add(
+    void (*cleaner_func)(void*), //!< Cleanup funtion
+    void* etc //!< Argument for the cleaner. Is not allowed to be NULL
+);
+
+/**
+ * Run the cleaner
+ *
+ * @warning It is _not_ safe to use _any_ memory which was cleaned up after this
+ * method ran.
+ *
+ * @warning This function is not thread safe.
+ *
+ * @return true if all cleaners were executed, else false.
+ */
+bool
+ws_cleaner_run(void);
 
 #endif // __WS_UTIL_CLEANER_H__
