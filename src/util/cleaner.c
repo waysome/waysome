@@ -71,10 +71,6 @@ ws_cleaner_add(
     void (*cleaner_func)(void*),
     void* etc
 ) {
-    if (!etc) {
-        return -EINVAL;
-    }
-
     struct cleaner_entry* e = calloc(1, sizeof(*e));
 
     if (!e) {

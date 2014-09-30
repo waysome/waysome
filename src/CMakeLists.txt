@@ -44,6 +44,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    logger/module.c
     main.c
     objects/object.c
     util/cleaner.c

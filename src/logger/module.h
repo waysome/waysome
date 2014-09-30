@@ -28,6 +28,44 @@
 #ifndef __WS_LOGGER_MODULE_H__
 #define __WS_LOGGER_MODULE_H__
 
+#include <stdarg.h>
+#include <pthread.h>
 
+/**
+ * Logging context
+ */
+struct ws_logger_context {
+    char const* prefix;
+};
+
+/**
+ * Get a new allocated, initialized `struct ws_logger` object
+ *
+ * @warning Singleton. Returns old logger object if there already is one.
+ *
+ * @return zero on success, else error code from errno.h
+ */
+int
+ws_logger_new(void);
+
+/**
+ * Log with a logger
+ *
+ * @note `ctx` can be NULL
+ */
+void
+ws_log(
+    struct ws_logger_context* const ctx, //!< The logging context
+    char* fmt,  //!< Format string
+    ...         //!< Additional parameters
+);
+
+/*
+ * void
+ * ws_log_str(
+ *     struct ws_string* const str
+ * );
+ *
+ */
 
 #endif // __WS_LOGGER_MODULE_H__
