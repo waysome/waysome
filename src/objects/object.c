@@ -96,7 +96,7 @@ ws_object_new_raw(void) {
 }
 
 ws_object_type_id*
-ws_object_get_id(
+ws_object_get_type_id(
     struct ws_object* const self
 ) {
     if (self) {
