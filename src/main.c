@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <ev.h>
 
+#include "compositor/module.h"
 #include "util/cleaner.h"
 
 static void
@@ -70,6 +71,10 @@ main(
     ev_signal_init(&sigterm_watcher, handle_sig, SIGTERM);
     ev_signal_start(default_loop, &sigterm_watcher);
 
+    retval = ws_compositor_init();
+    if (retval != 0) {
+        goto cleanup;
+    }
 
     // everything did go well
     retval = 0;

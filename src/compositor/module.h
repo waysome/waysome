@@ -28,6 +28,19 @@
 #ifndef __WS_COMPOSITOR_MODULE_H__
 #define __WS_COMPOSITOR_MODULE_H__
 
-
+/**
+ * Initialise the compositor
+ *
+ * This function initialises the compositor.
+ * This includes allocating resources and performing initial discovery.
+ * The function takes care of initialising the compositor only once, it is save
+ * to call this function multiple times.
+ * 
+ *
+ * @return 0 if the initialisation was successful, a negative error code on
+ *         failure
+ */
+int
+ws_compositor_init(void);
 
 #endif // __WS_COMPOSITOR_MODULE_H__
