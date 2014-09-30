@@ -139,8 +139,18 @@ ws_array_has(
     struct ws_array* const self,
     void* const obj
 ) {
-    /** @todo implement */
-    return false;
+    bool res = false;
+
+    if (self && obj) {
+        ws_object_lock_read(&self->obj);
+        size_t i;
+        for (i = 0; i < self->len && !res; i++) {
+            res = (self->ary[i] == obj);
+        }
+
+        ws_object_unlock_read(&self->obj);
+    }
+    return res;
 }
 
 void*
