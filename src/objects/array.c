@@ -126,7 +126,11 @@ ws_array_sort(
     struct ws_array* self,
     signed int (*cmp)(const void*, const void*)
 ) {
-    /** @todo implement */
+    if (self) {
+        ws_object_lock_write(&self->obj);
+        qsort(self->ary, sizeof(*self->ary), self->len, cmp);
+        ws_object_unlock_write(&self->obj);
+    }
     return;
 }
 
