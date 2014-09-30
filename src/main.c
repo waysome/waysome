@@ -45,8 +45,18 @@ main(
     int argc,
     char** argv
 ) {
+    /*
+     * I  N   N  I  TTTTTTT
+     * I  NN  N  I     T
+     * I  N N N  I     T
+     * I  N  NN  I     T
+     * I  N   N  I     T
+     */
+    int retval = 1;
 
+    // initialize main loop
     struct ev_loop* default_loop = ev_default_loop(EVFLAG_AUTO);
+    if (!default_loop) goto cleanup;
 
     struct ev_signal sigint_watcher;
     ev_signal_init(&sigint_watcher, handle_sig, SIGINT);
@@ -56,7 +66,31 @@ main(
     ev_signal_init(&sigterm_watcher, handle_sig, SIGTERM);
     ev_signal_start(default_loop, &sigterm_watcher);
 
+
+    // everything did go well
+    retval = 0;
+
+
+    /*
+     * L       OOO    OOO   PPPP
+     * L      O   O  O   O  P   P
+     * L      O   O  O   O  P   P
+     * L      O   O  O   O  PPPP
+     * LLLLL   OOO    OOO   P
+     */
     ev_loop(default_loop, 0);
 
-    return 0;
+
+    /*
+     * DDDD   EEEEE  I  N   N  I  TTTTTTT
+     * D   D  E      I  NN  N  I     T
+     * D   D  EEEEE  I  N N N  I     T
+     * D   D  E      I  N  NN  I     T
+     * DDDD   EEEEE  I  N   N  I     T
+     */
+cleanup:
+
+
+    return retval;
 }
+
