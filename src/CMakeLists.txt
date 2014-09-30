@@ -46,6 +46,7 @@ add_definitions(
 set(SOURCE_FILES
     logger/module.c
     main.c
+    objects/array.c
     objects/object.c
     util/cleaner.c
 )
