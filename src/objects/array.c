@@ -37,6 +37,14 @@
  *
  */
 
+/**
+ * Deinit callback for array type
+ */
+static bool
+deinit_callback(
+    struct ws_object* const //!< Object to deinitialize
+);
+
 /*
  *
  *
@@ -48,6 +56,8 @@
 ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_array",
+
+    .deinit_callback = deinit_callback,
 };
 
 /*
@@ -154,3 +164,10 @@ ws_array_append(
  *
  */
 
+static bool
+deinit_callback(
+    struct ws_object* self
+) {
+    free(((struct ws_array*) self)->ary);
+    return true;
+}
