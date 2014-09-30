@@ -202,8 +202,24 @@ ws_array_set_at(
     void* obj,
     unsigned int i
 ) {
-    /** @todo implement */
-    return NULL;
+    void* res = NULL;
+
+    if (self) {
+        ws_object_lock_write(&self->obj);
+
+        if (self->len > i) {
+            if (self->ary[i]) {
+                res = self->ary[i];
+            } else {
+                res = obj;
+            }
+            self->ary[i] = obj;
+        }
+
+        ws_object_unlock_write(&self->obj);
+    }
+
+    return res;
 }
 
 bool
