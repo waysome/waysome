@@ -97,8 +97,13 @@ ws_array_init(
 struct ws_array*
 ws_array_new(void)
 {
-    /** @todo implement */
-    return NULL;
+    struct ws_array* a = calloc(1, sizeof(*a));
+
+    if (a) {
+        ws_array_init(a);
+    }
+
+    return a;
 }
 
 size_t
