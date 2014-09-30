@@ -44,6 +44,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    compositor/module.c
     logger/module.c
     main.c
     objects/array.c
