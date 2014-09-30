@@ -75,8 +75,8 @@
 #define __ws_vis_internal__         __ws_visibility__(internal)
 #define __ws_vis_protected__        __ws_visibility__(protected)
 
-#define __ws_alloc_size__(x,y)        __attribute__((alloc_size(x,y)))
 #define __ws_alloc_size__(x)          __attribute__((alloc_size(x)))
+#define __ws_alloc_size2__(x,y)        __attribute__((alloc_size(x,y)))
 
 #define __ws_warn_unused_result__   __attribute__((warn_unused_result))
 
@@ -108,8 +108,8 @@
 #define __ws_internal__
 #define __ws_protected__
 
-#define __ws_alloc_size__(x,y)
 #define __ws_alloc_size__(x)
+#define __ws_alloc_size2__(x,y)
 
 #define __ws_warn_unused_result__
 
