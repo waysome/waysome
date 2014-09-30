@@ -168,6 +168,8 @@ ws_array_foreach(
  * @warning Does not set empty entries, does _always_ append.
  *
  * @return 0 on success, else error numbers from errno.h
+ *          EINVAL - on passing NULL
+ *          ENOMEM - on realloc() failure. Old array is saved in this case.
  */
 int
 ws_array_append(

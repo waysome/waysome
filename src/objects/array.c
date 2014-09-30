@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <stdlib.h>
 
 #include "objects/array.h"
@@ -249,8 +250,28 @@ ws_array_append(
     struct ws_array* const self,
     void* element
 ) {
-    /** @todo implement */
-    return false;
+    static const int realloc_fact = 2;
+    if (!self) {
+        return -EINVAL;
+    }
+
+    ws_object_lock_write(&self->obj);
+
+    size_t newsize = sizeof(*self->ary) * self->len * realloc_fact;
+    void** newbuf = realloc(self->ary, newsize);
+
+    if (!newbuf) {
+        ws_object_unlock_write(&self->obj);
+        return -ENOMEM;
+    }
+
+    self->ary = newbuf;
+    self->ary[self->len] = element;
+    self->len *= realloc_fact;
+    self->nused++;
+
+    ws_object_unlock_write(&self->obj);
+    return 0;
 }
 
 /*
