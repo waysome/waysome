@@ -39,6 +39,7 @@ add_definitions(
 #
 set(SOURCE_FILES
     main.c
+    objects/array.c
     objects/object.c
 )
 
