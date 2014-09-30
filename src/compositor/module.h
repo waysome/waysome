@@ -31,13 +31,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <xf86drmMode.h>
-/**
- * A framebuffer device
- */
-struct ws_framebuffer_device {
-    int fd; //<! The FileDescriptor
-    const char* path; //<! The path to the given filedescriptor
-};
 
 /**
  * A connector, which under DRM translates to a Device+Output

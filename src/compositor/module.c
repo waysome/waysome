@@ -35,19 +35,12 @@
 #include <unistd.h>
 #include <xf86drm.h>
 
-
 #include "util/cleaner.h"
+#include "compositor/internal_context.h"
 
 
-/**
- * Internal compositor context
- *
- * This context holds the internal state of the compositor.
- */
-static struct ws_compositor_context{
-    struct ws_framebuffer_device fb;
-    struct ws_monitor* conns; //<! A linked list of ws_monitors
-} comp_ctx;
+struct ws_compositor_context ws_comp_ctx;
+
 
 /**
  * Find the connector associated with a crtc id
@@ -170,11 +163,11 @@ ws_compositor_deinit(
     void* dummy
 ) {
 
-    if (comp_ctx.fb.fd >= 0) {
-        close(comp_ctx.fb.fd);
+    if (ws_comp_ctx.fb.fd >= 0) {
+        close(ws_comp_ctx.fb.fd);
     }
 
-    struct ws_monitor* it = comp_ctx.conns;
+    struct ws_monitor* it = ws_comp_ctx.conns;
 
     while(it) {
         struct ws_monitor* next = it->next;
@@ -191,7 +184,7 @@ static struct ws_monitor*
 find_connector_with_crtc(
         int crtc
 ) {
-    for (struct ws_monitor* iter = comp_ctx.conns; iter; iter = iter->next) {
+    for (struct ws_monitor* iter = ws_comp_ctx.conns; iter; iter = iter->next) {
         if (iter->crtc == (uint32_t)crtc) {
             return iter;
         }
@@ -210,7 +203,7 @@ find_crtc(
 
     // We check if we already have found a suitable encoder
     if (conn->encoder_id) {
-        enc = drmModeGetEncoder(comp_ctx.fb.fd, conn->encoder_id);
+        enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
     } else {
         enc = NULL;
     }
@@ -231,7 +224,7 @@ find_crtc(
     }
     // There is no encoder+crtc pair! We go through /all/ the encoders now
     for (int i = 0; i < conn->count_encoders; ++i) {
-        enc = drmModeGetEncoder(comp_ctx.fb.fd, conn->encoders[i]);
+        enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoders[i]);
 
         if (!enc) {
             //!< @todo: Log Error!
@@ -266,9 +259,9 @@ static int
 populate_connectors(void) {
     drmModeRes* res;
     drmModeConnector* conn;
-    struct ws_monitor** connector = &comp_ctx.conns;
+    struct ws_monitor** connector = &ws_comp_ctx.conns;
 
-    res = drmModeGetResources(comp_ctx.fb.fd);
+    res = drmModeGetResources(ws_comp_ctx.fb.fd);
     if (!res) {
         //!< @todo: Log Error
         return -ENOENT;
@@ -277,7 +270,7 @@ populate_connectors(void) {
     // Let's go through all connectors (outputs)
     int i = res->count_connectors;
     while(i--) {
-        conn = drmModeGetConnector(comp_ctx.fb.fd, res->connectors[i]);
+        conn = drmModeGetConnector(ws_comp_ctx.fb.fd, res->connectors[i]);
         if (!conn) {
             //!< @todo: Log Error
             continue;
@@ -336,8 +329,8 @@ get_framebuffer_device(
         close(fd);
         return -EOPNOTSUPP;
     }
-    comp_ctx.fb.path = path;
-    comp_ctx.fb.fd = fd;
+    ws_comp_ctx.fb.path = path;
+    ws_comp_ctx.fb.fd = fd;
     return 0;
 }
 
