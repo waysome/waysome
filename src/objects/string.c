@@ -25,5 +25,10 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "objects/string.h"
 
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unicode/ustring.h>
+
+#include "objects/string.h"
