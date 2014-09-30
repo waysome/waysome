@@ -103,3 +103,8 @@ tramp
 # AUCTeX auto folder
 /auto/
 
+#
+# Kate gitignore
+#
+.*.kate-swp
+.swp.*
