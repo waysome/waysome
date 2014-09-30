@@ -59,3 +59,13 @@ Testing
 Session.vim
 .netrwhist
 *~
+
+#
+# Sublime text gitignore
+#
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+sftp-config.json
