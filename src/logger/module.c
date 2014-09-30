@@ -25,5 +25,34 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <pthread.h>
+#include <stdarg.h>
+#include <stdlib.h>
+
 #include "logger/module.h"
 
+struct ws_logger*
+ws_logger_new(void)
+{
+    /** @todo implement */
+    return NULL;
+}
+
+void
+ws_log(
+    struct ws_logger* const logger,
+    struct ws_logger_context* const ctx,
+    char* fmt,
+    ...
+) {
+    /** @todo implement */
+    return;
+}
+
+/*
+ * void
+ * ws_log_str(
+ *     struct ws_string* const str
+ * );
+ *
+ */
