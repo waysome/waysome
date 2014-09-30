@@ -25,5 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
+#include <libreset/hash.h>
+#include <libreset/set.h>
+
+#include "objects/object.h"
+
 #include "objects/set.h"
 
