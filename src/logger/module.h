@@ -32,13 +32,6 @@
 #include <pthread.h>
 
 /**
- * Logger type
- */
-struct ws_logger {
-    pthread_mutex_t loglock; //!< Log mutex for synchronizing logging
-};
-
-/**
  * Logging context
  */
 struct ws_logger_context {

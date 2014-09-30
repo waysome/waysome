@@ -35,7 +35,15 @@
 #include "logger/module.h"
 #include "util/cleaner.h"
 
-static struct ws_logger* logger = NULL;
+/**
+ * Logger type
+ */
+struct logger {
+    pthread_mutex_t loglock; //!< Log mutex for synchronizing logging
+};
+
+
+static struct logger* logger = NULL;
 
 /**
  * Cleanup function for the logger singleton
@@ -46,7 +54,7 @@ static void
 cleanup_logger(
     void* logger
 ) {
-    struct ws_logger* l = (struct ws_logger*) logger;
+    struct logger* l = (struct logger*) logger;
 
     if (l) {
         pthread_mutex_destroy(&l->loglock);
@@ -60,7 +68,7 @@ cleanup_logger(
  *
  */
 
-struct ws_logger*
+struct logger*
 ws_logger_new(void)
 {
     if (!logger) {
