@@ -181,8 +181,19 @@ ws_array_get_at(
     struct ws_array* const self,
     unsigned int i
 ) {
-    /** @todo implement */
-    return NULL;
+    void* res = NULL;
+
+    if (self) {
+        ws_object_lock_read(&self->obj);
+
+        if (self->len > i) {
+            res = self->ary[i];
+        }
+
+        ws_object_unlock_read(&self->obj);
+    }
+
+    return res;
 }
 
 void*
