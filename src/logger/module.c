@@ -92,31 +92,32 @@ ws_log(
     char* fmt,
     ...
 ) {
-    if (logger) {
-        char* __fmt = fmt;
-        va_list list;
-        va_start(list, fmt);
+    if (!logger) {
+        return;
+    }
+    char* __fmt = fmt;
+    va_list list;
+    va_start(list, fmt);
 
-        bool used_prefix = false;
+    bool used_prefix = false;
 
-        if (ctx) {
-            __fmt = calloc(1, strlen(ctx->prefix) + strlen(fmt) + 1);
+    if (ctx) {
+        __fmt = calloc(1, strlen(ctx->prefix) + strlen(fmt) + 1);
 
-            if (__fmt) {
-                sprintf(__fmt, "%s%s", ctx->prefix, fmt);
-                used_prefix = true;
-            }
+        if (__fmt) {
+            sprintf(__fmt, "%s%s", ctx->prefix, fmt);
+            used_prefix = true;
         }
+    }
 
-        pthread_mutex_lock(&logger->loglock);
-        fprintf(stderr, __fmt, list);
-        pthread_mutex_unlock(&logger->loglock);
+    pthread_mutex_lock(&logger->loglock);
+    fprintf(stderr, __fmt, list);
+    pthread_mutex_unlock(&logger->loglock);
 
-        va_end(list);
+    va_end(list);
 
-        if (used_prefix) {
-            free(__fmt);
-        }
+    if (used_prefix) {
+        free(__fmt);
     }
 }
 
