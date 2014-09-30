@@ -44,6 +44,7 @@ add_definitions(
 set(SOURCE_FILES
     main.c
     objects/object.c
+    util/cleaner.c
 )
 
 #
