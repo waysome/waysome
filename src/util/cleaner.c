@@ -52,39 +52,6 @@ static struct cleaner {
     pthread_mutex_t mtx; //!< Mutex for cleanup linked list
 } cleaner;
 
-/*
- *
- *
- * static functions
- *
- *
- */
-
-/**
- *
- *
- */
-static void
-cleanup_entry(
-    struct cleaner_entry* head
-) {
-    if (head->next) {
-        cleanup_entry(head->next);
-    }
-
-    free(head);
-}
-
-/**
- * Cleanup function for cleaner itself
- */
-static void
-cleanup(
-    void* cleaner //!< Cleanup argument
-) {
-    cleanup_entry(((struct cleaner*) cleaner)->head);
-    pthread_mutex_destroy(&((struct cleaner*) cleaner)->mtx);
-}
 
 /*
  *
@@ -97,7 +64,6 @@ ws_cleaner_init(void)
 {
     cleaner.head = NULL;
     pthread_mutex_init(&cleaner.mtx, NULL);
-    ws_cleaner_add(cleanup, &cleaner);
 }
 
 int
@@ -136,8 +102,11 @@ ws_cleaner_run(void)
     while (iter) {
         next = iter->next;
         iter->func(iter->etc);
+        free(iter);
         iter = next;
     }
+
+    pthread_mutex_destroy(&cleaner.mtx);
     return true;
 }
 
