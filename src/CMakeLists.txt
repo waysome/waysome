@@ -13,6 +13,7 @@ include_directories(
     ${EV_INCLUDE_DIRS}
     ${ICU_OP_INCLUDE_DIRS}
     ${ICU_UC_INCLUDE_DIRS}
+    ${libreset_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIRS}
     ${UDEV_INCLUDE_DIRS}
     ${WAYLAND_CURSOR_INCLUDE_DIRS}
@@ -29,6 +30,7 @@ add_definitions(
     ${EV_DEFINITIONS}
     ${ICU_OP_DEFINITIONS}
     ${ICU_UC_DEFINITIONS}
+    ${libreset_DEFINITIONS}
     ${PNG_DEFINITIONS}
     ${UDEV_DEFINITIONS}
     ${WAYLAND_CURSOR_DEFINITIONS}
@@ -80,6 +82,7 @@ target_link_libraries(waysome
     ${DRM_LIBRARIES}
     ${EGL_LIBRARIES}
     ${EV_LIBRARIES}
+    ${libreset_LIBRARIES}
     ${PNG_LIBRARIES}
     ${UDEV_LIBRARIES}
     ${WAYLAND_CURSOR_LIBRARIES}
