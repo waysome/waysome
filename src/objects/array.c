@@ -110,7 +110,14 @@ size_t
 ws_array_get_len(
     struct ws_array* const self
 ) {
-    /** @todo implement */
+    if (self) {
+        size_t len;
+        ws_object_lock_read(&self->obj);
+        len = self->len;
+        ws_object_unlock_read(&self->obj);
+        return len;
+    }
+
     return 0;
 }
 
