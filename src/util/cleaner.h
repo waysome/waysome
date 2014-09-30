@@ -39,8 +39,6 @@ ws_cleaner_init(void);
 /**
  * Add a function to the cleaner
  *
- * @note Does not allow the argument to be NULL.
- *
  * @note Threadsafe!
  *
  * @return zero or negative error code from errno.h
