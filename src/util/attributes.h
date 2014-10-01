@@ -31,6 +31,12 @@
  * @{
  */
 
+/**
+ * @addtogroup utils_attributes "(internal) utils: attribute extensions"
+ *
+ * @{
+ */
+
 #ifndef __WS_UTIL_ATTRIBUTES_H__
 #define __WS_UTIL_ATTRIBUTES_H__
 
@@ -124,6 +130,10 @@
 #endif // __GNUC__
 
 #endif // __WS_UTIL_ATTRIBUTES_H__
+
+/**
+ * @}
+ */
 
 /**
  * @}
