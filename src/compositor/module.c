@@ -265,7 +265,7 @@ find_crtc(
             crtc = res->crtcs[j];
 
             // Looks like we found one! Return!
-            if (find_connector_with_crtc(crtc) != NULL) {
+            if (find_connector_with_crtc(crtc) == NULL) {
                 drmModeFreeEncoder(enc);
                 ws_log(&log_ctx, "Found a CRTC! Saving");
                 connector->crtc = crtc;
