@@ -100,7 +100,7 @@ ws_log(
     }
 
     pthread_mutex_lock(&logger.loglock);
-    fprintf(stderr, __fmt, list);
+    vfprintf(stderr, __fmt, list);
     pthread_mutex_unlock(&logger.loglock);
 
     va_end(list);
