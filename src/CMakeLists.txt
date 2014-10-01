@@ -51,6 +51,7 @@ set(SOURCE_FILES
     objects/array.c
     objects/object.c
     util/cleaner.c
+    util/wayland.c
 )
 
 #
