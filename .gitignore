@@ -108,3 +108,8 @@ tramp
 #
 .*.kate-swp
 .swp.*
+
+#
+# documentation
+#
+doc/gen/*
