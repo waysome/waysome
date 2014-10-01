@@ -30,6 +30,7 @@
 #include <ev.h>
 
 #include "compositor/module.h"
+#include "logger/module.h"
 #include "util/cleaner.h"
 
 static void
@@ -70,6 +71,11 @@ main(
     struct ev_signal sigterm_watcher;
     ev_signal_init(&sigterm_watcher, handle_sig, SIGTERM);
     ev_signal_start(default_loop, &sigterm_watcher);
+
+    retval = ws_logger_init();
+    if (retval != 0) {
+        goto cleanup;
+    }
 
     retval = ws_compositor_init();
     if (retval != 0) {
