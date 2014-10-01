@@ -137,7 +137,7 @@ ws_compositor_init(void) {
         return 0;
     }
 
-    ws_log(&log_ctx, "Starting initialization of the Compositor.\n");
+    ws_log(&log_ctx, "Starting initialization of the Compositor.");
 
     ws_cleaner_add(ws_compositor_deinit, NULL);
     int retval;
@@ -221,17 +221,23 @@ find_crtc(
 
     // We check if we already have found a suitable encoder
     if (conn->encoder_id) {
+        ws_log(&log_ctx, "Found an existing encoder for monitor: %dx%d",
+                connector->width, connector->height);
         enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
     } else {
+        ws_log(&log_ctx, "Found no existing encoder for monitor: %dx%d",
+                connector->width, connector->height);
         enc = NULL;
     }
 
     // If we do have an encoder, we check that noone else uses this crtc
     if (enc) {
         if (enc->crtc_id) {
+            ws_log(&log_ctx, "There seems to be a crtc on here.");
             crtc = enc->crtc_id;
 
             if (find_connector_with_crtc(crtc) != NULL) {
+                ws_log(&log_ctx, "There was a crtc! Setting it.");
                 drmModeFreeEncoder(enc);
                 connector->crtc = crtc;
                 return 0;
@@ -245,7 +251,7 @@ find_crtc(
         enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoders[i]);
 
         if (!enc) {
-            ws_log(&log_ctx, "Could not get Encoder.\n");
+            ws_log(&log_ctx, "Could not get Encoder.");
             continue;
         }
 
@@ -261,6 +267,7 @@ find_crtc(
             // Looks like we found one! Return!
             if (find_connector_with_crtc(crtc) != NULL) {
                 drmModeFreeEncoder(enc);
+                ws_log(&log_ctx, "Found a CRTC! Saving");
                 connector->crtc = crtc;
                 return 0;
             }
@@ -269,7 +276,7 @@ find_crtc(
         drmModeFreeEncoder(enc);
     }
 
-    ws_log(&log_ctx, "Could not find suitable Encoder for crtc with dim: %dx%d.\n",
+    ws_log(&log_ctx, "Could not find suitable Encoder for crtc with dim: %dx%d.",
             connector->width, connector->height);
     return -ENOENT;
 }
@@ -282,7 +289,7 @@ populate_connectors(void) {
 
     res = drmModeGetResources(ws_comp_ctx.fb.fd);
     if (!res) {
-        ws_log(&log_ctx, "Could not get Resources for: %s.\n",
+        ws_log(&log_ctx, "Could not get Resources for: %s.",
                 ws_comp_ctx.fb.path);
         return -ENOENT;
     }
@@ -292,7 +299,7 @@ populate_connectors(void) {
     while(i--) {
         conn = drmModeGetConnector(ws_comp_ctx.fb.fd, res->connectors[i]);
         if (!conn) {
-            ws_log(&log_ctx, "Could not get connector for: %s\n",
+            ws_log(&log_ctx, "Could not get connector for: %s",
                     ws_comp_ctx.fb.path);
             continue;
         }
@@ -305,17 +312,20 @@ populate_connectors(void) {
         (*connector)->conn = conn->connector_id;
 
         if (conn->connection != DRM_MODE_CONNECTED) {
-            ws_log(&log_ctx, "Found unused connector\n");
+            ws_log(&log_ctx, "Found unused connector");
             (*connector)->connected = 0;
             continue;
         }
 
         if (conn->count_modes == 0) {
-            ws_log(&log_ctx, "No valid modes for Connector %d.\n",
+            ws_log(&log_ctx, "No valid modes for Connector %d.",
                     conn->connector_id);
             (*connector)->connected = 0;
             continue;
         }
+
+        ws_log(&log_ctx, "Found a valid connector with %d modes.",
+                conn->count_modes);
 
         //!< @todo: Do not just take the biggest mode available
         memcpy(&(*connector)->mode, &conn->modes[0],
@@ -324,9 +334,11 @@ populate_connectors(void) {
         (*connector)->width = conn->modes[0].hdisplay;
         (*connector)->height = conn->modes[0].vdisplay;
 
+        ws_log(&log_ctx, "Found a valid connector with %dx%d dimensions.",
+                (*connector)->width, (*connector)->height);
 
         if (find_crtc(res, conn, *connector) < 0) {
-            ws_log(&log_ctx, "No valid crtcs found\n");
+            ws_log(&log_ctx, "No valid crtcs found");
             (*connector)->connected = 0;
             continue;
         }
@@ -341,13 +353,13 @@ get_framebuffer_device(
 ) {
     int fd = open(path, O_RDWR | O_CLOEXEC);
     if (fd < 0) {
-        ws_log(&log_ctx, "Could not open: '%s'.\n", path);
+        ws_log(&log_ctx, "Could not open: '%s'.", path);
         return -ENOENT;
     }
 
     uint64_t has_dumb;
     if (drmGetCap(fd, DRM_CAP_DUMB_BUFFER, &has_dumb) < 0 || !has_dumb) {
-        ws_log(&log_ctx, "File %s has no DUMB BUFFER cap. \n", path);
+        ws_log(&log_ctx, "File %s has no DUMB BUFFER cap. ", path);
         close(fd);
         return -EOPNOTSUPP;
     }
@@ -375,7 +387,7 @@ populate_framebuffers(
         creq.bpp = 32;
         int ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
         if (ret < 0) {
-            ws_log(&log_ctx, "Could not create DUMB BUFFER\n");
+            ws_log(&log_ctx, "Could not create DUMB BUFFER");
             continue;
         }
 
@@ -387,7 +399,7 @@ populate_framebuffers(
                 iter->stride, iter->handle, &iter->fb);
 
         if (ret) {
-            ws_log(&log_ctx, "Could not add FB of size: %dx%d.\n",
+            ws_log(&log_ctx, "Could not add FB of size: %dx%d.",
                     creq.width, creq.height);
             goto err_destroy;
         }
@@ -396,7 +408,7 @@ populate_framebuffers(
         mreq.handle = iter->handle;
         ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
         if (ret) {
-            ws_log(&log_ctx, "Could not allocate enough memory for FB.\n");
+            ws_log(&log_ctx, "Could not allocate enough memory for FB.");
             goto err_fb;
         }
 
@@ -404,7 +416,7 @@ populate_framebuffers(
                 ws_comp_ctx.fb.fd, mreq.offset);
 
         if (iter->map == MAP_FAILED) {
-            ws_log(&log_ctx, "Could not MMAP FB\n");
+            ws_log(&log_ctx, "Could not MMAP FB");
             goto err_fb;
         }
 
@@ -414,7 +426,7 @@ populate_framebuffers(
         ret = drmModeSetCrtc(ws_comp_ctx.fb.fd, iter->crtc, iter->fb, 0, 0,
                 &iter->conn, 1, &iter->mode);
         if (ret) {
-            ws_log(&log_ctx, "Could not set the CRTC.\n");
+            ws_log(&log_ctx, "Could not set the CRTC.");
             goto err_fb;
         }
 
