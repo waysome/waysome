@@ -63,7 +63,7 @@ cleanup_logger(
  */
 
 int
-ws_logger_new(void)
+ws_logger_init(void)
 {
     static bool is_used = false;
 

@@ -39,14 +39,12 @@ struct ws_logger_context {
 };
 
 /**
- * Get a new allocated, initialized `struct ws_logger` object
- *
- * @warning Singleton. Returns old logger object if there already is one.
+ * Initialize the logger module
  *
  * @return zero on success, else error code from errno.h
  */
 int
-ws_logger_new(void);
+ws_logger_init(void);
 
 /**
  * Log with a logger
