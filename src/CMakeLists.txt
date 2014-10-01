@@ -44,6 +44,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    compositor/background_surface.c
     compositor/module.c
     logger/module.c
     main.c
