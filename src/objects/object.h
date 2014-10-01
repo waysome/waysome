@@ -268,6 +268,18 @@ ws_object_run(
 );
 
 /**
+ * Hash the object
+ *
+ * @memberof ws_object
+ *
+ * @return the object hash as a `size_t`
+ */
+size_t
+ws_object_hash(
+    struct ws_object* self //!< The object
+);
+
+/**
  * Read-lock the object
  *
  * @memberof ws_object

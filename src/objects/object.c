@@ -219,6 +219,14 @@ ws_object_run(
     return false;
 }
 
+size_t
+ws_object_hash(
+    struct ws_object* self
+) {
+    /** @todo implement */
+    return 0;
+}
+
 bool
 ws_object_lock_read(
     struct ws_object* self
