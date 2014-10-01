@@ -73,6 +73,11 @@ typedef bool (*ws_object_log_callback)(struct ws_object* const, void*);
  */
 typedef bool (*ws_object_run_callback)(struct ws_object* const);
 
+/**
+ * hash callback
+ */
+typedef size_t (*ws_object_hash_callback)(struct ws_object* const);
+
 /*
  *
  * Type implementation
@@ -90,6 +95,7 @@ struct ws_object_type {
     ws_object_deinit_callback deinit_callback; //!< Free callback for the type
     ws_object_log_callback log_callback; //!< Log callback for the type
     ws_object_run_callback run_callback; //!< Run callback for the type
+    ws_object_hash_callback hash_callback; //!< Hash callback for the type
 };
 
 /**
