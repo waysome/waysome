@@ -28,7 +28,15 @@
 #ifndef __WS_BACKGROUND_SERVICE_H__
 #define __WS_BACKGROUND_SERVICE_H__
 
-char*
+struct ws_image_buffer {
+    int height;
+    int width;
+    int bytesize;
+    int stride;
+    void* buffer;
+};
+
+struct ws_image_buffer*
 ws_background_service_load_image(
     const char* filename
 );

@@ -39,6 +39,7 @@
 #include "util/cleaner.h"
 #include "logger/module.h"
 #include "compositor/internal_context.h"
+#include "background_surface.h"
 
 struct ws_compositor_context ws_comp_ctx;
 static struct ws_logger_context log_ctx = { "[Compositor] " };
@@ -157,12 +158,22 @@ ws_compositor_init(void) {
         return retval;
     }
 
-    retval =
-    //!< @todo: create a framebuffer for each connector
+    struct ws_monitor* it = ws_comp_ctx.conns;
 
-    //!< @todo: prelimary: preload a PNG from a hardcoded path
+    struct ws_image_buffer* duck = ws_background_service_load_image("duck.png");
 
-    //!< @todo: prelimary: blit the preloaded PNG on each of the frame buffers
+    if (duck->buffer == NULL) {
+        ws_log(&log_ctx, "The image could not be loaded");
+    }
+
+    while (it && duck->buffer) {
+        ws_log(&log_ctx, "Copying onto buffer: %dx%d", it->width, it->height);
+        for (int i = 0; i < duck->height; ++i) {
+           memcpy(it->map + (it->stride * i), (char*)duck->buffer + (duck->stride * i),
+                    duck->stride);
+        }
+        it = it->next;
+    }
 
     is_init = true;
     return 0;
