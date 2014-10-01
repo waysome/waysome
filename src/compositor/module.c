@@ -402,6 +402,15 @@ populate_framebuffers(
 
         memset(iter->map, 0, iter->size);
 
+        iter->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb.fd, iter->crtc);
+        ret = drmModeSetCrtc(ws_comp_ctx.fb.fd, iter->crtc, iter->fb, 0, 0,
+                &iter->conn, 1, &iter->mode);
+        if (ret) {
+            //!< @todo: Log Error about not being able to set the CRTC for this
+            //connector
+            goto err_fb;
+        }
+
         continue;
 err_fb:
         drmModeRmFB(ws_comp_ctx.fb.fd, iter->fb);
