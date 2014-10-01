@@ -46,6 +46,7 @@ struct ws_monitor {
     uint8_t* map; //!< mapped buffer data
 
     drmModeModeInfo mode; //!< mode of the monitor
+    uint32_t handle; //!< Handle of the frame buffer
     uint32_t fb; //!< id of the frame buffer
     uint32_t conn; //!< id of the connector
     uint32_t crtc; //!< id of the "monitor"

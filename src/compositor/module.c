@@ -32,6 +32,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include <unistd.h>
 #include <xf86drm.h>
 
@@ -83,6 +84,9 @@ find_crtc(
  */
 static int
 populate_connectors(void);
+
+static int
+populate_framebuffers(void);
 
 
 /**
@@ -140,6 +144,12 @@ ws_compositor_init(void) {
         return retval;
     }
 
+    retval = populate_framebuffers();
+    if (retval < 0) {
+        return retval;
+    }
+
+    retval =
     //!< @todo: create a framebuffer for each connector
 
     //!< @todo: prelimary: preload a PNG from a hardcoded path
@@ -334,3 +344,66 @@ get_framebuffer_device(
     return 0;
 }
 
+static int
+populate_framebuffers(
+    void
+) {
+
+    struct drm_mode_create_dumb creq; //Create Request
+    struct drm_mode_destroy_dumb dreq; //Delete Request
+    struct drm_mode_map_dumb mreq; //Memory Request
+
+    for (struct ws_monitor* iter = ws_comp_ctx.conns; iter; iter = iter->next) {
+        if (!iter->connected) {
+            continue;
+        }
+        memset(&creq, 0, sizeof(creq));
+        creq.width = iter->width;
+        creq.height = iter->height;
+        creq.bpp = 32;
+        int ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
+        if (ret < 0) {
+            //< @todo: Log Error about this FB
+            continue;
+        }
+
+        iter->stride = creq.pitch;
+        iter->size = creq.size;
+        iter->handle = creq.handle;
+
+        ret = drmModeAddFB(ws_comp_ctx.fb.fd, iter->width, iter->height, 24, 32,
+                iter->stride, iter->handle, &iter->fb);
+
+        if (ret) {
+            //< @todo: Log error about create fb
+            goto err_destroy;
+        }
+
+        memset(&mreq, 0, sizeof(mreq));
+        mreq.handle = iter->handle;
+        ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
+        if (ret) {
+            //< @todo: Error about not being able to get the memory
+            goto err_fb;
+        }
+
+        iter->map = mmap(0, iter->size, PROT_READ | PROT_WRITE, MAP_SHARED,
+                ws_comp_ctx.fb.fd, mreq.offset);
+
+        if (iter->map == MAP_FAILED) {
+            //< @todo: Error about not being able to MMAP;
+            goto err_fb;
+        }
+
+        memset(iter->map, 0, iter->size);
+
+        continue;
+err_fb:
+        drmModeRmFB(ws_comp_ctx.fb.fd, iter->fb);
+err_destroy:
+        memset(&dreq, 0, sizeof(dreq));
+        dreq.handle = iter->handle;
+        drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
+    }
+    return 0;
+}
