@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup values "Value types"
+ *
+ * @{
+ */
+
 #ifndef __WS_VALUES_VALUE_TYPE_H__
 #define __WS_VALUES_VALUE_TYPE_H__
 
@@ -46,3 +52,6 @@ enum ws_value_type {
 
 #endif // __WS_VALUES_VALUE_TYPE_H__
 
+/**
+ * @}
+ */

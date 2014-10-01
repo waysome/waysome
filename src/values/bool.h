@@ -25,9 +25,19 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup values "Value types"
+ *
+ * @{
+ */
+
 #ifndef __WS_VALUES_BOOL_H__
 #define __WS_VALUES_BOOL_H__
 
 
 
 #endif // __WS_VALUES_BOOL_H__
+
+/**
+ * @}
+ */
