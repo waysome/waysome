@@ -85,6 +85,11 @@ find_crtc(
 static int
 populate_connectors(void);
 
+/**
+ * Create framebuffers for all connected connectors
+ *
+ * @return 0 on success, a negative error code otherwise (-ENOENT)
+ */
 static int
 populate_framebuffers(void);
 
