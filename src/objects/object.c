@@ -223,8 +223,17 @@ size_t
 ws_object_hash(
     struct ws_object* self
 ) {
-    /** @todo implement */
-    return 0;
+    if (!self || !self->id || !self->id->hash_callback) {
+        return 0;
+    }
+
+    size_t hash;
+
+    pthread_rwlock_rdlock(&self->rw_lock);
+    hash = self->id->hash_callback(self);
+    pthread_rwlock_unlock(&self->rw_lock);
+
+    return hash;
 }
 
 bool
