@@ -66,19 +66,11 @@ struct ws_array {
 extern ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY;
 
 /**
- * Initialize an array object
- *
- * @return true if initialisation worked, else false
- */
-bool
-ws_array_init(
-    struct ws_array* self //!< Array object
-);
-
-/**
  * Allocate a new, initialized array object
  *
  * @memberof ws_array
+ *
+ * @note One ref is already taken
  *
  * @return New array object, initialized. NULL on failure
  */
