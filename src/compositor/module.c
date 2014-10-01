@@ -37,10 +37,11 @@
 #include <xf86drm.h>
 
 #include "util/cleaner.h"
+#include "logger/module.h"
 #include "compositor/internal_context.h"
 
-
 struct ws_compositor_context ws_comp_ctx;
+static struct ws_logger_context log_ctx = { "[Compositor] " };
 
 
 /**
@@ -135,6 +136,8 @@ ws_compositor_init(void) {
     if (is_init) {
         return 0;
     }
+
+    ws_log(&log_ctx, "Starting initialization of the Compositor.\n");
 
     ws_cleaner_add(ws_compositor_deinit, NULL);
     int retval;
@@ -242,7 +245,7 @@ find_crtc(
         enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoders[i]);
 
         if (!enc) {
-            //!< @todo: Log Error!
+            ws_log(&log_ctx, "Could not get Encoder.\n");
             continue;
         }
 
@@ -266,7 +269,8 @@ find_crtc(
         drmModeFreeEncoder(enc);
     }
 
-    //!< @todo: Log Error! No CRTC FOUND!!!
+    ws_log(&log_ctx, "Could not find suitable Encoder for crtc with dim: %dx%d.\n",
+            connector->width, connector->height);
     return -ENOENT;
 }
 
@@ -278,7 +282,8 @@ populate_connectors(void) {
 
     res = drmModeGetResources(ws_comp_ctx.fb.fd);
     if (!res) {
-        //!< @todo: Log Error
+        ws_log(&log_ctx, "Could not get Resources for: %s.\n",
+                ws_comp_ctx.fb.path);
         return -ENOENT;
     }
 
@@ -287,7 +292,8 @@ populate_connectors(void) {
     while(i--) {
         conn = drmModeGetConnector(ws_comp_ctx.fb.fd, res->connectors[i]);
         if (!conn) {
-            //!< @todo: Log Error
+            ws_log(&log_ctx, "Could not get connector for: %s\n",
+                    ws_comp_ctx.fb.path);
             continue;
         }
         if (*connector) {
@@ -299,13 +305,14 @@ populate_connectors(void) {
         (*connector)->conn = conn->connector_id;
 
         if (conn->connection != DRM_MODE_CONNECTED) {
-            //!< @todo: Log Unused
+            ws_log(&log_ctx, "Found unused connector\n");
             (*connector)->connected = 0;
             continue;
         }
 
         if (conn->count_modes == 0) {
-            //!< @todo: Log No Valid Modes
+            ws_log(&log_ctx, "No valid modes for Connector %d.\n",
+                    conn->connector_id);
             (*connector)->connected = 0;
             continue;
         }
@@ -319,7 +326,7 @@ populate_connectors(void) {
 
 
         if (find_crtc(res, conn, *connector) < 0) {
-            //!< @todo: Log error about not finding crtcs
+            ws_log(&log_ctx, "No valid crtcs found\n");
             (*connector)->connected = 0;
             continue;
         }
@@ -334,13 +341,13 @@ get_framebuffer_device(
 ) {
     int fd = open(path, O_RDWR | O_CLOEXEC);
     if (fd < 0) {
-        //!< @todo: Log Error!
+        ws_log(&log_ctx, "Could not open: '%s'.\n", path);
         return -ENOENT;
     }
 
     uint64_t has_dumb;
     if (drmGetCap(fd, DRM_CAP_DUMB_BUFFER, &has_dumb) < 0 || !has_dumb) {
-        //!< @todo: Log Error!
+        ws_log(&log_ctx, "File %s has no DUMB BUFFER cap. \n", path);
         close(fd);
         return -EOPNOTSUPP;
     }
@@ -368,7 +375,7 @@ populate_framebuffers(
         creq.bpp = 32;
         int ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
         if (ret < 0) {
-            //< @todo: Log Error about this FB
+            ws_log(&log_ctx, "Could not create DUMB BUFFER\n");
             continue;
         }
 
@@ -380,7 +387,8 @@ populate_framebuffers(
                 iter->stride, iter->handle, &iter->fb);
 
         if (ret) {
-            //< @todo: Log error about create fb
+            ws_log(&log_ctx, "Could not add FB of size: %dx%d.\n",
+                    creq.width, creq.height);
             goto err_destroy;
         }
 
@@ -388,7 +396,7 @@ populate_framebuffers(
         mreq.handle = iter->handle;
         ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
         if (ret) {
-            //< @todo: Error about not being able to get the memory
+            ws_log(&log_ctx, "Could not allocate enough memory for FB.\n");
             goto err_fb;
         }
 
@@ -396,7 +404,7 @@ populate_framebuffers(
                 ws_comp_ctx.fb.fd, mreq.offset);
 
         if (iter->map == MAP_FAILED) {
-            //< @todo: Error about not being able to MMAP;
+            ws_log(&log_ctx, "Could not MMAP FB\n");
             goto err_fb;
         }
 
@@ -406,8 +414,7 @@ populate_framebuffers(
         ret = drmModeSetCrtc(ws_comp_ctx.fb.fd, iter->crtc, iter->fb, 0, 0,
                 &iter->conn, 1, &iter->mode);
         if (ret) {
-            //!< @todo: Log Error about not being able to set the CRTC for this
-            //connector
+            ws_log(&log_ctx, "Could not set the CRTC.\n");
             goto err_fb;
         }
 
