@@ -25,9 +25,19 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup utils "(internal) utilities"
+ *
+ * @{
+ */
+
 #ifndef __WS_UTIL_ARITHMETICAL_H__
 #define __WS_UTIL_ARITHMETICAL_H__
 
 
 
 #endif // __WS_UTIL_ARITHMETICAL_H__
+
+/**
+ * @}
+ */

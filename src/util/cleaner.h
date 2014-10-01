@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup utils "(internal) utilities"
+ *
+ * @{
+ */
+
 #ifndef __WS_UTIL_CLEANER_H__
 #define __WS_UTIL_CLEANER_H__
 
@@ -63,3 +69,7 @@ bool
 ws_cleaner_run(void);
 
 #endif // __WS_UTIL_CLEANER_H__
+
+/**
+ * @}
+ */
