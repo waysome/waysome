@@ -31,6 +31,12 @@
  * @{
  */
 
+/**
+ * @addtogroup objects_array "Class: Array type"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_ARRAY_H__
 #define __WS_OBJECTS_ARRAY_H__
 
@@ -202,6 +208,10 @@ ws_array_append(
 );
 
 #endif // __WS_OBJECTS_ARRAY_H__
+
+/**
+ * @}
+ */
 
 /**
  * @}
