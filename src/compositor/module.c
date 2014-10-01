@@ -187,8 +187,27 @@ ws_compositor_deinit(
 
     struct ws_monitor* it = ws_comp_ctx.conns;
 
+    struct drm_mode_destroy_dumb dreq;
     while(it) {
         struct ws_monitor* next = it->next;
+
+        drmModeSetCrtc(ws_comp_ctx.fb.fd,
+                it->saved_crtc->crtc_id,
+                it->saved_crtc->buffer_id,
+                it->saved_crtc->x,
+                it->saved_crtc->y,
+                &it->conn,
+                1,
+                &it->saved_crtc->mode);
+        if (it->map) {
+            munmap(it->map, it->size);
+        }
+
+        drmModeRmFB(ws_comp_ctx.fb.fd, it->fb);
+
+        memset(&dreq, 0, sizeof(dreq));
+        dreq.handle = it->handle;
+        drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
         free(it);
         it = next;
     }
