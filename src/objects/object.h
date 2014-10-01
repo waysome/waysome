@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup objects_object "Class: object type"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_OBJECT_H__
 #define __WS_OBJECTS_OBJECT_H__
 
@@ -310,3 +322,11 @@ ws_object_unlock_write(
 );
 
 #endif // __WS_OBJECTS_OBJECT_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

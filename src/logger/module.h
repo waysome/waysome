@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup logger "Logging module"
+ *
+ * @{
+ */
+
 #ifndef __WS_LOGGER_MODULE_H__
 #define __WS_LOGGER_MODULE_H__
 
@@ -67,3 +73,7 @@ ws_log(
  */
 
 #endif // __WS_LOGGER_MODULE_H__
+
+/**
+ * @}
+ */

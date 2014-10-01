@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup objects_array "Class: Array type"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_ARRAY_H__
 #define __WS_OBJECTS_ARRAY_H__
 
@@ -66,6 +78,8 @@ ws_array_init(
 /**
  * Allocate a new, initialized array object
  *
+ * @memberof ws_array
+ *
  * @return New array object, initialized. NULL on failure
  */
 struct ws_array*
@@ -73,6 +87,8 @@ ws_array_new(void);
 
 /**
  * Get the length of an array object
+ *
+ * @memberof ws_array
  *
  * @return Size of array object, zero on NULL passed
  */
@@ -83,6 +99,8 @@ ws_array_get_len(
 
 /**
  * Sort an array object
+ *
+ * @memberof ws_array
  *
  * @note Sorts ascending pointers if `cmp` is NULL
  */
@@ -95,6 +113,8 @@ ws_array_sort(
 /**
  * Check if an array has an object
  *
+ * @memberof ws_array
+ *
  * @return true if the array has an reference to the object
  */
 bool
@@ -105,6 +125,8 @@ ws_array_has(
 
 /**
  * Find an object in the array by predicate
+ *
+ * @memberof ws_array
  *
  * @note Iterates through the array. If the `cmp` function returns non-false,
  * the function returns immediately.
@@ -120,6 +142,8 @@ ws_array_find(
 /**
  * Get from array at specific position
  *
+ * @memberof ws_array
+ *
  * @warning returns NULL if index is out of bounds
  *
  * @return the object at position `i`
@@ -132,6 +156,8 @@ ws_array_get_at(
 
 /**
  * Set object into array at specific position
+ *
+ * @memberof ws_array
  *
  * @warning returns NULL if index is out of bounds
  *
@@ -148,6 +174,8 @@ ws_array_set_at(
 /**
  * Iterate through an array
  *
+ * @memberof ws_array
+ *
  * @warning stops iteration whenever `iter` returns false
  *
  * @return true if the iteration exited normally (over elements was iterated),
@@ -162,6 +190,8 @@ ws_array_foreach(
 
 /**
  * Append a value to the array
+ *
+ * @memberof ws_array
  *
  * @note Tries to resize the array if there is not enough space
  *
@@ -179,3 +209,10 @@ ws_array_append(
 
 #endif // __WS_OBJECTS_ARRAY_H__
 
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
