@@ -31,6 +31,15 @@
  * @{
  */
 
+/**
+ * @addtogroup utils_cleaner "(internal) cleanup utility"
+ *
+ * Helper for saving cleanup-callbacks which get executed at program exit
+ * automatically.
+ *
+ * @{
+ */
+
 #ifndef __WS_UTIL_CLEANER_H__
 #define __WS_UTIL_CLEANER_H__
 
@@ -69,6 +78,10 @@ bool
 ws_cleaner_run(void);
 
 #endif // __WS_UTIL_CLEANER_H__
+
+/**
+ * @}
+ */
 
 /**
  * @}
