@@ -31,6 +31,12 @@
  * @{
  */
 
+/**
+ * @addtogroup values_value "Value types: Value type"
+ *
+ * @{
+ */
+
 #ifndef __WS_VALUES_VALUE_H__
 #define __WS_VALUES_VALUE_H__
 
@@ -75,6 +81,10 @@ __ws_nonnull__(1)
 ;
 
 #endif // __WS_VALUES_VALUE_H__
+
+/**
+ * @}
+ */
 
 /**
  * @}
