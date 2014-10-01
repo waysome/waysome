@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_ARRAY_H__
 #define __WS_OBJECTS_ARRAY_H__
 
@@ -197,3 +203,6 @@ ws_array_append(
 
 #endif // __WS_OBJECTS_ARRAY_H__
 
+/**
+ * @}
+ */

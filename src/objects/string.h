@@ -25,9 +25,19 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_STRING_H__
 #define __WS_OBJECTS_STRING_H__
 
 
 
 #endif // __WS_OBJECTS_STRING_H__
+
+/**
+ * @}
+ */
