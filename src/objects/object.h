@@ -237,6 +237,10 @@ ws_object_getref(
  *
  * @memberof ws_object
  *
+ * @warning This function must not be called for stack-allocated ws_objects,
+ * as freeing an object with zero references will possibly lead to a
+ * segmentation fault.
+ *
  * @warning It is not save to use the object after this operation _in any kind_.
  * The object might be unavailable after this operation, as it was freed from
  * the heap.
