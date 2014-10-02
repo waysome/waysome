@@ -463,6 +463,51 @@ ws_object_deinit(
 );
 
 /**
+ * Get an attribute of an object
+ *
+ * @memberof ws_object
+ *
+ * How this works:
+ *
+ * Each object type has to embedd a attribute table into its type information
+ * table (@see ws_object_attribute, @see ws_object_type). Each entry in this
+ * table has three members:
+ *
+ * - The name of the attribute, so how it can be addressed/referenced. This can
+ *   be a name of a member, but also something else, so forward-compatibility
+ *   is granted.
+ * - The offset in the struct definition. This one is compiletime generated and
+ *   simply stores the offset of the member to reference, E.G:
+ *      @code{.c}
+ *      struct a {
+ *         int b;
+ *         int c;
+ *      };
+ *      @endcode
+ *   So, `c` has the offset `sizeof(b) == sizeof(int)`. This is neccessary to get
+ *   a pointer on the actual member and retreiving the data from it.
+ * - The third member is the actual type information about the attribute to
+ *   read. According to this, and an internal table, the type of the destination
+ *   `ws_value` subtype is decided.
+ *
+ * The overall approach of the method is simple: Find the entry in the table
+ * which matches the specified identifier. If the type of the member can be
+ * parsed into the type of the passed ws_value type, get the data from the
+ * object and put it into the `dest` ws_value type.
+ *
+ * @note Does string-match the attribute name with the `ident` parameter in O(n)
+ *
+ * @return zero on success, else negative error code from errno.h
+ *      -EINVAL - if the passed `dest` type does not match the attribute type
+ */
+int
+ws_object_attr_read(
+    struct ws_object* self, //!< The object
+    char* ident, //!< The identifier for the attribute
+    struct ws_value* dest //!< Destination of the data
+);
+
+/**
  * Compare two ws_object instances
  *
  * @memberof ws_object

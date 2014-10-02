@@ -357,6 +357,17 @@ ws_object_deinit(
 }
 
 int
+ws_object_attr_read(
+    struct ws_object* self,
+    char* ident,
+    enum ws_object_attribute_type* type_dest,
+    void** dest
+) {
+    /** @todo implement */
+    return -1;
+}
+
+int
 ws_object_cmp(
     struct ws_object const* o1,
     struct ws_object const* o2
