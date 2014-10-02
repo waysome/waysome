@@ -219,6 +219,23 @@ ws_object_run(
     return false;
 }
 
+size_t
+ws_object_hash(
+    struct ws_object* self
+) {
+    if (!self || !self->id || !self->id->hash_callback) {
+        return 0;
+    }
+
+    size_t hash;
+
+    pthread_rwlock_rdlock(&self->rw_lock);
+    hash = self->id->hash_callback(self);
+    pthread_rwlock_unlock(&self->rw_lock);
+
+    return hash;
+}
+
 bool
 ws_object_lock_read(
     struct ws_object* self
