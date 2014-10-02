@@ -46,6 +46,7 @@
 
 #include "util/attributes.h"
 #include "logger/module.h"
+#include "values/value.h"
 
 /*
  *
@@ -122,6 +123,35 @@ typedef uintmax_t (*ws_object_uuid_callback)(struct ws_object*);
  */
 
 /**
+ * Attribute type identifier
+ */
+enum ws_object_attribute_type {
+    WS_OBJ_ATTR_NO_TYPE = 0,
+
+    WS_OBJ_ATTR_TYPE_CHAR,
+    WS_OBJ_ATTR_TYPE_INT32,
+    WS_OBJ_ATTR_TYPE_INT64,
+    WS_OBJ_ATTR_TYPE_UINT32,
+    WS_OBJ_ATTR_TYPE_UINT64,
+    WS_OBJ_ATTR_TYPE_DOUBLE,
+    WS_OBJ_ATTR_TYPE_OBJ,
+};
+
+/**
+ * Attribute type
+ *
+ * For storing information about an attribute of an object
+ *
+ * @note When specifying the table for a type, this _should_ be NULL termiated
+ */
+struct ws_object_attribute {
+    char const* const   name; //!< Name of the attribute
+    size_t              offset_in_struct; //!< Offset in the struct
+    enum ws_object_attribute_type type; //!< Attribute type
+
+};
+
+/**
  * Object type identifier for identifiying an object type
  */
 struct ws_object_type {
@@ -135,6 +165,8 @@ struct ws_object_type {
     ws_object_hash_callback hash_callback; //!< Hash callback for the type
     ws_object_cmp_callback cmp_callback; //!< Compare callback for the type
     ws_object_uuid_callback uuid_callback; //!< @protected UUID callback
+
+    struct ws_object_attribute const* attribute_table; //!< Attr table
 };
 
 /**
