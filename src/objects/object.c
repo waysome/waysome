@@ -44,6 +44,23 @@ static struct ws_logger_context log_ctx = {
  */
 
 /*
+ * Attribute information about the type
+ */
+struct ws_object_attribute const WS_OBJECT_ATTRS_OBJECT[] = {
+/* The following code is outcommented as it should be an example only: */
+//    {
+//        .name = "id",
+//        .offset_in_struct = offsetof(struct ws_object, id),// stddef: offsetof
+//        .type = WS_OBJ_ATTR_NO_TYPE,
+//    }
+    {
+        .name = NULL,
+        .offset_in_struct = 0,
+        .type = 0
+    },
+};
+
+/*
  * Type information
  */
 ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
@@ -57,6 +74,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .hash_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
+    .attribute_table = WS_OBJECT_ATTRS_OBJECT,
 };
 
 struct ws_object*
