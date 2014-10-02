@@ -25,13 +25,16 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <pthread.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 #include <uuid/uuid.h>
 
-#include "objects/object.h"
 #include "logger/module.h"
+#include "objects/object.h"
+#include "values/int.h"
 
 static struct ws_logger_context log_ctx = {
     .prefix = "[Object] ",
@@ -360,11 +363,105 @@ int
 ws_object_attr_read(
     struct ws_object* self,
     char* ident,
-    enum ws_object_attribute_type* type_dest,
-    void** dest
+    struct ws_value* dest
 ) {
-    /** @todo implement */
-    return -1;
+    if (!self || !ident || !dest || !self->id || !self->id->attribute_table) {
+        return -EINVAL;
+    }
+
+
+    ws_object_lock_read(self);
+
+    bool found = false;
+    size_t offset = 0;
+    enum ws_object_attribute_type type = WS_OBJ_ATTR_NO_TYPE;
+
+    struct ws_object_attribute const* iter;
+    for (iter = &self->id->attribute_table[0]; iter->name && !found; iter++) {
+        if (strcmp(iter->name, ident) == 0) {
+            offset  = iter->offset_in_struct;
+            type    = iter->type;
+            found   = true;
+        }
+    }
+
+    if (!found) {
+        ws_object_unlock(self);
+        return -ECANCELED;
+    }
+
+    if (type & WS_OBJ_ATTR_NO_TYPE) {
+        ws_object_unlock(self);
+        return -EFAULT;
+    }
+
+    enum ws_value_type typemap[] = {
+        [WS_OBJ_ATTR_TYPE_CHAR]     = WS_VALUE_TYPE_STRING,
+        [WS_OBJ_ATTR_TYPE_INT32]    = WS_VALUE_TYPE_INT,
+        [WS_OBJ_ATTR_TYPE_INT64]    = WS_VALUE_TYPE_INT,
+        [WS_OBJ_ATTR_TYPE_UINT32]   = WS_VALUE_TYPE_INT,
+        [WS_OBJ_ATTR_TYPE_UINT64]   = WS_VALUE_TYPE_INT,
+        [WS_OBJ_ATTR_TYPE_DOUBLE]   = WS_VALUE_TYPE_INT, //!< @todo double?
+        [WS_OBJ_ATTR_TYPE_OBJ]      = WS_VALUE_TYPE_OBJECT_ID,
+    };
+
+    if (typemap[type] != ws_value_get_type(dest)) {
+        /* Types not matching */
+        ws_object_unlock(self);
+        return -EINVAL;
+    }
+
+    void* member_pos = (void *) (((char *) self) + offset);
+    switch (type) {
+    case WS_OBJ_ATTR_TYPE_CHAR:
+        {
+            size_t slen = strlen((char*) member_pos);
+            char* buff  = calloc(slen + 1, sizeof(*buff));
+
+            if (!buff) {
+                return -ENOMEM;
+            }
+
+            memcpy(buff, member_pos, slen);
+
+            struct ws_string* s = ws_string_new();
+            if (!s) {
+                free(buff);
+                return -ENOMEM;
+            }
+
+            ws_string_set_from_raw(s, buff);
+
+            ws_value_string_set_str((struct ws_value_string*) dest, s);
+        }
+        break;
+
+    case WS_OBJ_ATTR_TYPE_INT32:
+    case WS_OBJ_ATTR_TYPE_INT64:
+    case WS_OBJ_ATTR_TYPE_UINT32:
+    case WS_OBJ_ATTR_TYPE_UINT64:
+        //!< @todo The object attr types for this case are mapped onto the very
+        // same value type.
+
+        ws_value_int_set((struct ws_value_int*) dest, *((int*) member_pos));
+        break;
+
+    case WS_OBJ_ATTR_TYPE_DOUBLE:
+        //!< @todo implement casting to value type
+        break;
+
+    case WS_OBJ_ATTR_TYPE_OBJ:
+        //!< @todo implement casting to value type
+        break;
+
+    default:
+        //!< @todo Something strange happened in this case, maybe implementation
+        // missing here. What to do now?
+        break;
+    };
+
+    ws_object_unlock(self);
+    return 0;
 }
 
 int

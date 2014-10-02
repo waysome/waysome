@@ -6,7 +6,6 @@ set(TEST_SUITES_OBJECTS
 foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
     add_subdirectory("${TEST}")
 
-
     if (DEFINED TEST_INCLUDE_DIRS)
         include_directories(${TEST_INCLUDE_DIRS})
     endif()
