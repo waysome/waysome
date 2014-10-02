@@ -321,6 +321,20 @@ ws_object_unlock_write(
     struct ws_object* self //!< The object
 );
 
+/**
+ * Uninitialize a ws_object
+ *
+ * @warning It is not save to use the object after this method was called on it.
+ *
+ * @warning Should only be called for objects which are allocated on the stack.
+ *
+ * @return true on success, else false
+ */
+bool
+ws_object_deinit(
+    struct ws_object* self //!< The object
+);
+
 #endif // __WS_OBJECTS_OBJECT_H__
 
 /**

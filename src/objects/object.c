@@ -247,6 +247,27 @@ ws_object_unlock_write(
     return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
+bool
+ws_object_deinit(
+    struct ws_object* self
+) {
+    if (self) {
+        wrlock(self);
+        if (self->id && self->id->deinit_callback) {
+            if (!self->id->deinit_callback(self)) {
+                return false;
+            }
+        }
+
+        if ((pthread_rwlock_destroy(&self->ref_counting.rwl) != 0) ||
+           (pthread_rwlock_destroy(&self->rw_lock) != 0)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 /*
  *
  * static function implementations
