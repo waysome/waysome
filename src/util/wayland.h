@@ -25,6 +25,21 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup utils "(internal) utilities"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup utils_wayland "wayland singleton and utilities"
+ *
+ * This includes a singleton construct for wl_display, socket management code
+ * and convenience functions.
+ *
+ * @{
+ */
+
 #ifndef __WS_UTIL_WAYLAND_H__
 #define __WS_UTIL_WAYLAND_H__
 
@@ -81,3 +96,11 @@ ws_wayland_get_next_serial(void);
 
 
 #endif // __WS_UTIL_CLEANER_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
