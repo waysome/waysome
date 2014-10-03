@@ -25,6 +25,33 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Author's note
+ *
+ * So wayland ships with it's own main loop implementation.
+ * The client library does not ship with a loop implementation but contains
+ * functions for reading, processing and flushing data from/to the connection
+ * to the server.
+ *
+ * Compared to libev, the implementation is retarded, which is the reason why
+ * we use libev and do not rely on wayland-server's loop implementation to do
+ * things right.
+ * For example, we want to run the loop from multiple threads, which you can do
+ * with libev, but not with wayland.
+ * Because the source code for the wayland's loop implementation does not
+ * contain a single locking mechanism, we have to impose locking ourself.
+ *
+ * Duh.
+ *
+ * We can, however, embed wayland's main loop, thanks to epoll.
+ * Note that this is one of the few legitimate usecases for epoll imho, as the
+ * syscall makes people rise their eyebrows once in awhile and
+ * misbehaves/misbehaved in some situations according to Marc Lehmann)
+ *
+ * I sincerely hope that one lucky day wayland will not rely on linux specific
+ * syscalls anymore.
+ */
+
 #include <errno.h>
 #include <ev.h>
 #include <pthread.h>
