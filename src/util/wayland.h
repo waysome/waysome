@@ -60,5 +60,13 @@ ws_wayland_acquire_display(void);
 void
 ws_wayland_release_display(void);
 
+/**
+ * Open up the socket and start listening on it
+ *
+ * @return 0 on success, a negative error code on failure
+ */
+int
+ws_wayland_listen(void);
+
 
 #endif // __WS_UTIL_CLEANER_H__

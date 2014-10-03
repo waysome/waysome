@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <ev.h>
 #include <pthread.h>
 #include <stdlib.h>
 
@@ -50,6 +51,8 @@
 static struct {
     pthread_mutex_t lock; //!< lock to impose on the loop
     struct wl_display* display; //!< wayland display singleton
+    ev_io dispatcher; //!< dispatching watcher
+    ev_prepare flusher; //!< flushing watcher
 } wayland_ctx;
 
 /*
@@ -84,6 +87,30 @@ wayland_display_cleanup(
  */
 static struct wl_display*
 ws_wayland_try_acquire_display(void);
+
+/*
+ * Dispatching watcher callback
+ *
+ * This callback dispatches wayland events
+ */
+static void
+wayland_dispatch(
+    struct ev_loop* loop, //!< loop on which the callback was called
+    ev_io* watcher, //!< watcher which triggered the update
+    int revents //!< events
+);
+
+/**
+ * Flushing watcher callback
+ *
+ * This callback flushes wayland events
+ */
+static void
+wayland_flush(
+    struct ev_loop* loop, //!< loop on which the callback was called
+    ev_prepare* watcher, //!< watcher which triggered the update
+    int revents //!< events
+);
 
 
 /*
@@ -163,6 +190,68 @@ ws_wayland_release_display(void)
     pthread_mutex_unlock(&wayland_ctx.lock);
 }
 
+int
+ws_wayland_listen(void)
+{
+    struct wl_display* disp = ws_wayland_acquire_display();
+    if (!disp) {
+        return -errno;
+    }
+
+    // set the environment variable
+    {
+        const char* name = wl_display_add_socket_auto(disp);
+        if (!name) {
+            goto display_fail;
+        }
+
+        int retval = setenv(WAYLAND_SOCKET_PATH_ENV, name, 1);
+        if (retval < 0) {
+            goto display_fail;
+        }
+    }
+
+    // get us some fd to poll() on
+    int fd;
+    {
+        // get the wayland event loop
+        struct wl_event_loop* wl_loop = wl_display_get_event_loop(disp);
+        if (!wl_loop) {
+            goto display_fail;
+        }
+
+        // get the fd to poll() on
+        fd = wl_event_loop_get_fd(wl_loop);
+        if (fd < 0) {
+            goto display_fail;
+        }
+    }
+
+    ws_wayland_release_display();
+
+    // now get the libev loop
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    if (!loop) {
+        return -ENOENT;
+    }
+
+    // initialize watchers
+    ev_io_init(&wayland_ctx.dispatcher, wayland_dispatch, fd, EV_READ);
+    ev_prepare_init(&wayland_ctx.flusher, wayland_flush);
+
+    // start those watchers
+    ev_io_start(loop, &wayland_ctx.dispatcher);
+    ev_prepare_start(loop, &wayland_ctx.flusher);
+
+    return 0;
+
+    // failure which forces us to release the display
+
+display_fail:
+    ws_wayland_release_display();
+    return -ENOENT;
+}
+
 
 /*
  *
@@ -174,6 +263,12 @@ static void
 wayland_display_cleanup(
     void* dummy
 ) {
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    if (loop) {
+        ev_io_stop(loop, &wayland_ctx.dispatcher);
+        ev_prepare_stop(loop, &wayland_ctx.flusher);
+    }
+
     wl_display_destroy(wayland_ctx.display);
     pthread_mutex_destroy(&wayland_ctx.lock);
 }
@@ -186,5 +281,44 @@ ws_wayland_try_acquire_display(void)
     }
 
     return wayland_ctx.display;
+}
+
+static void
+wayland_dispatch(
+    struct ev_loop* loop,
+    ev_io* watcher,
+    int revents
+) {
+    // if we don't get a lock, another thread is probably dispatching already
+    struct wl_display* disp = ws_wayland_try_acquire_display();
+    if (!disp) {
+        return;
+    }
+
+    struct wl_event_loop* wl_loop = wl_display_get_event_loop(disp);
+    if (unlikely(!wl_loop)) {
+        return;
+    }
+
+    // dispatch events and return immediately, even if no events are pending
+    wl_event_loop_dispatch(wl_loop, 0);
+
+    ws_wayland_release_display();
+}
+
+static void
+wayland_flush(
+    struct ev_loop* loop,
+    ev_prepare* watcher,
+    int revents
+) {
+    // why can't you flush all the clients by the loop? Like I know...
+    struct wl_display* disp = ws_wayland_acquire_display();
+    if (unlikely(!disp)) {
+        return;
+    }
+    wl_display_flush_clients(disp);
+
+    ws_wayland_release_display();
 }
 
