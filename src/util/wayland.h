@@ -31,16 +31,34 @@
 #include <wayland-server.h>
 
 /**
- * Initialize and return the display
+ * Initialize, lock and return the display
+ *
+ * This function will return the recursively locked wl_display, to prevent other
+ * threads from interfering with the caller's actions on that object.
+ * Callers will need to call ws_wayland_release_display() once they are done.
  *
  * This function imposes singleton behavior.
  * The display is initialized only once.
  * It is save to call this function multiple times.
  *
+ * @warning locks the display for other threads recursively.
+ *          Call ws_wayland_release_display() to release the lock.
+ *
  * @return initialized display or NULL
  */
 struct wl_display*
 ws_wayland_acquire_display(void);
+
+/**
+ * Release the lock on the display singleton
+ *
+ * This function releases the display singleton, previously locked by a call
+ * to ws_wayland_acquire_display()
+ *
+ * @warning call this function only if you called ws_wayland_acquire_display().
+ */
+void
+ws_wayland_release_display(void);
 
 
 #endif // __WS_UTIL_CLEANER_H__

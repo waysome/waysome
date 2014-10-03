@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <pthread.h>
 #include <stdlib.h>
 
 #include "util/cleaner.h"
@@ -47,6 +48,7 @@
  * lock and watchers.
  */
 static struct {
+    pthread_mutex_t lock; //!< lock to impose on the loop
     struct wl_display* display; //!< wayland display singleton
 } wayland_ctx;
 
@@ -68,7 +70,6 @@ wayland_display_cleanup(
     void* display
 );
 
-
 /*
  *
  * Interface implementation
@@ -80,6 +81,7 @@ ws_wayland_acquire_display(void)
 {
     static bool is_init = false;
     if (likely(is_init)) {
+        pthread_mutex_lock(&wayland_ctx.lock);
         return wayland_ctx.display;
     }
 
@@ -91,22 +93,58 @@ ws_wayland_acquire_display(void)
 
     int retval;
 
+    // create the lock
+    pthread_mutexattr_t attr;
+    retval = pthread_mutexattr_init(&attr);
+    if (retval != 0) {
+        errno = retval;
+        goto cleanup_display;
+    }
+
+    // we want a recursive lock
+    retval = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    if (retval != 0) {
+        errno = retval;
+        goto cleanup_mutex_attr;
+    }
+
+    retval = pthread_mutex_init(&wayland_ctx.lock, &attr);
+    if (retval != 0) {
+        errno = retval;
+        goto cleanup_mutex_attr;
+    }
+
+    pthread_mutexattr_destroy(&attr);
+
     // add the cleaner
     retval = ws_cleaner_add(wayland_display_cleanup, NULL);
     if (retval < 0) {
         errno = -retval;
-        goto cleanup_display;
+        goto cleanup_mutex;
     }
 
     // everything is initialized now
     is_init = true;
+    pthread_mutex_lock(&wayland_ctx.lock);
     return wayland_ctx.display;
 
     // cleanup code
 
+cleanup_mutex:
+    pthread_mutex_destroy(&wayland_ctx.lock);
+
+cleanup_mutex_attr:
+    pthread_mutexattr_destroy(&attr);
+
 cleanup_display:
     wl_display_destroy(wayland_ctx.display);
     return NULL;
+}
+
+void
+ws_wayland_release_display(void)
+{
+    pthread_mutex_unlock(&wayland_ctx.lock);
 }
 
 
@@ -121,5 +159,6 @@ wayland_display_cleanup(
     void* dummy
 ) {
     wl_display_destroy(wayland_ctx.display);
+    pthread_mutex_destroy(&wayland_ctx.lock);
 }
 
