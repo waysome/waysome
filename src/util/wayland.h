@@ -68,5 +68,16 @@ ws_wayland_release_display(void);
 int
 ws_wayland_listen(void);
 
+/**
+ * Get the next serial/uuid for wayland objects
+ *
+ * This function generates a uuid/serial for objects exported via the wayland
+ * protocol.
+ *
+ * @return a new serial
+ */
+uint32_t
+ws_wayland_get_next_serial(void);
+
 
 #endif // __WS_UTIL_CLEANER_H__

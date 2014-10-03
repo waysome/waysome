@@ -252,6 +252,21 @@ display_fail:
     return -ENOENT;
 }
 
+uint32_t
+ws_wayland_get_next_serial(void) {
+    struct wl_display* disp = ws_wayland_acquire_display();
+
+    // return an invalid id when the display is not availible
+    if (unlikely(!disp)) {
+        return 0;
+    }
+
+    uint32_t retval = wl_display_next_serial(disp);
+
+    ws_wayland_release_display();
+    return retval;
+}
+
 
 /*
  *
