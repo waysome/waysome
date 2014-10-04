@@ -29,13 +29,19 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#include "util/attributes.h"
 #include "values/bool.h"
-
 
 void
 ws_value_bool_init(
     struct ws_value_bool* self
 ) {
+    if (self) {
+        ws_value_init(&self->value);
+
+        self->value.type = WS_VALUE_TYPE_BOOL;
+        self->value.deinit_callback = NULL;
+    }
 }
 
 bool
