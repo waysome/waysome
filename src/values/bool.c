@@ -48,6 +48,12 @@ bool
 ws_value_bool_plain(
     struct ws_value_bool* self
 ) {
+    if (self) {
+        bool b = self->b;
+
+        return b;
+    }
+
     return false;
 }
 
