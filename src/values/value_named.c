@@ -66,9 +66,15 @@ ws_value_named_value_init(
 int
 ws_value_named_set_name(
     struct ws_value_named_value* self,
-    char * str //!< new name
+    struct ws_string* str
 ) {
-    return 0;
+    if (self) {
+        ws_object_getref((struct ws_object*) str);
+        struct ws_string* old = self->name;
+        self->name = str;
+        ws_object_unref((struct ws_object*) old);
+    }
+    return -EINVAL;
 }
 
 int
