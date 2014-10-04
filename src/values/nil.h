@@ -34,7 +34,21 @@
 #ifndef __WS_VALUES_NIL_H__
 #define __WS_VALUES_NIL_H__
 
+#include "values/value.h"
 
+struct ws_value_nil {
+    struct ws_value value;
+};
+
+/**
+ * Initialize an nil value object
+ */
+void
+ws_value_nil_init(
+    struct ws_value_nil* self //!< The value object
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_VALUES_NIL_H__
 
