@@ -81,5 +81,21 @@ ws_value_int_cmp(
     struct ws_value_int* self,
     struct ws_value_int* other
 ) {
+    if (self && other) {
+        if (self->value.type == WS_VALUE_TYPE_INT &&
+                other->value.type == WS_VALUE_TYPE_INT) {
+
+            signed int res;
+
+            if (self->i == other->i) {
+                res = 0;
+            } else {
+                res = ((self->i > other->i) ? -1 : 1);
+            }
+
+            return res;
+        }
+    }
+
     return 0;
 }
