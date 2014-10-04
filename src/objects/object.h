@@ -508,6 +508,18 @@ ws_object_attr_read(
 );
 
 /**
+ * Get the type of an attribute identified by its name
+ *
+ * @return The attribute type of the attribute identified by name or
+ * WS_OBJ_ATTR_NO_TYPE
+ */
+enum ws_object_attribute_type
+ws_object_attr_type(
+    struct ws_object* self, //!< The object
+    char* ident //!< The identifier for the attribute
+);
+
+/**
  * Compare two ws_object instances
  *
  * @memberof ws_object

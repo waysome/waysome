@@ -464,6 +464,14 @@ ws_object_attr_read(
     return 0;
 }
 
+enum ws_object_attribute_type
+ws_object_attr_type(
+    struct ws_object* self,
+    char* ident
+) {
+    return WS_OBJ_ATTR_NO_TYPE;
+}
+
 int
 ws_object_cmp(
     struct ws_object const* o1,
