@@ -25,5 +25,38 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "values/int.h"
+#include <errno.h>
+#include <pthread.h>
+#include <stdint.h>
 
+#include "values/int.h"
+#include "values/value.h"
+
+void
+ws_value_int_init(
+    struct ws_value_int* self
+) {
+}
+
+int
+ws_value_int_set(
+    struct ws_value_int* self,
+    uint32_t i
+) {
+    return 0;
+}
+
+uint32_t
+ws_value_int_get(
+    struct ws_value_int* self
+) {
+    return 0;
+}
+
+signed int
+ws_value_int_cmp(
+    struct ws_value_int* self,
+    struct ws_value_int* other
+) {
+    return 0;
+}
