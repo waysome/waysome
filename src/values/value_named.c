@@ -35,10 +35,32 @@
 #include "values/value.h"
 #include "values/value_named.h"
 
+static void
+deinit_namedval(
+    struct ws_value* self
+) {
+    if (!self || self->type != WS_VALUE_TYPE_NAMED) {
+        return;
+    }
+
+    struct ws_value_named_value* nv;
+    nv = (struct ws_value_named_value*) self;
+
+    ws_object_unref((struct ws_object*) nv->name);
+}
+
 void
 ws_value_named_value_init(
     struct ws_value_named_value* self
 ) {
+    if (!self || self->value.type != WS_VALUE_TYPE_NAMED) {
+        return;
+    }
+
+    self->name = NULL;
+    self->v = NULL;
+
+    self->value.deinit_callback = deinit_namedval;
 }
 
 int
