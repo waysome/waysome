@@ -50,7 +50,14 @@ ws_value_int_set(
     struct ws_value_int* self,
     uint32_t i
 ) {
-    return 0;
+    if (self) {
+        if (self->value.type == WS_VALUE_TYPE_INT) {
+            struct ws_value_int* obj = (struct ws_value_int*) self;
+            obj->i = i;
+            return 0;
+        }
+    }
+    return -EINVAL;
 }
 
 uint32_t
