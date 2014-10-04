@@ -62,5 +62,11 @@ ws_value_bool_set(
     struct ws_value_bool* self,
     bool b
 ) {
-    return 0;
+    if (self) {
+        self->b = b;
+
+        return 0;
+    }
+
+    return -EINVAL;
 }
