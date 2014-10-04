@@ -104,6 +104,10 @@ struct ws_value*
 ws_value_named_get_value(
     struct ws_value_named_value* self
 ) {
+    if (self) {
+        return self->v;
+    }
+
     return NULL;
 }
 
