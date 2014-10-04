@@ -116,5 +116,37 @@ ws_value_named_cmp(
     struct ws_value_named_value* self,
     struct ws_value_named_value* other
 ) {
-    return 0;
+
+    /*
+     * IF
+     *  self does not exist, but other
+     * OR
+     *  self is not a WS_VALUE_TYPE_NAMED, but other
+     *
+     * return 1
+     */
+    if ((!self && other) || ((self->value.type != WS_VALUE_TYPE_NAMED) &&
+            (other->value.type == WS_VALUE_TYPE_NAMED))) {
+        return 1;
+    }
+    /*
+     * else, IF
+     *  self does exist but not other
+     * OR
+     * self is a WS_VALUE_TYPE_NAMED, but not other
+     *
+     * return -1
+     */
+    else if ((self && !other) || ((self->value.type == WS_VALUE_TYPE_NAMED) &&
+            (other->value.type != WS_VALUE_TYPE_NAMED))) {
+        return -1;
+    }
+
+    /*
+     * If they both exist and are both WS_VALUE_TYPE_NAMED types
+     */
+
+    int cmp = ws_string_cmp(self->name, other->name);
+
+    return cmp;
 }
