@@ -31,11 +31,18 @@
 
 #include "values/int.h"
 #include "values/value.h"
+#include "util/attributes.h"
 
 void
 ws_value_int_init(
     struct ws_value_int* self
 ) {
+    if (self) {
+        ws_value_init(&self->value);
+
+        self->value.type = WS_VALUE_TYPE_INT;
+        self->value.deinit_callback = NULL;
+    }
 }
 
 int

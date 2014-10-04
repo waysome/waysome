@@ -48,10 +48,7 @@
 struct ws_value_int {
     struct ws_value value;
 
-    struct {
-        uint32_t i;
-        pthread_rwlock_t rwl;
-    } i;
+    uint32_t i;
 };
 
 /**
