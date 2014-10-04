@@ -70,6 +70,22 @@ wayland_display_cleanup(
     void* display
 );
 
+/**
+ * Try to acquire the display
+ *
+ * This function tries to acquire the display, but does not block if another
+ * thread has a lock on the display.
+ * If the display is locked by another thread, this method simply returns NULL.
+ * Use this function where non-blocking behavior is needed.
+ *
+ * @warning does not initialize the display
+ *
+ * @return the locked display or NULL
+ */
+static struct wl_display*
+ws_wayland_try_acquire_display(void);
+
+
 /*
  *
  * Interface implementation
@@ -160,5 +176,15 @@ wayland_display_cleanup(
 ) {
     wl_display_destroy(wayland_ctx.display);
     pthread_mutex_destroy(&wayland_ctx.lock);
+}
+
+static struct wl_display*
+ws_wayland_try_acquire_display(void)
+{
+    if (pthread_mutex_trylock(&wayland_ctx.lock) != 0) {
+        return NULL;
+    }
+
+    return wayland_ctx.display;
 }
 
