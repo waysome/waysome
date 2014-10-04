@@ -469,6 +469,22 @@ ws_object_attr_type(
     struct ws_object* self,
     char* ident
 ) {
+    ws_object_lock_read(self);
+
+    if (!self || !self->id || !self->id->attribute_table) {
+        goto err;
+    }
+
+    size_t i;
+    for (i = 0; self->id->attribute_table[i].name != NULL; i++) {
+        if (strcmp(self->id->attribute_table[i].name, ident) == 0) {
+            ws_object_unlock(self);
+            return self->id->attribute_table[i].type;
+        }
+    }
+
+err:
+    ws_object_unlock(self);
     return WS_OBJ_ATTR_NO_TYPE;
 }
 
