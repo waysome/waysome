@@ -82,7 +82,10 @@ ws_value_named_set_value(
     struct ws_value_named_value* self,
     struct ws_value* val
 ) {
-    return 0;
+    if (self) {
+        self->v = val;
+    }
+    return -EINVAL;
 }
 
 char const*
