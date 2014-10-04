@@ -48,7 +48,7 @@ struct ws_value {
     ws_value_type_deinit_callback deinit_callback;
 };
 
-typedef void (ws_value_type_deinit_callback)(struct ws_value*);
+typedef void (*ws_value_type_deinit_callback)(struct ws_value*);
 
 /**
  * Initialize a value object
