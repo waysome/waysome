@@ -25,5 +25,30 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <pthread.h>
+#include <stdbool.h>
+
 #include "values/bool.h"
 
+
+void
+ws_value_bool_init(
+    struct ws_value_bool* self
+) {
+}
+
+bool
+ws_value_bool_plain(
+    struct ws_value_bool* self
+) {
+    return false;
+}
+
+int
+ws_value_bool_set(
+    struct ws_value_bool* self,
+    bool b
+) {
+    return 0;
+}
