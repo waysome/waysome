@@ -27,3 +27,21 @@
 
 #include "values/nil.h"
 
+#include "values/value.h"
+
+void
+ws_value_nil_init(
+    struct ws_value_nil* self
+) {
+    if (self) {
+        ws_value_init(&self->value);
+        self->value.type = WS_VALUE_TYPE_NIL;
+
+        /*
+         * DON'T set the deinit callback, as the NIL type is nothing
+         * special. We don't need a deinit functionality, because it is
+         * just a value type with another name
+         */
+        //self->value.deinit_callback = nil_deinit;
+    }
+}
