@@ -44,6 +44,7 @@
 #include <pthread.h>
 
 #include "util/attributes.h"
+#include "logger/module.h"
 
 /*
  * Type names
@@ -77,10 +78,11 @@ typedef bool (*ws_object_deinit_callback)(struct ws_object* const);
 
 /**
  * log callback
- *
- * @todo Implement second parameter: struct ws_log_context*
  */
-typedef bool (*ws_object_log_callback)(struct ws_object* const, void*);
+typedef bool (*ws_object_log_callback)(
+        struct ws_object* self,
+        struct ws_logger_context* const log_ctx
+);
 
 /**
  * run callback
@@ -274,8 +276,8 @@ ws_object_unref(
  */
 bool
 ws_object_log(
-    struct ws_object const* const self, //!< The object
-    void* log_context /*!< @todo ws_log_context* */
+    struct ws_object* self, //!< The object
+    struct ws_logger_context* const ctx //!< Logging context
 );
 
 /**

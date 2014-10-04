@@ -171,8 +171,8 @@ ws_object_unref(
 
 bool
 ws_object_log(
-    struct ws_object const* const self,
-    void* log_context /*!< @todo ws_log_context* */
+    struct ws_object* self,
+    struct ws_logger_context* const ctx
 ) {
     /** @todo implement */
     return false;
