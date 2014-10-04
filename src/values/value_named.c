@@ -88,10 +88,15 @@ ws_value_named_set_value(
     return -EINVAL;
 }
 
-char const*
+struct ws_string const*
 ws_value_named_get_name(
     struct ws_value_named_value* self
 ) {
+    if (self) {
+        ws_object_getref((struct ws_object*)self->name);
+        return self->name;
+    }
+
     return NULL;
 }
 
