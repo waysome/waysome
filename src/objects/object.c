@@ -174,7 +174,16 @@ ws_object_log(
     struct ws_object* self,
     struct ws_logger_context* const ctx
 ) {
-    /** @todo implement */
+    if (self) {
+        rdlock(self);
+        if (self->id && self->id->log_callback) {
+            self->id->log_callback(self, ctx);
+        }
+        unlock(self);
+
+        return true;
+    }
+
     return false;
 }
 
