@@ -25,5 +25,56 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <pthread.h>
+#include <string.h>
+
+#include "objects/object.h"
+#include "objects/string.h"
+
+#include "values/value.h"
 #include "values/value_named.h"
 
+void
+ws_value_named_value_init(
+    struct ws_value_named_value* self
+) {
+}
+
+int
+ws_value_named_set_name(
+    struct ws_value_named_value* self,
+    char * str //!< new name
+) {
+    return 0;
+}
+
+int
+ws_value_named_set_value(
+    struct ws_value_named_value* self,
+    struct ws_value* val
+) {
+    return 0;
+}
+
+char const*
+ws_value_named_get_name(
+    struct ws_value_named_value* self
+) {
+    return NULL;
+}
+
+struct ws_value*
+ws_value_named_get_value(
+    struct ws_value_named_value* self
+) {
+    return NULL;
+}
+
+signed int
+ws_value_named_cmp(
+    struct ws_value_named_value* self,
+    struct ws_value_named_value* other
+) {
+    return 0;
+}
