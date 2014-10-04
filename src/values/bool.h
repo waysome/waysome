@@ -34,7 +34,53 @@
 #ifndef __WS_VALUES_BOOL_H__
 #define __WS_VALUES_BOOL_H__
 
+#include <stdbool.h>
 
+#include "values/value.h"
+
+/**
+ * ws_value_bool type definition
+ */
+struct ws_value_bool {
+    struct ws_value value; //!< Supertype
+
+    bool b; //!< Actual value
+};
+
+/**
+ * Initialize a ws_value_bool object
+ *
+ * @memberof ws_value_bool
+ */
+void
+ws_value_bool_init(
+    struct ws_value_bool* self //!< The object
+);
+
+/**
+ * Get a plain `bool` from the ws_value_bool object
+ *
+ * @memberof ws_value_bool
+ *
+ * @return The `bool` representation of the `ws_value_bool` object
+ */
+bool
+ws_value_bool_plain(
+    struct ws_value_bool* self //!< The object
+);
+
+/**
+ * Set the ws_value_bool to a specific value
+ *
+ * @memberof ws_value_bool
+ *
+ * @return zero if operation succeeded, else negative error const from errno.h
+ */
+int
+ws_value_bool_set(
+    struct ws_value_bool* self, //!< The object
+    bool b //!< The value to set to
+);
 
 #endif // __WS_VALUES_BOOL_H__
 
