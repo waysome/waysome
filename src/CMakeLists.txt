@@ -54,6 +54,7 @@ set(SOURCE_FILES
     util/cleaner.c
     util/wayland.c
     values/bool.c
+    values/int.c
     values/nil.c
     values/value.c
 )
