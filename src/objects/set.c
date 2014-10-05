@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <stdlib.h>
 
 #include <libreset/hash.h>
@@ -33,4 +34,102 @@
 #include "objects/object.h"
 
 #include "objects/set.h"
+
+int
+ws_set_init(
+    struct ws_set* self
+) {
+    return;
+}
+
+struct ws_set*
+ws_set_new(void)
+{
+    return NULL;
+}
+
+int
+ws_set_insert(
+    struct ws_set* self,
+    struct ws_object* obj
+) {
+    return 0;
+}
+
+int
+ws_set_remove(
+    struct ws_set* self,
+    struct ws_object const* cmp
+) {
+    return 0;
+}
+
+struct ws_object*
+ws_set_get(
+    struct ws_set const* self,
+    struct ws_object const* cmp
+) {
+    return NULL;
+}
+
+int
+ws_set_union(
+    struct ws_set* dest,
+    struct ws_set const* src_a,
+    struct ws_set const* src_b
+) {
+    return 0;
+}
+
+int
+ws_set_intersection(
+    struct ws_set* dest,
+    struct ws_set const* src_a,
+    struct ws_set const* src_b
+) {
+    return 0;
+}
+
+int
+ws_set_xor(
+    struct ws_set* dest,
+    struct ws_set const* src_a,
+    struct ws_set const* src_b
+) {
+    return 0;
+}
+
+bool
+ws_set_is_subset(
+    struct ws_set const* self,
+    struct ws_set const* other
+) {
+    return false;
+}
+
+bool
+ws_set_equal(
+    struct ws_set const* self,
+    struct ws_set const* other
+) {
+    return false;
+}
+
+size_t
+ws_set_cardinality(
+    struct ws_set const* self
+) {
+    return 0;
+}
+
+int
+ws_set_select(
+    struct ws_set const* self,
+    ws_set_predf pred,
+    void* pred_etc,
+    ws_set_procf proc,
+    void* proc_etc
+) {
+    return 0;
+}
 
