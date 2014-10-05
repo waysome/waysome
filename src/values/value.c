@@ -43,7 +43,7 @@ ws_value_deinit(
     struct ws_value* self
 ) {
     if (self) {
-        if (self->deinit_callback) {
+        if (self->deinit_callback && self->deinit_callback != ws_value_deinit) {
             self->deinit_callback(self);
         }
     }
