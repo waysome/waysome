@@ -177,7 +177,7 @@ ws_object_log(
     if (self) {
         rdlock(self);
         if (self->id && self->id->log_callback) {
-            self->id->log_callback(self, ctx);
+            self->id->log_callback(ctx, self);
         }
         unlock(self);
 
