@@ -43,12 +43,12 @@
 #include "values/value_type.h"
 #include "util/attributes.h"
 
-typedef void (ws_value_type_deinit_callback)(struct ws_value*);
-
 struct ws_value {
     enum ws_value_type type;
     ws_value_type_deinit_callback deinit_callback;
 };
+
+typedef void (*ws_value_type_deinit_callback)(struct ws_value*);
 
 /**
  * Initialize a value object
