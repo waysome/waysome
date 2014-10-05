@@ -244,7 +244,11 @@ ws_set_select(
     ws_set_procf proc,
     void* proc_etc
 ) {
-    return 0;
+    if (self) {
+        return r_set_select(self->set, pred, pred_etc, proc, proc_etc);
+    }
+
+    return -EINVAL;
 }
 
 
