@@ -42,7 +42,11 @@ void
 ws_value_deinit(
     struct ws_value* self
 ) {
-    return;
+    if (self) {
+        if (self->deinit_callback) {
+            self->deinit_callback(self);
+        }
+    }
 }
 
 enum ws_value_type
