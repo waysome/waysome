@@ -218,6 +218,10 @@ ws_set_equal(
     struct ws_set const* self,
     struct ws_set const* other
 ) {
+    if (self && other) {
+        return r_set_equal(self->set, other->set);
+    }
+
     return false;
 }
 
