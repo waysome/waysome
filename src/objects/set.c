@@ -162,56 +162,56 @@ ws_set_get(
     return NULL;
 }
 
-int
-ws_set_union(
-    struct ws_set* dest,
-    struct ws_set const* src_a,
-    struct ws_set const* src_b
-) {
-    if (dest && src_a && src_b) {
-        return r_set_union(dest->set, src_a->set, src_b->set);
-    }
+// int
+// ws_set_union(
+//     struct ws_set* dest,
+//     struct ws_set const* src_a,
+//     struct ws_set const* src_b
+// ) {
+//     if (dest && src_a && src_b) {
+//         return r_set_union(dest->set, src_a->set, src_b->set);
+//     }
+//
+//     return -EINVAL;
+// }
 
-    return -EINVAL;
-}
+// int
+// ws_set_intersection(
+//     struct ws_set* dest,
+//     struct ws_set const* src_a,
+//     struct ws_set const* src_b
+// ) {
+//     if (dest && src_a && src_b) {
+//         return r_set_intersection(dest->set, src_a->set, src_b->set);
+//     }
+//
+//     return -EINVAL;
+// }
 
-int
-ws_set_intersection(
-    struct ws_set* dest,
-    struct ws_set const* src_a,
-    struct ws_set const* src_b
-) {
-    if (dest && src_a && src_b) {
-        return r_set_intersection(dest->set, src_a->set, src_b->set);
-    }
+// int
+// ws_set_xor(
+//     struct ws_set* dest,
+//     struct ws_set const* src_a,
+//     struct ws_set const* src_b
+// ) {
+//     if (dest && src_a && src_b) {
+//         return r_set_xor(dest->set, src_a->set, src_b->set);
+//     }
+//
+//     return -EINVAL;
+// }
 
-    return -EINVAL;
-}
-
-int
-ws_set_xor(
-    struct ws_set* dest,
-    struct ws_set const* src_a,
-    struct ws_set const* src_b
-) {
-    if (dest && src_a && src_b) {
-        return r_set_xor(dest->set, src_a->set, src_b->set);
-    }
-
-    return -EINVAL;
-}
-
-bool
-ws_set_is_subset(
-    struct ws_set const* self,
-    struct ws_set const* other
-) {
-    if (self && other) {
-        return r_set_is_subset(self->set, other->set);
-    }
-
-    return false;
-}
+// bool
+// ws_set_is_subset(
+//     struct ws_set const* self,
+//     struct ws_set const* other
+// ) {
+//     if (self && other) {
+//         return r_set_is_subset(self->set, other->set);
+//     }
+// 
+//     return false;
+// }
 
 bool
 ws_set_equal(
