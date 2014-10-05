@@ -41,7 +41,6 @@
 struct ws_set {
     struct ws_object obj; //!< superclass
 
-    struct r_set_cfg set_config; //!< Configuration for libreset sets
     struct r_set* set; //!< Actual set implementation
 };
 

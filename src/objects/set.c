@@ -35,11 +35,86 @@
 
 #include "objects/set.h"
 
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Compare two objects
+ *
+ * @return 1 if both parameters point to the same objects, 0 otherwise
+ */
+static int
+cmp_objects(
+    void const* a, //!< object a
+    void const* b //!< object b
+);
+
+/**
+ * Deinit callback for ws_set type
+ */
+static bool
+deinit_set(
+    struct ws_object* const self
+);
+
+/*
+ *
+ * Internal structs
+ *
+ */
+
+/**
+ * Set configuration for libreset. Not meant to be public.
+ */
+static const struct r_set_cfg WS_SET_CONFIGURATION= {
+    .cmpf = cmp_objects,
+    .copyf = (void const* (*)(void const*)) ws_object_getref,
+    .freef = (void (*)(void*)) ws_object_unref,
+    .hashf = (r_hash (*)(void const*)) ws_object_hash,
+};
+
+/**
+ * Type information for ws_set type
+ */
+ws_object_type_id WS_OBJECT_TYPE_ID_SET = {
+    .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
+    .typestr    = "ws_set",
+
+    .deinit_callback = deinit_set,
+
+    .init_callback = NULL,
+    .log_callback = NULL,
+    .run_callback = NULL,
+    .hash_callback = NULL,
+};
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
 int
 ws_set_init(
     struct ws_set* self
 ) {
-    return;
+    if (!self) {
+        return -EINVAL;
+    }
+    ws_object_init(&self->obj);
+
+    self->obj.id = &WS_OBJECT_TYPE_ID_SET;
+
+    self->set = r_set_new(&WS_SET_CONFIGURATION);
+
+    if (!self->set) {
+        return -ENOMEM;
+    }
+
+    return 0;
 }
 
 struct ws_set*
@@ -131,5 +206,33 @@ ws_set_select(
     void* proc_etc
 ) {
     return 0;
+}
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static int
+cmp_objects(
+    void const* a,
+    void const* b
+) {
+    // comparing the pointers is sufficient --at least for now.
+    //!< @todo do real comparison
+    return a == b;
+}
+
+static bool
+deinit_set(
+    struct ws_object* const self
+) {
+    if (self) {
+        return (0 == r_set_destroy(((struct ws_set*) self)->set));
+    }
+
+    return false;
 }
 
