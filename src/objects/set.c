@@ -229,6 +229,10 @@ size_t
 ws_set_cardinality(
     struct ws_set const* self
 ) {
+    if (self) {
+        return r_set_cardinality(self->set);
+    }
+
     return 0;
 }
 
