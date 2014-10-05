@@ -181,7 +181,11 @@ ws_set_intersection(
     struct ws_set const* src_a,
     struct ws_set const* src_b
 ) {
-    return 0;
+    if (dest && src_a && src_b) {
+        return r_set_intersection(dest->set, src_a->set, src_b->set);
+    }
+
+    return -EINVAL;
 }
 
 int
