@@ -53,5 +53,5 @@ enum ws_value_type
 ws_value_get_type(
     struct ws_value* self
 ) {
-    return self->deinit_callback;
+    return self->type;
 }
