@@ -206,6 +206,10 @@ ws_set_is_subset(
     struct ws_set const* self,
     struct ws_set const* other
 ) {
+    if (self && other) {
+        return r_set_is_subset(self->set, other->set);
+    }
+
     return false;
 }
 
