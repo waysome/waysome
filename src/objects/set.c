@@ -120,7 +120,13 @@ ws_set_init(
 struct ws_set*
 ws_set_new(void)
 {
-    return NULL;
+    struct ws_set* set = (struct ws_set*) ws_object_new(sizeof(struct ws_set));
+
+    if (set) {
+        ws_set_init(set);
+    }
+
+    return set;
 }
 
 int
