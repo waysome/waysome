@@ -32,6 +32,7 @@
 #include "compositor/module.h"
 #include "logger/module.h"
 #include "util/cleaner.h"
+#include "util/wayland.h"
 
 static void
 handle_sig(
@@ -78,6 +79,11 @@ main(
     }
 
     retval = ws_compositor_init();
+    if (retval != 0) {
+        goto cleanup;
+    }
+
+    retval = ws_wayland_listen();
     if (retval != 0) {
         goto cleanup;
     }
