@@ -80,8 +80,8 @@ typedef bool (*ws_object_deinit_callback)(struct ws_object* const);
  * log callback
  */
 typedef bool (*ws_object_log_callback)(
-        struct ws_object* self,
-        struct ws_logger_context* const log_ctx
+        struct ws_logger_context* const log_ctx,
+        struct ws_object* self
 );
 
 /**
