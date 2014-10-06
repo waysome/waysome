@@ -344,6 +344,18 @@ ws_object_unlock_write(
 );
 
 /**
+ * Unlock the object
+ *
+ * @memberof ws_object
+ *
+ * @return true if the lock was unlocked, else false
+ */
+bool
+ws_object_unlock(
+    struct ws_object* self //!< The object
+);
+
+/**
  * Uninitialize a ws_object
  *
  * @warning It is not save to use the object after this method was called on it.
