@@ -270,8 +270,27 @@ char*
 ws_string_raw(
     struct ws_string* self
 ){
-    //!< @todo implement
-    return NULL;   
+    ws_object_lock_read(&self->obj);
+
+    if (!self->is_utf8) {
+        return NULL;
+    }
+
+    char* output = calloc(self->charcount + 1, sizeof(*output));
+    int32_t dest_len;
+    UErrorCode err;    
+
+    output = u_strToUTF8(output, self->charcount, &dest_len, self->str,
+                         self->charcount, &err);
+
+    ws_object_unlock(&self->obj);
+
+    if (U_FAILURE(err)) {
+        free(output);
+        return NULL;
+    }
+   
+    return output;   
 }
 
 /*
