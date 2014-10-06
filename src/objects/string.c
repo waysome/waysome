@@ -147,9 +147,44 @@ ws_string_multicat(
     struct ws_string* self,
     struct ws_array* others
 ){
-    //!< @todo implement
-    return NULL; 
- }
+    if (!self || !others) {
+        return NULL;
+    }
+
+    ws_object_lock_write(&self->obj); //!< @todo Thread-safeness!  
+    
+    int len = 0;
+    for (unsigned int i = 0; i < others->len; i++) {
+        struct ws_string* temp = ws_array_get_at(others, i);
+        if (temp && temp->str) {
+            len += temp->charcount;
+        } else {
+            ws_object_unlock(&self->obj);
+            return NULL;
+        }
+    }
+
+    self->str = realloc(self->str, (len + 1) * sizeof(*self->str));
+
+/* This loop doesn't check for NULL in `others`, assuming that in the final
+ * (threadsafe) implementation, the array will be locked during the process, so that
+ * it was already completely checked at this point. Depending on the final locking
+ * implementation, this might have to be adjusted later.
+ */
+    for (unsigned int i = 0; i < others->len; i++) {
+        self->str = u_strcat(self->str,
+                            ((struct ws_string*)ws_array_get_at(others, i))->str);
+        
+        if (!self) {
+            ws_object_unlock(&self->obj);
+            return NULL;
+        } 
+   }
+
+    ws_object_unlock(&self->obj);
+    
+    return self; 
+}
  
 
 struct ws_string*
