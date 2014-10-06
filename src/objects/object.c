@@ -265,6 +265,13 @@ ws_object_unlock_write(
 }
 
 bool
+ws_object_unlock(
+    struct ws_object* self
+) {
+    return 0 == pthread_rwlock_unlock(&self->rw_lock);
+}
+
+bool
 ws_object_deinit(
     struct ws_object* self
 ) {
