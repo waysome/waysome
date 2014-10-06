@@ -334,6 +334,18 @@ ws_object_lock_try_read(
 );
 
 /**
+ * Try to write-lock the object
+ *
+ * @memberof ws_object
+ *
+ * @return true if the lock was aquired, false otherwise
+ */
+bool
+ws_object_lock_try_write(
+    struct ws_object* self //!< The object to lock
+);
+
+/**
  * Read-unlock the object
  *
  * @memberof ws_object
