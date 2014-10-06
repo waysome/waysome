@@ -34,9 +34,11 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <wayland-server.h>
 #include <xf86drm.h>
 
 #include "util/cleaner.h"
+#include "util/wayland.h"
 #include "logger/module.h"
 #include "compositor/internal_context.h"
 #include "background_surface.h"
@@ -175,8 +177,28 @@ ws_compositor_init(void) {
         it = it->next;
     }
 
+    // initialize wayland specific stuff
+    struct wl_display* display = ws_wayland_acquire_display();
+    if (!display) {
+        return -1;
+    }
+
+    // try to initialize the shared memory subsystem
+    if (wl_display_init_shm(display) != 0) {
+        goto cleanup_display;
+    }
+
+    ws_wayland_release_display();
+
+
     is_init = true;
     return 0;
+
+    // cleanup wayland display
+
+cleanup_display:
+    ws_wayland_release_display();
+    return -1;
 }
 
 
