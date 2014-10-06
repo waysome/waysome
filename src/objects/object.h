@@ -324,6 +324,8 @@ ws_object_lock_write(
  *
  * @memberof ws_object
  *
+ * @deprecated
+ *
  * @return true if the lock was unlocked, else false
  */
 bool
@@ -335,6 +337,8 @@ ws_object_unlock_read(
  * Write-unlock the object
  *
  * @memberof ws_object
+ *
+ * @deprecated
  *
  * @return true if the lock was unlocked, else false
  */
