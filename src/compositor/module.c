@@ -316,7 +316,7 @@ static int
 populate_connectors(void) {
     drmModeRes* res;
     drmModeConnector* conn;
-    struct ws_monitor** connector = &ws_comp_ctx.conns;
+    // struct ws_monitor* connector = ws_comp_ctx.conns;
 
     res = drmModeGetResources(ws_comp_ctx.fb.fd);
     if (!res) {
@@ -327,6 +327,7 @@ populate_connectors(void) {
 
     // Let's go through all connectors (outputs)
     int i = res->count_connectors;
+    ws_log(&log_ctx, "Found a max of %d connectors.", i);
     while(i--) {
         conn = drmModeGetConnector(ws_comp_ctx.fb.fd, res->connectors[i]);
         if (!conn) {
@@ -334,24 +335,26 @@ populate_connectors(void) {
                     ws_comp_ctx.fb.path);
             continue;
         }
-        if (*connector) {
-            (*connector)->next = calloc(1, sizeof(**connector));
-            *connector = (*connector)->next;
+        if (ws_comp_ctx.conns) {
+            struct ws_monitor* new_connector = calloc(1, sizeof(*ws_comp_ctx.conns));
+
+            new_connector->next = ws_comp_ctx.conns;
+            ws_comp_ctx.conns = new_connector;
         } else {
-            *connector = calloc(1, sizeof(**connector));
+            ws_comp_ctx.conns = calloc(1, sizeof(*ws_comp_ctx.conns));
         }
-        (*connector)->conn = conn->connector_id;
+        ws_comp_ctx.conns->conn = conn->connector_id;
 
         if (conn->connection != DRM_MODE_CONNECTED) {
-            ws_log(&log_ctx, "Found unused connector");
-            (*connector)->connected = 0;
+            ws_log(&log_ctx, "Found unused connector %d", i);
+            ws_comp_ctx.conns->connected = 0;
             continue;
         }
 
         if (conn->count_modes == 0) {
             ws_log(&log_ctx, "No valid modes for Connector %d.",
                     conn->connector_id);
-            (*connector)->connected = 0;
+            ws_comp_ctx.conns->connected = 0;
             continue;
         }
 
@@ -359,21 +362,22 @@ populate_connectors(void) {
                 conn->count_modes);
 
         //!< @todo: Do not just take the biggest mode available
-        memcpy(&(*connector)->mode, &conn->modes[0],
-                sizeof((*connector)->mode));
+        memcpy(&ws_comp_ctx.conns->mode, &conn->modes[0],
+                sizeof(ws_comp_ctx.conns->mode));
 
-        (*connector)->width = conn->modes[0].hdisplay;
-        (*connector)->height = conn->modes[0].vdisplay;
+        ws_comp_ctx.conns->width = conn->modes[0].hdisplay;
+        ws_comp_ctx.conns->height = conn->modes[0].vdisplay;
 
         ws_log(&log_ctx, "Found a valid connector with %dx%d dimensions.",
-                (*connector)->width, (*connector)->height);
+                ws_comp_ctx.conns->width, ws_comp_ctx.conns->height);
 
-        if (find_crtc(res, conn, *connector) < 0) {
+        if (find_crtc(res, conn, ws_comp_ctx.conns) < 0) {
             ws_log(&log_ctx, "No valid crtcs found");
-            (*connector)->connected = 0;
+            ws_comp_ctx.conns->connected = 0;
             continue;
         }
-        (*connector)->connected = 1;
+        ws_log(&log_ctx, "Found a valid crtc with id %d", ws_comp_ctx.conns->crtc);
+        ws_comp_ctx.conns->connected = 1;
     }
     return 0;
 }
