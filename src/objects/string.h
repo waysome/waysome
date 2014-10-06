@@ -46,8 +46,8 @@
 struct ws_string {
     struct ws_object obj; //!< Supertype
     size_t charcount; //!< Number of characters in the string
-    char* firstbyte; //!< First byte of string
-    bool is_utf8;
+    UChar* str; //!< UChar array containing the actual string
+    bool is_utf8; 
 };
 
 /**

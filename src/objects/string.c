@@ -73,7 +73,22 @@ bool
 ws_string_init(
     struct ws_string* self
 ) { 
-    //!< @todo implement
+    if (self) {
+        self->charcount = 0; //initialize as empty string
+        self->str = calloc(self->charcount + 1, sizeof(*self->str));
+
+        if (!self->str) {
+            return false;
+        }
+
+        ws_object_init(&self->obj);
+        self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
+
+        self->is_utf8 = false;
+     
+        return true;
+    }
+
     return false; 
 }
 
@@ -166,6 +181,9 @@ static bool
 deinit_callback(
     struct ws_object* const self
 ) {
-    //!< @todo implement
-    return true;
+    if (self) {
+        free(((struct ws_string*) self)->str);
+        return true;
+    }
+    return false;
 }
