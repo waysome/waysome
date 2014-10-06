@@ -102,7 +102,7 @@ ws_array_get_len(
         size_t len;
         ws_object_lock_read(&self->obj);
         len = self->len;
-        ws_object_unlock_read(&self->obj);
+        ws_object_unlock(&self->obj);
         return len;
     }
 
@@ -136,7 +136,7 @@ ws_array_has(
             res = (self->ary[i] == obj);
         }
 
-        ws_object_unlock_read(&self->obj);
+        ws_object_unlock(&self->obj);
     }
     return res;
 }
@@ -158,7 +158,7 @@ ws_array_find(
             }
         }
 
-        ws_object_unlock_read(&self->obj);
+        ws_object_unlock(&self->obj);
     }
 
     return res;
@@ -178,7 +178,7 @@ ws_array_get_at(
             res = self->ary[i];
         }
 
-        ws_object_unlock_read(&self->obj);
+        ws_object_unlock(&self->obj);
     }
 
     return res;
