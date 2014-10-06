@@ -162,15 +162,15 @@ ws_compositor_init(void) {
 
     struct ws_image_buffer* duck = ws_background_service_load_image("duck.png");
 
-    if (duck->buffer == NULL) {
-        ws_log(&log_ctx, "The image could not be loaded");
-    }
-
     while (it && duck->buffer) {
-        ws_log(&log_ctx, "Copying onto buffer: %dx%d", it->width, it->height);
+        if (!it->connected) {
+            it = it->next;
+            continue;
+        }
+        ws_log(&log_ctx, "Copying into monitor with name: %s", it->mode.name);
         for (int i = 0; i < duck->height; ++i) {
-           memcpy(it->map + (it->stride * i), (char*)duck->buffer + (duck->stride * i),
-                    duck->stride);
+            memcpy(it->map + (it->stride * i), (char*)duck->buffer +
+                    (duck->stride * i), duck->stride);
         }
         it = it->next;
     }
@@ -250,32 +250,32 @@ find_crtc(
     int32_t crtc;
 
     // We check if we already have found a suitable encoder
-    if (conn->encoder_id) {
-        ws_log(&log_ctx, "Found an existing encoder for monitor: %dx%d",
-                connector->width, connector->height);
-        enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
-    } else {
-        ws_log(&log_ctx, "Found no existing encoder for monitor: %dx%d",
-                connector->width, connector->height);
-        enc = NULL;
-    }
+    // if (conn->encoder_id) {
+    //     ws_log(&log_ctx, "Found an existing encoder for monitor: %dx%d",
+    //             connector->width, connector->height);
+    //     enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
+    // } else {
+    //     ws_log(&log_ctx, "Found no existing encoder for monitor: %dx%d",
+    //             connector->width, connector->height);
+    //     enc = NULL;
+    // }
 
     // If we do have an encoder, we check that noone else uses this crtc
-    if (enc) {
-        if (enc->crtc_id) {
-            ws_log(&log_ctx, "There seems to be a crtc on here.");
-            crtc = enc->crtc_id;
+    // if (enc) {
+    //     if (enc->crtc_id) {
+    //         ws_log(&log_ctx, "There seems to be a crtc on here.");
+    //         crtc = enc->crtc_id;
 
-            if (find_connector_with_crtc(crtc) != NULL) {
-                ws_log(&log_ctx, "There was a crtc! Setting it.");
-                drmModeFreeEncoder(enc);
-                connector->crtc = crtc;
-                return 0;
-            }
-        }
+    //         if (find_connector_with_crtc(crtc) != NULL) {
+    //             ws_log(&log_ctx, "There was a crtc! Setting it.");
+    //             drmModeFreeEncoder(enc);
+    //             connector->crtc = crtc;
+    //             return 0;
+    //         }
+    //     }
 
-        drmModeFreeEncoder(enc);
-    }
+    //     drmModeFreeEncoder(enc);
+    // }
     // There is no encoder+crtc pair! We go through /all/ the encoders now
     for (int i = 0; i < conn->count_encoders; ++i) {
         enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoders[i]);
@@ -285,6 +285,7 @@ find_crtc(
             continue;
         }
 
+        ws_log(&log_ctx, "Found %d crtcs", res->count_crtcs);
         for( int j = 0; j < res->count_crtcs; ++j) {
             // Check if this encoding supports with all the crtcs
             if(!(enc->possible_crtcs & (1 << j))) {
