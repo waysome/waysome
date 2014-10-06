@@ -108,7 +108,14 @@ size_t
 ws_string_len(
     struct ws_string* self
 ){
-    //!< @todo implement
+    if (self) {
+        size_t len;
+        ws_object_lock_read(&self->obj);
+        len = self->charcount;
+        ws_object_unlock(&self->obj);
+        return len;
+    }
+
     return 0;
 }
 
