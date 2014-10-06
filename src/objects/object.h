@@ -43,6 +43,8 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+#include "util/attributes.h"
+
 /*
  * Type names
  */
@@ -331,7 +333,9 @@ ws_object_lock_write(
 bool
 ws_object_unlock_read(
     struct ws_object* self //!< The object
-);
+)
+__ws_deprecated__
+;
 
 /**
  * Write-unlock the object
@@ -345,7 +349,9 @@ ws_object_unlock_read(
 bool
 ws_object_unlock_write(
     struct ws_object* self //!< The object
-);
+)
+__ws_deprecated__
+;
 
 /**
  * Unlock the object
