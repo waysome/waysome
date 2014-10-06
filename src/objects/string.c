@@ -219,7 +219,7 @@ ws_string_cmp(
     int res;
 
     ws_object_lock_read(&self->obj);
-    ws_object_lock_read(&other->obj);
+    ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
     res = u_strcmp(self->str, other->str);  
   
@@ -239,7 +239,7 @@ ws_string_ncmp(
     int res;
 
     ws_object_lock_read(&self->obj);
-    ws_object_lock_read(&other->obj);
+    ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
     
     res = u_strncmp(self->str + offset, other->str, n);   
 
@@ -254,8 +254,16 @@ ws_string_substr(
     struct ws_string* self,
     struct ws_string* other
 ){
-    //!< @todo implement
-    return false;
+    UChar* res;
+    ws_object_lock_read(&self->obj);
+    ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
+    
+    res = u_strstr(self->str, other->str);
+
+    ws_object_unlock(&self->obj);
+    ws_object_unlock(&other->obj);
+
+    return !!res;
 }
 
 char*
