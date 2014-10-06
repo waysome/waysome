@@ -95,8 +95,13 @@ ws_string_init(
 struct ws_string*
 ws_string_new(void)
 {
-    //!< @todo implement
-    return NULL;
+    struct ws_string* wss = calloc(1, sizeof(*wss));
+
+    if (wss) {
+        ws_string_init(wss);
+    }
+
+    return wss;
 }
 
 size_t
