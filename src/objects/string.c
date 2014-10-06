@@ -124,7 +124,20 @@ ws_string_cat(
     struct ws_string* self,
     struct ws_string* other
 ){
-    //!< @todo implement
+    ws_object_lock_write(&self->obj);
+    ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
+    
+    self->str = realloc(self->str, (self->charcount + other->charcount + 1)
+                        * sizeof(*self->str));
+    self->str = u_strcat(self->str, other->str);
+
+    ws_object_unlock(&other->obj);
+    ws_object_unlock(&self->obj);
+    
+    if (self->str) {
+        return self;
+    }
+    
     return NULL;
 }
 
