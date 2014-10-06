@@ -179,7 +179,7 @@ ws_string_multicat(
             ws_object_unlock(&self->obj);
             return NULL;
         } 
-   }
+    }
 
     ws_object_unlock(&self->obj);
     
@@ -191,7 +191,23 @@ struct ws_string*
 ws_string_dupl(
     struct ws_string* self
 ){
-    //!< @todo implement
+    struct ws_string* nstr = ws_string_new();
+    
+    if (nstr) {
+        ws_object_lock_read(&self->obj);
+
+        nstr->charcount = self->charcount;
+        nstr->is_utf8 = self->is_utf8;
+        nstr->str = realloc(nstr->str, (self->charcount + 1) * sizeof(*self->str));
+        nstr->str = u_strcpy(nstr->str, self->str);
+    
+        ws_object_unlock(&self->obj);
+    
+        if (nstr->str) {
+            return nstr;
+        }
+    }
+
     return NULL;
 }
 
