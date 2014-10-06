@@ -117,7 +117,7 @@ ws_array_sort(
     if (self) {
         ws_object_lock_write(&self->obj);
         qsort(self->ary, sizeof(*self->ary), self->len, cmp);
-        ws_object_unlock_write(&self->obj);
+        ws_object_unlock(&self->obj);
     }
     return;
 }
@@ -204,7 +204,7 @@ ws_array_set_at(
             self->ary[i] = obj;
         }
 
-        ws_object_unlock_write(&self->obj);
+        ws_object_unlock(&self->obj);
     }
 
     return res;
@@ -226,7 +226,7 @@ ws_array_foreach(
             res = iter(etc, self->ary[i]);
         }
 
-        ws_object_unlock_write(&self->obj);
+        ws_object_unlock(&self->obj);
     }
 
     return res;
@@ -248,7 +248,7 @@ ws_array_append(
     void** newbuf = realloc(self->ary, newsize);
 
     if (!newbuf) {
-        ws_object_unlock_write(&self->obj);
+        ws_object_unlock(&self->obj);
         return -ENOMEM;
     }
 
@@ -257,7 +257,7 @@ ws_array_append(
     self->len *= realloc_fact;
     self->nused++;
 
-    ws_object_unlock_write(&self->obj);
+    ws_object_unlock(&self->obj);
     return 0;
 }
 
