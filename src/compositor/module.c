@@ -412,8 +412,10 @@ populate_framebuffers(
     struct drm_mode_destroy_dumb dreq; //Delete Request
     struct drm_mode_map_dumb mreq; //Memory Request
 
+    int i = 0;
     for (struct ws_monitor* iter = ws_comp_ctx.conns; iter; iter = iter->next) {
         if (!iter->connected) {
+            ws_log(&log_ctx, "Did not create FB for monitor %d.", i++);
             continue;
         }
         memset(&creq, 0, sizeof(creq));
@@ -461,9 +463,11 @@ populate_framebuffers(
         ret = drmModeSetCrtc(ws_comp_ctx.fb.fd, iter->crtc, iter->fb, 0, 0,
                 &iter->conn, 1, &iter->mode);
         if (ret) {
-            ws_log(&log_ctx, "Could not set the CRTC.");
+            ws_log(&log_ctx, "Could not set the CRTC for monitor %d.", i++);
             goto err_fb;
         }
+
+        ws_log(&log_ctx, "Succesfully created Framebuffer");
 
         continue;
 err_fb:
