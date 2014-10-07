@@ -29,6 +29,7 @@
 #include <wayland-server-protocol.h>
 
 #include "compositor/surface.h"
+#include "util/wayland.h"
 
 /*
  *
@@ -198,10 +199,30 @@ ws_surface_new(
         return NULL;
     }
 
-    ws_wayland_obj_init(&self->wl_obj, NULL); //!< @todo: pass wayland object
+    // try to get a serial
+    uint32_t serial = ws_wayland_get_next_serial();
+    if (!serial) {
+        goto cleanup_surface;
+    }
+
+    // try to set up the resource
+    struct wl_resource* resource;
+    resource = wl_resource_create(client,
+                                  (const struct wl_interface*) &interface,
+                                  3, serial);
+    if (!resource) {
+        goto cleanup_surface;
+    }
+
+    // finish the initialisation
+    ws_wayland_obj_init(&self->wl_obj, resource);
     self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SURFACE;
 
     return self;
+
+cleanup_surface:
+    free(self);
+    return NULL;
 }
 
 
