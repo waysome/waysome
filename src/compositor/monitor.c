@@ -36,6 +36,7 @@
 #include <xf86drm.h>
 
 #include "objects/object.h"
+#include "compositor/framebuffer_device.h"
 
 #include "compositor/monitor.h"
 
@@ -78,7 +79,6 @@ ws_monitor_new(
     struct ws_monitor* tmp = calloc(1, sizeof(*tmp));
     ws_object_init((struct ws_object*)tmp);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_MONITOR;
-    tmp->fb_dev = -1;
     return tmp;
 }
 
@@ -94,7 +94,7 @@ ws_monitor_deinit(
 ) {
     struct ws_monitor* self = (struct ws_monitor*) obj;
     if (self->connected) {
-        drmModeSetCrtc(self->fb_dev,
+        drmModeSetCrtc(self->fb_dev->fd,
                 self->saved_crtc->crtc_id,
                 self->saved_crtc->buffer_id,
                 self->saved_crtc->x,
@@ -108,15 +108,16 @@ ws_monitor_deinit(
     }
 
     if (self->fb) {
-        drmModeRmFB(self->fb_dev, self->fb);
+        drmModeRmFB(self->fb_dev->fd, self->fb);
     }
 
     if (self->handle) {
         struct drm_mode_destroy_dumb dreq;
         memset(&dreq, 0, sizeof(dreq));
         dreq.handle = self->handle;
-        drmIoctl(self->fb_dev, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
+        drmIoctl(self->fb_dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
     }
+    ws_object_unref((struct ws_object*)self->fb_dev);
     return true;
 }
 
@@ -125,5 +126,5 @@ ws_monitor_hash(
     struct ws_object* obj
 ) {
     struct ws_monitor* self = (struct ws_monitor*) obj;
-    return SIZE_MAX / (self->crtc * self->fb_dev);
+    return SIZE_MAX / (self->crtc * self->fb_dev->fd);
 }
