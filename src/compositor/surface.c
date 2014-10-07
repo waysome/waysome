@@ -26,8 +26,151 @@
  */
 
 #include <malloc.h>
+#include <wayland-server-protocol.h>
 
 #include "compositor/surface.h"
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Destroy a surface
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_destroy_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource //!< the resource affected by the action
+);
+
+/**
+ * Attach a buffer to the surface
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_attach_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    struct wl_resource* buffer, //!< buffer to attach to the surface
+    int32_t x, //!< change in position to display, relative to the buffer: x
+    int32_t y //!< change in position to display, relative to the buffer: y
+);
+
+/**
+ * Mark an area as damaged
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_damage_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    int32_t x, //!< x-coordinate of upper left corner of damaged area
+    int32_t y, //!< y-coordinate of upper left corner of damaged area
+    int32_t width, //!< width of damaged area
+    int32_t height //!< height of damaged area
+);
+
+/**
+ * Request a one-time notification on when to update the output
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_frame_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    uint32_t callback //!< callback to call when it's time for a new frame
+);
+
+/**
+ * Mark a region as being opaque
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_set_opaque_region_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    struct wl_resource* region //!< region to set
+);
+
+/**
+ * Mark a region as being an input region
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_set_input_region_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    struct wl_resource* region //!< region to set
+);
+
+/**
+ * Commit current state (perform a flip)
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_commit_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource //!< the resource affected by the action
+);
+
+/**
+ * Set a buffer transformation
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_set_buffer_transform_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    int32_t transform //!< transformation to set
+);
+
+/**
+ * Set a buffer scale
+ *
+ * See wayland server library documentation for details
+ */
+static void
+surface_set_buffer_scale_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the resource affected by the action
+    int32_t scale //!< scale to set
+);
+
+
+/*
+ *
+ * Internal constants
+ *
+ */
+
+/**
+ * Surface interface definition
+ *
+ * This interface definition holds all the methods for the surface type.
+ */
+static const struct wl_surface_interface interface = {
+    .destroy                = surface_destroy_cb,
+    .attach                 = surface_attach_cb,
+    .damage                 = surface_damage_cb,
+    .frame                  = surface_frame_cb,
+    .set_opaque_region      = surface_set_opaque_region_cb,
+    .set_input_region       = surface_set_input_region_cb,
+    .commit                 = surface_commit_cb,
+    .set_buffer_transform   = surface_set_buffer_transform_cb,
+    .set_buffer_scale       = surface_set_buffer_scale_cb,
+};
+
 
 /*
  *
@@ -61,4 +204,94 @@ ws_surface_new(
     return self;
 }
 
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static void
+surface_destroy_cb(
+    struct wl_client* client,
+    struct wl_resource* resource
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_attach_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* buffer,
+    int32_t x,
+    int32_t y
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_damage_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    int32_t x,
+    int32_t y,
+    int32_t width,
+    int32_t height
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_frame_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    uint32_t callback
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_opaque_region_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* region
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_input_region_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* region
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_commit_cb(
+    struct wl_client* client,
+    struct wl_resource* resource
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_buffer_transform_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    int32_t transform
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_buffer_scale_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    int32_t transform
+) {
+    //!< @todo: implement
+}
 
