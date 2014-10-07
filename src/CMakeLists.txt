@@ -50,6 +50,7 @@ set(SOURCE_FILES
     main.c
     objects/array.c
     objects/object.c
+    objects/set.c
     util/cleaner.c
     util/wayland.c
     values/nil.c
