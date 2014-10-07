@@ -254,11 +254,18 @@ bool
 ws_object_unlock_read(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_unlock(&self->rw_lock);
+    return ws_object_unlock(self);
 }
 
 bool
 ws_object_unlock_write(
+    struct ws_object* self
+) {
+    return ws_object_unlock(self);
+}
+
+bool
+ws_object_unlock(
     struct ws_object* self
 ) {
     return 0 == pthread_rwlock_unlock(&self->rw_lock);

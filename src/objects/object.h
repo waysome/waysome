@@ -43,6 +43,8 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+#include "util/attributes.h"
+
 /*
  * Type names
  */
@@ -324,22 +326,42 @@ ws_object_lock_write(
  *
  * @memberof ws_object
  *
+ * @deprecated
+ *
  * @return true if the lock was unlocked, else false
  */
 bool
 ws_object_unlock_read(
     struct ws_object* self //!< The object
-);
+)
+__ws_deprecated__
+;
 
 /**
  * Write-unlock the object
  *
  * @memberof ws_object
  *
+ * @deprecated
+ *
  * @return true if the lock was unlocked, else false
  */
 bool
 ws_object_unlock_write(
+    struct ws_object* self //!< The object
+)
+__ws_deprecated__
+;
+
+/**
+ * Unlock the object
+ *
+ * @memberof ws_object
+ *
+ * @return true if the lock was unlocked, else false
+ */
+bool
+ws_object_unlock(
     struct ws_object* self //!< The object
 );
 
