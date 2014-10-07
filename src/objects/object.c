@@ -175,11 +175,11 @@ ws_object_log(
     struct ws_logger_context* const ctx
 ) {
     if (self) {
-        rdlock(self);
+        ws_object_lock_read(self);
         if (self->id && self->id->log_callback) {
             self->id->log_callback(ctx, self);
         }
-        unlock(self);
+        ws_object_unlock(self);
 
         return true;
     }
