@@ -49,6 +49,7 @@ set(SOURCE_FILES
     compositor/framebuffer_device.c
     compositor/module.c
     compositor/monitor.c
+    compositor/surface.c
     compositor/wayland_buffer.c
     logger/module.c
     main.c
