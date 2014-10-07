@@ -37,15 +37,6 @@
  *
  */
 
-/**
- * Alias: `pthread_rwlock_rdlock(&obj->rw_lock);
- */
-static inline void
-rdlock(
-    struct ws_object* const obj //!< The object to read-lock
-);
-
-
 /*
  * Type information
  */
@@ -85,7 +76,7 @@ ws_object_get_type_id(
 ) {
     if (self) {
         ws_object_type_id* id;
-        rdlock(self);
+        ws_object_lock_read(self);
         id = self->id;
         ws_object_unlock(self);
         return id;
@@ -99,7 +90,7 @@ ws_object_get_settings(
 ) {
     if (self) {
         enum ws_object_settings s;
-        rdlock(self);
+        ws_object_lock_read(self);
         s = self->settings;
         ws_object_unlock(self);
         return s;
@@ -191,7 +182,7 @@ ws_object_run(
     if (self) {
         bool b = false;
 
-        rdlock(self);
+        ws_object_lock_read(self);
         if (self->id && self->id->run_callback) {
             b = self->id->run_callback(self);
         }
@@ -281,10 +272,3 @@ ws_object_deinit(
  * static function implementations
  *
  */
-
-static inline void
-rdlock(
-    struct ws_object* const obj
-) {
-    pthread_rwlock_rdlock(&obj->rw_lock);
-}
