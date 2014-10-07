@@ -44,7 +44,7 @@
 #include "background_surface.h"
 
 struct ws_compositor_context ws_comp_ctx;
-static struct ws_logger_context log_ctx = { "[Compositor] " };
+struct ws_logger_context log_ctx = { "[Compositor] " };
 
 
 /**

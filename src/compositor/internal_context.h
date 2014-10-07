@@ -46,5 +46,8 @@ extern struct ws_compositor_context {
     struct ws_monitor* conns; //<! A linked list of ws_monitors
 } ws_comp_ctx;
 
+// We make the object available for others to use
+extern struct ws_logger_context log_ctx;
+
 
 #endif // __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
