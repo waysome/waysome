@@ -28,6 +28,32 @@
 #ifndef __WS_WL_SURFACE_H__
 #define __WS_WL_SURFACE_H__
 
+#include "objects/wayland_obj.h"
+
+
+/**
+ * Waysome's implementation of wl_surface
+ *
+ * This struct represents a surface
+ */
+struct ws_surface {
+    struct ws_wayland_obj wl_obj; //!< parent object
+};
+
+/**
+ * Variable which holds type information about the wl_surface type
+ */
+extern ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE;
+
+/**
+ * Create a new surface
+ *
+ * create a new surface without any bufers attached to it
+ */
+struct ws_surface*
+ws_surface_new(
+    struct wl_client* client //!< client requesting the surface creation
+);
 
 #endif // __WS_WL_SURFACE_H__
 

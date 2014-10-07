@@ -25,5 +25,40 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <malloc.h>
+
 #include "compositor/surface.h"
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
+ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE = {
+    .supertype  = &WS_OBJECT_TYPE_ID_WAYLAND_OBJ,
+    .typestr    = "ws_surface",
+
+    .deinit_callback    = NULL,
+    .init_callback      = NULL,
+    .dump_callback      = NULL,
+    .run_callback       = NULL,
+    .hash_callback      = NULL,
+};
+
+struct ws_surface*
+ws_surface_new(
+    struct wl_client* client
+) {
+    struct ws_surface* self = calloc(1, sizeof(struct ws_surface));
+    if (!self) {
+        return NULL;
+    }
+
+    ws_wayland_obj_init(&self->wl_obj, NULL); //!< @todo: pass wayland object
+    self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SURFACE;
+
+    return self;
+}
+
 
