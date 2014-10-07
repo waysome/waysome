@@ -151,7 +151,17 @@ ws_set_remove(
     struct ws_set* self,
     struct ws_object const* cmp
 ) {
-    return 0;
+    if (!self || !cmp) {
+        return -EINVAL;
+    }
+
+    int r = r_set_remove(self->set, cmp);
+
+    if (r == 0 || r == -EEXIST) {
+        return 0;
+    }
+
+    return r;
 }
 
 struct ws_object*
