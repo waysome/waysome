@@ -226,6 +226,20 @@ ws_object_lock_write(
 }
 
 bool
+ws_object_lock_try_read(
+    struct ws_object* self
+) {
+    return 0 == pthread_rwlock_tryrdlock(&self->rw_lock);
+}
+
+bool
+ws_object_lock_try_write(
+    struct ws_object* self
+) {
+    return 0 == pthread_rwlock_trywrlock(&self->rw_lock);
+}
+
+bool
 ws_object_unlock_read(
     struct ws_object* self
 ) {
