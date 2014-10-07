@@ -170,14 +170,14 @@ ws_object_unref(
 }
 
 bool
-ws_object_log(
+ws_object_dump_state(
     struct ws_object* self,
     struct ws_logger_context* const ctx
 ) {
     if (self) {
         ws_object_lock_read(self);
-        if (self->id && self->id->log_callback) {
-            self->id->log_callback(ctx, self);
+        if (self->id && self->id->dump_callback) {
+            self->id->dump_callback(ctx, self);
         }
         ws_object_unlock(self);
 

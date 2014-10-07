@@ -74,7 +74,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE = {
     .deinit_callback = ws_framebuffer_device_deinit,
     .hash_callback = ws_framebuffer_device_hash,
     .init_callback = NULL,
-    .log_callback = NULL,
+    .dump_callback = NULL,
     .run_callback = NULL,
     .cmp_callback = ws_framebuffer_device_cmp
 };

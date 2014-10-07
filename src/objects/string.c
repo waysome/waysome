@@ -62,7 +62,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_STRING = {
     
     .init_callback = NULL,
     .deinit_callback = deinit_callback,
-    .log_callback = NULL,
+    .dump_callback = NULL,
     .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = (int (*) (struct ws_object const*, struct ws_object const*))

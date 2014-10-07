@@ -41,7 +41,7 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
 
         .init_callback = NULL,
         .deinit_callback = NULL,
-        .log_callback = NULL,
+        .dump_callback = NULL,
         .run_callback = NULL,
         .cmp_callback = NULL,
     },
