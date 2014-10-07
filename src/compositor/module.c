@@ -162,15 +162,15 @@ ws_compositor_init(void) {
 
     struct ws_image_buffer* duck = ws_background_service_load_image("duck.png");
 
-    if (duck->buffer == NULL) {
-        ws_log(&log_ctx, "The image could not be loaded");
-    }
-
     while (it && duck->buffer) {
-        ws_log(&log_ctx, "Copying onto buffer: %dx%d", it->width, it->height);
+        if (!it->connected) {
+            it = it->next;
+            continue;
+        }
+        ws_log(&log_ctx, "Copying into monitor with name: %s", it->mode.name);
         for (int i = 0; i < duck->height; ++i) {
-           memcpy(it->map + (it->stride * i), (char*)duck->buffer + (duck->stride * i),
-                    duck->stride);
+            memcpy(it->map + (it->stride * i), (char*)duck->buffer +
+                    (duck->stride * i), duck->stride);
         }
         it = it->next;
     }
@@ -250,32 +250,32 @@ find_crtc(
     int32_t crtc;
 
     // We check if we already have found a suitable encoder
-    if (conn->encoder_id) {
-        ws_log(&log_ctx, "Found an existing encoder for monitor: %dx%d",
-                connector->width, connector->height);
-        enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
-    } else {
-        ws_log(&log_ctx, "Found no existing encoder for monitor: %dx%d",
-                connector->width, connector->height);
-        enc = NULL;
-    }
+    // if (conn->encoder_id) {
+    //     ws_log(&log_ctx, "Found an existing encoder for monitor: %dx%d",
+    //             connector->width, connector->height);
+    //     enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
+    // } else {
+    //     ws_log(&log_ctx, "Found no existing encoder for monitor: %dx%d",
+    //             connector->width, connector->height);
+    //     enc = NULL;
+    // }
 
     // If we do have an encoder, we check that noone else uses this crtc
-    if (enc) {
-        if (enc->crtc_id) {
-            ws_log(&log_ctx, "There seems to be a crtc on here.");
-            crtc = enc->crtc_id;
+    // if (enc) {
+    //     if (enc->crtc_id) {
+    //         ws_log(&log_ctx, "There seems to be a crtc on here.");
+    //         crtc = enc->crtc_id;
 
-            if (find_connector_with_crtc(crtc) != NULL) {
-                ws_log(&log_ctx, "There was a crtc! Setting it.");
-                drmModeFreeEncoder(enc);
-                connector->crtc = crtc;
-                return 0;
-            }
-        }
+    //         if (find_connector_with_crtc(crtc) != NULL) {
+    //             ws_log(&log_ctx, "There was a crtc! Setting it.");
+    //             drmModeFreeEncoder(enc);
+    //             connector->crtc = crtc;
+    //             return 0;
+    //         }
+    //     }
 
-        drmModeFreeEncoder(enc);
-    }
+    //     drmModeFreeEncoder(enc);
+    // }
     // There is no encoder+crtc pair! We go through /all/ the encoders now
     for (int i = 0; i < conn->count_encoders; ++i) {
         enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoders[i]);
@@ -285,6 +285,7 @@ find_crtc(
             continue;
         }
 
+        ws_log(&log_ctx, "Found %d crtcs", res->count_crtcs);
         for( int j = 0; j < res->count_crtcs; ++j) {
             // Check if this encoding supports with all the crtcs
             if(!(enc->possible_crtcs & (1 << j))) {
@@ -315,7 +316,7 @@ static int
 populate_connectors(void) {
     drmModeRes* res;
     drmModeConnector* conn;
-    struct ws_monitor** connector = &ws_comp_ctx.conns;
+    // struct ws_monitor* connector = ws_comp_ctx.conns;
 
     res = drmModeGetResources(ws_comp_ctx.fb.fd);
     if (!res) {
@@ -326,6 +327,7 @@ populate_connectors(void) {
 
     // Let's go through all connectors (outputs)
     int i = res->count_connectors;
+    ws_log(&log_ctx, "Found a max of %d connectors.", i);
     while(i--) {
         conn = drmModeGetConnector(ws_comp_ctx.fb.fd, res->connectors[i]);
         if (!conn) {
@@ -333,24 +335,26 @@ populate_connectors(void) {
                     ws_comp_ctx.fb.path);
             continue;
         }
-        if (*connector) {
-            (*connector)->next = calloc(1, sizeof(**connector));
-            *connector = (*connector)->next;
+        if (ws_comp_ctx.conns) {
+            struct ws_monitor* new_connector = calloc(1, sizeof(*ws_comp_ctx.conns));
+
+            new_connector->next = ws_comp_ctx.conns;
+            ws_comp_ctx.conns = new_connector;
         } else {
-            *connector = calloc(1, sizeof(**connector));
+            ws_comp_ctx.conns = calloc(1, sizeof(*ws_comp_ctx.conns));
         }
-        (*connector)->conn = conn->connector_id;
+        ws_comp_ctx.conns->conn = conn->connector_id;
 
         if (conn->connection != DRM_MODE_CONNECTED) {
-            ws_log(&log_ctx, "Found unused connector");
-            (*connector)->connected = 0;
+            ws_log(&log_ctx, "Found unused connector %d", i);
+            ws_comp_ctx.conns->connected = 0;
             continue;
         }
 
         if (conn->count_modes == 0) {
             ws_log(&log_ctx, "No valid modes for Connector %d.",
                     conn->connector_id);
-            (*connector)->connected = 0;
+            ws_comp_ctx.conns->connected = 0;
             continue;
         }
 
@@ -358,21 +362,22 @@ populate_connectors(void) {
                 conn->count_modes);
 
         //!< @todo: Do not just take the biggest mode available
-        memcpy(&(*connector)->mode, &conn->modes[0],
-                sizeof((*connector)->mode));
+        memcpy(&ws_comp_ctx.conns->mode, &conn->modes[0],
+                sizeof(ws_comp_ctx.conns->mode));
 
-        (*connector)->width = conn->modes[0].hdisplay;
-        (*connector)->height = conn->modes[0].vdisplay;
+        ws_comp_ctx.conns->width = conn->modes[0].hdisplay;
+        ws_comp_ctx.conns->height = conn->modes[0].vdisplay;
 
         ws_log(&log_ctx, "Found a valid connector with %dx%d dimensions.",
-                (*connector)->width, (*connector)->height);
+                ws_comp_ctx.conns->width, ws_comp_ctx.conns->height);
 
-        if (find_crtc(res, conn, *connector) < 0) {
+        if (find_crtc(res, conn, ws_comp_ctx.conns) < 0) {
             ws_log(&log_ctx, "No valid crtcs found");
-            (*connector)->connected = 0;
+            ws_comp_ctx.conns->connected = 0;
             continue;
         }
-        (*connector)->connected = 1;
+        ws_log(&log_ctx, "Found a valid crtc with id %d", ws_comp_ctx.conns->crtc);
+        ws_comp_ctx.conns->connected = 1;
     }
     return 0;
 }
@@ -407,8 +412,10 @@ populate_framebuffers(
     struct drm_mode_destroy_dumb dreq; //Delete Request
     struct drm_mode_map_dumb mreq; //Memory Request
 
+    int i = 0;
     for (struct ws_monitor* iter = ws_comp_ctx.conns; iter; iter = iter->next) {
         if (!iter->connected) {
+            ws_log(&log_ctx, "Did not create FB for monitor %d.", i++);
             continue;
         }
         memset(&creq, 0, sizeof(creq));
@@ -456,9 +463,11 @@ populate_framebuffers(
         ret = drmModeSetCrtc(ws_comp_ctx.fb.fd, iter->crtc, iter->fb, 0, 0,
                 &iter->conn, 1, &iter->mode);
         if (ret) {
-            ws_log(&log_ctx, "Could not set the CRTC.");
+            ws_log(&log_ctx, "Could not set the CRTC for monitor %d.", i++);
             goto err_fb;
         }
+
+        ws_log(&log_ctx, "Succesfully created Framebuffer");
 
         continue;
 err_fb:
