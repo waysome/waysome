@@ -53,6 +53,7 @@ set(SOURCE_FILES
     objects/set.c
     util/cleaner.c
     util/wayland.c
+    values/bool.c
     values/nil.c
     values/value.c
 )
