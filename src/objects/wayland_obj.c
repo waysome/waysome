@@ -103,6 +103,13 @@ ws_wayland_obj_new(
     return NULL;
 }
 
+uint32_t
+ws_wayland_obj_get_id(
+    struct ws_wayland_obj* self
+) {
+    return self->resource->object.id;
+}
+
 /*
  *
  * Static function implementations
