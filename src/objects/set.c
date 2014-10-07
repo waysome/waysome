@@ -169,7 +169,11 @@ ws_set_get(
     struct ws_set const* self,
     struct ws_object const* cmp
 ) {
-    return NULL;
+    if (!self || !cmp) {
+        return NULL;
+    }
+
+    return r_set_contains(self->set, cmp);
 }
 
 // int
