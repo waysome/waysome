@@ -45,14 +45,6 @@ rdlock(
     struct ws_object* const obj //!< The object to read-lock
 );
 
-/**
- * Alias: `pthread_rwlock_wrlock(&obj->rw_lock);
- */
-static inline void
-wrlock(
-    struct ws_object* const obj //!< The object to write-lock
-);
-
 
 /*
  * Type information
@@ -122,7 +114,7 @@ ws_object_set_settings(
     enum ws_object_settings settings
 ) {
     if (self) {
-        wrlock(self);
+        ws_object_lock_write(self);
         self->settings = settings;
         ws_object_unlock(self);
     }
@@ -156,7 +148,7 @@ ws_object_getref(
     struct ws_object* self
 ) {
     if (self) {
-        wrlock(self);
+        ws_object_lock_write(self);
         self->ref_counting.refcnt++;
         ws_object_unlock(self);
         return self;
@@ -170,7 +162,7 @@ ws_object_unref(
     struct ws_object* self
 ) {
     if (self) {
-        wrlock(self);
+        ws_object_lock_write(self);
         self->ref_counting.refcnt--;
 
         if (self->ref_counting.refcnt == 0) {
@@ -268,7 +260,7 @@ ws_object_deinit(
     struct ws_object* self
 ) {
     if (self) {
-        wrlock(self);
+        ws_object_lock_write(self);
         if (self->id && self->id->deinit_callback) {
             if (!self->id->deinit_callback(self)) {
                 return false;
@@ -295,11 +287,4 @@ rdlock(
     struct ws_object* const obj
 ) {
     pthread_rwlock_rdlock(&obj->rw_lock);
-}
-
-static inline void
-wrlock(
-    struct ws_object* const obj //!< The object to write-lock
-) {
-    pthread_rwlock_wrlock(&obj->rw_lock);
 }
