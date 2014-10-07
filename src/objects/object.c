@@ -53,14 +53,6 @@ wrlock(
     struct ws_object* const obj //!< The object to write-lock
 );
 
-/**
- * Alias: `pthread_rwlock_unlock(&obj->rw_lock);
- */
-static inline void
-unlock(
-    struct ws_object* const obj //!< The object to unlock
-);
-
 
 /*
  * Type information
@@ -103,7 +95,7 @@ ws_object_get_type_id(
         ws_object_type_id* id;
         rdlock(self);
         id = self->id;
-        unlock(self);
+        ws_object_unlock(self);
         return id;
     }
     return NULL;
@@ -117,7 +109,7 @@ ws_object_get_settings(
         enum ws_object_settings s;
         rdlock(self);
         s = self->settings;
-        unlock(self);
+        ws_object_unlock(self);
         return s;
     }
 
@@ -132,7 +124,7 @@ ws_object_set_settings(
     if (self) {
         wrlock(self);
         self->settings = settings;
-        unlock(self);
+        ws_object_unlock(self);
     }
 }
 
@@ -166,7 +158,7 @@ ws_object_getref(
     if (self) {
         wrlock(self);
         self->ref_counting.refcnt++;
-        unlock(self);
+        ws_object_unlock(self);
         return self;
     }
 
@@ -186,7 +178,7 @@ ws_object_unref(
             pthread_rwlock_destroy(&self->ref_counting.rwl);
             free(self);
         } else {
-            unlock(self);
+            ws_object_unlock(self);
         }
     }
 }
@@ -211,7 +203,7 @@ ws_object_run(
         if (self->id && self->id->run_callback) {
             b = self->id->run_callback(self);
         }
-        unlock(self);
+        ws_object_unlock(self);
 
         return b;
     }
@@ -310,11 +302,4 @@ wrlock(
     struct ws_object* const obj //!< The object to write-lock
 ) {
     pthread_rwlock_wrlock(&obj->rw_lock);
-}
-
-static inline void
-unlock(
-    struct ws_object* const obj
-) {
-    pthread_rwlock_unlock(&obj->rw_lock);
 }
