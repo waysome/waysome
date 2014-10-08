@@ -28,6 +28,7 @@
 #ifndef __WS_WAYLAND_BUFFER_H__
 #define __WS_WAYLAND_BUFFER_H__
 
+#include "compositor/buffer.h"
 #include "objects/wayland_obj.h"
 
 /**
@@ -35,6 +36,7 @@
  */
 struct ws_wayland_buffer {
     struct ws_wayland_obj wl_obj;
+    struct ws_buffer buf;
 };
 
 /**
