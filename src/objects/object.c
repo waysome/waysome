@@ -281,6 +281,15 @@ ws_object_deinit(
     return true;
 }
 
+int
+ws_object_cmp(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+) {
+    /*!< @todo implement */
+    return 0;
+}
+
 /*
  *
  * static function implementations
