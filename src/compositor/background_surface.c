@@ -8,7 +8,7 @@
 #include "background_surface.h"
 
 struct ws_image_buffer*
-ws_background_service_load_image(
+ws_image_buffer_from_png(
     const char* filename
 ) {
     struct ws_image_buffer* buff = calloc(1, sizeof(*buff));

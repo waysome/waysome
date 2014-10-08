@@ -28,7 +28,10 @@
 #ifndef __WS_BACKGROUND_SERVICE_H__
 #define __WS_BACKGROUND_SERVICE_H__
 
+#include "compositor/buffer.h"
+
 struct ws_image_buffer {
+    struct ws_buffer;
     int height;
     int width;
     int bytesize;
@@ -37,7 +40,7 @@ struct ws_image_buffer {
 };
 
 struct ws_image_buffer*
-ws_background_service_load_image(
+ws_image_buffer_from_png(
     const char* filename
 );
 
