@@ -278,9 +278,10 @@ cmp_objects(
     void const* a,
     void const* b
 ) {
-    // comparing the pointers is sufficient --at least for now.
-    //!< @todo do real comparison
-    return a == b;
+    struct ws_object* o1 = (struct ws_object*) a;
+    struct ws_object* o2 = (struct ws_object*) b;
+
+    return ws_object_cmp(o1, o2);
 }
 
 static bool
