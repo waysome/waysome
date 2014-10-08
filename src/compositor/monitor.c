@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <xf86drm.h>
 
+#include "compositor/background_surface.h"
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "logger/module.h"
@@ -113,8 +114,8 @@ ws_monitor_deinit(
                 1,
                 &self->saved_crtc->mode);
     }
-    if (self->map) {
-        munmap(self->map, self->size);
+    if (self->buffer->buffer) {
+        munmap(self->buffer->buffer, self->buffer->size);
     }
 
     if (self->fb) {
@@ -144,8 +145,8 @@ ws_monitor_populate_fb(
         return;
     }
     memset(&creq, 0, sizeof(creq));
-    creq.width = self->width;
-    creq.height = self->height;
+    creq.width = self->buffer->width;
+    creq.height = self->buffer->height;
     creq.bpp = 32;
     int ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
     if (ret < 0) {
@@ -153,12 +154,15 @@ ws_monitor_populate_fb(
         return;
     }
 
-    self->stride = creq.pitch;
-    self->size = creq.size;
+    self->buffer->stride = creq.pitch;
+    self->buffer->size = creq.size;
     self->handle = creq.handle;
 
-    ret = drmModeAddFB(ws_comp_ctx.fb->fd, self->width, self->height, 24,
-            32, self->stride, self->handle, &self->fb);
+    ret = drmModeAddFB(ws_comp_ctx.fb->fd,
+            self->buffer->width,
+            self->buffer->height, 24, 32,
+            self->buffer->stride,
+            self->handle, &self->fb);
 
     if (ret) {
         ws_log(&log_ctx, "Could not add FB of size: %dx%d.",
@@ -174,15 +178,16 @@ ws_monitor_populate_fb(
         goto err_fb;
     }
 
-    self->map = mmap(0, self->size, PROT_READ | PROT_WRITE, MAP_SHARED,
+    self->buffer->buffer = mmap(0, self->buffer->size,
+            PROT_READ | PROT_WRITE, MAP_SHARED,
             ws_comp_ctx.fb->fd, mreq.offset);
 
-    if (self->map == MAP_FAILED) {
+    if (self->buffer->buffer == MAP_FAILED) {
         ws_log(&log_ctx, "Could not MMAP FB");
         goto err_fb;
     }
 
-    memset(self->map, 0, self->size);
+    memset(self->buffer->buffer, 0, self->buffer->size);
 
     self->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, self->crtc);
     ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->fb, 0, 0,
