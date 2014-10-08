@@ -179,34 +179,43 @@ bool
 ws_object_run(
     struct ws_object* self
 ) {
-    if (self) {
-        bool b = false;
-
-        ws_object_lock_read(self);
-        if (self->id && self->id->run_callback) {
-            b = self->id->run_callback(self);
-        }
-        ws_object_unlock(self);
-
-        return b;
+    if (!self) {
+        return false;
     }
 
-    return false;
+    ws_object_type_id* type = self->id;
+    while (!type->run_callback) {
+        if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
+            return false;
+        }
+    }
+
+    ws_object_lock_read(self);
+    bool b = type->run_callback(self);
+    ws_object_unlock(self);
+
+    return b;
 }
 
 size_t
 ws_object_hash(
     struct ws_object* self
 ) {
-    if (!self || !self->id || !self->id->hash_callback) {
-        return 0;
+    if (!self) {
+        return false;
     }
 
-    size_t hash;
+    ws_object_type_id* type = self->id;
+    while (!type->hash_callback) {
+        // we hit the basic object type, which is totally abstract
+        if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
+            return false;
+        }
+    }
 
-    pthread_rwlock_rdlock(&self->rw_lock);
-    hash = self->id->hash_callback(self);
-    pthread_rwlock_unlock(&self->rw_lock);
+    ws_object_lock_read(self);
+    size_t hash = type->hash_callback(self);
+    ws_object_unlock(self);
 
     return hash;
 }
@@ -288,19 +297,25 @@ ws_object_cmp(
 ) {
     if ((o1 == NULL) ^ (o2 == NULL)) {
         return (o1 == NULL) ? -1 : 1;
-    } else if ((o1 == NULL) && (o2 == NULL)) {
+    }
+
+    if ((o1 == NULL) && (o2 == NULL)) {
         return 0;
-    } else {
-        if (o1->id != o2->id) {
-            return 42; // determined by fair dice roll
-        } else {
-            if (!o1->id->cmp_callback) {
-                return 17; // neithernut said that!
-            } else {
-                return o1->id->cmp_callback(o1, o2);
-            }
+    }
+
+    if (o1->id != o2->id) {
+        return 42; // determined by fair dice roll
+    }
+
+    ws_object_type_id* type = o1->id;
+    while (!type->cmp_callback) {
+        // we hit the basic object type, which is totally abstract
+        if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
+            return 17; // because it's such a nice prime number
         }
     }
+
+    return type->cmp_callback(o1, o2);
 }
 
 /*
