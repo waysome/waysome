@@ -41,6 +41,13 @@
  */
 #define signum(x) (((x) > 0) - ((x) < 0))
 
+/**
+ * Returns the bigger of the two numbers
+ *
+ * @returns x if x>y else y
+ */
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+
 #endif // __WS_UTIL_ARITHMETICAL_H__
 
 /**

@@ -26,6 +26,9 @@
  */
 
 #include <errno.h>
+#include <string.h>
+
+#include "util/arithmetical.h"
 
 #include "compositor/buffer.h"
 
@@ -185,3 +188,26 @@ ws_buffer_end_access(
     type->end_access(self);
 }
 
+void
+ws_buffer_blit(
+    struct ws_buffer* dest,
+    struct ws_buffer* src
+) {
+    void* buf_dst = ws_buffer_data(dest);
+    void* buf_src = ws_buffer_data(src);
+    if (!(buf_dst && buf_src)) {
+        return;
+    }
+
+    int max_x = MAX(ws_buffer_width(dest), ws_buffer_width(src));
+    int max_y = MAX(ws_buffer_height(dest), ws_buffer_height(src));
+
+    int stride_dst = ws_buffer_stride(dest);
+    int stride_src = ws_buffer_stride(src);
+    for (int y = 0; y < max_y; ++y) {
+        memcpy(((char*)buf_dst) + (y * stride_dst),
+                ((char*)buf_src) + (y * stride_src),
+                max_x
+        );
+    }
+}
