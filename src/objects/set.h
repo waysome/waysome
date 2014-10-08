@@ -114,6 +114,8 @@ ws_set_remove(
  *
  * @memberof ws_set
  *
+ * @note Gets one ref on the returned object for you
+ *
  * @return the ws_object object or NULL on failure
  */
 struct ws_object*
