@@ -28,13 +28,7 @@
 #ifndef __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 #define __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 
-/**
- * A framebuffer device
- */
-struct ws_framebuffer_device {
-    int fd; //<! The FileDescriptor
-    const char* path; //<! The path to the given filedescriptor
-};
+#include "compositor/framebuffer_device.h"
 
 /**
  * Internal compositor context
@@ -42,9 +36,12 @@ struct ws_framebuffer_device {
  * This context holds the internal state of the compositor.
  */
 extern struct ws_compositor_context {
-    struct ws_framebuffer_device fb;
+    struct ws_framebuffer_device* fb;
     struct ws_monitor* conns; //<! A linked list of ws_monitors
 } ws_comp_ctx;
+
+// We make the object available for others to use
+extern struct ws_logger_context log_ctx;
 
 
 #endif // __WS_COMPOSITOR_INTERNAL_CONTEXT_H__

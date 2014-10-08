@@ -44,7 +44,7 @@
 #include "background_surface.h"
 
 struct ws_compositor_context ws_comp_ctx;
-static struct ws_logger_context log_ctx = { "[Compositor] " };
+struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };
 
 
 /**
@@ -97,21 +97,6 @@ populate_connectors(void);
 static int
 populate_framebuffers(void);
 
-
-/**
- * Get a Framebuffer Device provided by DRM using the given path
- *
- * This is the graphic card device that is given by the kernel. It loads it
- * and populates the given framebuffer with the information found.
- *
- * @return 0 on success, a negative error code otherwise (-ENOENT)
- */
-static int
-get_framebuffer_device(
-    const char* path
-);
-
-
 /**
  * Deinitialise the compositor
  *
@@ -145,10 +130,7 @@ ws_compositor_init(void) {
     ws_cleaner_add(ws_compositor_deinit, NULL);
     int retval;
 
-    retval = get_framebuffer_device("/dev/dri/card0");
-    if (retval < 0) {
-        return retval;
-    }
+    ws_comp_ctx.fb = ws_framebuffer_device_new("/dev/dri/card0");
 
     retval = populate_connectors();
     if (retval < 0) {
@@ -214,8 +196,8 @@ ws_compositor_deinit(
     void* dummy
 ) {
 
-    if (ws_comp_ctx.fb.fd >= 0) {
-        close(ws_comp_ctx.fb.fd);
+    if (ws_comp_ctx.fb->fd >= 0) {
+        close(ws_comp_ctx.fb->fd);
     }
 
     struct ws_monitor* it = ws_comp_ctx.conns;
@@ -224,7 +206,7 @@ ws_compositor_deinit(
     while(it) {
         struct ws_monitor* next = it->next;
 
-        drmModeSetCrtc(ws_comp_ctx.fb.fd,
+        drmModeSetCrtc(ws_comp_ctx.fb->fd,
                 it->saved_crtc->crtc_id,
                 it->saved_crtc->buffer_id,
                 it->saved_crtc->x,
@@ -236,11 +218,11 @@ ws_compositor_deinit(
             munmap(it->map, it->size);
         }
 
-        drmModeRmFB(ws_comp_ctx.fb.fd, it->fb);
+        drmModeRmFB(ws_comp_ctx.fb->fd, it->fb);
 
         memset(&dreq, 0, sizeof(dreq));
         dreq.handle = it->handle;
-        drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
+        drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
         free(it);
         it = next;
     }
@@ -271,17 +253,6 @@ find_crtc(
     drmModeEncoder* enc;
     int32_t crtc;
 
-    // We check if we already have found a suitable encoder
-    // if (conn->encoder_id) {
-    //     ws_log(&log_ctx, "Found an existing encoder for monitor: %dx%d",
-    //             connector->width, connector->height);
-    //     enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoder_id);
-    // } else {
-    //     ws_log(&log_ctx, "Found no existing encoder for monitor: %dx%d",
-    //             connector->width, connector->height);
-    //     enc = NULL;
-    // }
-
     // If we do have an encoder, we check that noone else uses this crtc
     // if (enc) {
     //     if (enc->crtc_id) {
@@ -300,7 +271,7 @@ find_crtc(
     // }
     // There is no encoder+crtc pair! We go through /all/ the encoders now
     for (int i = 0; i < conn->count_encoders; ++i) {
-        enc = drmModeGetEncoder(ws_comp_ctx.fb.fd, conn->encoders[i]);
+        enc = drmModeGetEncoder(ws_comp_ctx.fb->fd, conn->encoders[i]);
 
         if (!enc) {
             ws_log(&log_ctx, "Could not get Encoder.");
@@ -340,10 +311,10 @@ populate_connectors(void) {
     drmModeConnector* conn;
     // struct ws_monitor* connector = ws_comp_ctx.conns;
 
-    res = drmModeGetResources(ws_comp_ctx.fb.fd);
+    res = drmModeGetResources(ws_comp_ctx.fb->fd);
     if (!res) {
         ws_log(&log_ctx, "Could not get Resources for: %s.",
-                ws_comp_ctx.fb.path);
+                ws_comp_ctx.fb->path);
         return -ENOENT;
     }
 
@@ -351,10 +322,10 @@ populate_connectors(void) {
     int i = res->count_connectors;
     ws_log(&log_ctx, "Found a max of %d connectors.", i);
     while(i--) {
-        conn = drmModeGetConnector(ws_comp_ctx.fb.fd, res->connectors[i]);
+        conn = drmModeGetConnector(ws_comp_ctx.fb->fd, res->connectors[i]);
         if (!conn) {
             ws_log(&log_ctx, "Could not get connector for: %s",
-                    ws_comp_ctx.fb.path);
+                    ws_comp_ctx.fb->path);
             continue;
         }
         if (ws_comp_ctx.conns) {
@@ -405,27 +376,6 @@ populate_connectors(void) {
 }
 
 static int
-get_framebuffer_device(
-    const char* path
-) {
-    int fd = open(path, O_RDWR | O_CLOEXEC);
-    if (fd < 0) {
-        ws_log(&log_ctx, "Could not open: '%s'.", path);
-        return -ENOENT;
-    }
-
-    uint64_t has_dumb;
-    if (drmGetCap(fd, DRM_CAP_DUMB_BUFFER, &has_dumb) < 0 || !has_dumb) {
-        ws_log(&log_ctx, "File %s has no DUMB BUFFER cap. ", path);
-        close(fd);
-        return -EOPNOTSUPP;
-    }
-    ws_comp_ctx.fb.path = path;
-    ws_comp_ctx.fb.fd = fd;
-    return 0;
-}
-
-static int
 populate_framebuffers(
     void
 ) {
@@ -444,7 +394,7 @@ populate_framebuffers(
         creq.width = iter->width;
         creq.height = iter->height;
         creq.bpp = 32;
-        int ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
+        int ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
         if (ret < 0) {
             ws_log(&log_ctx, "Could not create DUMB BUFFER");
             continue;
@@ -454,7 +404,7 @@ populate_framebuffers(
         iter->size = creq.size;
         iter->handle = creq.handle;
 
-        ret = drmModeAddFB(ws_comp_ctx.fb.fd, iter->width, iter->height, 24, 32,
+        ret = drmModeAddFB(ws_comp_ctx.fb->fd, iter->width, iter->height, 24, 32,
                 iter->stride, iter->handle, &iter->fb);
 
         if (ret) {
@@ -465,14 +415,14 @@ populate_framebuffers(
 
         memset(&mreq, 0, sizeof(mreq));
         mreq.handle = iter->handle;
-        ret = drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
+        ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
         if (ret) {
             ws_log(&log_ctx, "Could not allocate enough memory for FB.");
             goto err_fb;
         }
 
         iter->map = mmap(0, iter->size, PROT_READ | PROT_WRITE, MAP_SHARED,
-                ws_comp_ctx.fb.fd, mreq.offset);
+                ws_comp_ctx.fb->fd, mreq.offset);
 
         if (iter->map == MAP_FAILED) {
             ws_log(&log_ctx, "Could not MMAP FB");
@@ -481,8 +431,8 @@ populate_framebuffers(
 
         memset(iter->map, 0, iter->size);
 
-        iter->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb.fd, iter->crtc);
-        ret = drmModeSetCrtc(ws_comp_ctx.fb.fd, iter->crtc, iter->fb, 0, 0,
+        iter->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, iter->crtc);
+        ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, iter->crtc, iter->fb, 0, 0,
                 &iter->conn, 1, &iter->mode);
         if (ret) {
             ws_log(&log_ctx, "Could not set the CRTC for monitor %d.", i++);
@@ -493,11 +443,11 @@ populate_framebuffers(
 
         continue;
 err_fb:
-        drmModeRmFB(ws_comp_ctx.fb.fd, iter->fb);
+        drmModeRmFB(ws_comp_ctx.fb->fd, iter->fb);
 err_destroy:
         memset(&dreq, 0, sizeof(dreq));
         dreq.handle = iter->handle;
-        drmIoctl(ws_comp_ctx.fb.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
+        drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
     }
     return 0;
 }

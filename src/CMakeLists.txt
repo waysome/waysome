@@ -45,7 +45,9 @@ add_definitions(
 #
 set(SOURCE_FILES
     compositor/background_surface.c
+    compositor/framebuffer_device.c
     compositor/module.c
+    compositor/monitor.c
     logger/module.c
     main.c
     objects/array.c
