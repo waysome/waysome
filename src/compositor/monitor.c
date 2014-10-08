@@ -36,6 +36,8 @@
 #include <xf86drm.h>
 
 #include "compositor/framebuffer_device.h"
+#include "compositor/internal_context.h"
+#include "logger/module.h"
 #include "objects/object.h"
 
 #include "compositor/monitor.h"
@@ -126,6 +128,81 @@ ws_monitor_deinit(
     }
     ws_object_unref((struct ws_object*)self->fb_dev);
     return true;
+}
+
+void
+ws_monitor_populate_fb(
+    struct ws_monitor* self
+) {
+    struct drm_mode_create_dumb creq; //Create Request
+    struct drm_mode_destroy_dumb dreq; //Delete Request
+    struct drm_mode_map_dumb mreq; //Memory Request
+
+    if (!self->connected) {
+        ws_log(&log_ctx, "Did not create FB for self %d.", self->crtc);
+        return;
+    }
+    memset(&creq, 0, sizeof(creq));
+    creq.width = self->width;
+    creq.height = self->height;
+    creq.bpp = 32;
+    int ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
+    if (ret < 0) {
+        ws_log(&log_ctx, "Could not create DUMB BUFFER");
+        return;
+    }
+
+    self->stride = creq.pitch;
+    self->size = creq.size;
+    self->handle = creq.handle;
+
+    ret = drmModeAddFB(ws_comp_ctx.fb->fd, self->width, self->height, 24,
+            32, self->stride, self->handle, &self->fb);
+
+    if (ret) {
+        ws_log(&log_ctx, "Could not add FB of size: %dx%d.",
+                creq.width, creq.height);
+        goto err_destroy;
+    }
+
+    memset(&mreq, 0, sizeof(mreq));
+    mreq.handle = self->handle;
+    ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
+    if (ret) {
+        ws_log(&log_ctx, "Could not allocate enough memory for FB.");
+        goto err_fb;
+    }
+
+    self->map = mmap(0, self->size, PROT_READ | PROT_WRITE, MAP_SHARED,
+            ws_comp_ctx.fb->fd, mreq.offset);
+
+    if (self->map == MAP_FAILED) {
+        ws_log(&log_ctx, "Could not MMAP FB");
+        goto err_fb;
+    }
+
+    memset(self->map, 0, self->size);
+
+    self->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, self->crtc);
+    ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->fb, 0, 0,
+            &self->conn, 1, &self->mode);
+    if (ret) {
+        ws_log(&log_ctx, "Could not set the CRTC for self %d.",
+                self->crtc);
+        goto err_fb;
+    }
+
+    ws_log(&log_ctx, "Succesfully created Framebuffer");
+
+    return;
+err_fb:
+    drmModeRmFB(ws_comp_ctx.fb->fd, self->fb);
+err_destroy:
+    memset(&dreq, 0, sizeof(dreq));
+    dreq.handle = self->handle;
+    drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
+
+    return;
 }
 
 static size_t

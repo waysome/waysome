@@ -85,6 +85,17 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR;
 struct ws_monitor*
 ws_monitor_new(void);
 
+/**
+ * Populate the monitor with a framebuffer, unless one already exists or
+ * the monitor is not connected.
+ *
+ * @memberof ws_monitor
+ */
+void
+ws_monitor_populate_fb(
+    struct ws_monitor* self
+);
+
 #endif // __WS_OBJECTS_MONITOR_H__
 
 /**
