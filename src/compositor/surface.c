@@ -274,7 +274,11 @@ surface_attach_cb(
     int32_t x,
     int32_t y
 ) {
-    //!< @todo: implement
+    struct ws_surface* self;
+    self = (struct ws_surface*) wl_resource_get_user_data(resource);
+
+    //!< @todo: handle x and y parameters
+    ws_wayland_buffer_set_resource(&self->img_buf, buffer);
 }
 
 static void
