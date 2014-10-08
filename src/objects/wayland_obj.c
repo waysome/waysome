@@ -60,6 +60,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ = {
     .deinit_callback = NULL,
     .log_callback = NULL,
     .run_callback = NULL,
+    .cmp_callback = NULL,
 };
 
 /*
