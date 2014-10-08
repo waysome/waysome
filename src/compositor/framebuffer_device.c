@@ -56,6 +56,12 @@ ws_framebuffer_device_hash(
     struct ws_object* obj
 );
 
+static int
+ws_framebuffer_device_cmp(
+    struct ws_object const* obj1,
+    struct ws_object const* obj2
+);
+
 /*
  *
  * Interface Implementation
@@ -69,7 +75,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE = {
     .hash_callback = ws_framebuffer_device_hash,
     .init_callback = NULL,
     .log_callback = NULL,
-    .run_callback = NULL
+    .run_callback = NULL,
+    .cmp_callback = ws_framebuffer_device_cmp
 };
 
 struct ws_framebuffer_device*
@@ -122,4 +129,15 @@ ws_framebuffer_device_hash(
 ) {
     struct ws_framebuffer_device* self = (struct ws_framebuffer_device*) obj;
     return SIZE_MAX / self->fd;
+}
+
+static int
+ws_framebuffer_device_cmp(
+    struct ws_object const* obj1,
+    struct ws_object const* obj2
+) {
+    struct ws_framebuffer_device* dev1 = (struct ws_framebuffer_device*) obj1;
+    struct ws_framebuffer_device* dev2 = (struct ws_framebuffer_device*) obj2;
+    // It's short signum function
+    return (dev1->fd > dev2->fd) - (dev1->fd < dev2->fd);
 }

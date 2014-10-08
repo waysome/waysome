@@ -56,6 +56,12 @@ ws_monitor_hash(
     struct ws_object* self
 );
 
+static int
+ws_monitor_cmp(
+    struct ws_object const* obj1,
+    struct ws_object const* obj2
+);
+
 /*
  *
  * Interface Implementation
@@ -69,7 +75,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR = {
     .hash_callback = ws_monitor_hash,
     .init_callback = NULL,
     .log_callback = NULL,
-    .run_callback = NULL
+    .run_callback = NULL,
+    .cmp_callback = ws_monitor_cmp
 };
 
 struct ws_monitor*
@@ -127,4 +134,23 @@ ws_monitor_hash(
 ) {
     struct ws_monitor* self = (struct ws_monitor*) obj;
     return SIZE_MAX / (self->crtc * self->fb_dev->fd);
+}
+
+static int
+ws_monitor_cmp(
+    struct ws_object const* obj1,
+    struct ws_object const* obj2
+) {
+    struct ws_monitor* mon1 = (struct ws_monitor*) obj1;
+    struct ws_monitor* mon2 = (struct ws_monitor*) obj2;
+
+    if (mon1->crtc != mon2->crtc) {
+        return (mon1->crtc > mon2->crtc) - (mon1->crtc < mon2->crtc);
+    }
+
+    if (mon1->fb_dev->fd != mon2->fb_dev->fd) {
+        return (mon1->fb_dev->fd > mon2->fb_dev->fd) -
+            (mon1->fb_dev->fd < mon2->fb_dev->fd);
+    }
+    return 0;
 }
