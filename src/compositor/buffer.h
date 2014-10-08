@@ -30,7 +30,7 @@
 
 #include <stdint.h>
 
-#include "objects/wayland_obj.h"
+#include "objects/object.h"
 #include "util/attributes.h"
 
 /*
