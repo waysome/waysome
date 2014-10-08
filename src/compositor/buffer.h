@@ -76,5 +76,15 @@ struct ws_buffer {
  */
 extern ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER;
 
+/**
+ * Initialize a `ws_bufer` object
+ *
+ * @return zero on success, else negative errno.h constant
+ */
+int
+ws_buffer_init(
+    struct ws_buffer* self //!< The buffer to initialize
+);
+
 #endif // __WS_BUFFER_H__
 

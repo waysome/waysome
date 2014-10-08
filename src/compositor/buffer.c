@@ -25,6 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+
 #include "compositor/buffer.h"
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
@@ -48,4 +50,18 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
     .begin_access = NULL,
     .end_access = NULL,
 };
+
+int
+ws_buffer_init(
+    struct ws_buffer* self
+) {
+    if (!self) {
+        return -EINVAL;
+    }
+
+    ws_object_init(&self->obj);
+    self->obj.id = &WS_OBJECT_TYPE_ID_BUFFER.type;
+
+    return 0;
+}
 
