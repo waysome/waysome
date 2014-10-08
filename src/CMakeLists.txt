@@ -51,6 +51,7 @@ set(SOURCE_FILES
     objects/array.c
     objects/object.c
     objects/set.c
+    objects/wayland_obj.c
     util/cleaner.c
     util/wayland.c
     values/nil.c
