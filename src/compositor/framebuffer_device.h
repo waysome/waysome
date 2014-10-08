@@ -53,7 +53,7 @@
 struct ws_framebuffer_device {
     struct ws_object obj; //!< Supertype
     int fd; //!< The filedescriptor
-    char* path; //!< The path to the descriptor
+    char* path; //!< The path to the device file
 };
 
 /**

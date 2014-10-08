@@ -40,11 +40,11 @@
 #ifndef __WS_OBJECTS_MONITOR_H__
 #define __WS_OBJECTS_MONITOR_H__
 
-#include <stdbool.h>
 #include <pthread.h>
+#include <stdbool.h>
+#include <xf86drmMode.h>
 
 #include "objects/object.h"
-#include <xf86drmMode.h>
 
 /**
  * ws_monitor type definition

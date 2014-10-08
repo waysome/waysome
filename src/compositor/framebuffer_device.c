@@ -26,18 +26,18 @@
  */
 
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <unistd.h>
 #include <xf86drm.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
 
 #include "logger/module.h"
 #include "objects/object.h"
 
-#include "compositor/internal_context.h"
 #include "compositor/framebuffer_device.h"
+#include "compositor/internal_context.h"
 
 
 /*

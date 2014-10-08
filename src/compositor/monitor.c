@@ -26,17 +26,17 @@
  */
 
 #include <errno.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <xf86drm.h>
 
-#include "objects/object.h"
 #include "compositor/framebuffer_device.h"
+#include "objects/object.h"
 
 #include "compositor/monitor.h"
 
