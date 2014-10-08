@@ -41,16 +41,6 @@
  */
 
 /**
- * Init callback for array type
- *
- * @return true if initialisation worked, else false
- */
-static bool
-init_callback(
-    struct ws_object* self //!< Array object
-);
-
-/**
  * Deinit callback for array type
  */
 static bool
@@ -295,35 +285,6 @@ ws_array_append(
  *
  *
  */
-
-static bool
-init_callback(
-    struct ws_object* obj
-) {
-    if (obj->id != &WS_OBJECT_TYPE_ID_ARRAY) {
-        return false;
-    }
-
-    struct ws_array* self = (struct ws_array*) obj;
-    if (self) {
-        self->len = 2; // initialize with two elements
-        self->ary = calloc(self->len, sizeof(*self->ary));
-
-        if (!self->ary) {
-            return false;
-        }
-
-        ws_object_init(&self->obj);
-        self->obj.id = &WS_OBJECT_TYPE_ID_ARRAY;
-
-        self->nused = 0;
-        self->sorted = false;
-
-        return true;
-    }
-
-    return false;
-}
 
 static bool
 deinit_callback(
