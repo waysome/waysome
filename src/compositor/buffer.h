@@ -31,6 +31,7 @@
 #include <stdint.h>
 
 #include "objects/wayland_obj.h"
+#include "util/attributes.h"
 
 /*
  *
@@ -85,6 +86,76 @@ int
 ws_buffer_init(
     struct ws_buffer* self //!< The buffer to initialize
 );
+
+/**
+ * Get a pointer to the buffer's contents
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ *
+ * @return pointer to the buffer's contents
+ */
+void*
+ws_buffer_data(
+    struct ws_buffer* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the buffer's width
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ *
+ * @return width of the buffer's contents
+ */
+int32_t
+ws_buffer_width(
+    struct ws_buffer* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the buffer's height
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ *
+ * @return height of the buffer's contents
+ */
+int32_t
+ws_buffer_height(
+    struct ws_buffer* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the buffer's stride
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ *
+ * @return stride of the buffer's contents
+ */
+int32_t
+ws_buffer_stride(
+    struct ws_buffer* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the buffer's format
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ *
+ * @return format of the buffer's contents
+ */
+uint32_t
+ws_buffer_format(
+    struct ws_buffer* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_BUFFER_H__
 

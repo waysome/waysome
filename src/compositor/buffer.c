@@ -65,3 +65,59 @@ ws_buffer_init(
     return 0;
 }
 
+
+void*
+ws_buffer_data(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->get_data)) {
+        return NULL;
+    }
+    return type->get_data(self);
+}
+
+int32_t
+ws_buffer_width(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->get_width)) {
+        return 0;
+    }
+    return type->get_width(self);
+}
+
+int32_t
+ws_buffer_height(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->get_height)) {
+        return 0;
+    }
+    return type->get_height(self);
+}
+
+int32_t
+ws_buffer_stride(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->get_stride)) {
+        return 0;
+    }
+    return type->get_stride(self);
+}
+
+uint32_t
+ws_buffer_format(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->get_format)) {
+        return 0;
+    }
+    return type->get_format(self);
+}
+
