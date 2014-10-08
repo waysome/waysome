@@ -92,6 +92,12 @@ typedef bool (*ws_object_run_callback)(struct ws_object* const);
  */
 typedef size_t (*ws_object_hash_callback)(struct ws_object* const);
 
+/**
+ * Compare callback
+ */
+typedef int (*ws_object_cmp_callback)(struct ws_object const*,
+                                      struct ws_object const*);
+
 /*
  *
  * Type implementation
@@ -110,6 +116,7 @@ struct ws_object_type {
     ws_object_log_callback log_callback; //!< Log callback for the type
     ws_object_run_callback run_callback; //!< Run callback for the type
     ws_object_hash_callback hash_callback; //!< Hash callback for the type
+    ws_object_cmp_callback cmp_callback; //!< Compare callback for the type
 };
 
 /**
@@ -401,6 +408,27 @@ ws_object_unlock(
 bool
 ws_object_deinit(
     struct ws_object* self //!< The object
+);
+
+/**
+ * Compare two ws_object instances
+ *
+ * @memberof ws_object
+ *
+ * @note If either of the arguments is `NULL`, the other is defined to be the
+ * greater one.
+ *
+ * @warning If the types of the arguments `o1` and `o2` differ, the return value
+ * is undefined.
+ *
+ * @warning If the type has no compare callback, the return value is undefined.
+ *
+ * @return -1 if `o1` is bigger, zero if they are equal, 1 if `o2` is bigger
+ */
+int
+ws_object_cmp(
+    struct ws_object const* o1, //!< The first operant of the comparison
+    struct ws_object const* o2 //!< The second operant of the comparison
 );
 
 #endif // __WS_OBJECTS_OBJECT_H__

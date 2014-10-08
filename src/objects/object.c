@@ -281,6 +281,28 @@ ws_object_deinit(
     return true;
 }
 
+int
+ws_object_cmp(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+) {
+    if ((o1 == NULL) ^ (o2 == NULL)) {
+        return (o1 == NULL) ? -1 : 1;
+    } else if ((o1 == NULL) && (o2 == NULL)) {
+        return 0;
+    } else {
+        if (o1->id != o2->id) {
+            return 42; // determined by fair dice roll
+        } else {
+            if (!o1->id->cmp_callback) {
+                return 17; // neithernut said that!
+            } else {
+                return o1->id->cmp_callback(o1, o2);
+            }
+        }
+    }
+}
+
 /*
  *
  * static function implementations

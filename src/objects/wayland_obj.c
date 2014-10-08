@@ -46,6 +46,15 @@ hash_callback(
     struct ws_object* const self //!< The object to hash
 );
 
+/**
+ * Compare callback for `ws_wayland_obj` type
+ */
+int
+cmp_callback(
+    struct ws_object const* o1, //!< First operant
+    struct ws_object const* o2 //!< Second operant
+);
+
 
 /**
  * Type information for ws_wayland_obj type
@@ -60,6 +69,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ = {
     .deinit_callback = NULL,
     .log_callback = NULL,
     .run_callback = NULL,
+    .cmp_callback = cmp_callback,
 };
 
 /*
@@ -136,4 +146,18 @@ hash_callback(
     }
 
     return 0;
+}
+
+int
+cmp_callback(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+) {
+    struct ws_wayland_obj* w1 = (struct ws_wayland_obj*) o1;
+    struct ws_wayland_obj* w2 = (struct ws_wayland_obj*) o2;
+
+    uint32_t id1 = ws_wayland_obj_get_id(w1);
+    uint32_t id2 = ws_wayland_obj_get_id(w2);
+
+    return ((id1 == id2) ? 0 : ((id1 > id2) ? -1 : 1));
 }
