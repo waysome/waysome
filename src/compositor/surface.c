@@ -27,6 +27,7 @@
 
 #include <malloc.h>
 #include <wayland-server-protocol.h>
+#include <wayland-server.h>
 
 #include "compositor/surface.h"
 #include "util/wayland.h"
@@ -149,6 +150,22 @@ surface_set_buffer_scale_cb(
 );
 
 
+/**
+ * Destroy the user data associated with a surface
+ *
+ * This method implements the destruction of the user data associated with a
+ * surface.
+ * This invalidates the object and performs an unref on it.
+ *
+ * @warning only call on resources which hold surfaces as constructed by
+ *          ws_surface_new()
+ */
+static void
+resource_destroy(
+    struct wl_resource* resource
+);
+
+
 /*
  *
  * Internal constants
@@ -213,6 +230,8 @@ ws_surface_new(
     if (!resource) {
         goto cleanup_surface;
     }
+    wl_resource_set_user_data(resource, ws_object_getref(&self->wl_obj.obj));
+    wl_resource_set_destructor(resource, resource_destroy);
 
     // finish the initialisation
     ws_wayland_obj_init(&self->wl_obj, resource);
@@ -314,5 +333,20 @@ surface_set_buffer_scale_cb(
     int32_t transform
 ) {
     //!< @todo: implement
+}
+
+static void
+resource_destroy(
+    struct wl_resource* resource
+) {
+    struct ws_surface* surface;
+    surface = (struct ws_surface*) wl_resource_get_user_data(resource);
+    // we don't need a null-check since we rely on the resource to ref a surface
+
+    // invalidate
+    ws_object_lock_write(&surface->wl_obj.obj);
+    surface->wl_obj.resource = NULL;
+    ws_object_unlock(&surface->wl_obj.obj);
+    ws_object_unref(&surface->wl_obj.obj);
 }
 
