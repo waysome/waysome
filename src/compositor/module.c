@@ -280,7 +280,7 @@ find_crtc(
     }
 
     ws_log(&log_ctx, "Could not find suitable Encoder for crtc with dim: %dx%d.",
-            connector->width, connector->height);
+            connector->buffer->width, connector->buffer->height);
     return -ENOENT;
 }
 
@@ -308,6 +308,7 @@ populate_connectors(void) {
             goto insert;
         }
         struct ws_monitor* new_monitor = ws_monitor_new();
+        new_monitor->buffer = ws_image_buffer_new();
         new_monitor->conn = conn->connector_id;
         new_monitor->fb_dev = ws_comp_ctx.fb;
 
@@ -331,11 +332,11 @@ populate_connectors(void) {
         memcpy(&new_monitor->mode, &conn->modes[0],
                 sizeof(new_monitor->mode));
 
-        new_monitor->width = conn->modes[0].hdisplay;
-        new_monitor->height = conn->modes[0].vdisplay;
+        new_monitor->buffer->width = conn->modes[0].hdisplay;
+        new_monitor->buffer->height = conn->modes[0].vdisplay;
 
         ws_log(&log_ctx, "Found a valid connector with %dx%d dimensions.",
-                new_monitor->width, new_monitor->height);
+                new_monitor->buffer->width, new_monitor->buffer->height);
 
         if (find_crtc(res, conn, new_monitor) < 0) {
             ws_log(&log_ctx, "No valid crtcs found");

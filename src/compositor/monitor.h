@@ -54,12 +54,8 @@
 struct ws_monitor {
     struct ws_object obj; //!< Supertype
     int connected; //!< is the monitor connected?
-    uint32_t width; //!< width of the buffer
-    uint32_t height; //!< height of the buffer
-    uint32_t stride; //!< length of a line
 
-    uint32_t size; //!< size of the map
-    uint8_t* map; //!< mapped buffer data
+    struct ws_image_buffer* buffer; //!< The frame buffer
 
     struct ws_framebuffer_device* fb_dev; //!< Framebuffer Device
     drmModeModeInfo mode; //!< mode of the monitor
