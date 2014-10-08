@@ -194,6 +194,14 @@ cleanup:
     return NULL;
 }
 
+void
+ws_wayland_buffer_set_resource(
+    struct ws_wayland_buffer* self,
+    struct wl_resource* r
+) {
+    ws_wayland_obj_set_wl_resource(&self->wl_obj, r);
+}
+
 struct ws_buffer*
 ws_wayland_buffer_get_buffer(
     struct ws_wayland_buffer* self
