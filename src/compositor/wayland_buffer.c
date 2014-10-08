@@ -193,6 +193,13 @@ cleanup:
     return NULL;
 }
 
+struct ws_buffer*
+ws_wayland_buffer_get_buffer(
+    struct ws_wayland_buffer* self
+) {
+    return &self->buf;
+}
+
 
 /*
  *

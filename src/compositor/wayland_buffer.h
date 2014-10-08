@@ -65,5 +65,15 @@ ws_wayland_buffer_new(
     struct wl_resource* r //!< wl_buffer resource to initialize with
 );
 
+/**
+ * Get the embedded buffer
+ *
+ * @return the embedded buffer
+ */
+struct ws_buffer*
+ws_wayland_buffer_get_buffer(
+    struct ws_wayland_buffer* self //!< The object itself
+);
+
 #endif // __WS_WAYLAND_BUFFER_H__
 
