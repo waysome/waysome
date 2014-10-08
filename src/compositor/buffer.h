@@ -69,7 +69,6 @@ typedef struct ws_buffer_type const ws_buffer_type_id;
  */
 struct ws_buffer {
     struct ws_object obj;
-    struct ws_buffer_cbs* funcs;
 };
 
 /**
