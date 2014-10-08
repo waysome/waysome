@@ -84,6 +84,30 @@ ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY = {
  *
  */
 
+int
+ws_array_init(
+    struct ws_array* self
+) {
+    if (!self) {
+        return -EINVAL;
+    }
+
+    self->len = 2; // initialize with two elements
+    self->ary = calloc(self->len, sizeof(*self->ary));
+
+    if (!self->ary) {
+        return -ENOMEM;
+    }
+
+    ws_object_init(&self->obj);
+    self->obj.id = &WS_OBJECT_TYPE_ID_ARRAY;
+
+    self->nused = 0;
+    self->sorted = false;
+
+    return 0;
+}
+
 struct ws_array*
 ws_array_new(void)
 {
