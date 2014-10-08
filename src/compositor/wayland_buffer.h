@@ -42,5 +42,26 @@ struct ws_wayland_buffer {
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_BUFFER;
 
+/**
+ * Initialize a `ws_wayland_buffer` object
+ *
+ * @return zero on success, else negative errno.h constant
+ */
+int
+ws_wayland_buffer_init(
+    struct ws_wayland_buffer* self, //!< The object itself
+    struct wl_resource* r //!< wl_buffer resource to initialize with
+);
+
+/**
+ * Get a newly allocated and initialized `ws_wayland_obj` object
+ *
+ * @return new `ws_wayland_obj` object or NULL on failure
+ */
+struct ws_wayland_buffer*
+ws_wayland_buffer_new(
+    struct wl_resource* r //!< wl_buffer resource to initialize with
+);
+
 #endif // __WS_WAYLAND_BUFFER_H__
 
