@@ -99,6 +99,7 @@ ws_string_new(void)
 
     if (wss) {
         ws_string_init(wss);
+        wss->obj.settings |= WS_OBJECT_HEAPALLOCED;
     }
 
     return wss;
