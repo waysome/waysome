@@ -104,7 +104,11 @@ ws_array_new(void)
     struct ws_array* a = calloc(1, sizeof(*a));
 
     if (a) {
-        ws_object_init(&a->obj);
+        if (0 != ws_array_init(a)) {
+            free(a);
+            return NULL;
+        }
+
         a->obj.settings |= WS_OBJECT_HEAPALLOCED;
     }
 
