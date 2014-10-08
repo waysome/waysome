@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <stdlib.h>
 #include <wayland-server.h>
 
 #include "objects/wayland_obj.h"
@@ -86,9 +87,19 @@ ws_wayland_obj_init(
 
 struct ws_wayland_obj*
 ws_wayland_obj_new(
-    struct wl_object* wlo //!< wl_object object to initialize with
+    struct wl_resource* r //!< wl_object object to initialize with
 ) {
-    /** @todo implement */
+    struct ws_wayland_obj* w = calloc(1, sizeof(*w));
+
+    if (!w) {
+        return NULL;
+    }
+
+    if (0 == ws_wayland_obj_init(w, r)) {
+        return w;
+    }
+
+    free(w);
     return NULL;
 }
 
