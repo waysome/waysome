@@ -32,26 +32,6 @@
 #include <stdlib.h>
 #include <xf86drmMode.h>
 
-/**
- * A connector, which under DRM translates to a Device+Output
- */
-struct ws_monitor {
-    struct ws_monitor* next;
-    int connected; //!< is the monitor connected?
-    uint32_t width; //!< width of the buffer
-    uint32_t height; //!< height of the buffer
-    uint32_t stride; //!< length of a line
-
-    uint32_t size; //!< size of the map
-    uint8_t* map; //!< mapped buffer data
-
-    drmModeModeInfo mode; //!< mode of the monitor
-    uint32_t handle; //!< Handle of the frame buffer
-    uint32_t fb; //!< id of the frame buffer
-    uint32_t conn; //!< id of the connector
-    uint32_t crtc; //!< id of the "monitor"
-    drmModeCrtc* saved_crtc; //!< drm internal datastructure for the crtc
-};
 
 /**
  * Initialise the compositor

@@ -133,7 +133,7 @@ ws_monitor_hash(
     struct ws_object* obj
 ) {
     struct ws_monitor* self = (struct ws_monitor*) obj;
-    return SIZE_MAX / (self->crtc * self->fb_dev->fd);
+    return SIZE_MAX / (self->crtc * self->fb_dev->fd + 1);
 }
 
 static int

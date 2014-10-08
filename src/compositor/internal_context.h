@@ -28,6 +28,7 @@
 #ifndef __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 #define __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 
+#include "objects/set.h"
 #include "compositor/framebuffer_device.h"
 
 /**
@@ -36,7 +37,8 @@
  * This context holds the internal state of the compositor.
  */
 extern struct ws_compositor_context {
-    struct ws_framebuffer_device* fb;
+    struct ws_framebuffer_device* fb; //<! The Framebuffer device
+    struct ws_set monitors; //<! A set of monitors (connected or not)
     struct ws_monitor* conns; //<! A linked list of ws_monitors
 } ws_comp_ctx;
 
