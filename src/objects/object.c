@@ -57,7 +57,7 @@ ws_object_new(
 
     if (o) {
         o->id = &WS_OBJECT_TYPE_ID_OBJECT;
-        o->settings = WS_OBJ_NO_SETTINGS;
+        o->settings = WS_OBJECT_HEAPALLOCED;
         pthread_rwlock_init(&o->rw_lock, NULL);
         pthread_rwlock_init(&o->ref_counting.rwl, NULL);
     }
