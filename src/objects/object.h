@@ -128,7 +128,7 @@ enum ws_object_settings {
     WS_OBJ_NO_SETTINGS = 0,
     WS_OBJ_CONST            = 1 << 0,
     WS_OBJ_SELF_DESTROYING  = 1 << 1,
-    WS_OBJECT_STACKALLOCED  = 1 << 2,
+    WS_OBJECT_HEAPALLOCED   = 1 << 2,
     WS_OBJECT_LOCKABLE      = 1 << 3,
 };
 

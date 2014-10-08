@@ -91,6 +91,7 @@ ws_array_new(void)
 
     if (a) {
         ws_object_init(&a->obj);
+        a->obj.settings |= WS_OBJECT_HEAPALLOCED;
     }
 
     return a;

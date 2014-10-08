@@ -125,6 +125,7 @@ ws_set_new(void)
 
     if (set) {
         ws_set_init(set);
+        set->obj.settings |= WS_OBJECT_HEAPALLOCED;
     }
 
     return set;

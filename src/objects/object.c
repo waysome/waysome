@@ -57,7 +57,7 @@ ws_object_new(
 
     if (o) {
         o->id = &WS_OBJECT_TYPE_ID_OBJECT;
-        o->settings = WS_OBJ_NO_SETTINGS;
+        o->settings = WS_OBJECT_HEAPALLOCED;
         pthread_rwlock_init(&o->rw_lock, NULL);
         pthread_rwlock_init(&o->ref_counting.rwl, NULL);
     }
@@ -138,32 +138,35 @@ struct ws_object*
 ws_object_getref(
     struct ws_object* self
 ) {
-    if (self) {
-        ws_object_lock_write(self);
-        self->ref_counting.refcnt++;
-        ws_object_unlock(self);
+    if (!(self && (self->settings & WS_OBJECT_HEAPALLOCED))) {
         return self;
     }
 
-    return NULL;
+    ws_object_lock_write(self);
+    self->ref_counting.refcnt++;
+    ws_object_unlock(self);
+    return self;
 }
 
 void
 ws_object_unref(
     struct ws_object* self
 ) {
-    if (self) {
-        ws_object_lock_write(self);
-        self->ref_counting.refcnt--;
-
-        if (self->ref_counting.refcnt == 0) {
-            self->id->deinit_callback(self);
-            pthread_rwlock_destroy(&self->ref_counting.rwl);
-            free(self);
-        } else {
-            ws_object_unlock(self);
-        }
+    if (!(self && (self->settings & WS_OBJECT_HEAPALLOCED))) {
+        return;
     }
+
+    ws_object_lock_write(self);
+    self->ref_counting.refcnt--;
+
+    if (self->ref_counting.refcnt) {
+        ws_object_unlock(self);
+        return;
+    }
+
+    self->id->deinit_callback(self);
+    pthread_rwlock_destroy(&self->ref_counting.rwl);
+    free(self);
 }
 
 bool
