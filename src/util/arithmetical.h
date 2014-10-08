@@ -34,7 +34,7 @@
 #ifndef __WS_UTIL_ARITHMETICAL_H__
 #define __WS_UTIL_ARITHMETICAL_H__
 
-/*
+/**
  * Returns the sign of the number put in
  *
  * @returns 1 if x is positive, -1 if negative, and 0 if zero

@@ -31,14 +31,35 @@
 #include "compositor/buffer.h"
 
 struct ws_image_buffer {
-    struct ws_buffer;
-    int height;
-    int width;
+    struct ws_buffer obj;
+    char* path;
     int bytesize;
+    int height;
     int stride;
+    int width;
     void* buffer;
 };
 
+/**
+ * Variable which holds the type information about the ws_image_buffer type
+ */
+
+extern ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER;
+
+/**
+ * Initialize a `ws_image_buffer` object
+ *
+ * @return an empty image buffer
+ */
+struct ws_image_buffer*
+ws_image_buffer_new(void);
+
+/**
+ * Initialize a `ws_image_buffer` object and load the image
+ * specified by the path argument
+ *
+ * @return a filled image buffer, or NULL on failure
+ */
 struct ws_image_buffer*
 ws_image_buffer_from_png(
     const char* filename
