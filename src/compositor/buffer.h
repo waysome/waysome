@@ -30,7 +30,7 @@
 
 #include <stdint.h>
 
-#include "objects/wayland_obj.h"
+#include "objects/object.h"
 #include "util/attributes.h"
 
 /*
@@ -69,7 +69,6 @@ typedef struct ws_buffer_type const ws_buffer_type_id;
  */
 struct ws_buffer {
     struct ws_object obj;
-    struct ws_buffer_cbs* funcs;
 };
 
 /**
