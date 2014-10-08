@@ -106,6 +106,7 @@ ws_wayland_obj_new(
     }
 
     if (0 == ws_wayland_obj_init(w, r)) {
+        w->obj.settings |= WS_OBJECT_HEAPALLOCED;
         return w;
     }
 
