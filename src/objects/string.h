@@ -34,7 +34,142 @@
 #ifndef __WS_OBJECTS_STRING_H__
 #define __WS_OBJECTS_STRING_H__
 
+#include <stdbool.h>
+#include <unicode/ustring.h>
 
+#include "objects/object.h"
+#include "objects/array.h"
+
+/**
+* ws_string type definition
+*/
+struct ws_string {
+    struct ws_object obj; //!< Supertype
+    size_t charcount; //!< Number of characters in the string
+    UChar* str; //!< UChar array containing the actual string
+    bool is_utf8; 
+};
+
+/**
+* ws_string type information
+*/
+extern ws_object_type_id WS_OBJECT_TYPE_ID_STRING;
+
+/**
+ * Initialize a ws_string
+ *
+ * @return true if ws_string object was successfully initialized,
+ * NULL on failire
+ */
+bool
+ws_string_init(
+    struct ws_string* self
+);
+
+/**
+ * Allocate a new, initialized ws_string
+ * 
+ * @return allocated, initialized ws_string object, NULL on failure 
+ */
+struct ws_string*
+ws_string_new(void);
+
+/**
+ * Get length of a ws_string
+ *
+ * @return length of ws_string, 0 on NULL passed
+ */
+size_t
+ws_string_len(
+    struct ws_string* self
+);
+
+/**
+ * Concatenate two ws_strings
+ *
+ * @return self with other appended to self, NULL on failure
+ */
+struct ws_string*
+ws_string_cat(
+    struct ws_string* self,
+    struct ws_string* other
+);
+
+/**
+ * Concatenate multiple ws_strings
+ *
+ * @return ws_string object with contents of other consecutively appended
+ * to self, NULL if ws_array contains at least one non-string element or is NULL */
+
+struct ws_string*
+ws_string_multicat(
+    struct ws_string* self,
+    struct ws_array* others
+);
+
+
+/**
+ * Duplicate a ws_string object
+ *
+ * @return copy of self, NULL on failure
+ */
+struct ws_string*
+ws_string_dupl(
+    struct ws_string* self
+);
+
+/**
+ * Compare if the contents of two ws_strings are equal
+ *
+ * @return 0 if the contents of both strings are equal,
+ * -1 if the first character that does not match has a lower value in self than
+ * in other, 1 if the first character that does not match has a greater value in
+ * self than in other 
+ */
+int
+ws_string_cmp(
+    struct ws_string* self,
+    struct ws_string* other
+);
+
+/**
+ * Compare if a substring of a ws_string and another ws_string are equal
+ *
+ * @return 0 if the contents of self's substring and other are equal,
+ * -1 if the first character that does not match has a lower value in self than
+ * in other, 1 if the first character that does not match has a greater value in
+ * self than in other
+ */
+int
+ws_string_ncmp(
+    struct ws_string* self,
+    struct ws_string* other,
+    size_t offset,
+    size_t n
+);
+
+/**
+ * Checks if a string is a substring of another ws_string
+ *
+ * @return true if other is a substring, else false
+ */
+bool
+ws_string_substr(
+    struct ws_string* self,
+    struct ws_string* other
+);
+
+/**
+ * Get ws_string as a UTF-8 string
+ *
+ * @warning returns NULL if ws_string is no UTF8 string
+ *
+ * @return Returns the ws_string as an UTF-8 string, NULL on failure
+ */
+char*
+ws_string_raw(
+    struct ws_string* self
+);
 
 #endif // __WS_OBJECTS_STRING_H__
 
