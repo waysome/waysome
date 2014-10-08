@@ -91,6 +91,15 @@ ws_wayland_obj_get_wl_resource(
 );
 
 /**
+ * Set the wl_resource to encapsulate in the ws_wayland_obj object
+ */
+void
+ws_wayland_obj_set_wl_resource(
+    struct ws_wayland_obj* self, //!< The object
+    struct wl_resource* resource //!< resource to encapsulate
+);
+
+/**
  * Get the ID of the underlying wl_object object
  *
  * @warning Not NULL safe.
