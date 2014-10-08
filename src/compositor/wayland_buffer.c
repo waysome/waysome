@@ -185,6 +185,7 @@ ws_wayland_buffer_new(
         goto cleanup;
     }
     w->buf.obj.id = &buffer_type.type;
+    w->buf.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     return w;
 
