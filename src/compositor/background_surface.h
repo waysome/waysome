@@ -37,6 +37,7 @@ struct ws_image_buffer {
     int height;
     int stride;
     int width;
+    int size;
     void* buffer;
 };
 
