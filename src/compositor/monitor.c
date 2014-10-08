@@ -88,6 +88,7 @@ ws_monitor_new(
     struct ws_monitor* tmp = calloc(1, sizeof(*tmp));
     ws_object_init((struct ws_object*)tmp);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_MONITOR;
+    tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
     return tmp;
 }
 
