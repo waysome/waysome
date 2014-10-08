@@ -177,6 +177,18 @@ ws_buffer_end_access(
 )
 __ws_nonnull__(1)
 ;
+/**
+ * Blit two buffers together (This copies one into the other)
+ *
+ * @warning do not pass NULL to this function! It will crash!
+ */
+void
+ws_buffer_blit(
+    struct ws_buffer* dest, //!< The buffer to copy into
+    struct ws_buffer* src //!< The buffer to copy from
+)
+__ws_nonnull__(1,2)
+;
 
 #endif // __WS_BUFFER_H__
 
