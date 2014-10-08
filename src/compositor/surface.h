@@ -28,6 +28,7 @@
 #ifndef __WS_WL_SURFACE_H__
 #define __WS_WL_SURFACE_H__
 
+#include "compositor/wayland_buffer.h"
 #include "objects/wayland_obj.h"
 
 
@@ -38,6 +39,7 @@
  */
 struct ws_surface {
     struct ws_wayland_obj wl_obj; //!< parent object
+    struct ws_wayland_buffer img_buf; //!< image buffer
 };
 
 /**

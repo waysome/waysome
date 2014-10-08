@@ -237,6 +237,9 @@ ws_surface_new(
     ws_wayland_obj_init(&self->wl_obj, resource);
     self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SURFACE;
 
+    // initialize the members
+    ws_wayland_buffer_init(&self->img_buf, NULL);
+
     return self;
 
 cleanup_surface:
@@ -256,7 +259,11 @@ surface_destroy_cb(
     struct wl_client* client,
     struct wl_resource* resource
 ) {
-    //!< @todo: implement
+    struct ws_surface* self;
+    self = (struct ws_surface*) wl_resource_get_user_data(resource);
+
+    // deinitialize the main image buffer
+    ws_object_deinit(&self->img_buf.wl_obj.obj);
 }
 
 static void
