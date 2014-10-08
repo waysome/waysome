@@ -121,3 +121,25 @@ ws_buffer_format(
     return type->get_format(self);
 }
 
+void
+ws_buffer_begin_access(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->begin_access)) {
+        return;
+    }
+    type->begin_access(self);
+}
+
+void
+ws_buffer_end_access(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    if (!(type && type->end_access)) {
+        return;
+    }
+    type->end_access(self);
+}
+

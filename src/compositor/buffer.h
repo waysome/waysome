@@ -156,6 +156,28 @@ ws_buffer_format(
 )
 __ws_nonnull__(1)
 ;
+/**
+ * Begin buffer access
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ */
+void
+ws_buffer_begin_access(
+    struct ws_buffer* self //!< The buffer to begin a transaction on
+)
+__ws_nonnull__(1)
+;
+/**
+ * End buffer access
+ *
+ * @warning to not pass NULL to this function! It will crash!
+ */
+void
+ws_buffer_end_access(
+    struct ws_buffer* self //!< The buffer to end a transaction on
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_BUFFER_H__
 
