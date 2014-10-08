@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <wayland-server.h>
 
 #include "objects/wayland_obj.h"
@@ -65,6 +66,23 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ = {
  * Interface implementation
  *
  */
+
+int
+ws_wayland_obj_init(
+    struct ws_wayland_obj* self,
+    struct wl_resource* r
+) {
+    if (!self) {
+        return -EINVAL;
+    }
+
+    ws_object_init(&self->obj);
+
+    self->obj.id = &WS_OBJECT_TYPE_ID_WAYLAND_OBJ;
+    self->resource = r;
+
+    return 0;
+}
 
 struct ws_wayland_obj*
 ws_wayland_obj_new(
