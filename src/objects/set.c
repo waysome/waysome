@@ -175,7 +175,9 @@ ws_set_get(
         return NULL;
     }
 
-    return r_set_contains(self->set, cmp);
+    struct ws_object* o = r_set_contains(self->set, cmp);
+    ws_object_getref(o);
+    return o;
 }
 
 // int
