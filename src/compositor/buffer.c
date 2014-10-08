@@ -27,3 +27,25 @@
 
 #include "compositor/buffer.h"
 
+ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
+    .type = {
+        .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
+        .typestr    = "ws_buffer",
+
+        .hash_callback = NULL,
+
+        .init_callback = NULL,
+        .deinit_callback = NULL,
+        .log_callback = NULL,
+        .run_callback = NULL,
+        .cmp_callback = NULL,
+    },
+    .get_data = NULL,
+    .get_width = NULL,
+    .get_height = NULL,
+    .get_stride = NULL,
+    .get_format = NULL,
+    .begin_access = NULL,
+    .end_access = NULL,
+};
+

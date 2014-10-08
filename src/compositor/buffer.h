@@ -28,6 +28,53 @@
 #ifndef __WS_BUFFER_H__
 #define __WS_BUFFER_H__
 
+#include <stdint.h>
+
+#include "objects/wayland_obj.h"
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+struct ws_buffer;
+
+
+/*
+ *
+ * Interface
+ *
+ */
+
+/**
+ * Callbacks for buffer operations
+ */
+struct ws_buffer_type {
+    struct ws_object_type type; //!< regular object type
+    void*       (*get_data)(struct ws_buffer*);
+    int32_t     (*get_width)(struct ws_buffer*);
+    int32_t     (*get_height)(struct ws_buffer*);
+    int32_t     (*get_stride)(struct ws_buffer*);
+    uint32_t    (*get_format)(struct ws_buffer*);
+    void        (*begin_access)(struct ws_buffer*);
+    void        (*end_access)(struct ws_buffer*);
+};
+
+typedef struct ws_buffer_type const ws_buffer_type_id;
+
+/**
+ * Abstract buffer type
+ */
+struct ws_buffer {
+    struct ws_object obj;
+    struct ws_buffer_cbs* funcs;
+};
+
+/**
+ * Variable which holds the type information about the ws_wayland_obj type
+ */
+extern ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER;
 
 #endif // __WS_BUFFER_H__
 
