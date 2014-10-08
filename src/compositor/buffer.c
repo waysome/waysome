@@ -71,8 +71,14 @@ ws_buffer_data(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->get_data)) {
-        return NULL;
+
+    // search for an implementation in the base classes
+    while (!type->get_data) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return NULL;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     return type->get_data(self);
 }
@@ -82,8 +88,14 @@ ws_buffer_width(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->get_width)) {
-        return 0;
+
+    // search for an implementation in the base classes
+    while (!type->get_width) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return 0;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     return type->get_width(self);
 }
@@ -93,8 +105,14 @@ ws_buffer_height(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->get_height)) {
-        return 0;
+
+    // search for an implementation in the base classes
+    while (!type->get_height) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return 0;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     return type->get_height(self);
 }
@@ -104,8 +122,14 @@ ws_buffer_stride(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->get_stride)) {
-        return 0;
+
+    // search for an implementation in the base classes
+    while (!type->get_stride) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return 0;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     return type->get_stride(self);
 }
@@ -115,8 +139,14 @@ ws_buffer_format(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->get_format)) {
-        return 0;
+
+    // search for an implementation in the base classes
+    while (!type->get_format) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return 0; //!< @todo: return invalid format
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     return type->get_format(self);
 }
@@ -126,8 +156,14 @@ ws_buffer_begin_access(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->begin_access)) {
-        return;
+
+    // search for an implementation in the base classes
+    while (!type->begin_access) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     type->begin_access(self);
 }
@@ -137,8 +173,14 @@ ws_buffer_end_access(
     struct ws_buffer* self
 ) {
     ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
-    if (!(type && type->end_access)) {
-        return;
+
+    // search for an implementation in the base classes
+    while (!type->end_access) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
     }
     type->end_access(self);
 }
