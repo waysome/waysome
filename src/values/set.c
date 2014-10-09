@@ -29,3 +29,16 @@
 #include <stdlib.h>
 #include "values/set.h"
 
+static void
+value_set_deinit(
+    struct ws_value* self
+) {
+    struct ws_value_set* s = (struct ws_value_set*) self;
+
+    if (!s) {
+        return;
+    }
+
+    ws_object_unref(&s->set->obj);
+}
+
