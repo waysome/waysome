@@ -107,3 +107,14 @@ ws_value_set_union(
 }
 */
 
+/*
+int
+ws_value_set_intersection(
+    struct ws_value_set* dest,
+    struct ws_value_set const* src_a,
+    struct ws_value_set const* src_b
+) {
+    return ws_set_intersection(dest->set, src_a->set, src_b->set);
+}
+*/
+
