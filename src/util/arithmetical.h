@@ -48,6 +48,13 @@
  */
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 
+/**
+ * Returns the smaller of the two numbers
+ *
+ * @returns x if x<y else y
+ */
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
+
 #endif // __WS_UTIL_ARITHMETICAL_H__
 
 /**
