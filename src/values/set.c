@@ -118,3 +118,14 @@ ws_value_set_intersection(
 }
 */
 
+/*
+int
+ws_value_set_xor(
+    struct ws_value_set* dest,
+    struct ws_value_set const* src_a,
+    struct ws_value_set const* src_b
+) {
+    return ws_set_xor(dest->set, src_a->set, src_b->set);
+}
+*/
+
