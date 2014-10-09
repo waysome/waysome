@@ -66,6 +66,18 @@ struct ws_array {
 extern ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY;
 
 /**
+ * Initialize an array object
+ *
+ * @memberof ws_array
+ *
+ * @return zero on success, else negative error number from errno.h
+ */
+int
+ws_array_init(
+    struct ws_array* self //!< Array object
+);
+
+/**
  * Allocate a new, initialized array object
  *
  * @memberof ws_array
