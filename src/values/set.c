@@ -139,3 +139,11 @@ ws_value_set_is_subset(
 }
 */
 
+bool
+ws_value_set_equal(
+    struct ws_value_set const* self,
+    struct ws_value_set const* other
+) {
+    return ws_set_equal(self->set, other->set);
+}
+
