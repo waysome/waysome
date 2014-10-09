@@ -199,7 +199,8 @@ ws_buffer_blit(
         return;
     }
 
-    int min_x = MIN(ws_buffer_width(dest), ws_buffer_width(src));
+    //!< @todo use byte-size instead of stride
+    int min_x = MIN(ws_buffer_stride(dest), ws_buffer_stride(src));
     int min_y = MIN(ws_buffer_height(dest), ws_buffer_height(src));
 
     int stride_dst = ws_buffer_stride(dest);
