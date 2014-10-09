@@ -34,6 +34,11 @@
 #include "compositor/surface.h"
 #include "util/wayland.h"
 
+/**
+ * Version of the wayland surface interface we're implementing
+ */
+#define WAYLAND_SURFACE_VERSION (1)
+
 /*
  *
  * Forward declarations
@@ -179,7 +184,7 @@ resource_destroy(
  *
  * This interface definition holds all the methods for the surface type.
  */
-static const struct wl_surface_interface interface = {
+static struct wl_surface_interface interface = {
     .destroy                = surface_destroy_cb,
     .attach                 = surface_attach_cb,
     .damage                 = surface_damage_cb,
@@ -221,14 +226,16 @@ ws_surface_new(
 
     // try to set up the resource
     struct wl_resource* resource;
-    resource = wl_resource_create(client,
-                                  (const struct wl_interface*) &interface,
-                                  3, serial);
+    resource = wl_resource_create(client, &wl_surface_interface,
+                                  WAYLAND_SURFACE_VERSION, serial);
     if (!resource) {
         goto cleanup_surface;
     }
-    wl_resource_set_user_data(resource, ws_object_getref(&self->wl_obj.obj));
-    wl_resource_set_destructor(resource, resource_destroy);
+
+    // set the implementation
+    wl_resource_set_implementation(resource, &interface,
+                                   ws_object_getref(&self->wl_obj.obj),
+                                   resource_destroy);
 
     // finish the initialisation
     ws_wayland_obj_init(&self->wl_obj, resource);
