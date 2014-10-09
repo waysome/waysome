@@ -51,6 +51,7 @@ set(SOURCE_FILES
     compositor/monitor.c
     compositor/surface.c
     compositor/wayland_buffer.c
+    compositor/wayland_compositor.c
     logger/module.c
     main.c
     objects/array.c
