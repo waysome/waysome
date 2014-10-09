@@ -30,6 +30,7 @@
 
 #include "util/arithmetical.h"
 
+#include "compositor/internal_context.h"
 #include "compositor/buffer.h"
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
@@ -217,7 +218,12 @@ ws_buffer_blit(
     }
 
     //!< @todo use byte-size instead of stride
-    int min_x = MIN(ws_buffer_stride(dest), ws_buffer_stride(src));
+    ws_log(&log_ctx, "Blitting image with dim: %dx%d with bpp:%d",
+            ws_buffer_width(src),
+            ws_buffer_height(src),
+            ws_buffer_bpp(src));
+    int min_x = MIN(ws_buffer_width(dest) * ws_buffer_bpp(dest),
+            ws_buffer_width(src) * ws_buffer_bpp(src));
     int min_y = MIN(ws_buffer_height(dest), ws_buffer_height(src));
 
     int stride_dst = ws_buffer_stride(dest);
