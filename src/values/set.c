@@ -87,3 +87,12 @@ ws_value_set_remove(
 ) {
     return ws_set_remove(self->set, cmp);
 }
+
+struct ws_object*
+ws_value_set_get(
+    struct ws_value_set const* self,
+    struct ws_object const* cmp
+) {
+    return  ws_set_get(self->set, cmp);
+}
+
