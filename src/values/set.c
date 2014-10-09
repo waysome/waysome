@@ -79,3 +79,11 @@ ws_value_set_insert(
 ) {
     return ws_set_insert(self->set, obj);
 }
+
+int
+ws_value_set_remove(
+    struct ws_value_set* self,
+    struct ws_object const* cmp
+) {
+    return ws_set_remove(self->set, cmp);
+}
