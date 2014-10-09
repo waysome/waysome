@@ -25,11 +25,28 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
+
 // wayland-server.h has to be included before wayland-server-protocol.h
 #include <wayland-server.h>
 #include <wayland-server-protocol.h>
 
 #include "compositor/wayland_compositor.h"
+#include "objects/wayland_obj.h"
+#include "util/arithmetical.h"
+#include "util/wayland.h"
+
+/**
+ * Version of the wayland compositor interface we're implementing
+ */
+#define WAYLAND_COMPOSITOR_VERSION  (3)
+
+/**
+ * Context of the compositor
+ */
+static struct {
+    struct wl_global* comp; //!< the actual wayland compositor
+} wl_comp_ctx;
 
 /*
  *
@@ -57,6 +74,19 @@ create_region(
     uint32_t serial //!< the serial to apply to the region
 );
 
+/**
+ * Binding function for the compositor
+ *
+ * Creates a resource for the compositor
+ */
+static void
+bind_compositor(
+    struct wl_client* client, //!< client requesting the compositor
+    void* data, //!< userdata (not used)
+    uint32_t version, //!< interface version
+    uint32_t serial //!< serial to give the compositor
+);
+
 /*
  *
  * Internal constants
@@ -72,6 +102,47 @@ static struct wl_compositor_interface interface = {
     .create_surface = create_surface,
     .create_region  = create_region,
 };
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
+int
+ws_wayland_compositor_init(void) {
+    static bool is_init = false;
+    if (is_init) {
+        return 0;
+    }
+
+    // get the display
+    struct wl_display* display = ws_wayland_acquire_display();
+    if (!display) {
+        // there are a number of reasons why the display could not be acquired
+        return -1;
+    }
+
+    // try to set up the resource
+    wl_comp_ctx.comp = wl_global_create(display, &wl_compositor_interface,
+                                        WAYLAND_COMPOSITOR_VERSION, &interface,
+                                        bind_compositor);
+    if (!wl_comp_ctx.comp) {
+        goto cleanup_display;
+    }
+
+    // we don't need the display anymore
+    ws_wayland_release_display();
+
+
+    // we're done
+    is_init = true;
+    return 0;
+
+cleanup_display:
+    ws_wayland_release_display();
+    return -1;
+}
 
 /*
  *
@@ -95,5 +166,24 @@ create_region(
     uint32_t serial
 ) {
     //!< @todo: implement
+}
+
+static void
+bind_compositor(
+    struct wl_client *client,
+    void *data,
+    uint32_t version,
+    uint32_t serial
+) {
+    struct wl_resource* resource;
+    resource = wl_resource_create(client, &wl_compositor_interface,
+                                  MIN(version, WAYLAND_COMPOSITOR_VERSION),
+                                  serial);
+    if (!resource) {
+        wl_client_post_no_memory(client);
+    }
+
+    // set the implementation of the resource
+    wl_resource_set_implementation(resource, &interface, NULL, NULL);
 }
 

@@ -28,6 +28,14 @@
 #ifndef __WS_WL_COMPOSITOR_H__
 #define __WS_WL_COMPOSITOR_H__
 
+/**
+ * Initialize the wayland side of the compositor
+ *
+ * @return 0 if the initialisation was successful, a negative error code
+ *         otherwise.
+ */
+int
+ws_wayland_compositor_init(void);
 
 #endif // __WS_WL_SURFACE_H__
 
