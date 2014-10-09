@@ -71,7 +71,7 @@ deinit_set(
  */
 static const struct r_set_cfg WS_SET_CONFIGURATION= {
     .cmpf = cmp_objects,
-    .copyf = (void const* (*)(void const*)) ws_object_getref,
+    .copyf = (void* (*)(void*)) ws_object_getref,
     .freef = (void (*)(void*)) ws_object_unref,
     .hashf = (r_hash (*)(void const*)) ws_object_hash,
 };
