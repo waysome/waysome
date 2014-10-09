@@ -96,3 +96,14 @@ ws_value_set_get(
     return  ws_set_get(self->set, cmp);
 }
 
+/*
+int
+ws_value_set_union(
+    struct ws_value_set* dest,
+    struct ws_value_set const* src_a,
+    struct ws_value_set const* src_b
+) {
+    return ws_set_union(dest->set, src_a->set, src_b->set);
+}
+*/
+
