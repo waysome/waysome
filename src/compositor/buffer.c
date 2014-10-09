@@ -73,7 +73,7 @@ void*
 ws_buffer_data(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->get_data) {
@@ -90,7 +90,7 @@ int32_t
 ws_buffer_width(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->get_width) {
@@ -107,7 +107,7 @@ int32_t
 ws_buffer_height(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->get_height) {
@@ -124,7 +124,7 @@ int32_t
 ws_buffer_stride(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->get_stride) {
@@ -141,7 +141,7 @@ uint32_t
 ws_buffer_format(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->get_format) {
@@ -158,7 +158,7 @@ void
 ws_buffer_begin_access(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->begin_access) {
@@ -175,7 +175,7 @@ void
 ws_buffer_end_access(
     struct ws_buffer* self
 ) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) &self->obj.id;
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
 
     // search for an implementation in the base classes
     while (!type->end_access) {
