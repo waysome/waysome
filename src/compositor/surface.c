@@ -26,8 +26,10 @@
  */
 
 #include <malloc.h>
-#include <wayland-server-protocol.h>
+
+// wayland-server.h has to be included before wayland-server-protocol.h
 #include <wayland-server.h>
+#include <wayland-server-protocol.h>
 
 #include "compositor/surface.h"
 #include "util/wayland.h"
