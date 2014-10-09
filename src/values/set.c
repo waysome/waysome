@@ -72,3 +72,10 @@ ws_value_set_new(void) {
     return s;
 }
 
+int
+ws_value_set_insert(
+    struct ws_value_set* self,
+    struct ws_object* obj
+) {
+    return ws_set_insert(self->set, obj);
+}
