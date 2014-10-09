@@ -115,6 +115,11 @@ ws_compositor_deinit(
     void* dummy
 );
 
+static int
+blit_duck_on_monitor(
+    void* dummy,
+    void const* mon
+);
 
 /*
  *
@@ -141,30 +146,25 @@ ws_compositor_init(void) {
 
     retval = populate_connectors();
     if (retval < 0) {
+        ws_log(&log_ctx, "Populate Connectors failed");
         return retval;
     }
 
+    ws_log(&log_ctx, "Populating monitors with Framebuffers");
     retval = ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
             populate_framebuffers, NULL);
     if (retval < 0) {
+        ws_log(&log_ctx, "Populate Framebuffers failed");
         return retval;
     }
 
     //!< @todo: Port to buffer code once it is implemented
-    // struct ws_monitor* it = ws_comp_ctx.conns;
-    // struct ws_image_buffer* duck = ws_background_service_load_image("duck.png");
-    // while (it && duck->buffer) {
-    //     if (!it->connected) {
-    //         it = it->next;
-    //         continue;
-    //     }
-    //     ws_log(&log_ctx, "Copying into monitor with name: %s", it->mode.name);
-    //     for (int i = 0; i < duck->height; ++i) {
-    //         memcpy(it->map + (it->stride * i), (char*)duck->buffer +
-    //                 (duck->stride * i), duck->stride);
-    //     }
-    //     it = it->next;
-    // }
+    struct ws_image_buffer* duck = ws_image_buffer_from_png("duck.png");
+
+    ws_log(&log_ctx, "Starting blitting");
+    ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
+            blit_duck_on_monitor, duck);
+
 
     // initialize wayland specific stuff
     struct wl_display* display = ws_wayland_acquire_display();
@@ -198,6 +198,24 @@ cleanup_display:
  */
 
 
+static int
+blit_duck_on_monitor(
+    void* img,
+    void const* mon
+) {
+    struct ws_monitor* monitor = (struct ws_monitor*)mon;
+    struct ws_image_buffer* duck = (struct ws_image_buffer*)img;
+
+    if (!monitor->connected) {
+        ws_log(&log_ctx, "Monitor %d is not connected", monitor->crtc);
+        return 0;
+    }
+    ws_log(&log_ctx, "Copying into monitor with name: %s", monitor->mode.name);
+    ws_buffer_blit((struct ws_buffer*)monitor->buffer,
+            (struct ws_buffer*)duck);
+    return 0;
+}
+
 static void
 ws_compositor_deinit(
     void* dummy
@@ -217,6 +235,8 @@ find_connector_with_crtc(
         int crtc
 ) {
     struct ws_monitor dummy;
+    memset(&dummy, 0, sizeof(dummy));
+    dummy.obj.id = &WS_OBJECT_TYPE_ID_MONITOR;
     dummy.crtc = crtc;
     dummy.fb_dev = ws_comp_ctx.fb;
     return (struct ws_monitor*)ws_set_get(&ws_comp_ctx.monitors,
