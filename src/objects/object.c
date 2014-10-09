@@ -170,11 +170,20 @@ ws_object_unref(
 }
 
 bool
-ws_object_log(
-    struct ws_object const* const self,
-    void* log_context /*!< @todo ws_log_context* */
+ws_object_dump_state(
+    struct ws_object* self,
+    struct ws_logger_context* const ctx
 ) {
-    /** @todo implement */
+    if (self) {
+        ws_object_lock_read(self);
+        if (self->id && self->id->dump_callback) {
+            self->id->dump_callback(ctx, self);
+        }
+        ws_object_unlock(self);
+
+        return true;
+    }
+
     return false;
 }
 

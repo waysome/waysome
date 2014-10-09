@@ -44,6 +44,7 @@
 #include <pthread.h>
 
 #include "util/attributes.h"
+#include "logger/module.h"
 
 /*
  * Type names
@@ -77,10 +78,11 @@ typedef bool (*ws_object_deinit_callback)(struct ws_object* const);
 
 /**
  * log callback
- *
- * @todo Implement second parameter: struct ws_log_context*
  */
-typedef bool (*ws_object_log_callback)(struct ws_object* const, void*);
+typedef bool (*ws_object_dump_callback)(
+        struct ws_logger_context* const log_ctx,
+        struct ws_object* self
+);
 
 /**
  * run callback
@@ -113,7 +115,7 @@ struct ws_object_type {
 
     ws_object_init_callback init_callback; //!< Init callback for the type
     ws_object_deinit_callback deinit_callback; //!< Free callback for the type
-    ws_object_log_callback log_callback; //!< Log callback for the type
+    ws_object_dump_callback dump_callback; //!< Log callback for the type
     ws_object_run_callback run_callback; //!< Run callback for the type
     ws_object_hash_callback hash_callback; //!< Hash callback for the type
     ws_object_cmp_callback cmp_callback; //!< Compare callback for the type
@@ -273,9 +275,9 @@ ws_object_unref(
  * @return true if the logging was successful, else false
  */
 bool
-ws_object_log(
-    struct ws_object const* const self, //!< The object
-    void* log_context /*!< @todo ws_log_context* */
+ws_object_dump_state(
+    struct ws_object* self, //!< The object
+    struct ws_logger_context* const ctx //!< Logging context
 );
 
 /**
