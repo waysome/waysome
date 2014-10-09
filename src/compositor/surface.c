@@ -211,17 +211,12 @@ ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE = {
 
 struct ws_surface*
 ws_surface_new(
-    struct wl_client* client
+    struct wl_client* client,
+    uint32_t serial
 ) {
     struct ws_surface* self = calloc(1, sizeof(struct ws_surface));
     if (!self) {
         return NULL;
-    }
-
-    // try to get a serial
-    uint32_t serial = ws_wayland_get_next_serial();
-    if (!serial) {
-        goto cleanup_surface;
     }
 
     // try to set up the resource

@@ -54,7 +54,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE;
  */
 struct ws_surface*
 ws_surface_new(
-    struct wl_client* client //!< client requesting the surface creation
+    struct wl_client* client, //!< client requesting the surface creation
+    uint32_t serial //!< id of the newly created surface
 );
 
 #endif // __WS_WL_SURFACE_H__
