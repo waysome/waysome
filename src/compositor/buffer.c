@@ -199,15 +199,15 @@ ws_buffer_blit(
         return;
     }
 
-    int max_x = MAX(ws_buffer_width(dest), ws_buffer_width(src));
-    int max_y = MAX(ws_buffer_height(dest), ws_buffer_height(src));
+    int min_x = MIN(ws_buffer_width(dest), ws_buffer_width(src));
+    int min_y = MIN(ws_buffer_height(dest), ws_buffer_height(src));
 
     int stride_dst = ws_buffer_stride(dest);
     int stride_src = ws_buffer_stride(src);
-    for (int y = 0; y < max_y; ++y) {
+    for (int y = 0; y < min_y; ++y) {
         memcpy(((char*)buf_dst) + (y * stride_dst),
                 ((char*)buf_src) + (y * stride_src),
-                max_x
+                min_x
         );
     }
 }
