@@ -147,3 +147,10 @@ ws_value_set_equal(
     return ws_set_equal(self->set, other->set);
 }
 
+size_t
+ws_value_set_cardinality(
+    struct ws_value_set const* self
+){
+    return ws_set_cardinality(self->set);
+}
+
