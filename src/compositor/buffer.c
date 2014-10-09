@@ -154,6 +154,23 @@ ws_buffer_format(
     return type->get_format(self);
 }
 
+uint32_t
+ws_buffer_bpp(
+    struct ws_buffer* self
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
+
+    // search for an implementation in the base classes
+    while (!type->get_bpp) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return 0; //!< @todo: return invalid format
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
+    }
+    return type->get_bpp(self);
+}
+
 void
 ws_buffer_begin_access(
     struct ws_buffer* self

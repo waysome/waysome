@@ -52,6 +52,11 @@ get_format(
     struct ws_buffer* self
 );
 
+static uint32_t
+get_bpp(
+    struct ws_buffer* self
+);
+
 ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .type = {
         .supertype  = (ws_object_type_id*)&WS_OBJECT_TYPE_ID_BUFFER,
@@ -70,6 +75,7 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .get_height = get_height,
     .get_stride = get_stride,
     .get_format = get_format,
+    .get_bpp = get_bpp,
     .begin_access = NULL,
     .end_access = NULL,
 };
@@ -185,5 +191,13 @@ get_format(
 ) {
     //struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
     return 0; //!< @todo: unused (But maybe of use later)
+}
+
+static uint32_t
+get_bpp(
+    struct ws_buffer* self
+) {
+    // This is the amount of bytes per pixel (BGRA)
+    return 4;
 }
 
