@@ -129,3 +129,13 @@ ws_value_set_xor(
 }
 */
 
+/*
+bool
+ws_value_set_is_subset(
+    struct ws_value_set const* self,
+    struct ws_value_set const* other
+) {
+    return ws_set_is_subset(self->set, other->set);
+}
+*/
+
