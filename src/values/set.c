@@ -42,3 +42,18 @@ value_set_deinit(
     ws_object_unref(&s->set->obj);
 }
 
+int
+ws_value_set_init(
+    struct ws_value_set* self
+) {
+    self->set = ws_set_new();
+    if (!self) {
+        return -ENOMEM;
+    }
+
+    self->value.type = WS_VALUE_TYPE_SET;
+    self->value.deinit_callback = value_set_deinit;
+
+    return 0;
+}
+
