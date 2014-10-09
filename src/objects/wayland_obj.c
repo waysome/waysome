@@ -125,6 +125,14 @@ ws_wayland_obj_get_wl_resource(
     return NULL;
 }
 
+void
+ws_wayland_obj_set_wl_resource(
+    struct ws_wayland_obj* self,
+    struct wl_resource* resource
+) {
+    self->resource = resource;
+}
+
 uint32_t
 ws_wayland_obj_get_id(
     struct ws_wayland_obj* self

@@ -66,6 +66,15 @@ ws_wayland_buffer_new(
 );
 
 /**
+ * Set the resource of the wayland buffer
+ */
+void
+ws_wayland_buffer_set_resource(
+    struct ws_wayland_buffer* self, //!< The object to set the resource in
+    struct wl_resource* r //!< wl_buffer resource to set
+);
+
+/**
  * Get the embedded buffer
  *
  * @return the embedded buffer
