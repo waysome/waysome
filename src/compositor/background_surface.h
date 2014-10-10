@@ -30,6 +30,10 @@
 
 #include "compositor/buffer.h"
 
+/**
+ *
+ * @extends ws_buffer
+ */
 struct ws_image_buffer {
     struct ws_buffer obj;
     char* path;
