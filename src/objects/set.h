@@ -41,9 +41,9 @@
  * set interface.
  */
 struct ws_set {
-    struct ws_object obj; //!< superclass
+    struct ws_object obj; //!< @protected Base class.
 
-    struct r_set* set; //!< Actual set implementation
+    struct r_set* set; //!< @protected Actual set implementation
 };
 
 /**
