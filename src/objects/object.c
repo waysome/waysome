@@ -80,6 +80,16 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .attribute_table = WS_OBJECT_ATTRS_OBJECT,
 };
 
+static const enum ws_value_type ATTR_TYPE_VALUE_TYPE_MAP[] = {
+    [WS_OBJ_ATTR_TYPE_CHAR]     = WS_VALUE_TYPE_STRING,
+    [WS_OBJ_ATTR_TYPE_INT32]    = WS_VALUE_TYPE_INT,
+    [WS_OBJ_ATTR_TYPE_INT64]    = WS_VALUE_TYPE_INT,
+    [WS_OBJ_ATTR_TYPE_UINT32]   = WS_VALUE_TYPE_INT,
+    [WS_OBJ_ATTR_TYPE_UINT64]   = WS_VALUE_TYPE_INT,
+    [WS_OBJ_ATTR_TYPE_DOUBLE]   = WS_VALUE_TYPE_INT, //!< @todo double?
+    [WS_OBJ_ATTR_TYPE_OBJ]      = WS_VALUE_TYPE_OBJECT_ID,
+};
+
 struct ws_object*
 ws_object_new(
     size_t s
@@ -395,17 +405,7 @@ ws_object_attr_read(
         return -EFAULT;
     }
 
-    enum ws_value_type typemap[] = {
-        [WS_OBJ_ATTR_TYPE_CHAR]     = WS_VALUE_TYPE_STRING,
-        [WS_OBJ_ATTR_TYPE_INT32]    = WS_VALUE_TYPE_INT,
-        [WS_OBJ_ATTR_TYPE_INT64]    = WS_VALUE_TYPE_INT,
-        [WS_OBJ_ATTR_TYPE_UINT32]   = WS_VALUE_TYPE_INT,
-        [WS_OBJ_ATTR_TYPE_UINT64]   = WS_VALUE_TYPE_INT,
-        [WS_OBJ_ATTR_TYPE_DOUBLE]   = WS_VALUE_TYPE_INT, //!< @todo double?
-        [WS_OBJ_ATTR_TYPE_OBJ]      = WS_VALUE_TYPE_OBJECT_ID,
-    };
-
-    if (typemap[type] != ws_value_get_type(dest)) {
+    if (ATTR_TYPE_VALUE_TYPE_MAP[type] != ws_value_get_type(dest)) {
         /* Types not matching */
         ws_object_unlock(self);
         return -EINVAL;
