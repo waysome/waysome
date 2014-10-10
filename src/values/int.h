@@ -50,7 +50,7 @@
 struct ws_value_int {
     struct ws_value value;
 
-    uint32_t i;
+    uint32_t i; //!< @private
 };
 
 /**
