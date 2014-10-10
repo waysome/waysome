@@ -42,6 +42,8 @@
 
 /**
 * ws_string type definition
+ *
+ * @extends ws_object
 */
 struct ws_string {
     struct ws_object obj; //!< Supertype
