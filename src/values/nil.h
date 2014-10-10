@@ -41,7 +41,7 @@
  * @extends ws_value
  */
 struct ws_value_nil {
-    struct ws_value value;
+    struct ws_value value; //!< @protected Base class.
 };
 
 /**
