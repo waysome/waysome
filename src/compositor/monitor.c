@@ -103,6 +103,13 @@ cleanup_alloc:
     return tmp;
 }
 
+struct ws_set*
+ws_monitor_surfaces(
+    struct ws_monitor* self
+) {
+    return &self->surfaces;
+}
+
 /*
  *
  * Internal implementation

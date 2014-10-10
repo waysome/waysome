@@ -85,6 +85,19 @@ struct ws_monitor*
 ws_monitor_new(void);
 
 /**
+ * Get the set of suraces assigned to the monitor
+ *
+ * @warning you must hold a reference of the monitor while working on the set
+ *          returned to prevent destruction of the set by another thread.
+ *
+ * @return the set of surfaces assigned to the monitor
+ */
+struct ws_set*
+ws_monitor_surfaces(
+    struct ws_monitor* self //!< the monitor to query
+);
+
+/**
  * Populate the monitor with a framebuffer, unless one already exists or
  * the monitor is not connected.
  *
