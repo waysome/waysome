@@ -42,6 +42,8 @@
 /**
  * ws_value_int type definition
  *
+ * @extends ws_value
+ *
  * The implementation for the int type uses an 32-bit wide integer type
  * internally.
  */
