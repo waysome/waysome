@@ -40,6 +40,8 @@
 
 /**
  * ws_value_bool type definition
+ *
+ * @extends ws_value
  */
 struct ws_value_bool {
     struct ws_value value; //!< Supertype
