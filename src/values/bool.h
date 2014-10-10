@@ -46,7 +46,7 @@
 struct ws_value_bool {
     struct ws_value value; //!< Supertype
 
-    bool b; //!< Actual value
+    bool b; //!< @private Actual value
 };
 
 /**
