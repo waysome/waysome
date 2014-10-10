@@ -58,6 +58,7 @@ struct ws_buffer_type {
     int32_t     (*get_height)(struct ws_buffer*);
     int32_t     (*get_stride)(struct ws_buffer*);
     uint32_t    (*get_format)(struct ws_buffer*);
+    uint32_t    (*get_bpp)(struct ws_buffer*);
     void        (*begin_access)(struct ws_buffer*);
     void        (*end_access)(struct ws_buffer*);
 };
@@ -154,6 +155,19 @@ ws_buffer_format(
     struct ws_buffer* self //!< The buffer to query
 )
 __ws_nonnull__(1)
+;
+
+/**
+ * Get the buffer's bits per pixel
+ *
+ * @return bits per pixel of this buffer
+ */
+uint32_t
+ws_buffer_bpp(
+    struct ws_buffer* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+
 ;
 /**
  * Begin buffer access

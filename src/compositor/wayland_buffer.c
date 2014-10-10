@@ -88,6 +88,16 @@ get_format(
 );
 
 /**
+ * Get the buffer's bpp
+ *
+ * @return bpp
+ */
+static uint32_t
+get_bpp(
+    struct ws_buffer* self
+);
+
+/**
  * Begin a transaction
  */
 static void
@@ -131,6 +141,7 @@ static ws_buffer_type_id buffer_type = {
     .get_height = get_height,
     .get_stride = get_stride,
     .get_format = get_format,
+    .get_bpp = get_bpp,
     .begin_access = begin_access,
     .end_access = end_access,
 };
@@ -279,6 +290,14 @@ get_format(
     // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_format(shm_buffer);
+}
+
+static uint32_t
+get_bpp(
+    struct ws_buffer* self
+) {
+    // 4 Bytes per pixel (BGRA)
+    return 4;
 }
 
 static void
