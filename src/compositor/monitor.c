@@ -90,7 +90,24 @@ ws_monitor_new(
     ws_object_init((struct ws_object*)tmp);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_MONITOR;
     tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
+
+    // initialize members
+    if (ws_set_init(&tmp->surfaces) < 0) {
+        goto cleanup_alloc;
+    }
+
     return tmp;
+
+cleanup_alloc:
+    free(tmp);
+    return tmp;
+}
+
+struct ws_set*
+ws_monitor_surfaces(
+    struct ws_monitor* self
+) {
+    return &self->surfaces;
 }
 
 /*
@@ -129,6 +146,8 @@ ws_monitor_deinit(
         drmIoctl(self->fb_dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
     }
     ws_object_unref((struct ws_object*)self->fb_dev);
+
+    ws_object_deinit((struct ws_object*) &self->surfaces);
     return true;
 }
 

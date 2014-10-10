@@ -45,6 +45,7 @@
 #include <xf86drmMode.h>
 
 #include "objects/object.h"
+#include "objects/set.h"
 
 /**
  * ws_monitor type definition
@@ -64,6 +65,8 @@ struct ws_monitor {
     uint32_t conn; //!< id of the connector
     uint32_t crtc; //!< id of the "monitor"
     drmModeCrtc* saved_crtc; //!< drm internal datastructure for the crtc
+
+    struct ws_set surfaces;
 };
 
 /**
@@ -80,6 +83,19 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR;
  */
 struct ws_monitor*
 ws_monitor_new(void);
+
+/**
+ * Get the set of suraces assigned to the monitor
+ *
+ * @warning you must hold a reference of the monitor while working on the set
+ *          returned to prevent destruction of the set by another thread.
+ *
+ * @return the set of surfaces assigned to the monitor
+ */
+struct ws_set*
+ws_monitor_surfaces(
+    struct ws_monitor* self //!< the monitor to query
+);
 
 /**
  * Populate the monitor with a framebuffer, unless one already exists or
