@@ -45,6 +45,7 @@
 #include <xf86drmMode.h>
 
 #include "objects/object.h"
+#include "objects/set.h"
 
 /**
  * ws_monitor type definition
@@ -64,6 +65,8 @@ struct ws_monitor {
     uint32_t conn; //!< id of the connector
     uint32_t crtc; //!< id of the "monitor"
     drmModeCrtc* saved_crtc; //!< drm internal datastructure for the crtc
+
+    struct ws_set surfaces;
 };
 
 /**
