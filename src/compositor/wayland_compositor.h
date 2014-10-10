@@ -25,38 +25,17 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_WL_SURFACE_H__
-#define __WS_WL_SURFACE_H__
-
-#include "compositor/wayland_buffer.h"
-#include "objects/wayland_obj.h"
-
+#ifndef __WS_WL_COMPOSITOR_H__
+#define __WS_WL_COMPOSITOR_H__
 
 /**
- * Waysome's implementation of wl_surface
+ * Initialize the wayland side of the compositor
  *
- * This struct represents a surface
+ * @return 0 if the initialisation was successful, a negative error code
+ *         otherwise.
  */
-struct ws_surface {
-    struct ws_wayland_obj wl_obj; //!< parent object
-    struct ws_wayland_buffer img_buf; //!< image buffer
-};
-
-/**
- * Variable which holds type information about the wl_surface type
- */
-extern ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE;
-
-/**
- * Create a new surface
- *
- * create a new surface without any bufers attached to it
- */
-struct ws_surface*
-ws_surface_new(
-    struct wl_client* client, //!< client requesting the surface creation
-    uint32_t serial //!< id of the newly created surface
-);
+int
+ws_wayland_compositor_init(void);
 
 #endif // __WS_WL_SURFACE_H__
 
