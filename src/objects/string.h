@@ -46,9 +46,9 @@
  * @extends ws_object
 */
 struct ws_string {
-    struct ws_object obj; //!< Supertype
-    size_t charcount; //!< Number of characters in the string
-    UChar* str; //!< UChar array containing the actual string
+    struct ws_object obj; //!< @protected Base class.
+    size_t charcount; //!< @protected Number of characters in the string
+    UChar* str; //!< @protected UChar array containing the actual string
     bool is_utf8; 
 };
 
