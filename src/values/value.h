@@ -49,7 +49,7 @@ typedef void (*ws_value_type_deinit_callback)(struct ws_value*);
 
 struct ws_value {
     enum ws_value_type type;
-    ws_value_type_deinit_callback deinit_callback;
+    ws_value_type_deinit_callback deinit_callback; //!< @private
 };
 
 /**
