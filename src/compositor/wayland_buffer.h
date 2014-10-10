@@ -33,6 +33,8 @@
 
 /**
  * Wayland buffer type
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_wayland_buffer {
     struct ws_wayland_obj wl_obj;
