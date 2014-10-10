@@ -38,8 +38,8 @@
  * This struct represents a surface
  */
 struct ws_surface {
-    struct ws_wayland_obj wl_obj; //!< parent object
-    struct ws_wayland_buffer img_buf; //!< image buffer
+    struct ws_wayland_obj wl_obj; //!< @protected Base class.
+    struct ws_wayland_buffer img_buf; //!< @protected image buffer
 };
 
 /**
