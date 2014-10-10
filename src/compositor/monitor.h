@@ -50,6 +50,8 @@
 /**
  * ws_monitor type definition
  *
+ * @extends ws_object
+ *
  * The ws_monitor
  */
 struct ws_monitor {
