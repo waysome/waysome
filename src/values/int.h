@@ -48,7 +48,7 @@
  * internally.
  */
 struct ws_value_int {
-    struct ws_value value;
+    struct ws_value value; //!< @protected Base class.
 
     uint32_t i; //!< @private
 };
