@@ -48,6 +48,8 @@
 /**
  * ws_framebuffer type definition
  *
+ * @extends ws_object
+ *
  * The ws_framebuffer
  */
 struct ws_framebuffer_device {
