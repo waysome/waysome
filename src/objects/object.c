@@ -34,7 +34,13 @@
 
 #include "logger/module.h"
 #include "objects/object.h"
+#include "values/bool.h"
 #include "values/int.h"
+#include "values/nil.h"
+#include "values/object_id.h"
+#include "values/set.h"
+#include "values/string.h"
+#include "values/value_named.h"
 
 static struct ws_logger_context log_ctx = {
     .prefix = "[Object] ",
@@ -80,14 +86,53 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .attribute_table = WS_OBJECT_ATTRS_OBJECT,
 };
 
-static const enum ws_value_type ATTR_TYPE_VALUE_TYPE_MAP[] = {
-    [WS_OBJ_ATTR_TYPE_CHAR]     = WS_VALUE_TYPE_STRING,
-    [WS_OBJ_ATTR_TYPE_INT32]    = WS_VALUE_TYPE_INT,
-    [WS_OBJ_ATTR_TYPE_INT64]    = WS_VALUE_TYPE_INT,
-    [WS_OBJ_ATTR_TYPE_UINT32]   = WS_VALUE_TYPE_INT,
-    [WS_OBJ_ATTR_TYPE_UINT64]   = WS_VALUE_TYPE_INT,
-    [WS_OBJ_ATTR_TYPE_DOUBLE]   = WS_VALUE_TYPE_INT, //!< @todo double?
-    [WS_OBJ_ATTR_TYPE_OBJ]      = WS_VALUE_TYPE_OBJECT_ID,
+static const struct {
+    enum ws_value_type type;
+    size_t size;
+    void (*init)(struct ws_value*);
+} ATTR_TYPE_VALUE_TYPE_MAP[] = {
+//    [WS_OBJ_ATTR_TYPE_CHAR]     = {
+//        .type = WS_VALUE_TYPE_STRING,
+//        .size = sizeof(struct ws_value_string),
+//        .init = ws_value_string_init,
+//    },
+
+    [WS_OBJ_ATTR_TYPE_INT32]    = {
+        .type = WS_VALUE_TYPE_INT,
+        .size = sizeof(struct ws_value_int),
+        .init = (void (*)(struct ws_value*)) ws_value_int_init,
+    },
+
+    [WS_OBJ_ATTR_TYPE_INT64]    = {
+        .type = WS_VALUE_TYPE_INT,
+        .size = sizeof(struct ws_value_int),
+        .init = (void (*)(struct ws_value*)) ws_value_int_init,
+    },
+
+    [WS_OBJ_ATTR_TYPE_UINT32]   = {
+        .type = WS_VALUE_TYPE_INT,
+        .size = sizeof(struct ws_value_int),
+        .init = (void (*)(struct ws_value*)) ws_value_int_init,
+    },
+
+    [WS_OBJ_ATTR_TYPE_UINT64]   = {
+        .type = WS_VALUE_TYPE_INT,
+        .size = sizeof(struct ws_value_int),
+        .init = (void (*)(struct ws_value*)) ws_value_int_init,
+    },
+
+    [WS_OBJ_ATTR_TYPE_DOUBLE]   = {
+        .type = WS_VALUE_TYPE_INT,
+        .size = sizeof(struct ws_value_int),
+        .init = (void (*)(struct ws_value*)) ws_value_int_init,
+    }, //!< @todo double?
+
+//    [WS_OBJ_ATTR_TYPE_OBJ]      = {
+//        .type = WS_VALUE_TYPE_OBJECT_ID,
+//        .size = sizeof(struct ws_value_object_id),
+//        .init = (void (*)(struct ws_value*)) ws_value_object_id_init,
+//    },
+
 };
 
 struct ws_object*
@@ -405,7 +450,7 @@ ws_object_attr_read(
         return -EFAULT;
     }
 
-    if (ATTR_TYPE_VALUE_TYPE_MAP[type] != ws_value_get_type(dest)) {
+    if (ATTR_TYPE_VALUE_TYPE_MAP[type].type != ws_value_get_type(dest)) {
         /* Types not matching */
         ws_object_unlock(self);
         return -EINVAL;
