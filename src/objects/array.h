@@ -48,6 +48,8 @@
 /**
  * ws_array type definition
  *
+ * @extends ws_object
+ *
  * The ws_array type implementation operates on `void*` internally.
  */
 struct ws_array {
