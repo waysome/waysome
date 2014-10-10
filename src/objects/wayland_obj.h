@@ -46,6 +46,8 @@
 
 /**
  * ws_wayland_obj type definition
+ *
+ * @extends ws_object
  */
 struct ws_wayland_obj {
     struct ws_object obj; //!< Supertype
