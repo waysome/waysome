@@ -44,7 +44,7 @@
  * @extends ws_value
  */
 struct ws_value_bool {
-    struct ws_value value; //!< Supertype
+    struct ws_value value; //!< @protected Base class.
 
     bool b; //!< @private Actual value
 };
