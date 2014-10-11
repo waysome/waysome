@@ -334,14 +334,14 @@ populate_connectors(void) {
 
         if (conn->connection != DRM_MODE_CONNECTED) {
             ws_log(&log_ctx, "Found unused connector %d", i);
-            new_monitor->connected = 0;
+            new_monitor->connected = false;
             goto insert;
         }
 
         if (conn->count_modes == 0) {
             ws_log(&log_ctx, "No valid modes for Connector %d.",
                     conn->connector_id);
-            new_monitor->connected = 0;
+            new_monitor->connected = false;
             goto insert;
         }
 
@@ -360,11 +360,11 @@ populate_connectors(void) {
 
         if (find_crtc(res, conn, new_monitor) < 0) {
             ws_log(&log_ctx, "No valid crtcs found");
-            new_monitor->connected = 0;
+            new_monitor->connected = false;
             goto insert;
         }
         ws_log(&log_ctx, "Found a valid crtc with id %d", new_monitor->crtc);
-        new_monitor->connected = 1;
+        new_monitor->connected = true;
 
 insert:
         ws_set_insert(&ws_comp_ctx.monitors, (struct ws_object*)new_monitor);

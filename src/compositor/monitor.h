@@ -54,7 +54,7 @@
  */
 struct ws_monitor {
     struct ws_object obj; //!< Supertype
-    int connected; //!< is the monitor connected?
+    bool connected; //!< is the monitor connected?
 
     struct ws_image_buffer* buffer; //!< The frame buffer
 
