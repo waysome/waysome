@@ -63,10 +63,8 @@ ws_object_new(
     struct ws_object* o = calloc(1, s);
 
     if (o) {
-        o->id = &WS_OBJECT_TYPE_ID_OBJECT;
+        ws_object_init(o);
         o->settings = WS_OBJECT_HEAPALLOCED;
-        pthread_rwlock_init(&o->rw_lock, NULL);
-        pthread_rwlock_init(&o->ref_counting.rwl, NULL);
     }
 
     return o;
