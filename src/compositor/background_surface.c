@@ -29,32 +29,32 @@ cmp_buffer(
 
 static void*
 get_data(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 static int32_t
 get_height(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 static int32_t
 get_width(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 static int32_t
 get_stride(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 static uint32_t
 get_format(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 static uint32_t
 get_bpp(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
@@ -155,7 +155,7 @@ cmp_buffer(
 
 static void*
 get_data(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
     return buff->buffer;
@@ -163,7 +163,7 @@ get_data(
 
 static int32_t
 get_height(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
     return  buff->height;
@@ -171,7 +171,7 @@ get_height(
 
 static int32_t
 get_width(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
     return buff->width;
@@ -179,7 +179,7 @@ get_width(
 
 static int32_t
 get_stride(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
     return buff->stride;
@@ -187,7 +187,7 @@ get_stride(
 
 static uint32_t
 get_format(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     //struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
     return 0; //!< @todo: unused (But maybe of use later)
@@ -195,7 +195,7 @@ get_format(
 
 static uint32_t
 get_bpp(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // This is the amount of bytes per pixel (BGRA)
     return 4;
