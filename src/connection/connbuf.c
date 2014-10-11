@@ -53,3 +53,15 @@ ws_connbuf_init(
     return 0;
 }
 
+void
+ws_connbuf_deinit(
+    struct ws_connbuf* self
+) {
+    free(self->buffer);
+
+    self->buffer = NULL;
+    self->data = 0;
+    self->size = 0;
+    self->blocked = false;
+}
+
