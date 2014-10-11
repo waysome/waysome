@@ -40,6 +40,17 @@
 #include <check.h>
 #include "tests.h"
 
+#include "objects/object.h"
+
+START_TEST (test_object_init) {
+    struct ws_object o;
+    memset(&o, 0, sizeof(o));
+
+    ck_assert(ws_object_init(&o));
+    ck_assert(ws_object_deinit(&o));
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -49,7 +60,7 @@ objects_suite(void)
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
-    //tcase_add_tests(tc, ...);
+    tcase_add_test(tc, test_object_init);
 
     return s;
 }
