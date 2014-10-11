@@ -65,3 +65,21 @@ ws_connbuf_deinit(
     self->blocked = false;
 }
 
+char*
+ws_connbuf_reserve(
+    struct ws_connbuf* self,
+    size_t amount
+) {
+    if (amount == 0) {
+        return NULL;
+    }
+
+    self->blocked = true;
+
+    if ((self->data + amount) > self->size) {
+        return NULL;
+    }
+
+    return self->buffer + self->data;
+}
+
