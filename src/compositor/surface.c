@@ -31,7 +31,10 @@
 #include <wayland-server.h>
 #include <wayland-server-protocol.h>
 
+#include "compositor/monitor.h"
+#include "compositor/internal_context.h"
 #include "compositor/surface.h"
+#include "objects/set.h"
 #include "util/wayland.h"
 
 /**
@@ -130,6 +133,17 @@ static void
 surface_commit_cb(
     struct wl_client* client, //!< client requesting the action
     struct wl_resource* resource //!< the resource affected by the action
+);
+
+/**
+ * Helper for iterating over monitors and committing them
+ *
+ * @return always zero
+ */
+static int
+sf_commit_blit(
+    void* mon, //!< The monitor of the current iteration
+    void const* buf //!< The buffer to blit
 );
 
 /**
@@ -329,7 +343,22 @@ surface_commit_cb(
     struct wl_client* client,
     struct wl_resource* resource
 ) {
-    //!< @todo: implement
+    struct ws_surface* s = wl_resource_get_user_data(resource);
+    ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
+                  sf_commit_blit, &s->img_buf);
+}
+
+static int
+sf_commit_blit(
+    void* mon,
+    void const* buf
+) {
+    struct ws_monitor* monitor = mon;
+    struct ws_buffer const* buffer = buf;
+
+    ws_buffer_blit((struct ws_buffer *) monitor->buffer, buffer);
+
+    return 0;
 }
 
 static void
