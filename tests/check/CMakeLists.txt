@@ -6,6 +6,8 @@ include_directories(
     ${CHECK_INCLUDE_DIRS}
 )
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pthread")
+
 #
 # This variable will hold all the tests
 #
