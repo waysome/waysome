@@ -53,12 +53,12 @@ struct ws_buffer;
  */
 struct ws_buffer_type {
     struct ws_object_type type; //!< regular object type
-    void*       (*get_data)(struct ws_buffer*);
-    int32_t     (*get_width)(struct ws_buffer*);
-    int32_t     (*get_height)(struct ws_buffer*);
-    int32_t     (*get_stride)(struct ws_buffer*);
-    uint32_t    (*get_format)(struct ws_buffer*);
-    uint32_t    (*get_bpp)(struct ws_buffer*);
+    void*       (*get_data)(struct ws_buffer const*);
+    int32_t     (*get_width)(struct ws_buffer const*);
+    int32_t     (*get_height)(struct ws_buffer const*);
+    int32_t     (*get_stride)(struct ws_buffer const*);
+    uint32_t    (*get_format)(struct ws_buffer const*);
+    uint32_t    (*get_bpp)(struct ws_buffer const*);
     void        (*begin_access)(struct ws_buffer*);
     void        (*end_access)(struct ws_buffer*);
 };
@@ -96,7 +96,7 @@ ws_buffer_init(
  */
 void*
 ws_buffer_data(
-    struct ws_buffer* self //!< The buffer to query
+    struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 ;
@@ -110,7 +110,7 @@ __ws_nonnull__(1)
  */
 int32_t
 ws_buffer_width(
-    struct ws_buffer* self //!< The buffer to query
+    struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 ;
@@ -124,7 +124,7 @@ __ws_nonnull__(1)
  */
 int32_t
 ws_buffer_height(
-    struct ws_buffer* self //!< The buffer to query
+    struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 ;
@@ -138,7 +138,7 @@ __ws_nonnull__(1)
  */
 int32_t
 ws_buffer_stride(
-    struct ws_buffer* self //!< The buffer to query
+    struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 ;
@@ -152,7 +152,7 @@ __ws_nonnull__(1)
  */
 uint32_t
 ws_buffer_format(
-    struct ws_buffer* self //!< The buffer to query
+    struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 ;
@@ -164,7 +164,7 @@ __ws_nonnull__(1)
  */
 uint32_t
 ws_buffer_bpp(
-    struct ws_buffer* self //!< The buffer to query
+    struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 
