@@ -164,7 +164,10 @@ ws_object_unref(
         return;
     }
 
-    self->id->deinit_callback(self);
+    if (self->id && self->id->deinit_callback) {
+        self->id->deinit_callback(self);
+    }
+
     pthread_rwlock_destroy(&self->ref_counting.rwl);
     free(self);
 }
