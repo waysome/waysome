@@ -83,3 +83,26 @@ ws_connbuf_reserve(
     return self->buffer + self->data;
 }
 
+int
+ws_connbuf_append(
+    struct ws_connbuf* self,
+    size_t amount
+) {
+    if (amount == 0) {
+        return -EINVAL;
+    }
+
+    if (!self->blocked) {
+        return -EINTR;
+    }
+
+    if ((self->data + amount) > self->size) {
+        return -ENOSPC;
+    }
+
+    self->data += amount;
+    self->blocked = false;
+
+    return 0;
+}
+
