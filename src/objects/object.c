@@ -182,17 +182,18 @@ ws_object_dump_state(
     struct ws_object* self,
     struct ws_logger_context* const ctx
 ) {
+    bool res = false;
+
     if (self) {
         ws_object_lock_read(self);
         if (self->id && self->id->dump_callback) {
             self->id->dump_callback(ctx, self);
+            res = true;
         }
         ws_object_unlock(self);
-
-        return true;
     }
 
-    return false;
+    return res;
 }
 
 bool
