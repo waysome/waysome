@@ -32,3 +32,24 @@
 
 #include "connection/connbuf.h"
 
+int
+ws_connbuf_init(
+    struct ws_connbuf* self,
+    size_t amount
+) {
+    if (amount == 0) {
+        return -EINVAL;
+    }
+
+    self->buffer = calloc(amount, sizeof(char));
+    if (!self->buffer) {
+        return -ENOMEM;
+    }
+
+    self->size = amount;
+    self->data = 0;
+    self->blocked = false;
+
+    return 0;
+}
+
