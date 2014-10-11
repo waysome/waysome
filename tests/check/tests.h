@@ -39,10 +39,7 @@
 
 #define WS_TESTS_CHECK_MAIN_ADJUST(genf,ckflags)                    \
     int                                                             \
-    main(                                                           \
-        int argc,                                                   \
-        char** argv                                                 \
-    ) {                                                             \
+    main(void) {                                                    \
         Suite* s;                                                   \
         SRunner* r;                                                 \
         int nfailed;                                                \
