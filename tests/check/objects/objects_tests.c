@@ -51,6 +51,16 @@ START_TEST (test_object_init) {
 }
 END_TEST
 
+START_TEST (test_object_alloc) {
+    ck_assert(ws_object_new(1) == NULL);
+
+    struct ws_object* o = ws_object_new(sizeof(*o));
+    ck_assert(o != NULL);
+
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -61,6 +71,7 @@ objects_suite(void)
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
     tcase_add_test(tc, test_object_init);
+    tcase_add_test(tc, test_object_alloc);
 
     return s;
 }
