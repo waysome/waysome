@@ -44,7 +44,7 @@
  */
 static void*
 get_data(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 /**
@@ -54,7 +54,7 @@ get_data(
  */
 static int32_t
 get_width(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 /**
@@ -64,7 +64,7 @@ get_width(
  */
 static int32_t
 get_height(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 /**
@@ -74,7 +74,7 @@ get_height(
  */
 static int32_t
 get_stride(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 /**
@@ -84,7 +84,7 @@ get_stride(
  */
 static uint32_t
 get_format(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 /**
@@ -94,7 +94,7 @@ get_format(
  */
 static uint32_t
 get_bpp(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 );
 
 /**
@@ -229,7 +229,7 @@ ws_wayland_buffer_get_buffer(
 
 static void*
 get_data(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
@@ -242,7 +242,7 @@ get_data(
 
 static int32_t
 get_width(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
@@ -255,7 +255,7 @@ get_width(
 
 static int32_t
 get_height(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
@@ -268,7 +268,7 @@ get_height(
 
 static int32_t
 get_stride(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
@@ -281,7 +281,7 @@ get_stride(
 
 static uint32_t
 get_format(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
@@ -294,7 +294,7 @@ get_format(
 
 static uint32_t
 get_bpp(
-    struct ws_buffer* self
+    struct ws_buffer const* self
 ) {
     // 4 Bytes per pixel (BGRA)
     return 4;
