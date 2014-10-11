@@ -61,6 +61,15 @@ START_TEST (test_object_alloc) {
 }
 END_TEST
 
+START_TEST (test_object_type_id) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+
+    ck_assert(&WS_OBJECT_TYPE_ID_OBJECT == ws_object_get_type_id(o));
+
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -72,6 +81,7 @@ objects_suite(void)
 
     tcase_add_test(tc, test_object_init);
     tcase_add_test(tc, test_object_alloc);
+    tcase_add_test(tc, test_object_type_id);
 
     return s;
 }
