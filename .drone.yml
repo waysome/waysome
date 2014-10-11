@@ -2,3 +2,4 @@ image: neikos/waysome_fedora
 script:
     - cmake -DHARD_MODE=ON .
     - make
+    - ctest -VV
