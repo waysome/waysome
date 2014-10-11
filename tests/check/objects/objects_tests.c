@@ -101,6 +101,14 @@ START_TEST (test_object_getref) {
 }
 END_TEST
 
+START_TEST (test_object_unref) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+    ws_object_getref(o);
+    ws_object_unref(o);
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -116,6 +124,7 @@ objects_suite(void)
     tcase_add_test(tc, test_object_settings);
     tcase_add_test(tc, test_object_settings_set);
     tcase_add_test(tc, test_object_getref);
+    tcase_add_test(tc, test_object_unref);
 
     return s;
 }
