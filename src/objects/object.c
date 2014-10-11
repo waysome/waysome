@@ -120,7 +120,7 @@ ws_object_init(
 
         pthread_rwlock_init(&self->rw_lock, NULL);
         pthread_rwlock_init(&self->ref_counting.rwl, NULL);
-        self->ref_counting.refcnt = 0;
+        self->ref_counting.refcnt = 1;
 
         if (self->id) {
             self->id->init_callback(self);
