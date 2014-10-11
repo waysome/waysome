@@ -154,10 +154,10 @@ struct ws_object {
     struct {
         pthread_rwlock_t rwl;
         size_t refcnt;
-    } ref_counting; //!< Ref counting
+    } ref_counting; //!< @private Ref counting
 
-    enum ws_object_settings settings; //!< Object settings
-    pthread_rwlock_t rw_lock; //!< Read/Write lock
+    enum ws_object_settings settings; //!< @private Object settings
+    pthread_rwlock_t rw_lock; //!< @private Read/Write lock
 };
 
 /**

@@ -42,13 +42,15 @@
 /**
  * ws_value_int type definition
  *
+ * @extends ws_value
+ *
  * The implementation for the int type uses an 32-bit wide integer type
  * internally.
  */
 struct ws_value_int {
-    struct ws_value value;
+    struct ws_value value; //!< @protected Base class.
 
-    uint32_t i;
+    uint32_t i; //!< @private
 };
 
 /**

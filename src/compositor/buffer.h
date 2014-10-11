@@ -67,9 +67,11 @@ typedef struct ws_buffer_type const ws_buffer_type_id;
 
 /**
  * Abstract buffer type
+ *
+ * @extends ws_object
  */
 struct ws_buffer {
-    struct ws_object obj;
+    struct ws_object obj; //!< @protected Base class.
 };
 
 /**

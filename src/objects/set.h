@@ -33,15 +33,17 @@
 /**
  * ws_set type definition
  *
+ * @extends ws_object
+ *
  * The ws_set type implementation operates on libreset internally.
  * The `struct ws_set` type is only used for `ws_object` objects, so nobody has
  * to care about the set configuration. Therefor, this is hold internally to the
  * set interface.
  */
 struct ws_set {
-    struct ws_object obj; //!< superclass
+    struct ws_object obj; //!< @protected Base class.
 
-    struct r_set* set; //!< Actual set implementation
+    struct r_set* set; //!< @protected Actual set implementation
 };
 
 /**

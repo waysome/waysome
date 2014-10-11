@@ -46,11 +46,13 @@
 
 /**
  * ws_wayland_obj type definition
+ *
+ * @extends ws_object
  */
 struct ws_wayland_obj {
-    struct ws_object obj; //!< Supertype
+    struct ws_object obj; //!< @protected Base class.
 
-    struct wl_resource* resource; //!< Wayland object
+    struct wl_resource* resource; //!< @private Wayland object
 };
 
 /**

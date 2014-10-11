@@ -50,23 +50,25 @@
 /**
  * ws_monitor type definition
  *
+ * @extends ws_object
+ *
  * The ws_monitor
  */
 struct ws_monitor {
-    struct ws_object obj; //!< Supertype
-    bool connected; //!< is the monitor connected?
+    struct ws_object obj; //!< @protected Base class.
+    bool connected; //!< @public is the monitor connected?
 
-    struct ws_image_buffer* buffer; //!< The frame buffer
+    struct ws_image_buffer* buffer; //!< @public The frame buffer
 
-    struct ws_framebuffer_device* fb_dev; //!< Framebuffer Device
-    drmModeModeInfo mode; //!< mode of the monitor
-    uint32_t handle; //!< Handle of the frame buffer
-    uint32_t fb; //!< id of the frame buffer
-    uint32_t conn; //!< id of the connector
-    uint32_t crtc; //!< id of the "monitor"
-    drmModeCrtc* saved_crtc; //!< drm internal datastructure for the crtc
+    struct ws_framebuffer_device* fb_dev; //!< @public Framebuffer Device
+    drmModeModeInfo mode; //!< @public mode of the monitor
+    uint32_t handle; //!< @public Handle of the frame buffer
+    uint32_t fb; //!< @public id of the frame buffer
+    uint32_t conn; //!< @public id of the connector
+    uint32_t crtc; //!< @public id of the "monitor"
+    drmModeCrtc* saved_crtc; //!< @public drm internal datastructure for crtc
 
-    struct ws_set surfaces;
+    struct ws_set surfaces; //!< @public
 };
 
 /**

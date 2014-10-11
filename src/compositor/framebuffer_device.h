@@ -48,12 +48,14 @@
 /**
  * ws_framebuffer type definition
  *
+ * @extends ws_object
+ *
  * The ws_framebuffer
  */
 struct ws_framebuffer_device {
-    struct ws_object obj; //!< Supertype
-    int fd; //!< The filedescriptor
-    char* path; //!< The path to the device file
+    struct ws_object obj; //!< @protected Base class.
+    int fd; //!< @public The filedescriptor
+    char* path; //!< @public The path to the device file
 };
 
 /**

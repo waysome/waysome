@@ -48,16 +48,18 @@
 /**
  * ws_array type definition
  *
+ * @extends ws_object
+ *
  * The ws_array type implementation operates on `void*` internally.
  */
 struct ws_array {
-    struct ws_object obj; //!< Supertype
+    struct ws_object obj; //!< @protected Base class.
 
-    size_t len; //!< Length of the array
-    size_t nused; //!< Number of used elements in the array
-    bool sorted; //!< Flag whether the array is sorted
+    size_t len; //!< @protected Length of the array
+    size_t nused; //!< @protected Number of used elements in the array
+    bool sorted; //! @protected Flag whether the array is sorted
 
-    void** ary; //!< Actual array
+    void** ary; //!< @protected Actual array
 };
 
 /**

@@ -42,11 +42,13 @@
 
 /**
 * ws_string type definition
+ *
+ * @extends ws_object
 */
 struct ws_string {
-    struct ws_object obj; //!< Supertype
-    size_t charcount; //!< Number of characters in the string
-    UChar* str; //!< UChar array containing the actual string
+    struct ws_object obj; //!< @protected Base class.
+    size_t charcount; //!< @protected Number of characters in the string
+    UChar* str; //!< @protected UChar array containing the actual string
     bool is_utf8; 
 };
 
@@ -58,6 +60,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_STRING;
 /**
  * Initialize a ws_string
  *
+ * @memberof ws_string
+ *
  * @return true if ws_string object was successfully initialized,
  * NULL on failire
  */
@@ -68,14 +72,18 @@ ws_string_init(
 
 /**
  * Allocate a new, initialized ws_string
- * 
- * @return allocated, initialized ws_string object, NULL on failure 
+ *
+ * @memberof ws_string
+ *
+ * @return allocated, initialized ws_string object, NULL on failure
  */
 struct ws_string*
 ws_string_new(void);
 
 /**
  * Get length of a ws_string
+ *
+ * @memberof ws_string
  *
  * @return length of ws_string, 0 on NULL passed
  */
@@ -87,6 +95,8 @@ ws_string_len(
 /**
  * Concatenate two ws_strings
  *
+ * @memberof ws_string
+ *
  * @return self with other appended to self, NULL on failure
  */
 struct ws_string*
@@ -97,6 +107,8 @@ ws_string_cat(
 
 /**
  * Concatenate multiple ws_strings
+ *
+ * @memberof ws_string
  *
  * @return ws_string object with contents of other consecutively appended
  * to self, NULL if ws_array contains at least one non-string element or is NULL */
@@ -111,6 +123,8 @@ ws_string_multicat(
 /**
  * Duplicate a ws_string object
  *
+ * @memberof ws_string
+ *
  * @return copy of self, NULL on failure
  */
 struct ws_string*
@@ -121,10 +135,12 @@ ws_string_dupl(
 /**
  * Compare if the contents of two ws_strings are equal
  *
+ * @memberof ws_string
+ *
  * @return 0 if the contents of both strings are equal,
  * -1 if the first character that does not match has a lower value in self than
  * in other, 1 if the first character that does not match has a greater value in
- * self than in other 
+ * self than in other
  */
 int
 ws_string_cmp(
@@ -134,6 +150,8 @@ ws_string_cmp(
 
 /**
  * Compare if a substring of a ws_string and another ws_string are equal
+ *
+ * @memberof ws_string
  *
  * @return 0 if the contents of self's substring and other are equal,
  * -1 if the first character that does not match has a lower value in self than
@@ -151,6 +169,8 @@ ws_string_ncmp(
 /**
  * Checks if a string is a substring of another ws_string
  *
+ * @memberof ws_string
+ *
  * @return true if other is a substring, else false
  */
 bool
@@ -161,6 +181,8 @@ ws_string_substr(
 
 /**
  * Get ws_string as a UTF-8 string
+ *
+ * @memberof ws_string
  *
  * @warning returns NULL if ws_string is no UTF8 string
  *
