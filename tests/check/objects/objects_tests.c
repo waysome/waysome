@@ -164,6 +164,22 @@ START_TEST (test_object_lock_try_write) {
 }
 END_TEST
 
+START_TEST (test_object_cmp) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+
+    ck_assert(ws_object_cmp(NULL, NULL) == 0);
+    ck_assert(ws_object_cmp(o, NULL) == -1);
+    ck_assert(ws_object_cmp(NULL, o) == 1);
+
+    int t = ws_object_cmp(o, o);
+    ck_assert(t != -1);
+    ck_assert(t != 0);
+    ck_assert(t != 1);
+
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -187,6 +203,7 @@ objects_suite(void)
     tcase_add_test(tc, test_object_lock_write);
     tcase_add_test(tc, test_object_lock_try_read);
     tcase_add_test(tc, test_object_lock_try_write);
+    tcase_add_test(tc, test_object_cmp);
 
     return s;
 }
