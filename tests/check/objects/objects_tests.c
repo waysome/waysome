@@ -83,6 +83,17 @@ START_TEST (test_object_settings) {
 }
 END_TEST
 
+START_TEST (test_object_settings_set) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+    ck_assert(WS_OBJECT_HEAPALLOCED == ws_object_get_settings(o));
+
+    ws_object_set_settings(o, WS_OBJ_NO_SETTINGS);
+    ck_assert(WS_OBJ_NO_SETTINGS == ws_object_get_settings(o));
+
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -96,6 +107,7 @@ objects_suite(void)
     tcase_add_test(tc, test_object_alloc);
     tcase_add_test(tc, test_object_type_id);
     tcase_add_test(tc, test_object_settings);
+    tcase_add_test(tc, test_object_settings_set);
 
     return s;
 }
