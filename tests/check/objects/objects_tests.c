@@ -38,6 +38,8 @@
  */
 
 #include <check.h>
+#include <stdbool.h>
+
 #include "tests.h"
 
 #include "objects/object.h"
@@ -109,6 +111,13 @@ START_TEST (test_object_unref) {
 }
 END_TEST
 
+START_TEST (test_object_cb_dump_state) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+    ck_assert(false == ws_object_dump_state(o, NULL));
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -125,6 +134,7 @@ objects_suite(void)
     tcase_add_test(tc, test_object_settings_set);
     tcase_add_test(tc, test_object_getref);
     tcase_add_test(tc, test_object_unref);
+    tcase_add_test(tc, test_object_cb_dump_state);
 
     return s;
 }
