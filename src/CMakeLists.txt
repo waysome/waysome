@@ -65,6 +65,7 @@ set(SOURCE_FILES
     values/int.c
     values/nil.c
     values/value.c
+    values/value_named.c
 )
 
 #
