@@ -317,7 +317,7 @@ ws_object_cmp(
     struct ws_object const* o2
 ) {
     if ((o1 == NULL) ^ (o2 == NULL)) {
-        return (o1 == NULL) ? -1 : 1;
+        return (o1 != NULL) ? -1 : 1;
     }
 
     if ((o1 == NULL) && (o2 == NULL)) {
