@@ -31,6 +31,9 @@
 #include <wayland-server.h>
 #include <wayland-server-protocol.h>
 
+#include "compositor/internal_context.h"
+#include "compositor/monitor.h"
+#include "compositor/surface.h"
 #include "compositor/wayland_compositor.h"
 #include "objects/wayland_obj.h"
 #include "util/arithmetical.h"
@@ -85,6 +88,14 @@ bind_compositor(
     void* data, //!< userdata (not used)
     uint32_t version, //!< interface version
     uint32_t serial //!< serial to give the compositor
+);
+
+/**
+ * Add the surface to a monitor
+ */
+static int add_surface_to_monitor(
+    void* surface_, //!< pointer to the surface
+    void const* monitor_ //!< pointer to the monitor
 );
 
 /*
@@ -156,7 +167,19 @@ create_surface(
     struct wl_resource* resource,
     uint32_t serial
 ) {
-    //!< @todo: implement
+    struct ws_surface* surface = ws_surface_new(client, serial);
+    if (!surface) {
+        //!< @todo: throw an error by emitting a signal
+        return;
+    }
+
+    // TEMPORARY SOLUTION: put surface on all of the availible monitors
+    //!< @todo: integrate in new infrastructure as soon as it's up
+    ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
+                  add_surface_to_monitor, surface);
+
+    // we don't need the local reference any more
+    ws_object_unref(&surface->wl_obj.obj);
 }
 
 void
@@ -185,5 +208,30 @@ bind_compositor(
 
     // set the implementation of the resource
     wl_resource_set_implementation(resource, &interface, NULL, NULL);
+}
+
+static int add_surface_to_monitor(
+    void* surface_,
+    void const* monitor_
+) {
+    struct ws_monitor* monitor = (struct ws_monitor*) monitor_;
+    struct ws_surface* surface = (struct ws_surface*) surface_;
+
+    monitor = getref(monitor);
+
+    struct ws_set* surfaces = ws_monitor_surfaces(monitor);
+    if (!surfaces) {
+        goto cleanup_monitor;
+    }
+
+    int retval = ws_set_insert(surfaces, ws_object_getref(&surface->wl_obj.obj));
+    if (retval < 0) {
+        // if the insertion failed, we unref and carry on
+        ws_object_unref(&surface->wl_obj.obj);
+    }
+
+cleanup_monitor:
+    ws_object_unref((struct ws_object*) monitor);
+    return 0;
 }
 

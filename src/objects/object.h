@@ -47,6 +47,13 @@
 #include "logger/module.h"
 
 /*
+ *
+ * Convenience macros
+ *
+ */
+#define getref(obj_) ((typeof(obj_)) ws_object_getref((struct ws_object*) (obj_)))
+
+/*
  * Type names
  */
 struct ws_object_type;
