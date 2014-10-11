@@ -43,6 +43,13 @@
 ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_object",
+
+    .init_callback = NULL,
+    .deinit_callback = NULL,
+    .dump_callback = NULL,
+    .run_callback = NULL,
+    .hash_callback = NULL,
+    .cmp_callback = NULL,
 };
 
 struct ws_object*
@@ -56,10 +63,8 @@ ws_object_new(
     struct ws_object* o = calloc(1, s);
 
     if (o) {
-        o->id = &WS_OBJECT_TYPE_ID_OBJECT;
+        ws_object_init(o);
         o->settings = WS_OBJECT_HEAPALLOCED;
-        pthread_rwlock_init(&o->rw_lock, NULL);
-        pthread_rwlock_init(&o->ref_counting.rwl, NULL);
     }
 
     return o;
@@ -120,7 +125,7 @@ ws_object_init(
 
         pthread_rwlock_init(&self->rw_lock, NULL);
         pthread_rwlock_init(&self->ref_counting.rwl, NULL);
-        self->ref_counting.refcnt = 0;
+        self->ref_counting.refcnt = 1;
 
         if (self->id) {
             self->id->init_callback(self);
@@ -164,7 +169,10 @@ ws_object_unref(
         return;
     }
 
-    self->id->deinit_callback(self);
+    if (self->id && self->id->deinit_callback) {
+        self->id->deinit_callback(self);
+    }
+
     pthread_rwlock_destroy(&self->ref_counting.rwl);
     free(self);
 }
@@ -174,17 +182,18 @@ ws_object_dump_state(
     struct ws_object* self,
     struct ws_logger_context* const ctx
 ) {
+    bool res = false;
+
     if (self) {
         ws_object_lock_read(self);
         if (self->id && self->id->dump_callback) {
             self->id->dump_callback(ctx, self);
+            res = true;
         }
         ws_object_unlock(self);
-
-        return true;
     }
 
-    return false;
+    return res;
 }
 
 bool
@@ -308,7 +317,7 @@ ws_object_cmp(
     struct ws_object const* o2
 ) {
     if ((o1 == NULL) ^ (o2 == NULL)) {
-        return (o1 == NULL) ? -1 : 1;
+        return (o1 != NULL) ? -1 : 1;
     }
 
     if ((o1 == NULL) && (o2 == NULL)) {
