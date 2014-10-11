@@ -125,6 +125,13 @@ START_TEST (test_object_cb_run) {
 }
 END_TEST
 
+START_TEST (test_object_cb_hash) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+    ck_assert(0 == ws_object_hash(o));
+    ws_object_deinit(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -143,6 +150,7 @@ objects_suite(void)
     tcase_add_test(tc, test_object_unref);
     tcase_add_test(tc, test_object_cb_dump_state);
     tcase_add_test(tc, test_object_cb_run);
+    tcase_add_test(tc, test_object_cb_hash);
 
     return s;
 }
