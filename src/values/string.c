@@ -38,7 +38,7 @@
  *
  */
 static void
-ws_value_string_deinit(
+value_string_deinit(
     struct ws_value* self
 )
 __ws_nonnull__(1)
@@ -52,7 +52,7 @@ ws_value_string_init(
         ws_value_init(&self->val);
 
         self->val.type = WS_VALUE_TYPE_STRING;
-        self->val.deinit_callback = ws_value_string_deinit;
+        self->val.deinit_callback = value_string_deinit;
 
         struct ws_string* str = ws_string_new();
 
@@ -107,7 +107,14 @@ ws_value_string_set_str(
  *
  */
 static void
-ws_value_string_deinit(
+value_string_deinit(
     struct ws_value* self
 ) {
+    struct ws_value_string* wvs = (struct ws_value_string*) self;
+    
+    if (!wvs) {
+        return;
+    }
+
+    ws_object_unref(&wvs->str->obj);
 }
