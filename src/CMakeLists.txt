@@ -61,6 +61,7 @@ set(SOURCE_FILES
     objects/set.c
     objects/string.c
     objects/wayland_obj.c
+    serialize/deserializer.c
     util/cleaner.c
     util/wayland.c
     values/bool.c
