@@ -1,9 +1,9 @@
 set(TEST_SUITES_OBJECTS
-    ws_object
+    object
 )
 
 foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
-    add_subdirectory("${TEST}")
+    add_subdirectory("ws_${TEST}")
 
 
     if (DEFINED TEST_INCLUDE_DIRS)
@@ -13,9 +13,9 @@ foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
         add_definitions(${TEST_DEFINITIONS})
     endif()
 
-    set(TEST_EXE "check_${TEST}.test")
+    set(TEST_EXE "check_ws_${TEST}.test")
     add_executable(${TEST_EXE} EXCLUDE_FROM_ALL
-        "${TEST}/test.c"
+        "ws_${TEST}/test.c"
         ${TEST_SOURCES}
     )
 
