@@ -58,3 +58,14 @@ ws_deserialize(
     return retval;
 }
 
+void
+ws_deserializer_deinit(
+    struct ws_deserializer* self
+) {
+    ws_object_unref(&self->buffer->obj);
+
+    if (self->deinit) {
+        self->deinit(self->state);
+    }
+}
+

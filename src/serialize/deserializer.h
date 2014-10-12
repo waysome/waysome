@@ -95,5 +95,18 @@ ws_deserialize(
 __ws_nonnull__(1, 2, 3)
 ;
 
+/**
+ * Deinitialize the deserializer
+ *
+ * This function deinitializes the deserializer
+ */
+void
+ws_deserializer_deinit(
+    struct ws_deserializer* self //!< the deserializer
+)
+__ws_nonnull__(1)
+;
+
+
 #endif //__WS_SERIALIZE_DESERIALIZER_H__
 
