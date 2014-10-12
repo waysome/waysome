@@ -1,5 +1,6 @@
 set(TEST_SUITES_OBJECTS
     object
+    set
 )
 
 foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
