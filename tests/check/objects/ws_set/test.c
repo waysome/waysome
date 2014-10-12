@@ -127,6 +127,20 @@ END_TEST
 
 /*
  *
+ * Tests: Element insertion, removal, etc
+ *
+ */
+
+START_TEST (test_set_insert) {
+    int i;
+    for (i = N_TEST_OBJS - 1; i; --i) {
+        ck_assert(0 == ws_set_insert(set, TEST_OBJS[i]));
+    }
+}
+END_TEST
+
+/*
+ *
  * Suite
  *
  */
@@ -146,6 +160,7 @@ set_suite(void)
 
     suite_add_tcase(s, tce);
     tcase_add_checked_fixture(tce, test_set_setup_objs, test_set_teardown_objs);
+    tcase_add_test(tce, test_set_insert);
 
     return s;
 }
