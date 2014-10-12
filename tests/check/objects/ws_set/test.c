@@ -208,6 +208,23 @@ END_TEST
 
 /*
  *
+ * Tests: Set operations
+ *
+ */
+
+START_TEST (test_set_union) {
+    ck_assert(0 == ws_set_union(set, set_a, set_b));
+
+    int i;
+
+    for (i = N_TEST_OBJS - 1; i; --i) {
+        ck_assert(TEST_OBJS[i] == ws_set_get(set, TEST_OBJS[i]));
+    }
+}
+END_TEST
+
+/*
+ *
  * Suite
  *
  */
@@ -236,6 +253,7 @@ set_suite(void)
     tcase_add_checked_fixture(tcso,
                               test_set_setup_sets,
                               test_set_teardown_sets);
+    tcase_add_test(tcso, test_set_union);
 
     return s;
 }
