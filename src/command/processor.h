@@ -28,6 +28,10 @@
 #ifndef __WS_COMMAND_PROCESSOR_H__
 #define __WS_COMMAND_PROCESSOR_H__
 
-
+/**
+ */
+struct ws_command_processor {
+    //!< @todo implement
+};
 
 #endif // __WS_COMMAND_PROCESSOR_H__
