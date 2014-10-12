@@ -66,3 +66,14 @@ ws_serialize(
     return retval + offset;
 }
 
+void
+ws_serializer_deinit(
+    struct ws_serializer* self
+) {
+    ws_object_unref(&self->buffer->obj);
+
+    if (self->deinit) {
+        self->deinit(self->state);
+    }
+}
+

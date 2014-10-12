@@ -89,5 +89,17 @@ ws_serialize(
 __ws_nonnull__(1, 2, 4)
 ;
 
+/**
+ * Deinitialize the serializer
+ *
+ * This function deinitializes the serializer
+ */
+void
+ws_serializer_deinit(
+    struct ws_serializer* self //!< the serializer
+)
+__ws_nonnull__(1)
+;
+
 #endif //__WS_SERIALIZE_SERIALIZER_H__
 
