@@ -38,9 +38,54 @@
  */
 
 #include <check.h>
+#include <stdlib.h>
 
 #include "tests.h"
+#include "objects/object.h"
+#include "objects/set.h"
 
+static struct ws_set* set = NULL;
+
+/*
+ *
+ * Setup/Teardown functions
+ *
+ */
+
+static void
+test_set_setup(void)
+{
+    ck_assert(set == NULL);
+    set = ws_set_new();
+    ck_assert(set != NULL);
+}
+
+static void
+test_set_teardown(void)
+{
+    ck_assert(set != NULL);
+    ck_assert(true == ws_object_deinit(&set->obj));
+    free(set);
+    set = NULL;
+    ck_assert(set == NULL);
+}
+
+/*
+ *
+ * Tests
+ *
+ */
+
+START_TEST (test_set_init) {
+    ck_assert(0 == ws_set_init(set));
+}
+END_TEST
+
+/*
+ *
+ * Suite
+ *
+ */
 
 static Suite*
 set_suite(void)
@@ -49,9 +94,9 @@ set_suite(void)
     TCase* tc   = tcase_create("main case");
 
     suite_add_tcase(s, tc);
-    // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
+    tcase_add_checked_fixture(tc, test_set_setup, test_set_teardown);
 
-    // tcase_add_test(tc, ...);
+    tcase_add_test(tc, test_set_init);
 
     return s;
 }
