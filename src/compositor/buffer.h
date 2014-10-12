@@ -201,7 +201,7 @@ __ws_nonnull__(1)
 void
 ws_buffer_blit(
     struct ws_buffer* dest, //!< The buffer to copy into
-    struct ws_buffer* src //!< The buffer to copy from
+    struct ws_buffer const* src //!< The buffer to copy from
 )
 __ws_nonnull__(1,2)
 ;

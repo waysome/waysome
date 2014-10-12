@@ -209,7 +209,7 @@ ws_buffer_end_access(
 void
 ws_buffer_blit(
     struct ws_buffer* dest,
-    struct ws_buffer* src
+    struct ws_buffer const* src
 ) {
     void* buf_dst = ws_buffer_data(dest);
     void* buf_src = ws_buffer_data(src);
