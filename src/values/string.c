@@ -48,6 +48,19 @@ void
 ws_value_string_init(
     struct ws_value_string* self
 ){
+    if (self) {
+        ws_value_init(&self->val);
+
+        self->val.type = WS_VALUE_TYPE_STRING;
+        self->val.deinit_callback = ws_value_string_deinit;
+
+        struct ws_string* str = ws_string_new();
+
+        if (str) {
+            str->is_utf8 = true;
+            self->str = str;
+        }
+    }
 }
 
 struct ws_value_string*
