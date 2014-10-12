@@ -81,6 +81,14 @@ START_TEST (test_set_init) {
 }
 END_TEST
 
+START_TEST (test_set_init_deinit) {
+    ck_assert(0 == ws_set_init(set));
+    ck_assert(true == ws_object_deinit((struct ws_object*) set));
+    ck_assert(0 == ws_set_init(set));
+    // reinitialize here, so we do not segfault in the teardown function
+}
+END_TEST
+
 /*
  *
  * Suite
@@ -97,6 +105,7 @@ set_suite(void)
     tcase_add_checked_fixture(tc, test_set_setup, test_set_teardown);
 
     tcase_add_test(tc, test_set_init);
+    tcase_add_test(tc, test_set_init_deinit);
 
     return s;
 }
