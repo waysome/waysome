@@ -46,6 +46,9 @@
 
 static struct ws_set* set = NULL;
 
+static struct ws_set* set_a = NULL;
+static struct ws_set* set_b = NULL;
+
 static const int N_TEST_OBJS = 15;
 static struct ws_object* TEST_OBJS[N_TEST_OBJS] = { 0 };
 
@@ -78,6 +81,30 @@ test_set_setup_objs(void)
 }
 
 static void
+test_set_setup_sets(void)
+{
+    test_set_setup_objs();
+
+    ck_assert(set_a == NULL);
+    ck_assert(set_b == NULL);
+
+    set_a = ws_set_new();
+    set_b = ws_set_new();
+
+    ck_assert(set_a != NULL);
+    ck_assert(set_b != NULL);
+
+    for (int i = N_TEST_OBJS - 1; i; --i) {
+        if (i % 2) {
+            ck_assert(0 == ws_set_insert(set_a, TEST_OBJS[i]));
+        } else {
+            ck_assert(0 == ws_set_insert(set_b, TEST_OBJS[i]));
+        }
+    }
+
+}
+
+static void
 test_set_teardown(void)
 {
     ck_assert(set != NULL);
@@ -104,6 +131,18 @@ test_set_teardown_objs(void)
 
         TEST_OBJS[i] = NULL;
     }
+}
+
+static void
+test_set_teardown_sets(void)
+{
+    ck_assert(true == ws_object_deinit((struct ws_object*) set_a));
+    set_a = NULL;
+
+    ck_assert(true == ws_object_deinit((struct ws_object*) set_b));
+    set_b = NULL;
+
+    test_set_teardown_objs();
 }
 
 /*
@@ -179,6 +218,7 @@ set_suite(void)
     Suite* s    = suite_create("Set");
     TCase* tc   = tcase_create("main case");
     TCase* tce  = tcase_create("Elements case");
+    TCase* tcso = tcase_create("Set operations case");
 
     suite_add_tcase(s, tc);
     tcase_add_checked_fixture(tc, test_set_setup, test_set_teardown);
@@ -191,6 +231,11 @@ set_suite(void)
     tcase_add_test(tce, test_set_insert);
     tcase_add_test(tce, test_set_insert_remove);
     tcase_add_test(tce, test_set_insert_get_remove);
+
+    suite_add_tcase(s, tcso);
+    tcase_add_checked_fixture(tcso,
+                              test_set_setup_sets,
+                              test_set_teardown_sets);
 
     return s;
 }
