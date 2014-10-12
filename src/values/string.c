@@ -25,5 +25,57 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
 #include "values/string.h"
 
+#include "objects/string.h"
+#include "values/value.h"
+
+/*
+ *
+ * forward delarations
+ *
+ */
+static void
+ws_value_string_deinit(
+    struct ws_value* self
+)
+__ws_nonnull__(1)
+;
+
+void
+ws_value_string_init(
+    struct ws_value_string* self
+){
+}
+
+struct ws_value_string*
+ws_value_string_new(void){
+    return NULL;
+}
+
+struct ws_string*
+ws_value_string_get_str(
+    struct ws_value_string* self
+){
+    return NULL;
+}
+
+void
+ws_value_string_set_str(
+    struct ws_value_string* self,
+    struct ws_string str
+) {
+}
+
+/*
+ *
+ * static function implementations
+ *
+ */
+static void
+ws_value_string_deinit(
+    struct ws_value* self
+) {
+}
