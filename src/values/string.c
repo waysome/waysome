@@ -89,8 +89,16 @@ ws_value_string_get_str(
 void
 ws_value_string_set_str(
     struct ws_value_string* self,
-    struct ws_string str
+    struct ws_string* str
 ) {
+    if (self && str) {
+        struct ws_string* new_str = getref(str);
+
+        if (new_str) {
+            ws_object_unref(&self->str->obj);           
+            self->str = new_str;
+        }
+    }
 }
 
 /*
