@@ -49,3 +49,22 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MESSAGE = {
     .cmp_callback = NULL,
 };
 
+/*
+ *
+ * Interface implementations
+ *
+ */
+
+int
+ws_message_init(
+    struct ws_message* self,
+    size_t id
+) {
+    ws_object_init(&self->obj);
+    self->obj.id = &WS_OBJECT_TYPE_ID_MESSAGE;
+    self->id = id;
+
+    // what could possibly go wrong?
+    return 0;
+}
+

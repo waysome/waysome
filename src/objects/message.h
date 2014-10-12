@@ -28,6 +28,8 @@
 #ifndef __WS_OBJECTS_MESSAGE_H__
 #define __WS_OBJECTS_MESSAGE_H__
 
+#include <malloc.h>
+
 #include "objects/object.h"
 
 /**
@@ -40,12 +42,28 @@
  */
 struct ws_message {
     struct ws_object obj; //!< @protected parent object
+    size_t id; //!< @protected id of the message
 };
 
 /**
  * Variable which holds the type information about the ws_message type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_MESSAGE;
+
+/**
+ * Initialize a ws_message
+ *
+ * @note for use by the derived types
+ *
+ * @return 0 on success, or a negative error code
+ */
+int
+ws_message_init(
+    struct ws_message* self, //!< message to initialize
+    size_t id //!< id to initialize the message with
+)
+__ws_nonnull__(1)
+;
 
 #endif //__WS_OBJECTS_MESSAGE_H__
 
