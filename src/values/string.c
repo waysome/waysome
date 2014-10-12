@@ -79,6 +79,10 @@ struct ws_string*
 ws_value_string_get_str(
     struct ws_value_string* self
 ){
+    if (self) {
+        return self->str;
+    }
+    
     return NULL;
 }
 
