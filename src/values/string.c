@@ -64,8 +64,15 @@ ws_value_string_init(
 }
 
 struct ws_value_string*
-ws_value_string_new(void){
-    return NULL;
+ws_value_string_new(void)
+{
+    struct ws_value_string* wvs = calloc(1, sizeof(*wvs));
+
+    if (wvs) {
+        ws_value_string_init(wvs);
+    }
+      
+    return wvs;
 }
 
 struct ws_string*
