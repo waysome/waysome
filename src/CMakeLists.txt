@@ -44,6 +44,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    command/command.c
     compositor/background_surface.c
     compositor/buffer.c
     compositor/framebuffer_device.c
