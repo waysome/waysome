@@ -1,17 +1,35 @@
-find_package(Threads REQUIRED)
+set(TEST_SUITES_OBJECTS
+    ws_object
+)
 
-set(TEST_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/objects/object.c
-    PARENT_SCOPE)
+foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
+    add_subdirectory("${TEST}")
 
-set(TEST_LIBRARIES
-    ${Threads_LIBRARIES}
-    PARENT_SCOPE)
 
-set(TEST_INCLUDE_DIRS
-    ${Threads_LIBRARIES}
-    PARENT_SCOPE)
+    if (DEFINED TEST_INCLUDE_DIRS)
+        include_directories(${TEST_INCLUDE_DIRS})
+    endif()
+    if (DEFINED TEST_DEFINITIONS)
+        add_definitions(${TEST_DEFINITIONS})
+    endif()
 
-set(TEST_DEFINITIONS
-    ${Threads_LIBRARIES}
-    PARENT_SCOPE)
+    set(TEST_EXE "check_${TEST}.test")
+    add_executable(${TEST_EXE} EXCLUDE_FROM_ALL
+        "${TEST}/test.c"
+        ${TEST_SOURCES}
+    )
+
+    target_link_libraries(${TEST_EXE}
+        ${CHECK_LIBRARY}
+        ${TEST_LIBRARIES}
+    )
+
+    add_test("build_${TEST_EXE}" "${CMAKE_COMMAND}"
+        --build ${CMAKE_BINARY_DIR}
+        --target "${TEST_EXE}"
+    )
+    add_test("${TEST_EXE}" ${TEST_EXE})
+    set_tests_properties(${TEST_EXE} PROPERTIES DEPENDS
+        "build_${TEST_EXE}"
+    )
+endforeach()

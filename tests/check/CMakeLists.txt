@@ -17,7 +17,6 @@ set (TEST_SUITES
     compositor
     connection
     logger
-    objects
     serialize
     session
     storage
@@ -67,4 +66,4 @@ else()
     message("Check framework not found")
 endif()
 
-
+add_subdirectory("objects")
