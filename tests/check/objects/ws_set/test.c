@@ -274,6 +274,20 @@ START_TEST (test_set_xor) {
 }
 END_TEST
 
+START_TEST (test_set_subset) {
+    // "set" is empty
+    ck_assert(0 == ws_set_is_subset(set, set_a));
+    ck_assert(0 == ws_set_is_subset(set, set_b));
+
+    ck_assert(1 == ws_set_is_subset(set_a, set));
+    ck_assert(1 == ws_set_is_subset(set_b, set));
+
+    // set_a and set_b are different
+    ck_assert(0 == ws_set_is_subset(set_a, set_b));
+    ck_assert(0 == ws_set_is_subset(set_b, set_a));
+}
+END_TEST
+
 /*
  *
  * Suite
@@ -307,6 +321,7 @@ set_suite(void)
     tcase_add_test(tcso, test_set_union);
     tcase_add_test(tcso, test_set_intersection);
     tcase_add_test(tcso, test_set_xor);
+    tcase_add_test(tcso, test_set_subset);
 
     return s;
 }
