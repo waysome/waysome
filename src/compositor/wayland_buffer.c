@@ -188,13 +188,15 @@ ws_wayland_buffer_new(
         return NULL;
     }
 
-    if (ws_wayland_obj_init(&w->wl_obj, r) != 0) {
+    if (ws_wayland_buffer_init(w, r) != 0) {
         goto cleanup;
     }
+    w->wl_obj.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     if (ws_buffer_init(&w->buf) != 0) {
         goto cleanup;
     }
+
     w->buf.obj.id = &buffer_type.type;
     w->buf.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
