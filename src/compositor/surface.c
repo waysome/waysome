@@ -356,6 +356,10 @@ sf_commit_blit(
     struct ws_monitor* monitor = mon;
     struct ws_buffer const* buffer = buf;
 
+    if (!monitor->buffer) {
+        return 0;
+    }
+
     ws_buffer_blit((struct ws_buffer *) monitor->buffer, buffer);
 
     return 0;
