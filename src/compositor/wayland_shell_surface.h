@@ -49,5 +49,17 @@ struct ws_shell_surface {
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE;
 
+/**
+ * Create a new surface
+ *
+ * create a new surface without any bufers attached to it
+ */
+struct ws_shell_surface*
+ws_shell_surface_new(
+    struct wl_client* client, //!< client requesting the surface creation
+    struct ws_surface* surface, //!< surface to attach
+    uint32_t serial //!< id of the newly created surface
+);
+
 #endif // __WS_WL_SHELL_SURFACE_H__
 

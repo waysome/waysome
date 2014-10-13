@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <malloc.h>
 #include <wayland-server.h>
 
 #include "compositor/wayland_shell_surface.h"
@@ -32,7 +33,7 @@
 /**
  * Version of the wayland surface interface we're implementing
  */
-#define WAYLAND_SURFACE_VERSION (1)
+#define WAYLAND_SHELL_SURFACE_VERSION (1)
 
 /*
  *
@@ -152,6 +153,20 @@ surface_set_class_cb(
     const char* class //!< class of the surface
 );
 
+/**
+ * Destroy the user data associated with a shell surface
+ *
+ * This method implements the destruction of the user data associated with a
+ * shell surface.
+ * This invalidates the object and performs an unref on it.
+ *
+ * @warning only call on resources which hold surfaces as constructed by
+ *          ws_surface_new()
+ */
+static void
+resource_destroy(
+    struct wl_resource* resource //!< resource to destroy
+);
 
 /*
  *
@@ -192,6 +207,53 @@ ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE = {
     .run_callback       = NULL,
     .hash_callback      = NULL,
 };
+
+struct ws_shell_surface*
+ws_shell_surface_new(
+    struct wl_client* client,
+    struct ws_surface* surface,
+    uint32_t serial
+) {
+    struct ws_shell_surface* self = calloc(1, sizeof(*self));
+    if (!self) {
+        return NULL;
+    }
+
+    // try to set up the resource
+    struct wl_resource* resource;
+    resource = wl_resource_create(client, &wl_shell_surface_interface,
+                                  WAYLAND_SHELL_SURFACE_VERSION, serial);
+    if (!resource) {
+        goto cleanup_surface;
+    }
+
+    // set the implementation
+    struct ws_shell_surface* user_data = getref(self);
+    if (!user_data) {
+        goto cleanup_resource;
+    }
+    wl_resource_set_implementation(resource, &interface, user_data,
+                                   resource_destroy);
+
+    // finish the initialization
+    ws_wayland_obj_init(&self->wl_obj, resource);
+    self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SHELL_SURFACE;
+
+    // initialize the members
+    self->surface = getref(surface);
+    if (!self->surface) {
+        goto cleanup_resource;
+    }
+
+    return self;
+
+cleanup_resource:
+    wl_resource_destroy(resource);
+
+cleanup_surface:
+    free(self);
+    return NULL;
+}
 
 
 /*
@@ -300,5 +362,20 @@ surface_set_class_cb(
     const char* class
 ) {
     //!< @todo: implement
+}
+
+static void
+resource_destroy(
+    struct wl_resource* resource
+) {
+    struct ws_shell_surface* surface;
+    surface = (struct ws_shell_surface*) wl_resource_get_user_data(resource);
+    // we don't need a null-check since we rely on the resource to ref a surface
+
+    // invalidate
+    ws_object_lock_write(&surface->wl_obj.obj);
+    surface->wl_obj.resource = NULL;
+    ws_object_unlock(&surface->wl_obj.obj);
+    ws_object_unref(&surface->wl_obj.obj);
 }
 
