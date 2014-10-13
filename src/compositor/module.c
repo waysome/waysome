@@ -43,6 +43,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/wayland_compositor.h"
 #include "background_surface.h"
+#include "monitor_mode.h"
 #include "monitor.h"
 
 struct ws_compositor_context ws_comp_ctx;
@@ -122,6 +123,12 @@ blit_duck_on_monitor(
     void const* mon
 );
 
+static int
+set_monitor_modes(
+    void* dummy,
+    void const* mon
+);
+
 /*
  *
  * Interface implementation
@@ -148,6 +155,14 @@ ws_compositor_init(void) {
     retval = populate_connectors();
     if (retval < 0) {
         ws_log(&log_ctx, "Populate Connectors failed");
+        return retval;
+    }
+
+    ws_log(&log_ctx, "Setting modes");
+    retval = ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
+            set_monitor_modes, NULL);
+    if (retval < 0) {
+        ws_log(&log_ctx, "Setting modes failed");
         return retval;
     }
 
@@ -215,7 +230,12 @@ blit_duck_on_monitor(
         ws_log(&log_ctx, "Monitor %d is not connected", monitor->crtc);
         return 0;
     }
-    ws_log(&log_ctx, "Copying into monitor with name: %s", monitor->mode.name);
+    if (!monitor->current_mode) {
+        ws_log(&log_ctx, "Not blitting into crtc %d", monitor->crtc);
+        return 0;
+    }
+    ws_log(&log_ctx, "Copying into monitor with name: %s",
+            monitor->current_mode->mode.name);
     ws_buffer_blit((struct ws_buffer*)monitor->buffer,
             (struct ws_buffer*)duck);
     return 0;
@@ -233,6 +253,28 @@ ws_compositor_deinit(
     //!< @todo: free all of the framebuffers
 
     //!< @todo: prelimary: free the preloaded PNG
+}
+
+static int
+set_monitor_modes(
+    void* dummy,
+    void const* mon
+) {
+    struct ws_monitor* monitor = (struct ws_monitor*)mon;
+
+    if (!monitor->connected) {
+        return 0;
+    }
+    ws_monitor_set_mode_with_id(monitor,
+            ws_set_cardinality(&monitor->modes) - 1);
+    if (monitor->current_mode) {
+        ws_log(&log_ctx, "Found a valid connector with %dx%d dimensions.",
+                monitor->current_mode->mode.hdisplay, monitor->current_mode->mode.vdisplay);
+    } else {
+        ws_log(&log_ctx, "Mode setting failed on crtc %d.", monitor->crtc);
+        return 1;
+    }
+    return 0;
 }
 
 static struct ws_monitor*
@@ -354,14 +396,14 @@ populate_connectors(void) {
                 conn->count_modes);
 
         //!< @todo: Do not just take the biggest mode available
-        memcpy(&new_monitor->mode, &conn->modes[0],
-                sizeof(new_monitor->mode));
+        int j = conn->count_modes;
+        while (j--) {
+            struct ws_monitor_mode* mode = ws_monitor_mode_new();
+            memcpy(&mode->mode, &conn->modes[j],
+                    sizeof(mode->mode));
+            ws_set_insert(&new_monitor->modes, (struct ws_object*)mode);
+        }
 
-        new_monitor->buffer->width = conn->modes[0].hdisplay;
-        new_monitor->buffer->height = conn->modes[0].vdisplay;
-
-        ws_log(&log_ctx, "Found a valid connector with %dx%d dimensions.",
-                new_monitor->buffer->width, new_monitor->buffer->height);
 
         if (find_crtc(res, conn, new_monitor) < 0) {
             ws_log(&log_ctx, "No valid crtcs found");

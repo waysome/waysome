@@ -47,6 +47,8 @@
 #include "objects/object.h"
 #include "objects/set.h"
 
+#include "monitor_mode.h"
+
 /**
  * ws_monitor type definition
  *
@@ -62,7 +64,7 @@ struct ws_monitor {
     struct ws_image_buffer* buffer; //!< @public The frame buffer
 
     struct ws_framebuffer_device* fb_dev; //!< @public Framebuffer Device
-    drmModeModeInfo mode; //!< @public mode of the monitor
+    struct ws_monitor_mode* current_mode;
     uint32_t handle; //!< @public Handle of the frame buffer
     uint32_t fb; //!< @public id of the frame buffer
     uint32_t conn; //!< @public id of the connector
@@ -70,6 +72,7 @@ struct ws_monitor {
     drmModeCrtc* saved_crtc; //!< @public drm internal datastructure for crtc
 
     struct ws_set surfaces; //!< @public
+    struct ws_set modes;
 };
 
 /**
@@ -109,6 +112,17 @@ ws_monitor_surfaces(
 void
 ws_monitor_populate_fb(
     struct ws_monitor* self
+);
+
+/**
+ * Set the mode of the monitor to the given id
+ *
+ * @memberof ws_monitor
+ */
+void
+ws_monitor_set_mode_with_id(
+    struct ws_monitor* self,
+    int id
 );
 
 #endif // __WS_OBJECTS_MONITOR_H__
