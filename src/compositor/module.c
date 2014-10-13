@@ -42,6 +42,7 @@
 #include "logger/module.h"
 #include "compositor/internal_context.h"
 #include "compositor/wayland_compositor.h"
+#include "compositor/wayland_shell.h"
 #include "background_surface.h"
 #include "monitor_mode.h"
 #include "monitor.h"
@@ -196,6 +197,11 @@ ws_compositor_init(void) {
     ws_wayland_release_display();
 
     retval = ws_wayland_compositor_init();
+    if (retval < 0) {
+        return retval;
+    }
+
+    retval = ws_wayland_shell_init();
     if (retval < 0) {
         return retval;
     }
