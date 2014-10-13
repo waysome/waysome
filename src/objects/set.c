@@ -227,7 +227,7 @@ ws_set_get(
 //     if (self && other) {
 //         return r_set_is_subset(self->set, other->set);
 //     }
-// 
+//
 //     return false;
 // }
 
@@ -284,7 +284,7 @@ cmp_objects(
     struct ws_object* o1 = (struct ws_object*) a;
     struct ws_object* o2 = (struct ws_object*) b;
 
-    return ws_object_cmp(o1, o2);
+    return !ws_object_cmp(o1, o2);
 }
 
 static bool
