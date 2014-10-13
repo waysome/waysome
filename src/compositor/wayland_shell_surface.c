@@ -25,7 +25,156 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <wayland-server.h>
+
 #include "compositor/wayland_shell_surface.h"
+
+/**
+ * Version of the wayland surface interface we're implementing
+ */
+#define WAYLAND_SURFACE_VERSION (1)
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Reply to a ping
+ */
+static void
+surface_pong_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    uint32_t serial //!< serial of the ping
+);
+
+/**
+ * Start a pointer driven move operation
+ */
+static void
+surface_move_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    struct wl_resource* seat, //!< seat which triggered the operation
+    uint32_t serial //!< serial of the request
+);
+
+/**
+ * Start a pointer driven resize
+ */
+static void
+surface_resize_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    struct wl_resource* seat, //!< seat which triggered the operation
+    uint32_t serial, //!< serial of the request
+    uint32_t edges //!< constrains for the resize
+);
+
+/**
+ * Make the surface a toplevel surface
+ */
+static void
+surface_set_toplevel_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource //!< the shell surface affected
+);
+
+/**
+ * Make the surface a transient surface
+ */
+static void
+surface_set_transient_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    struct wl_resource* parent, //!< parent of the popup
+    int32_t x, //!< requested position of the window
+    int32_t y, //!< requested position of the window
+    uint32_t flags //!< flags
+);
+
+/**
+ * Make the surface a fullscreen surface
+ */
+static void
+surface_set_fullscreen_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    uint32_t method, //!< method
+    uint32_t framerate, //!< requested framerate
+    struct wl_resource* output //!< optional parameter for intended output
+);
+
+/**
+ * Make the surface a popup surface
+ */
+static void
+surface_set_popup_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    struct wl_resource* seat, //!< seat the client wants to grab
+    uint32_t serial, //!< some serial
+    struct wl_resource* parent, //!< parent of the popup
+    int32_t x, //!< requested position of the popup
+    int32_t y, //!< requested position of the popup
+    uint32_t flags //!< flags
+);
+
+/**
+ * Maximize the surface
+ */
+static void
+surface_set_maximized_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    struct wl_resource* output //!< optional parameter for intended output
+);
+
+/**
+ * Set the title of the surface
+ */
+static void
+surface_set_title_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    const char* title //!< intended title of the surface
+);
+
+/**
+ * Set the class of the surface
+ */
+static void
+surface_set_class_cb(
+    struct wl_client* client, //!< client requesting the action
+    struct wl_resource* resource, //!< the shell surface affected
+    const char* class //!< class of the surface
+);
+
+
+/*
+ *
+ * Internal constants
+ *
+ */
+
+/**
+ * Shel surface interface definition
+ */
+static struct wl_shell_surface_interface interface = {
+    .pong           = surface_pong_cb,
+    .move           = surface_move_cb,
+    .resize         = surface_resize_cb,
+    .set_toplevel   = surface_set_toplevel_cb,
+    .set_transient  = surface_set_transient_cb,
+    .set_fullscreen = surface_set_fullscreen_cb,
+    .set_popup      = surface_set_popup_cb,
+    .set_maximized  = surface_set_maximized_cb,
+    .set_title      = surface_set_title_cb,
+    .set_class      = surface_set_class_cb,
+};
+
 
 /*
  *
@@ -43,4 +192,113 @@ ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE = {
     .run_callback       = NULL,
     .hash_callback      = NULL,
 };
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static void
+surface_pong_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    uint32_t serial
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_move_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* seat,
+    uint32_t serial
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_resize_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* seat,
+    uint32_t serial,
+    uint32_t edges
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_toplevel_cb(
+    struct wl_client* client,
+    struct wl_resource* resource
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_transient_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* parent,
+    int32_t x,
+    int32_t y,
+    uint32_t flags
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_fullscreen_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    uint32_t method,
+    uint32_t framerate,
+    struct wl_resource* output
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_popup_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* seat,
+    uint32_t serial,
+    struct wl_resource* parent,
+    int32_t x,
+    int32_t y,
+    uint32_t flags
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_maximized_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    struct wl_resource* output
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_title_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    const char* title
+) {
+    //!< @todo: implement
+}
+
+static void
+surface_set_class_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    const char* class
+) {
+    //!< @todo: implement
+}
 
