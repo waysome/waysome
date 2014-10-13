@@ -30,6 +30,38 @@
 
 #include "compositor/wayland_shell.h"
 
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+void
+create_shell_surface_cb(
+    struct wl_client* client, //!< client requesting the surface
+    struct wl_resource* resource, //!< the resource of the compositor
+    uint32_t serial, //!< the serial to apply to the surface
+    struct wl_resource* surface //!< surface to attach to the shell surface
+);
+
+
+/*
+ *
+ * Internal constants
+ *
+ */
+
+/**
+ * Surface interface definition
+ *
+ * This interface definition holds all the methods for the surface type.
+ */
+static struct wl_shell_interface interface = {
+    .get_shell_surface = create_shell_surface_cb,
+};
+
+
 /*
  *
  * Interface implementation
@@ -47,4 +79,22 @@ ws_wayland_shell_init(void) {
     is_init = true;
     return 0;
 }
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+void
+create_shell_surface_cb(
+    struct wl_client* client,
+    struct wl_resource* resource,
+    uint32_t serial,
+    struct wl_resource* surface
+) {
+    //!< @todo: implement
+}
+
 
