@@ -163,6 +163,11 @@ ws_monitor_populate_fb(
         ws_log(&log_ctx, "Did not create FB for self %d.", self->crtc);
         return;
     }
+
+    if (!self->current_mode) {
+        ws_log(&log_ctx, "No mode set, will not populate %d.", self->crtc);
+        return;
+    }
     memset(&creq, 0, sizeof(creq));
     creq.width = self->buffer->width;
     creq.height = self->buffer->height;
