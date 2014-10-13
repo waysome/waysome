@@ -209,6 +209,8 @@ ws_object_run(
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
             return false;
         }
+
+        type = type->supertype;
     }
 
     ws_object_lock_read(self);
@@ -232,6 +234,8 @@ ws_object_hash(
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
             return false;
         }
+
+        type = type->supertype;
     }
 
     ws_object_lock_read(self);
@@ -334,6 +338,8 @@ ws_object_cmp(
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
             return 17; // because it's such a nice prime number
         }
+
+        type = type->supertype;
     }
 
     return type->cmp_callback(o1, o2);
