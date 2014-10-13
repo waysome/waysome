@@ -29,6 +29,20 @@
 #include <wayland-server.h>
 
 #include "compositor/wayland_shell.h"
+#include "util/arithmetical.h"
+#include "util/wayland.h"
+
+/**
+ * Version of the wayland compositor interface we're implementing
+ */
+#define WAYLAND_SHELL_VERSION  (1)
+
+/**
+ * Context of the compositor
+ */
+static struct {
+    struct wl_global* shell; //!< the actual wayland shell
+} wl_shell_ctx;
 
 
 /*
@@ -61,6 +75,19 @@ static struct wl_shell_interface interface = {
     .get_shell_surface = create_shell_surface_cb,
 };
 
+/**
+ * Binding function for the shell
+ *
+ * Creates a resource for the shell
+ */
+static void
+bind_shell(
+    struct wl_client* client, //!< client requesting the shell
+    void* data, //!< userdata (not used)
+    uint32_t version, //!< interface version
+    uint32_t serial //!< serial to give the shell
+);
+
 
 /*
  *
@@ -75,9 +102,32 @@ ws_wayland_shell_init(void) {
         return 0;
     }
 
+    // get the display
+    struct wl_display* display = ws_wayland_acquire_display();
+    if (!display) {
+        // there are a number of reasons why the display could not be acquired
+        return -1;
+    }
+
+    // try to set up the resource
+    wl_shell_ctx.shell = wl_global_create(display, &wl_shell_interface,
+                                          WAYLAND_SHELL_VERSION, &interface,
+                                          bind_shell);
+    if (!wl_shell_ctx.shell) {
+        goto cleanup_display;
+    }
+
+    // we don't need the display anymore
+    ws_wayland_release_display();
+
+
     // we're done
     is_init = true;
     return 0;
+
+cleanup_display:
+    ws_wayland_release_display();
+    return -1;
 }
 
 
@@ -97,4 +147,23 @@ create_shell_surface_cb(
     //!< @todo: implement
 }
 
+
+static void
+bind_shell(
+    struct wl_client *client,
+    void *data,
+    uint32_t version,
+    uint32_t serial
+) {
+    struct wl_resource* resource;
+    resource = wl_resource_create(client, &wl_shell_interface,
+                                  MIN(version, WAYLAND_SHELL_VERSION),
+                                  serial);
+    if (!resource) {
+        wl_client_post_no_memory(client);
+    }
+
+    // set the implementation of the resource
+    wl_resource_set_implementation(resource, &interface, NULL, NULL);
+}
 
