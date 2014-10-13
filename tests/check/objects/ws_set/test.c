@@ -250,6 +250,30 @@ START_TEST (test_set_intersection) {
 }
 END_TEST
 
+START_TEST (test_set_xor) {
+    ck_assert(0 == ws_set_xor(set, set_a, set_b));
+
+    int i;
+
+    for (i = N_TEST_OBJS - 1; i; --i) {
+        ck_assert(NULL == ws_set_get(set, TEST_OBJS[i]));
+    }
+
+    ws_set_insert(set_a, TEST_OBJS[0]);
+    ws_set_insert(set_b, TEST_OBJS[0]);
+
+    ck_assert(0 == ws_set_xor(set, set_a, set_b));
+
+    for (i = N_TEST_OBJS - 1; i; --i) {
+        if (i == 0) {
+            ck_assert(TEST_OBJS[i] == ws_set_get(set, TEST_OBJS[i]));
+        } else {
+            ck_assert(NULL == ws_set_get(set, TEST_OBJS[i]));
+        }
+    }
+}
+END_TEST
+
 /*
  *
  * Suite
@@ -282,6 +306,7 @@ set_suite(void)
                               test_set_teardown_sets);
     tcase_add_test(tcso, test_set_union);
     tcase_add_test(tcso, test_set_intersection);
+    tcase_add_test(tcso, test_set_xor);
 
     return s;
 }
