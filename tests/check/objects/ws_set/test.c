@@ -288,6 +288,18 @@ START_TEST (test_set_subset) {
 }
 END_TEST
 
+START_TEST (test_set_cardinality) {
+    ck_assert(0 == ws_set_cardinality(set));
+
+    ck_assert(N_TEST_OBJS / 2 == ws_set_cardinality(set_a));
+    ck_assert(N_TEST_OBJS / 2 == ws_set_cardinality(set_b));
+
+    ck_assert(0 == ws_set_union(set, set_a, set_b));
+
+    ck_assert(15 == ws_set_cardinality(set));
+}
+END_TEST
+
 /*
  *
  * Suite
@@ -322,6 +334,7 @@ set_suite(void)
     tcase_add_test(tcso, test_set_intersection);
     tcase_add_test(tcso, test_set_xor);
     tcase_add_test(tcso, test_set_subset);
+    tcase_add_test(tcso, test_set_cardinality);
 
     return s;
 }
