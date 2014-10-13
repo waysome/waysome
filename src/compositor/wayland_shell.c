@@ -28,7 +28,9 @@
 #include <stdbool.h>
 #include <wayland-server.h>
 
+#include "compositor/surface.h"
 #include "compositor/wayland_shell.h"
+#include "compositor/wayland_shell_surface.h"
 #include "util/arithmetical.h"
 #include "util/wayland.h"
 
@@ -144,7 +146,10 @@ create_shell_surface_cb(
     uint32_t serial,
     struct wl_resource* surface
 ) {
-    //!< @todo: implement
+    struct ws_surface* internal_surface = ws_surface_from_resource(surface);
+
+    // we create the surface and leave the destruction to the attached resource
+    (void*) ws_shell_surface_new(client, internal_surface, serial);
 }
 
 
