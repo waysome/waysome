@@ -96,6 +96,11 @@ ws_monitor_new(
         goto cleanup_alloc;
     }
 
+    if (ws_set_init(&tmp->modes) < 0) {
+        goto cleanup_alloc;
+    }
+
+
     return tmp;
 
 cleanup_alloc:
@@ -169,6 +174,8 @@ ws_monitor_populate_fb(
         return;
     }
     memset(&creq, 0, sizeof(creq));
+    self->buffer->width = self->current_mode->mode.hdisplay;
+    self->buffer->height = self->current_mode->mode.vdisplay;
     creq.width = self->buffer->width;
     creq.height = self->buffer->height;
     creq.bpp = 32;
@@ -215,7 +222,7 @@ ws_monitor_populate_fb(
 
     self->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, self->crtc);
     ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->fb, 0, 0,
-            &self->conn, 1, &self->mode);
+            &self->conn, 1, &self->current_mode->mode);
     if (ret) {
         ws_log(&log_ctx, "Could not set the CRTC for self %d.",
                 self->crtc);
@@ -260,4 +267,19 @@ ws_monitor_cmp(
             (mon1->fb_dev->fd < mon2->fb_dev->fd);
     }
     return 0;
+}
+
+void
+ws_monitor_set_mode_with_id(
+    struct ws_monitor* self,
+    int id
+) {
+    struct ws_monitor_mode mode;
+    memset(&mode, 0, sizeof(mode));
+    mode.obj.id = &WS_OBJECT_TYPE_ID_MONITOR_MODE;
+    mode.id = id;
+    self->current_mode =
+        (struct ws_monitor_mode*) ws_set_get(
+                &self->modes,
+                (struct ws_object*)&mode);
 }
