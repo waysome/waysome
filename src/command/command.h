@@ -31,6 +31,7 @@
 #include <malloc.h>
 
 // forward declarations
+struct ws_command_processor;
 struct ws_value;
 
 /**
@@ -59,6 +60,43 @@ struct ws_argument {
 struct ws_command_args {
     size_t num; //!< @public number of arguments
     struct ws_argument* vals; //!< @public arguments
+};
+
+/**
+ * Function type for command implementation
+ *
+ * Functions of this type will implement commands which may be use in
+ * transactions.
+ */
+typedef int (*ws_regular_command_func)(struct ws_value*);
+
+/**
+ * Function type for special commands
+ *
+ * This callback type may be used for implementation of special commands, like
+ * jumps.
+ *
+ */
+typedef int (*ws_special_command_func)(struct ws_command_processor*,
+                                       struct ws_command_args*);
+
+/**
+ * Command type
+ *
+ * This datatype represents a command, which may be invoked in a transaction.
+ */
+struct ws_command {
+    char const* name; //!< @public name of the command
+
+    enum {
+        regular, //!< it's a regular command
+        special //!< it's a special command (like jump)
+    } command_type; //!< @public type of the command
+
+    union {
+        ws_regular_command_func regular; //!< @public regular commands' callback
+        ws_special_command_func special; //!< @public special commands' callback
+    } func; //!< @public function callback
 };
 
 #endif // __WS_COMMAND_COMMAND_H__
