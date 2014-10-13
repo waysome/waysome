@@ -86,7 +86,7 @@ typedef int (*ws_special_command_func)(struct ws_command_processor*,
  * This datatype represents a command, which may be invoked in a transaction.
  */
 struct ws_command {
-    char const* name; //!< @public name of the command
+    char const* const name; //!< @public name of the command
 
     enum {
         regular, //!< it's a regular command
