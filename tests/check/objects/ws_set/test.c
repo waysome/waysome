@@ -49,7 +49,7 @@ static struct ws_set* set = NULL;
 static struct ws_set* set_a = NULL;
 static struct ws_set* set_b = NULL;
 
-static const int N_TEST_OBJS = 15;
+#define N_TEST_OBJS 15
 static struct ws_object* TEST_OBJS[N_TEST_OBJS] = { 0 };
 
 /*
