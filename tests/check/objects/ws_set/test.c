@@ -246,32 +246,32 @@ END_TEST
 //}
 //END_TEST
 
-START_TEST (test_set_intersection) {
-    ck_assert(0 == ws_set_intersection(set, set_a, set_b));
-    // No intersection by now, as the sets `set_a` and `set_b` do not contain
-    // equal elements
-
-    int i;
-
-    for (i = N_TEST_OBJS - 1; i; --i) {
-        ck_assert(NULL == ws_set_get(set, TEST_OBJS[i]));
-    }
-
-    // Insert the same object into both sets here.
-    // No assertions here, as some of the objects are already in the sets
-    for (i = N_TEST_OBJS / 2; i; --i) {
-        ws_set_insert(set_a, TEST_OBJS[i]);
-        ws_set_insert(set_b, TEST_OBJS[i]);
-    }
-
-    // Now we create a _real_ intersection, where something actually happens
-    ck_assert(0 == ws_set_intersection(set, set_a, set_b));
-
-    for (i = N_TEST_OBJS / 2; i; --i) {
-        ck_assert(TEST_OBJS[i] == ws_set_get(set, TEST_OBJS[i]));
-    }
-}
-END_TEST
+//START_TEST (test_set_intersection) {
+//    ck_assert(0 == ws_set_intersection(set, set_a, set_b));
+//    // No intersection by now, as the sets `set_a` and `set_b` do not contain
+//    // equal elements
+//
+//    int i;
+//
+//    for (i = N_TEST_OBJS - 1; i; --i) {
+//        ck_assert(NULL == ws_set_get(set, TEST_OBJS[i]));
+//    }
+//
+//    // Insert the same object into both sets here.
+//    // No assertions here, as some of the objects are already in the sets
+//    for (i = N_TEST_OBJS / 2; i; --i) {
+//        ws_set_insert(set_a, TEST_OBJS[i]);
+//        ws_set_insert(set_b, TEST_OBJS[i]);
+//    }
+//
+//    // Now we create a _real_ intersection, where something actually happens
+//    ck_assert(0 == ws_set_intersection(set, set_a, set_b));
+//
+//    for (i = N_TEST_OBJS / 2; i; --i) {
+//        ck_assert(TEST_OBJS[i] == ws_set_get(set, TEST_OBJS[i]));
+//    }
+//}
+//END_TEST
 
 START_TEST (test_set_xor) {
     ck_assert(0 == ws_set_xor(set, set_a, set_b));
@@ -363,7 +363,7 @@ set_suite(void)
                               test_set_setup_sets,
                               test_set_teardown_sets);
 //    tcase_add_test(tcso, test_set_union);
-    tcase_add_test(tcso, test_set_intersection);
+//    tcase_add_test(tcso, test_set_intersection);
     tcase_add_test(tcso, test_set_xor);
     tcase_add_test(tcso, test_set_subset);
     tcase_add_test(tcso, test_set_cardinality);
