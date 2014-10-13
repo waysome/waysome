@@ -176,6 +176,13 @@ ws_wayland_buffer_init(
     ws_wayland_obj_init(&self->wl_obj, r);
     self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_WAYLAND_BUFFER;
 
+    // initialize members
+    int retval = ws_buffer_init(&w->buf);
+    if (retval < 0) {
+        return retval;
+    }
+    w->buf.obj.id = &buffer_type.type;
+
     return 0;
 }
 
@@ -192,13 +199,6 @@ ws_wayland_buffer_new(
         goto cleanup;
     }
     w->wl_obj.obj.settings |= WS_OBJECT_HEAPALLOCED;
-
-    if (ws_buffer_init(&w->buf) != 0) {
-        goto cleanup;
-    }
-
-    w->buf.obj.id = &buffer_type.type;
-    w->buf.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     return w;
 
