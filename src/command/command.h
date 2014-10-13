@@ -28,5 +28,38 @@
 #ifndef __WS_COMMAND_COMMAND_H__
 #define __WS_COMMAND_COMMAND_H__
 
+#include <malloc.h>
+
+// forward declarations
+struct ws_value;
+
+/**
+ * A command argument
+ *
+ * There are two types of arguments: the ones passed directly and the ones which
+ * are already on the stack.
+ */
+struct ws_argument {
+    enum {
+        indirect, //!< argument is given by position
+        direct //!< argument is given directly
+    } type; //!< @public type of argument (direct or indirect)
+    union {
+        ssize_t pos; //!< position, negative ones are from the top of the stack
+        struct ws_value* val; //!< a value
+    } arg; //!< @public the argument
+}; 
+
+/**
+ * Command arguments
+ * 
+ * This struct represents command arguments applied to a command as part of a
+ * statement.
+ */
+struct ws_command_args {
+    size_t num; //!< @public number of arguments
+    struct ws_argument* vals; //!< @public arguments
+};
+
 #endif // __WS_COMMAND_COMMAND_H__
 
