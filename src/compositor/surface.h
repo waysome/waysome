@@ -58,5 +58,17 @@ ws_surface_new(
     uint32_t serial //!< id of the newly created surface
 );
 
+/**
+ * Get a surface from a resource
+ *
+ * Extracts the surface from a resource.
+ *
+ * @return the surface or NULL, if the resource is not a wl_surface.
+ */
+struct ws_surface*
+ws_surface_from_resource(
+    struct wl_resource* resource
+);
+
 #endif // __WS_WL_SURFACE_H__
 
