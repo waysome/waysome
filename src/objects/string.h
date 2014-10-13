@@ -193,6 +193,18 @@ ws_string_raw(
     struct ws_string* self
 );
 
+/**
+ * Set the string contained in a ws_string object to the passed UTF8 string
+ *
+ * @memberof ws_string
+ */
+void
+ws_string_set_from_raw(
+    struct ws_string* self,
+    char* raw
+);
+
+
 #endif // __WS_OBJECTS_STRING_H__
 
 /**
