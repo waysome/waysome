@@ -99,5 +99,15 @@ struct ws_command {
     } func; //!< @public function callback
 };
 
+/**
+ * Statement
+ *
+ * This datatype represents a statement, which is part of an transaction
+ */
+struct ws_statement {
+    struct ws_command const* command; //!< @public command to invoke
+    struct ws_command_args args; //!< @public arguments to invoke the command with
+};
+
 #endif // __WS_COMMAND_COMMAND_H__
 
