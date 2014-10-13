@@ -142,8 +142,8 @@ surface_commit_cb(
  */
 static int
 sf_commit_blit(
-    void* mon, //!< The monitor of the current iteration
-    void const* buf //!< The buffer to blit
+    void* buf, //!< The buffer to blit
+    void const* mon //!< The monitor of the current iteration
 );
 
 /**
@@ -350,13 +350,13 @@ surface_commit_cb(
 
 static int
 sf_commit_blit(
-    void* mon,
-    void const* buf
+    void* buf,
+    void const* mon
 ) {
-    struct ws_monitor* monitor = mon;
-    struct ws_buffer const* buffer = buf;
+    struct ws_monitor* monitor = (void*) mon;
+    struct ws_buffer* buffer = ws_wayland_buffer_get_buffer((struct ws_wayland_buffer*)buf);
 
-    if (!monitor->buffer) {
+    if (!monitor->buffer || !ws_buffer_data((struct ws_buffer*)monitor->buffer)) {
         return 0;
     }
 
