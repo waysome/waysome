@@ -43,6 +43,51 @@
 #include "tests.h"
 #include "objects/object.h"
 #include "objects/set.h"
+#include "util/arithmetical.h"
+
+/*
+ *
+ * We need a type with a non-ws_object-compare functionality, to be able to test
+ * the set appropriately
+ *
+ */
+
+struct ws_set_test_obj {
+    struct ws_object obj;
+};
+
+static int
+compare_set_test_objs(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+) {
+    return signum(o2 - o1);
+}
+
+ws_object_type_id TEST_ID = {
+    .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
+    .typestr    = "ws_set_test_obj",
+
+    .init_callback = NULL,
+    .deinit_callback = NULL,
+    .dump_callback = NULL,
+    .run_callback = NULL,
+    .hash_callback = NULL,
+    .cmp_callback = compare_set_test_objs,
+};
+
+struct ws_set_test_obj*
+new_test_obj(void)
+{
+    struct ws_set_test_obj* o = calloc(1, sizeof(*o));
+
+    if (o) {
+        ws_object_init(&o->obj);
+        o->obj.id = &TEST_ID;
+    }
+
+    return o;
+}
 
 static struct ws_set* set = NULL;
 
@@ -73,6 +118,7 @@ processor(
 ) {
     struct ws_set* s = etc;
     ws_set_insert(s, (struct ws_object *) obj);
+    return 0;
 }
 
 /*
@@ -97,7 +143,7 @@ test_set_setup_objs(void)
     for (int i = N_TEST_OBJS - 1; i; --i) {
         ck_assert(TEST_OBJS[i] == NULL);
 
-        TEST_OBJS[i] = ws_object_new_raw();
+        TEST_OBJS[i] = (struct ws_object*) new_test_obj();
 
         ck_assert(TEST_OBJS[i] != NULL);
     }
