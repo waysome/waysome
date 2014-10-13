@@ -177,11 +177,11 @@ ws_wayland_buffer_init(
     self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_WAYLAND_BUFFER;
 
     // initialize members
-    int retval = ws_buffer_init(&w->buf);
+    int retval = ws_buffer_init(&self->buf);
     if (retval < 0) {
         return retval;
     }
-    w->buf.obj.id = &buffer_type.type;
+    self->buf.obj.id = &buffer_type.type;
 
     return 0;
 }
