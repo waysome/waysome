@@ -48,6 +48,7 @@
 #include "objects/set.h"
 
 #include "monitor_mode.h"
+#include "compositor/frame_buffer.h"
 
 /**
  * ws_monitor type definition
@@ -61,7 +62,7 @@ struct ws_monitor {
     bool connected; //!< @public is the monitor connected?
     int id; //!< @public the id of the monitor relative to the fb_dev
 
-    struct ws_image_buffer* buffer; //!< @public The frame buffer
+    struct ws_frame_buffer* buffer; //!< @public The frame buffer
 
     struct ws_framebuffer_device* fb_dev; //!< @public Framebuffer Device
     struct ws_monitor_mode* current_mode;
