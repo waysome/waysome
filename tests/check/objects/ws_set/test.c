@@ -54,6 +54,29 @@ static struct ws_object* TEST_OBJS[N_TEST_OBJS] = { 0 };
 
 /*
  *
+ * Selector helpers
+ *
+ */
+
+static int
+predicate(
+    void const* obj,
+    void* etc
+) {
+    return 1;
+}
+
+static int
+processor(
+    void* etc,
+    void const* obj
+) {
+    struct ws_set* s = etc;
+    ws_set_insert(s, (struct ws_object *) obj);
+}
+
+/*
+ *
  * Setup/Teardown functions
  *
  */
@@ -300,6 +323,15 @@ START_TEST (test_set_cardinality) {
 }
 END_TEST
 
+START_TEST (test_set_select) {
+    ck_assert(0 == ws_set_cardinality(set));
+
+    ck_assert(0 == ws_set_select(set_a, predicate, NULL, processor, set));
+
+    ck_assert(1 == ws_set_equal(set, set_a));
+}
+END_TEST
+
 /*
  *
  * Suite
@@ -335,6 +367,7 @@ set_suite(void)
     tcase_add_test(tcso, test_set_xor);
     tcase_add_test(tcso, test_set_subset);
     tcase_add_test(tcso, test_set_cardinality);
+    tcase_add_test(tcso, test_set_select);
 
     return s;
 }
