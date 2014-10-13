@@ -53,6 +53,7 @@ set(SOURCE_FILES
     compositor/surface.c
     compositor/wayland_buffer.c
     compositor/wayland_compositor.c
+    compositor/wayland_shell.c
     compositor/wayland_shell_surface.c
     logger/module.c
     main.c
