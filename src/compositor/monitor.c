@@ -246,8 +246,8 @@ ws_monitor_cmp(
     struct ws_monitor* mon1 = (struct ws_monitor*) obj1;
     struct ws_monitor* mon2 = (struct ws_monitor*) obj2;
 
-    if (mon1->crtc != mon2->crtc) {
-        return (mon1->crtc > mon2->crtc) - (mon1->crtc < mon2->crtc);
+    if (mon1->id != mon2->id) {
+        return (mon1->id > mon2->id) - (mon1->id < mon2->id);
     }
 
     if (mon1->fb_dev->fd != mon2->fb_dev->fd) {
