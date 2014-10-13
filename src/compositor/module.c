@@ -372,6 +372,7 @@ populate_connectors(void) {
         new_monitor->connected = true;
 
 insert:
+        new_monitor->id = i;
         ws_set_insert(&ws_comp_ctx.monitors, (struct ws_object*)new_monitor);
     }
     return 0;

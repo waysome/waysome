@@ -57,6 +57,7 @@
 struct ws_monitor {
     struct ws_object obj; //!< @protected Base class.
     bool connected; //!< @public is the monitor connected?
+    int id; //!< @public the id of the monitor relative to the fb_dev
 
     struct ws_image_buffer* buffer; //!< @public The frame buffer
 
