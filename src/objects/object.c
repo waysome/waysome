@@ -65,6 +65,8 @@ ws_object_new(
         return NULL;
     }
 
+    ws_log(&log_ctx, "Allocating");
+
     struct ws_object* o = calloc(1, s);
 
     if (o) {
