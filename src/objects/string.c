@@ -38,7 +38,7 @@
 /*
  *
  *
- * forward declarations  
+ * forward declarations
  *
  *
  */
@@ -59,7 +59,7 @@ deinit_callback(
 ws_object_type_id WS_OBJECT_TYPE_ID_STRING = {
     .supertype = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr = "ws_string",
-    
+
     .init_callback = NULL,
     .deinit_callback = deinit_callback,
     .dump_callback = NULL,
@@ -72,7 +72,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_STRING = {
 bool
 ws_string_init(
     struct ws_string* self
-) { 
+) {
     if (self) {
         self->charcount = 0; //initialize as empty string
         self->str = calloc(self->charcount + 1, sizeof(*self->str));
@@ -85,11 +85,11 @@ ws_string_init(
         self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
 
         self->is_utf8 = false;
-     
+
         return true;
     }
 
-    return false; 
+    return false;
 }
 
 struct ws_string*
@@ -127,18 +127,18 @@ ws_string_cat(
 ){
     ws_object_lock_write(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
-    
+
     self->str = realloc(self->str, (self->charcount + other->charcount + 1)
                         * sizeof(*self->str));
     self->str = u_strcat(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
-    
+
     if (self->str) {
         return self;
     }
-    
+
     return NULL;
 }
 
@@ -152,8 +152,8 @@ ws_string_multicat(
         return NULL;
     }
 
-    ws_object_lock_write(&self->obj); //!< @todo Thread-safeness!  
-    
+    ws_object_lock_write(&self->obj); //!< @todo Thread-safeness!
+
     int len = 0;
     for (unsigned int i = 0; i < others->len; i++) {
         struct ws_string* temp = ws_array_get_at(others, i);
@@ -175,25 +175,25 @@ ws_string_multicat(
     for (unsigned int i = 0; i < others->len; i++) {
         self->str = u_strcat(self->str,
                             ((struct ws_string*)ws_array_get_at(others, i))->str);
-        
+
         if (!self) {
             ws_object_unlock(&self->obj);
             return NULL;
-        } 
+        }
     }
 
     ws_object_unlock(&self->obj);
-    
-    return self; 
+
+    return self;
 }
- 
+
 
 struct ws_string*
 ws_string_dupl(
     struct ws_string* self
 ){
     struct ws_string* nstr = ws_string_new();
-    
+
     if (nstr) {
         ws_object_lock_read(&self->obj);
 
@@ -201,9 +201,9 @@ ws_string_dupl(
         nstr->is_utf8 = self->is_utf8;
         nstr->str = realloc(nstr->str, (self->charcount + 1) * sizeof(*self->str));
         nstr->str = u_strcpy(nstr->str, self->str);
-    
+
         ws_object_unlock(&self->obj);
-    
+
         if (nstr->str) {
             return nstr;
         }
@@ -222,8 +222,8 @@ ws_string_cmp(
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strcmp(self->str, other->str);  
-  
+    res = u_strcmp(self->str, other->str);
+
     ws_object_unlock(&self->obj);
     ws_object_unlock(&self->obj);
 
@@ -241,8 +241,8 @@ ws_string_ncmp(
 
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
-    
-    res = u_strncmp(self->str + offset, other->str, n);   
+
+    res = u_strncmp(self->str + offset, other->str, n);
 
     ws_object_unlock(&self->obj);
     ws_object_unlock(&self->obj);
@@ -258,7 +258,7 @@ ws_string_substr(
     UChar* res;
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
-    
+
     res = u_strstr(self->str, other->str);
 
     ws_object_unlock(&self->obj);
@@ -279,7 +279,7 @@ ws_string_raw(
 
     char* output = calloc(self->charcount + 1, sizeof(*output));
     int32_t dest_len;
-    UErrorCode err;    
+    UErrorCode err;
 
     output = u_strToUTF8(output, self->charcount, &dest_len, self->str,
                          self->charcount, &err);
@@ -290,44 +290,44 @@ ws_string_raw(
         free(output);
         return NULL;
     }
-   
-    return output;   
+
+    return output;
 }
 
 void
 ws_string_set_from_raw(
     struct ws_string* self,
     char* raw
-){  
+){
     if (!self) {
         return;
     }
-    
+
     int32_t len = strlen(raw);
     UChar* conv_raw = calloc(len + 1, sizeof(*conv_raw));
-        
+
     if (!conv_raw) {
         return;
      }
-    
+
     int32_t dest_len;
     UErrorCode err;
 
     conv_raw = u_strFromUTF8(conv_raw, len + 1, &dest_len, raw, len, &err);
-        
+
     if (U_FAILURE(err)) {
-        return;       
+        return;
     }
 
     ws_object_lock_write(&self->obj);
 
     free(self->str);
-        
+
     self->str = conv_raw;
     self->is_utf8 = true;
     self->charcount = len;
 
-    ws_object_unlock(&self->obj);   
+    ws_object_unlock(&self->obj);
 }
 
 /*
