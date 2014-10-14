@@ -265,6 +265,22 @@ cleanup_surface:
     return NULL;
 }
 
+struct ws_surface*
+ws_surface_from_resource(
+    struct wl_resource* resource
+) {
+    if (!resource) {
+        return NULL;
+    }
+
+    // check whether the resource is indeed a surface
+    if (!wl_resource_instance_of(resource, &wl_surface_interface, &interface)) {
+        return NULL;
+    }
+
+    return (struct ws_surface*) wl_resource_get_user_data(resource);
+}
+
 
 /*
  *
