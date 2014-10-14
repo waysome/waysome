@@ -196,6 +196,9 @@ ws_object_dump_state(
     if (self) {
         ws_object_lock_read(self);
         if (self->id && self->id->dump_callback) {
+            ws_log(&log_ctx, "Dumping object state: %p (%s)",
+                    self, self->id->typestr);
+
             self->id->dump_callback(ctx, self);
             res = true;
         }
