@@ -128,6 +128,8 @@ ws_object_init(
     struct ws_object* self
 ) {
     if (self) {
+        ws_log(&log_ctx, "Initializing: %p", self);
+
         self->settings = WS_OBJ_NO_SETTINGS;
 
         pthread_rwlock_init(&self->rw_lock, NULL);
