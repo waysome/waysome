@@ -34,6 +34,7 @@
 
 #include "logger/module.h"
 #include "objects/object.h"
+#include "util/condition.h"
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
@@ -420,7 +421,8 @@ ws_object_attr_read(
     char* ident,
     struct ws_value* dest
 ) {
-    if (!self || !ident || !dest || !self->id || !self->id->attribute_table) {
+    if (unlikely(!self || !ident || !dest || !self->id ||
+                !self->id->attribute_table)) {
         return -EINVAL;
     }
 
@@ -440,17 +442,18 @@ ws_object_attr_read(
         }
     }
 
-    if (!found) {
+    if (unlikely(!found)) {
         ws_object_unlock(self);
         return -ECANCELED;
     }
 
-    if (type & WS_OBJ_ATTR_NO_TYPE) {
+    if (unlikely(type & WS_OBJ_ATTR_NO_TYPE)) {
         ws_object_unlock(self);
         return -EFAULT;
     }
 
-    if (ATTR_TYPE_VALUE_TYPE_MAP[type].type != ws_value_get_type(dest)) {
+    if (unlikely(ATTR_TYPE_VALUE_TYPE_MAP[type].type !=
+                ws_value_get_type(dest))) {
         /* Types not matching */
         ws_object_unlock(self);
         return -EINVAL;
@@ -463,14 +466,14 @@ ws_object_attr_read(
             size_t slen = strlen((char*) member_pos);
             char* buff  = calloc(slen + 1, sizeof(*buff));
 
-            if (!buff) {
+            if (unlikely(!buff)) {
                 return -ENOMEM;
             }
 
             memcpy(buff, member_pos, slen);
 
             struct ws_string* s = ws_string_new();
-            if (!s) {
+            if (unlikely(!s)) {
                 free(buff);
                 return -ENOMEM;
             }
