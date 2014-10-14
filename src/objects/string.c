@@ -294,6 +294,42 @@ ws_string_raw(
     return output;   
 }
 
+void
+ws_string_set_from_raw(
+    struct ws_string* self,
+    char* raw
+){  
+    if (!self) {
+        return;
+    }
+    
+    int32_t len = strlen(raw);
+    UChar* conv_raw = calloc(len + 1, sizeof(*conv_raw));
+        
+    if (!conv_raw) {
+        return;
+     }
+    
+    int32_t dest_len;
+    UErrorCode err;
+
+    conv_raw = u_strFromUTF8(conv_raw, len + 1, &dest_len, raw, len, &err);
+        
+    if (U_FAILURE(err)) {
+        return;       
+    }
+
+    ws_object_lock_write(&self->obj);
+
+    free(self->str);
+        
+    self->str = conv_raw;
+    self->is_utf8 = true;
+    self->charcount = len;
+
+    ws_object_unlock(&self->obj);   
+}
+
 /*
  *
  * Static Function Implementations
