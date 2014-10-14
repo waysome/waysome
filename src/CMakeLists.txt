@@ -47,6 +47,7 @@ set(SOURCE_FILES
     compositor/background_surface.c
     compositor/buffer.c
     compositor/framebuffer_device.c
+    compositor/frame_buffer.c
     compositor/module.c
     compositor/monitor.c
     compositor/monitor_mode.c

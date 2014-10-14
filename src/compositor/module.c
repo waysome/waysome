@@ -353,7 +353,8 @@ find_crtc(
     }
 
     ws_log(&log_ctx, "Could not find suitable Encoder for crtc with dim: %dx%d.",
-            connector->buffer->width, connector->buffer->height);
+            ws_buffer_width((struct ws_buffer*)connector->buffer),
+            ws_buffer_height((struct ws_buffer*)connector->buffer));
     return -ENOENT;
 }
 
@@ -381,7 +382,6 @@ populate_connectors(void) {
             goto insert;
         }
         struct ws_monitor* new_monitor = ws_monitor_new();
-        new_monitor->buffer = ws_image_buffer_new();
         new_monitor->conn = conn->connector_id;
         new_monitor->fb_dev = ws_comp_ctx.fb;
 

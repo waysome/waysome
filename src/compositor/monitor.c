@@ -136,21 +136,6 @@ ws_monitor_deinit(
                 1,
                 &self->saved_crtc->mode);
     }
-    if (self->buffer->buffer) {
-        munmap(self->buffer->buffer, self->buffer->size);
-    }
-
-    if (self->fb) {
-        drmModeRmFB(self->fb_dev->fd, self->fb);
-    }
-
-    if (self->handle) {
-        struct drm_mode_destroy_dumb dreq;
-        memset(&dreq, 0, sizeof(dreq));
-        dreq.handle = self->handle;
-        drmIoctl(self->fb_dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
-    }
-    ws_object_unref((struct ws_object*)self->fb_dev);
 
     ws_object_deinit((struct ws_object*) &self->surfaces);
     return true;
@@ -160,85 +145,27 @@ void
 ws_monitor_populate_fb(
     struct ws_monitor* self
 ) {
-    struct drm_mode_create_dumb creq; //Create Request
-    struct drm_mode_destroy_dumb dreq; //Delete Request
-    struct drm_mode_map_dumb mreq; //Memory Request
 
     if (!self->connected) {
         ws_log(&log_ctx, "Did not create FB for self %d.", self->crtc);
         return;
     }
-
-    if (!self->current_mode) {
-        ws_log(&log_ctx, "No mode set, will not populate %d.", self->crtc);
-        return;
+    self->buffer = ws_frame_buffer_new(
+            self->fb_dev,
+            self->current_mode->mode.hdisplay,
+            self->current_mode->mode.vdisplay
+    );
+    if (!self->buffer) {
+        ws_log(&log_ctx, "Could not create Framebuffer");
     }
-    memset(&creq, 0, sizeof(creq));
-    self->buffer->width = self->current_mode->mode.hdisplay;
-    self->buffer->height = self->current_mode->mode.vdisplay;
-    creq.width = self->buffer->width;
-    creq.height = self->buffer->height;
-    creq.bpp = 32;
-    int ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
-    if (ret < 0) {
-        ws_log(&log_ctx, "Could not create DUMB BUFFER");
-        return;
-    }
-
-    self->buffer->stride = creq.pitch;
-    self->buffer->size = creq.size;
-    self->handle = creq.handle;
-
-    ret = drmModeAddFB(ws_comp_ctx.fb->fd,
-            self->buffer->width,
-            self->buffer->height, 24, 32,
-            self->buffer->stride,
-            self->handle, &self->fb);
-
-    if (ret) {
-        ws_log(&log_ctx, "Could not add FB of size: %dx%d.",
-                creq.width, creq.height);
-        goto err_destroy;
-    }
-
-    memset(&mreq, 0, sizeof(mreq));
-    mreq.handle = self->handle;
-    ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
-    if (ret) {
-        ws_log(&log_ctx, "Could not allocate enough memory for FB.");
-        goto err_fb;
-    }
-
-    self->buffer->buffer = mmap(0, self->buffer->size,
-            PROT_READ | PROT_WRITE, MAP_SHARED,
-            ws_comp_ctx.fb->fd, mreq.offset);
-
-    if (self->buffer->buffer == MAP_FAILED) {
-        ws_log(&log_ctx, "Could not MMAP FB");
-        goto err_fb;
-    }
-
-    memset(self->buffer->buffer, 0, self->buffer->size);
-
     self->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, self->crtc);
-    ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->fb, 0, 0,
-            &self->conn, 1, &self->current_mode->mode);
+
+    int ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->buffer->fb,
+            0, 0, &self->conn, 1, &self->current_mode->mode);
     if (ret) {
         ws_log(&log_ctx, "Could not set the CRTC for self %d.",
                 self->crtc);
-        goto err_fb;
     }
-
-    ws_log(&log_ctx, "Succesfully created Framebuffer");
-
-    return;
-err_fb:
-    drmModeRmFB(ws_comp_ctx.fb->fd, self->fb);
-err_destroy:
-    memset(&dreq, 0, sizeof(dreq));
-    dreq.handle = self->handle;
-    drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
-
     return;
 }
 
