@@ -317,6 +317,9 @@ ws_object_deinit(
     if (self) {
         ws_object_lock_write(self);
         if (self->id && self->id->deinit_callback) {
+            ws_log(&log_ctx, "Deinitializing: %p (%s)",
+                    self, self->id->typestr);
+
             if (!self->id->deinit_callback(self)) {
                 return false;
             }
