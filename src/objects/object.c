@@ -242,6 +242,8 @@ ws_object_hash(
         return false;
     }
 
+    ws_log(&log_ctx, "Hashing: %p (%s)", self, self->id->typestr);
+
     ws_object_type_id* type = self->id;
     while (!type->hash_callback) {
         // we hit the basic object type, which is totally abstract
