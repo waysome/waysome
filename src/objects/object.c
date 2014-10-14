@@ -216,6 +216,8 @@ ws_object_run(
         return false;
     }
 
+    ws_log(&log_ctx, "Running: %p (%s)", self, self->id->typestr);
+
     ws_object_type_id* type = self->id;
     while (!type->run_callback) {
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
