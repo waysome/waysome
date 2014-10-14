@@ -51,7 +51,8 @@
  * Convenience macros
  *
  */
-#define getref(obj_) ((typeof(obj_)) ws_object_getref((struct ws_object*) (obj_)))
+#define getref(obj_) ((__typeof__(obj_)) \
+                     ws_object_getref((struct ws_object*) (obj_)))
 
 /*
  * Type names
