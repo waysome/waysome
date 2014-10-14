@@ -59,10 +59,13 @@ set(SOURCE_FILES
     logger/module.c
     main.c
     objects/array.c
+    objects/message.c
     objects/object.c
     objects/set.c
     objects/string.c
     objects/wayland_obj.c
+    serialize/deserializer.c
+    serialize/serializer.c
     util/cleaner.c
     util/wayland.c
     values/bool.c
