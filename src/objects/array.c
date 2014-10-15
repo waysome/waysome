@@ -64,6 +64,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY = {
     .deinit_callback = deinit_callback,
 
     .cmp_callback = NULL,
+    .uuid_callback = NULL,
 };
 
 /*
