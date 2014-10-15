@@ -128,6 +128,12 @@ static const struct {
         .init = (void (*)(struct ws_value*)) ws_value_int_init,
     }, //!< @todo double?
 
+    [WS_OBJ_ATTR_TYPE_STRING]   = {
+        .type = WS_VALUE_TYPE_STRING,
+        .size = sizeof(struct ws_value_string),
+        .init = (void (*)(struct ws_value*)) ws_value_string_init,
+    },
+
 //    [WS_OBJ_ATTR_TYPE_OBJ]      = {
 //        .type = WS_VALUE_TYPE_OBJECT_ID,
 //        .size = sizeof(struct ws_value_object_id),
@@ -477,6 +483,19 @@ ws_object_attr_read(
 
     case WS_OBJ_ATTR_TYPE_DOUBLE:
         //!< @todo implement casting to value type
+        break;
+
+    case WS_OBJ_ATTR_TYPE_STRING:
+        {
+            struct ws_string* s = ws_string_new();
+            if (unlikely(!s)) {
+                return -ENOMEM;
+            }
+
+            ws_string_set_from_raw(s, *(char**) member_pos);
+
+            ws_value_string_set_str((struct ws_value_string*) dest, s);
+        }
         break;
 
     case WS_OBJ_ATTR_TYPE_OBJ:

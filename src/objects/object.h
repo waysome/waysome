@@ -134,6 +134,7 @@ enum ws_object_attribute_type {
     WS_OBJ_ATTR_TYPE_UINT32,
     WS_OBJ_ATTR_TYPE_UINT64,
     WS_OBJ_ATTR_TYPE_DOUBLE,
+    WS_OBJ_ATTR_TYPE_STRING,
     WS_OBJ_ATTR_TYPE_OBJ,
 };
 
