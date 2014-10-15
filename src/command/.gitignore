@@ -1,3 +1,4 @@
 # Ignore files we generated
 list.c
+arithmetical.h
 

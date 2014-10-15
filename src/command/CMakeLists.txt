@@ -21,6 +21,7 @@
 # List of command files
 #
 set(WS_COMMAND_FILES
+    arithmetical.commands
 )
 
 

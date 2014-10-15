@@ -46,6 +46,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    command/arithmetical.c
     command/command.c
     command/list.c
     compositor/background_surface.c
