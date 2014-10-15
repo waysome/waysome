@@ -29,6 +29,11 @@
 #include <stdlib.h>
 
 #include "objects/object.h"
+#include "values/int.h"
+#include "values/string.h"
+
+#define TEST_INT 1
+#define TEST_CHR 'a'
 
 struct ws_test_object {
     struct ws_object obj;
@@ -80,8 +85,8 @@ static struct ws_test_object* ws_test_object_new(void)
         t->obj.id = &WS_OBJECT_TYPE_ID_TESTOBJ;
         t->obj.settings |= WS_OBJECT_HEAPALLOCED;
 
-        t->int_attribute    = 1;
-        t->char_attribute   = 'a';
+        t->int_attribute    = TEST_INT;
+        t->char_attribute   = TEST_CHR;
     }
 
     return t;
@@ -112,5 +117,44 @@ START_TEST (test_object_attribute_type) {
 END_TEST
 
 START_TEST (test_object_attribute_read) {
+    struct ws_test_object* to = ws_test_object_new();
+    if (!to) { // If we fail to alloc, fail here
+        ck_assert(0 != 0);
+    }
+
+    struct ws_value* v = NULL;
+    int r = 0;
+
+    r = ws_object_attr_read(NULL, NULL, NULL);
+    ck_assert(r < 0);
+    ck_assert(v == NULL);
+
+    r = ws_object_attr_read(&to->obj, NULL, NULL);
+    ck_assert(r < 0);
+    ck_assert(v == NULL);
+
+    r = ws_object_attr_read(&to->obj, "int", NULL);
+    ck_assert(r < 0);
+    ck_assert(v == NULL);
+
+    v = calloc(1, sizeof(struct ws_value_int));
+    ws_value_int_init((struct ws_value_int*) v);
+    r = ws_object_attr_read(&to->obj, "int", v);
+    ck_assert(r == 0);
+    ck_assert(v != NULL);
+    ck_assert(TEST_INT == ws_value_int_get((struct ws_value_int*) v));
+    free(v);
+
+    v = (struct ws_value*) ws_value_string_new();
+    r = ws_object_attr_read(&to->obj, "char", v);
+    ck_assert(r == 0);
+    ck_assert(v != NULL);
+    struct ws_string* s = ws_value_string_get_str((struct ws_value_string*) v);
+    char* raw = ws_string_raw(s);
+    ck_assert(raw != NULL);
+    ck_assert(TEST_CHR == raw[0]);
+    free(v);
+
+    ws_object_unref(&to->obj);
 }
 END_TEST
