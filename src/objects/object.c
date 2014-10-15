@@ -459,17 +459,28 @@ ws_object_attr_read(
     void* member_pos = (void *) (((char *) self) + offset);
     switch (type) {
     case WS_OBJ_ATTR_TYPE_CHAR:
-        //!< @todo implement casting to value type
+        ws_value_int_set((struct ws_value_int*) dest,
+                         (char) *((int32_t*) member_pos));
         break;
 
     case WS_OBJ_ATTR_TYPE_INT32:
-    case WS_OBJ_ATTR_TYPE_INT64:
-    case WS_OBJ_ATTR_TYPE_UINT32:
-    case WS_OBJ_ATTR_TYPE_UINT64:
-        //!< @todo The object attr types for this case are mapped onto the very
-        // same value type.
+        ws_value_int_set((struct ws_value_int*) dest,
+                         (intmax_t) *((int32_t*) member_pos));
+        break;
 
-        ws_value_int_set((struct ws_value_int*) dest, *((int*) member_pos));
+    case WS_OBJ_ATTR_TYPE_INT64:
+        ws_value_int_set((struct ws_value_int*) dest,
+                         (intmax_t) *((int64_t*) member_pos));
+        break;
+
+    case WS_OBJ_ATTR_TYPE_UINT32:
+        ws_value_int_set((struct ws_value_int*) dest,
+                         (intmax_t) *((uint32_t*) member_pos));
+        break;
+
+    case WS_OBJ_ATTR_TYPE_UINT64:
+        ws_value_int_set((struct ws_value_int*) dest,
+                         (intmax_t) *((uint64_t*) member_pos));
         break;
 
     case WS_OBJ_ATTR_TYPE_DOUBLE:
