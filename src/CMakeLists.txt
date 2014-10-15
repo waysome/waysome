@@ -47,6 +47,7 @@ add_definitions(
 #
 set(SOURCE_FILES
     command/command.c
+    command/list.c
     compositor/background_surface.c
     compositor/buffer.c
     compositor/framebuffer_device.c
