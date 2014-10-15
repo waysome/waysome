@@ -48,7 +48,7 @@ ws_value_int_init(
 int
 ws_value_int_set(
     struct ws_value_int* self,
-    uint32_t i
+    intmax_t i
 ) {
     if (self) {
         if (self->value.type == WS_VALUE_TYPE_INT) {
@@ -60,7 +60,7 @@ ws_value_int_set(
     return -EINVAL;
 }
 
-uint32_t
+intmax_t
 ws_value_int_get(
     struct ws_value_int* self
 ) {
