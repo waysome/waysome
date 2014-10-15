@@ -504,7 +504,7 @@ ws_object_deinit(
 int
 ws_object_attr_read(
     struct ws_object* self, //!< The object
-    char* ident, //!< The identifier for the attribute
+    char const* ident, //!< The identifier for the attribute
     struct ws_value* dest //!< Destination of the data
 );
 

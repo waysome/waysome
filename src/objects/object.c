@@ -406,7 +406,7 @@ ws_object_deinit(
 int
 ws_object_attr_read(
     struct ws_object* self,
-    char* ident,
+    char const* ident,
     struct ws_value* dest
 ) {
     if (unlikely(!self || !ident || !dest || !self->id ||
