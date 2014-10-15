@@ -506,7 +506,9 @@ ws_object_attr_read(
     struct ws_object* self, //!< The object
     char const* ident, //!< The identifier for the attribute
     struct ws_value* dest //!< Destination of the data
-);
+)
+__ws_nonnull__(1, 2, 3)
+;
 
 /**
  * Get the type of an attribute identified by its name

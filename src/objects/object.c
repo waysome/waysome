@@ -409,8 +409,7 @@ ws_object_attr_read(
     char const* ident,
     struct ws_value* dest
 ) {
-    if (unlikely(!self || !ident || !dest || !self->id ||
-                !self->id->attribute_table)) {
+    if (unlikely(!self->id || !self->id->attribute_table)) {
         return -EINVAL;
     }
 
