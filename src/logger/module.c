@@ -84,6 +84,24 @@ ws_logger_init(void)
     ws_cleaner_add(cleanup_logger, NULL);
     is_used = true;
 
+    int lvl;
+    char* loglvl = getenv("WAYSOME_LOG_LEVEL");
+
+    if (!loglvl) {
+        lvl = LOG_ERR;
+        goto out;
+    }
+
+    char* loglvlend = NULL;
+    lvl = strtol(loglvl, &loglvlend, 10);
+
+    if ((loglvl == loglvlend) || /* There was no digit */
+            (loglvlend == '\0' && (lvl > LOG_DEBUG || lvl < LOG_EMERG))) {
+        lvl = LOG_ERR;
+    }
+
+out:
+    runtime_log_lvl = lvl;
     return 0;
 }
 
