@@ -2,6 +2,8 @@
 # Building the waysome exetuable
 #
 
+add_subdirectory(command)
+
 #
 # Set include directories
 #
