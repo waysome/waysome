@@ -105,7 +105,7 @@ ws_frame_buffer_new(
     creq.bpp = 32;
     int ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_CREATE_DUMB, &creq);
     if (ret < 0) {
-        ws_log(&log_ctx, "Could not create DUMB BUFFER");
+        ws_log(&log_ctx, LOG_CRIT, "Could not create DUMB BUFFER");
         goto err_destroy;
     }
 
@@ -122,7 +122,7 @@ ws_frame_buffer_new(
             tmp->handle, &tmp->fb);
 
     if (ret) {
-        ws_log(&log_ctx, "Could not add FB of size: %dx%d.",
+        ws_log(&log_ctx, LOG_CRIT, "Could not add FB of size: %dx%d.",
                 creq.width, creq.height);
         goto err_destroy;
     }
@@ -131,7 +131,7 @@ ws_frame_buffer_new(
     mreq.handle = tmp->handle;
     ret = drmIoctl(ws_comp_ctx.fb->fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
     if (ret) {
-        ws_log(&log_ctx, "Could not allocate enough memory for FB.");
+        ws_log(&log_ctx, LOG_CRIT, "Could not allocate enough memory for FB.");
         goto err_fb;
     }
 
@@ -140,13 +140,13 @@ ws_frame_buffer_new(
             ws_comp_ctx.fb->fd, mreq.offset);
 
     if (tmp->obj.buffer == MAP_FAILED) {
-        ws_log(&log_ctx, "Could not MMAP FB");
+        ws_log(&log_ctx, LOG_CRIT, "Could not MMAP FB");
         goto err_fb;
     }
 
     memset(tmp->obj.buffer, 0, tmp->obj.size);
 
-    ws_log(&log_ctx, "Succesfully created Frameobj");
+    ws_log(&log_ctx, LOG_DEBUG, "Succesfully created Frameobj");
 
     return tmp;
 err_fb:
