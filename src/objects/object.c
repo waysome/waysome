@@ -462,26 +462,7 @@ ws_object_attr_read(
     void* member_pos = (void *) (((char *) self) + offset);
     switch (type) {
     case WS_OBJ_ATTR_TYPE_CHAR:
-        {
-            size_t slen = strlen((char*) member_pos);
-            char* buff  = calloc(slen + 1, sizeof(*buff));
-
-            if (unlikely(!buff)) {
-                return -ENOMEM;
-            }
-
-            memcpy(buff, member_pos, slen);
-
-            struct ws_string* s = ws_string_new();
-            if (unlikely(!s)) {
-                free(buff);
-                return -ENOMEM;
-            }
-
-            ws_string_set_from_raw(s, buff);
-
-            ws_value_string_set_str((struct ws_value_string*) dest, s);
-        }
+        //!< @todo implement casting to value type
         break;
 
     case WS_OBJ_ATTR_TYPE_INT32:
