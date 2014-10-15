@@ -41,6 +41,7 @@
 #include <stdbool.h>
 
 #include "tests.h"
+#include "objects/ws_object/attribute_test.c"
 
 #include "objects/object.h"
 
