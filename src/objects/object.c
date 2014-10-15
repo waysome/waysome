@@ -511,7 +511,7 @@ ws_object_attr_type(
 ) {
     ws_object_lock_read(self);
 
-    if (!self || !self->id || !self->id->attribute_table) {
+    if (!self->id || !self->id->attribute_table) {
         goto err;
     }
 

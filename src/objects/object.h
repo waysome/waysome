@@ -520,7 +520,9 @@ enum ws_object_attribute_type
 ws_object_attr_type(
     struct ws_object* self, //!< The object
     char* ident //!< The identifier for the attribute
-);
+)
+__ws_nonnull__(1, 2)
+;
 
 /**
  * Compare two ws_object instances
