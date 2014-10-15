@@ -51,6 +51,7 @@ set(SOURCE_FILES
     command/list.c
     compositor/background_surface.c
     compositor/buffer.c
+    compositor/cursor.c
     compositor/framebuffer_device.c
     compositor/frame_buffer.c
     compositor/module.c

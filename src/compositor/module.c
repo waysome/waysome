@@ -43,6 +43,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/wayland_compositor.h"
 #include "compositor/wayland_shell.h"
+#include "compositor/cursor.h"
 #include "background_surface.h"
 #include "monitor_mode.h"
 #include "monitor.h"
@@ -205,6 +206,15 @@ ws_compositor_init(void) {
     if (retval < 0) {
         return retval;
     }
+
+    struct ws_image_buffer* cursor =
+        ws_image_buffer_from_png("share/waysome/cursor.png");
+
+    ws_comp_ctx.cursor = ws_cursor_new(ws_comp_ctx.fb, cursor);
+    struct ws_monitor* any =
+        (struct ws_monitor*) ws_set_select_any(&ws_comp_ctx.monitors);
+    ws_cursor_set_monitor(ws_comp_ctx.cursor, any);
+    ws_cursor_redraw(ws_comp_ctx.cursor);
 
     is_init = true;
     return 0;

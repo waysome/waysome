@@ -30,6 +30,7 @@
 
 #include "objects/set.h"
 #include "compositor/framebuffer_device.h"
+#include "compositor/cursor.h"
 
 /**
  * Internal compositor context
@@ -40,6 +41,7 @@ extern struct ws_compositor_context {
     struct ws_framebuffer_device* fb; //<! The Framebuffer device
     struct ws_set monitors; //<! A set of monitors (connected or not)
     struct ws_monitor* conns; //<! A linked list of ws_monitors
+    struct ws_cursor* cursor; //<! The cursor
 } ws_comp_ctx;
 
 // We make the object available for others to use
