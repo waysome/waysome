@@ -136,18 +136,6 @@ START_TEST (test_object_attribute_read) {
     struct ws_value* v = NULL;
     int r = 0;
 
-    r = ws_object_attr_read(NULL, NULL, NULL);
-    ck_assert(r < 0);
-    ck_assert(v == NULL);
-
-    r = ws_object_attr_read(&to->obj, NULL, NULL);
-    ck_assert(r < 0);
-    ck_assert(v == NULL);
-
-    r = ws_object_attr_read(&to->obj, "int", NULL);
-    ck_assert(r < 0);
-    ck_assert(v == NULL);
-
     v = calloc(1, sizeof(struct ws_value_int));
     ws_value_int_init((struct ws_value_int*) v);
     r = ws_object_attr_read(&to->obj, "int", v);
