@@ -90,54 +90,45 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
 static const struct {
     enum ws_value_type type;
     size_t size;
-    void (*init)(struct ws_value*);
 } ATTR_TYPE_VALUE_TYPE_MAP[] = {
 //    [WS_OBJ_ATTR_TYPE_CHAR]     = {
 //        .type = WS_VALUE_TYPE_STRING,
 //        .size = sizeof(struct ws_value_string),
-//        .init = ws_value_string_init,
 //    },
 
     [WS_OBJ_ATTR_TYPE_INT32]    = {
         .type = WS_VALUE_TYPE_INT,
         .size = sizeof(struct ws_value_int),
-        .init = (void (*)(struct ws_value*)) ws_value_int_init,
     },
 
     [WS_OBJ_ATTR_TYPE_INT64]    = {
         .type = WS_VALUE_TYPE_INT,
         .size = sizeof(struct ws_value_int),
-        .init = (void (*)(struct ws_value*)) ws_value_int_init,
     },
 
     [WS_OBJ_ATTR_TYPE_UINT32]   = {
         .type = WS_VALUE_TYPE_INT,
         .size = sizeof(struct ws_value_int),
-        .init = (void (*)(struct ws_value*)) ws_value_int_init,
     },
 
     [WS_OBJ_ATTR_TYPE_UINT64]   = {
         .type = WS_VALUE_TYPE_INT,
         .size = sizeof(struct ws_value_int),
-        .init = (void (*)(struct ws_value*)) ws_value_int_init,
     },
 
     [WS_OBJ_ATTR_TYPE_DOUBLE]   = {
         .type = WS_VALUE_TYPE_INT,
         .size = sizeof(struct ws_value_int),
-        .init = (void (*)(struct ws_value*)) ws_value_int_init,
     }, //!< @todo double?
 
     [WS_OBJ_ATTR_TYPE_STRING]   = {
         .type = WS_VALUE_TYPE_STRING,
         .size = sizeof(struct ws_value_string),
-        .init = (void (*)(struct ws_value*)) ws_value_string_init,
     },
 
 //    [WS_OBJ_ATTR_TYPE_OBJ]      = {
 //        .type = WS_VALUE_TYPE_OBJECT_ID,
 //        .size = sizeof(struct ws_value_object_id),
-//        .init = (void (*)(struct ws_value*)) ws_value_object_id_init,
 //    },
 
 };
