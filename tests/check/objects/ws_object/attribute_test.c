@@ -25,4 +25,92 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "objects/ws_object/attribute_test.h"
+#include <check.h>
+#include <stdlib.h>
+
+#include "objects/object.h"
+
+struct ws_test_object {
+    struct ws_object obj;
+
+    int     int_attribute;
+    char    char_attribute;
+
+    /* more types here */
+};
+
+struct ws_object_attribute const WS_OBJECT_ATTRS_TEST_OBJ[] = {
+    {
+        .name = "int",
+        .offset_in_struct = offsetof(struct ws_test_object, int_attribute),
+        .type = WS_OBJ_ATTR_TYPE_INT32,
+    },
+    {
+        .name = "char",
+        .offset_in_struct = offsetof(struct ws_test_object, char_attribute),
+        .type = WS_OBJ_ATTR_TYPE_CHAR,
+    },
+    {
+        .name = NULL,
+        .offset_in_struct = 0,
+        .type = 0
+    },
+};
+
+ws_object_type_id WS_OBJECT_TYPE_ID_TESTOBJ = {
+    .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
+    .typestr    = "ws_test_object",
+
+    .init_callback      = NULL,
+    .deinit_callback    = NULL,
+    .dump_callback      = NULL,
+    .run_callback       = NULL,
+    .hash_callback      = NULL,
+    .cmp_callback       = NULL,
+    .attribute_table = WS_OBJECT_ATTRS_TEST_OBJ,
+};
+
+static struct ws_test_object* ws_test_object_new(void)
+{
+    struct ws_test_object* t = calloc(1, sizeof(*t));
+
+    if (t) {
+        ws_object_init(&t->obj);
+
+        t->obj.id = &WS_OBJECT_TYPE_ID_TESTOBJ;
+        t->obj.settings |= WS_OBJECT_HEAPALLOCED;
+
+        t->int_attribute    = 1;
+        t->char_attribute   = 'a';
+    }
+
+    return t;
+}
+
+/*
+ *
+ * tests
+ *
+ */
+
+START_TEST (test_object_attribute_type) {
+    struct ws_test_object* to = ws_test_object_new();
+    if (!to) { // If we fail to alloc, fail here
+        ck_assert(0 != 0);
+    }
+
+    enum ws_object_attribute_type type;
+
+    type = ws_object_attr_type(&to->obj, "int");
+    ck_assert(WS_OBJ_ATTR_TYPE_INT32 == type || WS_OBJ_ATTR_TYPE_INT64 == type);
+
+    type = ws_object_attr_type(&to->obj, "char");
+    ck_assert(WS_OBJ_ATTR_TYPE_CHAR == type);
+
+    ws_object_unref(&to->obj);
+}
+END_TEST
+
+START_TEST (test_object_attribute_read) {
+}
+END_TEST

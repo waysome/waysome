@@ -186,8 +186,10 @@ objects_suite(void)
 {
     Suite* s    = suite_create("Objects");
     TCase* tc   = tcase_create("main case");
+    TCase* tca  = tcase_create("Attribute case");
 
     suite_add_tcase(s, tc);
+    suite_add_tcase(s, tca);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
     tcase_add_test(tc, test_object_init);
@@ -205,6 +207,8 @@ objects_suite(void)
     tcase_add_test(tc, test_object_lock_try_read);
     tcase_add_test(tc, test_object_lock_try_write);
     tcase_add_test(tc, test_object_cmp);
+
+    tcase_add_test(tca, test_object_attribute_type);
 
     return s;
 }
