@@ -369,6 +369,14 @@ ws_object_cmp(
     return type->cmp_callback(o1, o2);
 }
 
+uintmax_t
+ws_object_uuid(
+    struct ws_object* self //!< The object
+) {
+    /** @todo implement */
+    return 0;
+}
+
 /*
  *
  * static function implementations
