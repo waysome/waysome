@@ -34,6 +34,7 @@
 
 #define TEST_INT 1
 #define TEST_CHR 'a'
+#define TEST_STR "teststring"
 
 struct ws_test_object {
     struct ws_object obj;
@@ -41,6 +42,7 @@ struct ws_test_object {
     int     int_attribute;
     char    char_attribute;
 
+    char*   string_attribute;
     /* more types here */
 };
 
@@ -54,6 +56,11 @@ struct ws_object_attribute const WS_OBJECT_ATTRS_TEST_OBJ[] = {
         .name = "char",
         .offset_in_struct = offsetof(struct ws_test_object, char_attribute),
         .type = WS_OBJ_ATTR_TYPE_CHAR,
+    },
+    {
+        .name = "string",
+        .offset_in_struct = offsetof(struct ws_test_object, string_attribute),
+        .type = WS_OBJ_ATTR_TYPE_STRING,
     },
     {
         .name = NULL,
@@ -85,8 +92,9 @@ static struct ws_test_object* ws_test_object_new(void)
         t->obj.id = &WS_OBJECT_TYPE_ID_TESTOBJ;
         t->obj.settings |= WS_OBJECT_HEAPALLOCED;
 
-        t->int_attribute    = TEST_INT;
-        t->char_attribute   = TEST_CHR;
+        t->int_attribute        = TEST_INT;
+        t->char_attribute       = TEST_CHR;
+        t->string_attribute     = TEST_STR;
     }
 
     return t;
@@ -111,6 +119,9 @@ START_TEST (test_object_attribute_type) {
 
     type = ws_object_attr_type(&to->obj, "char");
     ck_assert(WS_OBJ_ATTR_TYPE_CHAR == type);
+
+    type = ws_object_attr_type(&to->obj, "string");
+    ck_assert(WS_OBJ_ATTR_TYPE_STRING == type);
 
     ws_object_unref(&to->obj);
 }
@@ -145,15 +156,16 @@ START_TEST (test_object_attribute_read) {
     ck_assert(TEST_INT == ws_value_int_get((struct ws_value_int*) v));
     free(v);
 
-//    v = (struct ws_value*) ws_value_string_new();
-//    r = ws_object_attr_read(&to->obj, "char", v);
-//    ck_assert(r == 0);
-//    ck_assert(v != NULL);
-//    struct ws_string* s = ws_value_string_get_str((struct ws_value_string*) v);
-//    char* raw = ws_string_raw(s);
-//    ck_assert(raw != NULL);
-//    ck_assert(TEST_CHR == raw[0]);
-//    free(v);
+    v = (struct ws_value*) ws_value_string_new();
+    r = ws_object_attr_read(&to->obj, "string", v);
+    ck_assert(r == 0);
+    ck_assert(v != NULL);
+    struct ws_string* s = ws_value_string_get_str((struct ws_value_string*) v);
+    ck_assert(s != NULL);
+    char* raw = ws_string_raw(s);
+    ck_assert(raw != NULL);
+    ck_assert(0 == strcmp(TEST_STR, raw));
+    free(v);
 
     ws_object_unref(&to->obj);
 }
