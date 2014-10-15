@@ -55,6 +55,14 @@ cmp_callback(
     struct ws_object const* o2 //!< Second operant
 );
 
+/**
+ * UUID callback for `ws_wayland_obj` type
+ */
+uintmax_t
+uuid_callback(
+    struct ws_object* self //!< The object
+);
+
 
 /**
  * Type information for ws_wayland_obj type
@@ -70,7 +78,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ = {
     .dump_callback = NULL,
     .run_callback = NULL,
     .cmp_callback = cmp_callback,
-    .uuid_callback = NULL,
+    .uuid_callback = uuid_callback,
 };
 
 /*
@@ -170,4 +178,12 @@ cmp_callback(
     uint32_t id2 = ws_wayland_obj_get_id(w2);
 
     return ((id1 == id2) ? 0 : ((id1 > id2) ? -1 : 1));
+}
+
+uintmax_t
+uuid_callback(
+    struct ws_object* self
+) {
+    struct ws_wayland_obj* o = (struct ws_wayland_obj*) self;
+    return (uintmax_t) wl_resource_get_id(o->resource);
 }
