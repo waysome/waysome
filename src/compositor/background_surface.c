@@ -93,7 +93,7 @@ ws_image_buffer_from_png(
     img.version = PNG_IMAGE_VERSION;
 
     if (!png_image_begin_read_from_file(&img, filename)) {
-        ws_log(NULL, "Could not read file: '%s' error: %s.",
+        ws_log(NULL, LOG_ERR, "Could not read file: '%s' error: %s.",
                 filename, img.message);
         return NULL;
     }
@@ -105,13 +105,14 @@ ws_image_buffer_from_png(
     buff->stride = PNG_IMAGE_ROW_STRIDE(img);
 
     if (!buff->buffer) {
-        ws_log(NULL, "Could not allocate memory for image: '%s'", filename);
+        ws_log(NULL, LOG_ERR, "Could not allocate memory for image: '%s'",
+                filename);
         png_image_free(&img);
         return NULL;
     }
 
     if (!png_image_finish_read(&img, NULL, buff->buffer, 0, NULL)) {
-        ws_log(NULL, "Could not read file: '%s'.", filename);
+        ws_log(NULL, LOG_ERR, "Could not read file: '%s'.", filename);
         return NULL;
     }
     return buff;
