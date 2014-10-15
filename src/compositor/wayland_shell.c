@@ -149,7 +149,7 @@ create_shell_surface_cb(
     struct ws_surface* internal_surface = ws_surface_from_resource(surface);
 
     // we create the surface and leave the destruction to the attached resource
-    (void*) ws_shell_surface_new(client, internal_surface, serial);
+    (void) ws_shell_surface_new(client, internal_surface, serial);
 }
 
 
