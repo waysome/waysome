@@ -109,5 +109,16 @@ struct ws_statement {
     struct ws_command_args args; //!< @public arguments to invoke the command with
 };
 
+
+/**
+ * Find a command by name
+ *
+ * @returns command with the name given or NULL
+ */
+struct ws_command*
+ws_command_get(
+    char const* name //!< name of the command
+);
+
 #endif // __WS_COMMAND_COMMAND_H__
 
