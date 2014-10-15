@@ -226,4 +226,13 @@ ws_set_select(
     void* proc_etc //!< Additional parameter for the processor function
 );
 
+/**
+ * Select first possible element
+ *
+ * @return the first element processed
+ */
+struct ws_object*
+ws_set_select_any(
+        struct ws_set const* self
+);
 #endif // __WS_OBJECTS_SET_H__

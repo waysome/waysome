@@ -270,6 +270,24 @@ ws_set_select(
 }
 
 
+static int
+get_reference(
+    void* dest,
+    void const* src
+) {
+    *(struct ws_object**)dest = (void*)src;
+    return 1;
+}
+
+struct ws_object*
+ws_set_select_any(
+    struct ws_set const* self
+) {
+    void* tmp = NULL;
+    ws_set_select(self, NULL, NULL, get_reference, &tmp);
+    return tmp;
+}
+
 /*
  *
  * Internal implementation
