@@ -266,7 +266,7 @@ ws_array_append(
     ws_object_lock_write(&self->obj);
 
     size_t newsize = sizeof(*self->ary) * self->len * realloc_fact;
-    void** newbuf = realloc(self->ary, newsize);
+    struct ws_object** newbuf = realloc(self->ary, newsize);
 
     if (!newbuf) {
         ws_object_unlock(&self->obj);
