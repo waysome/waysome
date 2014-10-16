@@ -267,6 +267,11 @@ ws_compositor_deinit(
         close(ws_comp_ctx.fb->fd);
     }
 
+    if (ws_comp_ctx.cursor) {
+        ws_cursor_unset(ws_comp_ctx.cursor);
+        ws_object_deinit((struct ws_object*) ws_comp_ctx.cursor);
+    }
+
     //!< @todo: free all of the framebuffers
 
     //!< @todo: prelimary: free the preloaded PNG

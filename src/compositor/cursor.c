@@ -52,7 +52,7 @@ deinit_cursor(
 
 ws_object_type_id WS_OBJECT_TYPE_ID_CURSOR = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
-    .typestr    = "ws_wayland_pointer",
+    .typestr    = "ws_cursor",
 
     .deinit_callback    = deinit_cursor,
     .init_callback      = NULL,
@@ -120,16 +120,17 @@ ws_cursor_redraw(
     int w = ws_buffer_width((struct ws_buffer*) self->cursor_fb);
     int h = ws_buffer_height((struct ws_buffer*) self->cursor_fb);
 
-    if (drmModeSetCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->cursor_fb->handle, w, h) != 0) {
-        ws_log(&log_ctx, "Could not set cursor");
-        ws_log(&log_ctx, "State was: crtc: %d, handle: %d, "
+    if (drmModeSetCursor2(self->cur_fb_dev->fd, self->cur_mon->crtc,
+            self->cursor_fb->handle, w, h,
+            self->x_hp, self->y_hp) != 0) {
+        ws_log(&log_ctx, LOG_CRIT, "Could not set cursor");
+        ws_log(&log_ctx, LOG_CRIT, "State was: crtc: %d, handle: %d, "
                 "height: %d, width: %d",
                 self->cur_mon->crtc, self->cursor_fb->handle, w, h);
     }
     if (drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
             self->x, self->y) != 0) {
-        ws_log(&log_ctx, "Could not move cursor");
+        ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
     }
 }
 
@@ -152,13 +153,21 @@ ws_cursor_set_monitor(
     self->cur_mon = mon;
 }
 
+void
+ws_cursor_unset(
+    struct ws_cursor* self
+) {
+    //<! @todo: Make unsetting work
+    int retval = drmModeSetCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
+            self->cursor_fb->handle, 0, 0);
+    ws_log(&log_ctx, LOG_DEBUG, "Removing cursor: %d", retval);
+}
+
 static bool
 deinit_cursor(
         struct ws_object* s
 ) {
     struct ws_cursor* self = (struct ws_cursor*) s;
-    drmModeSetCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->cursor_fb->handle, 0, 0);
     ws_object_deinit((struct ws_object*) self->cursor_fb);
     return true;
 }

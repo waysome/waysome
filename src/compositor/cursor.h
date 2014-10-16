@@ -104,6 +104,14 @@ ws_cursor_set_image(
 );
 
 /**
+ * Set a new buffer
+ */
+void
+ws_cursor_unset(
+    struct ws_cursor*
+);
+
+/**
  * Set the monitor
  */
 void
