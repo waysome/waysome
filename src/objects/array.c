@@ -167,7 +167,7 @@ ws_array_find(
     struct ws_array* const self,
     bool (*cmp)(struct ws_object* const)
 ) {
-    void* res = NULL;
+    struct ws_object* res = NULL;
 
     if (self) {
         ws_object_lock_read(&self->obj);
