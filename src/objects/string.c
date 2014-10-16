@@ -156,7 +156,7 @@ ws_string_multicat(
 
     int len = 0;
     for (unsigned int i = 0; i < others->len; i++) {
-        struct ws_string* temp = ws_array_get_at(others, i);
+        struct ws_string* temp = (struct ws_string*) ws_array_get_at(others, i);
         if (temp && temp->str) {
             len += temp->charcount;
         } else {
