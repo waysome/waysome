@@ -206,6 +206,8 @@ ws_array_foreach(
  *
  * @note Tries to resize the array if there is not enough space
  *
+ * @note Gets a ref on the objects before storing it
+ *
  * @warning Does not set empty entries, does _always_ append.
  *
  * @return 0 on success, else error numbers from errno.h

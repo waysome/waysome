@@ -279,6 +279,7 @@ ws_array_append(
     }
 
     self->ary = newbuf;
+    ws_object_getref(element);
     self->ary[self->len] = element;
     self->len *= realloc_fact;
     self->nused++;
