@@ -25,7 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "command/command.h"
+#include "command/list.h"
+
+#define LINEAR_THRESHOLD (4)
 
 
 /*
@@ -38,7 +43,43 @@ struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
 ) {
-    //!< @todo: implement
+    // initialize bounds
+    size_t first = 0;
+    size_t alast = ws_command_cnt;
+    size_t cur;
+
+    // perform a binary search
+    while (first + LINEAR_THRESHOLD > alast) {
+        cur = (first + alast) / 2;
+
+        // compare the current name with what we want
+        int cmp = strcmp(name, ws_command_list[cur].name);
+
+        // the name we want is smaller
+        if (cmp < 0) {
+            alast = cur;
+            continue;
+        }
+
+        // the name we want is greater
+        if (cmp > 0) {
+            first = cur + 1;
+            continue;
+        }
+
+        // bullseye
+        return ws_command_list + cur;
+    }
+
+    // we are now in a realm where linear search is expected to be faster
+    cur = alast;
+    while (cur-- > first) {
+        if (strcmp(name, ws_command_list[cur].name) == 0) {
+            return ws_command_list + cur;
+        }
+    }
+
+    // nothing found
     return NULL;
 }
 
