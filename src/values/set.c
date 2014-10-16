@@ -25,5 +25,142 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <stdlib.h>
 #include "values/set.h"
 
+static void
+value_set_deinit(
+    struct ws_value* self
+) {
+    struct ws_value_set* s = (struct ws_value_set*) self;
+
+    if (!s) {
+        return;
+    }
+
+    ws_object_unref(&s->set->obj);
+}
+
+int
+ws_value_set_init(
+    struct ws_value_set* self
+) {
+    self->set = ws_set_new();
+    if (!self) {
+        return -ENOMEM;
+    }
+
+    self->value.type = WS_VALUE_TYPE_SET;
+    self->value.deinit_callback = value_set_deinit;
+
+    return 0;
+}
+
+struct ws_value_set*
+ws_value_set_new(void) {
+    struct ws_value_set* s = calloc(1, sizeof(*s));
+    if (!s) {
+        return NULL;
+    }
+
+    if (ws_value_set_init(s) < 0) {
+        free(s);
+        return NULL;
+    }
+
+    return s;
+}
+
+int
+ws_value_set_insert(
+    struct ws_value_set* self,
+    struct ws_object* obj
+) {
+    return ws_set_insert(self->set, obj);
+}
+
+int
+ws_value_set_remove(
+    struct ws_value_set* self,
+    struct ws_object const* cmp
+) {
+    return ws_set_remove(self->set, cmp);
+}
+
+struct ws_object*
+ws_value_set_get(
+    struct ws_value_set const* self,
+    struct ws_object const* cmp
+) {
+    return  ws_set_get(self->set, cmp);
+}
+
+/*
+int
+ws_value_set_union(
+    struct ws_value_set* dest,
+    struct ws_value_set const* src_a,
+    struct ws_value_set const* src_b
+) {
+    return ws_set_union(dest->set, src_a->set, src_b->set);
+}
+*/
+
+/*
+int
+ws_value_set_intersection(
+    struct ws_value_set* dest,
+    struct ws_value_set const* src_a,
+    struct ws_value_set const* src_b
+) {
+    return ws_set_intersection(dest->set, src_a->set, src_b->set);
+}
+*/
+
+/*
+int
+ws_value_set_xor(
+    struct ws_value_set* dest,
+    struct ws_value_set const* src_a,
+    struct ws_value_set const* src_b
+) {
+    return ws_set_xor(dest->set, src_a->set, src_b->set);
+}
+*/
+
+/*
+bool
+ws_value_set_is_subset(
+    struct ws_value_set const* self,
+    struct ws_value_set const* other
+) {
+    return ws_set_is_subset(self->set, other->set);
+}
+*/
+
+bool
+ws_value_set_equal(
+    struct ws_value_set const* self,
+    struct ws_value_set const* other
+) {
+    return ws_set_equal(self->set, other->set);
+}
+
+size_t
+ws_value_set_cardinality(
+    struct ws_value_set const* self
+){
+    return ws_set_cardinality(self->set);
+}
+
+int
+ws_value_set_select(
+    struct ws_value_set const* self,
+    ws_value_set_predf pred,
+    void* pred_etc,
+    ws_value_set_procf proc,
+    void* proc_etc
+) {
+    return ws_set_select(self->set, pred, pred_etc, proc, proc_etc);
+}
