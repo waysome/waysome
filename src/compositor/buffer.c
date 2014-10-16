@@ -218,7 +218,7 @@ ws_buffer_blit(
     }
 
     //!< @todo use byte-size instead of stride
-    ws_log(&log_ctx, "Blitting image with dim: %dx%d with bpp:%d",
+    ws_log(&log_ctx, LOG_DEBUG, "Blitting image with dim: %dx%d with bpp:%d",
             ws_buffer_width(src),
             ws_buffer_height(src),
             ws_buffer_bpp(src));

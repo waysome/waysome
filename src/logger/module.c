@@ -32,10 +32,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <syslog.h>
 
 #include "logger/module.h"
 #include "util/attributes.h"
 #include "util/cleaner.h"
+
+/*
+ *
+ * local variables
+ *
+ */
+
+static int runtime_log_lvl = LOG_ERR;
 
 /**
  * Logger type
@@ -75,15 +84,38 @@ ws_logger_init(void)
     ws_cleaner_add(cleanup_logger, NULL);
     is_used = true;
 
+    int lvl;
+    char* loglvl = getenv("WAYSOME_LOG_LEVEL");
+
+    if (!loglvl) {
+        lvl = LOG_ERR;
+        goto out;
+    }
+
+    char* loglvlend = NULL;
+    lvl = strtol(loglvl, &loglvlend, 10);
+
+    if ((loglvl == loglvlend) || /* There was no digit */
+            (loglvlend == '\0' && (lvl > LOG_DEBUG || lvl < LOG_EMERG))) {
+        lvl = LOG_ERR;
+    }
+
+out:
+    runtime_log_lvl = lvl;
     return 0;
 }
 
 void
 ws_log(
     struct ws_logger_context* const ctx,
+    int prio,
     char* fmt,
     ...
 ) {
+    if (prio > runtime_log_lvl) { // (kindof) reverted logic here
+        return;
+    }
+
     va_list list;
     size_t pref_len = 0;
     size_t buf_len = strlen(fmt);

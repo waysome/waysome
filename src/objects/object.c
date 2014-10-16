@@ -65,7 +65,7 @@ ws_object_new(
         return NULL;
     }
 
-    ws_log(&log_ctx, "Allocating");
+    ws_log(&log_ctx, LOG_DEBUG, "Allocating");
 
     struct ws_object* o = calloc(1, s);
 
@@ -128,7 +128,7 @@ ws_object_init(
     struct ws_object* self
 ) {
     if (self) {
-        ws_log(&log_ctx, "Initializing: %p", self);
+        ws_log(&log_ctx, LOG_DEBUG, "Initializing: %p", self);
 
         self->settings = WS_OBJ_NO_SETTINGS;
 
@@ -196,7 +196,7 @@ ws_object_dump_state(
     if (self) {
         ws_object_lock_read(self);
         if (self->id && self->id->dump_callback) {
-            ws_log(&log_ctx, "Dumping object state: %p (%s)",
+            ws_log(&log_ctx, LOG_DEBUG, "Dumping object state: %p (%s)",
                     self, self->id->typestr);
 
             self->id->dump_callback(ctx, self);
@@ -216,7 +216,7 @@ ws_object_run(
         return false;
     }
 
-    ws_log(&log_ctx, "Running: %p (%s)", self, self->id->typestr);
+    ws_log(&log_ctx, LOG_DEBUG, "Running: %p (%s)", self, self->id->typestr);
 
     ws_object_type_id* type = self->id;
     while (!type->run_callback) {
@@ -242,7 +242,7 @@ ws_object_hash(
         return false;
     }
 
-    ws_log(&log_ctx, "Hashing: %p (%s)", self, self->id->typestr);
+    ws_log(&log_ctx, LOG_DEBUG, "Hashing: %p (%s)", self, self->id->typestr);
 
     ws_object_type_id* type = self->id;
     while (!type->hash_callback) {
@@ -317,7 +317,7 @@ ws_object_deinit(
     if (self) {
         ws_object_lock_write(self);
         if (self->id && self->id->deinit_callback) {
-            ws_log(&log_ctx, "Deinitializing: %p (%s)",
+            ws_log(&log_ctx, LOG_DEBUG, "Deinitializing: %p (%s)",
                     self, self->id->typestr);
 
             if (!self->id->deinit_callback(self)) {
@@ -339,7 +339,7 @@ ws_object_cmp(
     struct ws_object const* o1,
     struct ws_object const* o2
 ) {
-    ws_log(&log_ctx, "Comparing: %p <=> %p", o1, o2);
+    ws_log(&log_ctx, LOG_DEBUG, "Comparing: %p <=> %p", o1, o2);
 
     if ((o1 == NULL) ^ (o2 == NULL)) {
         return (o1 != NULL) ? -1 : 1;

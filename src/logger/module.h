@@ -36,6 +36,7 @@
 
 #include <stdarg.h>
 #include <pthread.h>
+#include <syslog.h>
 
 /**
  * Logging context
@@ -60,6 +61,7 @@ ws_logger_init(void);
 void
 ws_log(
     struct ws_logger_context* const ctx, //!< The logging context
+    int lvl, //!< Logging level
     char* fmt,  //!< Format string
     ...         //!< Additional parameters
 );

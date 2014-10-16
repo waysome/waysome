@@ -147,7 +147,8 @@ ws_monitor_populate_fb(
 ) {
 
     if (!self->connected) {
-        ws_log(&log_ctx, "Did not create FB for self %d.", self->crtc);
+        ws_log(&log_ctx, LOG_DEBUG,
+                "Did not create FB for self %d.", self->crtc);
         return;
     }
     self->buffer = ws_frame_buffer_new(
@@ -156,14 +157,14 @@ ws_monitor_populate_fb(
             self->current_mode->mode.vdisplay
     );
     if (!self->buffer) {
-        ws_log(&log_ctx, "Could not create Framebuffer");
+        ws_log(&log_ctx, LOG_CRIT, "Could not create Framebuffer");
     }
     self->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, self->crtc);
 
     int ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->buffer->fb,
             0, 0, &self->conn, 1, &self->current_mode->mode);
     if (ret) {
-        ws_log(&log_ctx, "Could not set the CRTC for self %d.",
+        ws_log(&log_ctx, LOG_ERR, "Could not set the CRTC for self %d.",
                 self->crtc);
     }
     return;

@@ -90,14 +90,14 @@ ws_framebuffer_device_new(
     tmp->fd = open(path, O_RDWR | O_CLOEXEC);
 
     if (tmp->fd < 0) {
-        ws_log(&log_ctx, "Could not open: '%s'.", path);
+        ws_log(&log_ctx, LOG_CRIT, "Could not open: '%s'.", path);
         free(tmp);
         return NULL;
     }
 
     uint64_t has_dumb;
     if (drmGetCap(tmp->fd, DRM_CAP_DUMB_BUFFER, &has_dumb) < 0 || !has_dumb) {
-        ws_log(&log_ctx, "File %s has no DUMB BUFFER cap. ", path);
+        ws_log(&log_ctx, LOG_CRIT, "File %s has no DUMB BUFFER cap. ", path);
         close(tmp->fd);
         free(tmp);
         return NULL;
