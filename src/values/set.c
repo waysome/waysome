@@ -154,3 +154,13 @@ ws_value_set_cardinality(
     return ws_set_cardinality(self->set);
 }
 
+int
+ws_value_set_select(
+    struct ws_value_set const* self,
+    ws_value_set_predf pred,
+    void* pred_etc,
+    ws_value_set_procf proc,
+    void* proc_etc
+) {
+    return ws_set_select(self->set, pred, pred_etc, proc, proc_etc);
+}
