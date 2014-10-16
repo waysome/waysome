@@ -154,7 +154,7 @@ ws_array_has(
         ws_object_lock_read(&self->obj);
         size_t i;
         for (i = 0; i < self->len && !res; i++) {
-            res = (self->ary[i] == obj);
+            res = (0 == ws_object_cmp(self->ary[i], obj));
         }
 
         ws_object_unlock(&self->obj);
