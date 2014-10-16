@@ -108,12 +108,11 @@ ws_array_get_len(
  *
  * @memberof ws_array
  *
- * @note Sorts ascending pointers if `cmp` is NULL
+ * @note Uses object sort mechanism
  */
 void
 ws_array_sort(
-    struct ws_array* self, //!< Array object
-    signed int (*cmp)(const void* , const void*) //!< compare function
+    struct ws_array* self //!< Array object
 );
 
 /**

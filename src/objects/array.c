@@ -132,12 +132,12 @@ ws_array_get_len(
 
 void
 ws_array_sort(
-    struct ws_array* self,
-    signed int (*cmp)(const void*, const void*)
+    struct ws_array* self
 ) {
     if (self) {
         ws_object_lock_write(&self->obj);
-        qsort(self->ary, sizeof(*self->ary), self->len, cmp);
+        qsort(self->ary, sizeof(*self->ary), self->len,
+                (int(*)(const void*, const void*)) ws_object_cmp);
         ws_object_unlock(&self->obj);
     }
     return;
