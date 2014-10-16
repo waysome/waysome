@@ -133,6 +133,8 @@ ws_array_has(
  *
  * @memberof ws_array
  *
+ * @note gets a ref for you if it returns an object
+ *
  * @return the object or NULL on failure or not found
  */
 struct ws_object*

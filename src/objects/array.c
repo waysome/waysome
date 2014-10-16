@@ -175,6 +175,7 @@ ws_array_find(
         size_t i;
         for (i = 0; i < self->len && res == NULL; i++) {
             if (0 == ws_object_cmp(self->ary[i], cmp)) {
+                ws_object_getref(self->ary[i]);
                 res = self->ary[i];
             }
         }
