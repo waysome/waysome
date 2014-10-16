@@ -136,7 +136,7 @@ ws_object_init(
         pthread_rwlock_init(&self->ref_counting.rwl, NULL);
         self->ref_counting.refcnt = 1;
 
-        if (self->id) {
+        if (self->id && self->id->init_callback) {
             self->id->init_callback(self);
         } else {
             self->id = &WS_OBJECT_TYPE_ID_OBJECT;
