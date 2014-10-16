@@ -29,7 +29,9 @@
 
 ${HEADER_INCLUSION}
 
-struct ws_command ws_command_list[] = {
+struct ws_command const ws_command_list[] = {
 ${LIST_BODY}
 };
+
+size_t const ws_command_cnt = ${WS_COMMAND_CNT};
 

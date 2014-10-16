@@ -48,7 +48,12 @@
 /**
  * List holding all the commands in alphabetical order
  */
-extern struct ws_command ws_command_list[];
+extern struct ws_command const ws_command_list[];
+
+/**
+ * Number of commands in `ws_command_list`
+ */
+extern size_t const ws_command_cnt;
 
 #endif // __WS_COMMAND_LIST_H__
 

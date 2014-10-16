@@ -64,6 +64,8 @@ if(DEFINED WS_COMMANDS)
     list(SORT WS_COMMANDS)
 endif()
 
+list(LENGTH WS_COMMANDS WS_COMMAND_CNT)
+
 #
 # Generate the command list source
 #

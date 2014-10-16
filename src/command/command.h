@@ -115,7 +115,7 @@ struct ws_statement {
  *
  * @returns command with the name given or NULL
  */
-struct ws_command*
+struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
 );
