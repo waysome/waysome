@@ -164,11 +164,8 @@ cmp_callback(
     struct ws_object const* o1,
     struct ws_object const* o2
 ) {
-    struct ws_wayland_obj* w1 = (struct ws_wayland_obj*) o1;
-    struct ws_wayland_obj* w2 = (struct ws_wayland_obj*) o2;
-
-    uint32_t id1 = ws_wayland_obj_get_id(w1);
-    uint32_t id2 = ws_wayland_obj_get_id(w2);
+    uintmax_t id1 = ws_object_uuid(o1);
+    uintmax_t id2 = ws_object_uuid(o2);
 
     return ((id1 == id2) ? 0 : ((id1 > id2) ? -1 : 1));
 }
