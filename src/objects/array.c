@@ -224,6 +224,7 @@ ws_array_set_at(
             } else {
                 res = obj;
             }
+            ws_object_getref(obj);
             self->ary[i] = obj;
         }
 

@@ -167,6 +167,8 @@ ws_array_get_at(
  *
  * @warning returns NULL if index is out of bounds
  *
+ * @note Gets a ref on the object before storing it, but not when returning it
+ *
  * @return Object which was inserted or object which was overridden by inserting
  * operation, if there was one.
  */
