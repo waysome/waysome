@@ -165,7 +165,7 @@ ws_array_has(
 struct ws_object*
 ws_array_find(
     struct ws_array* const self,
-    bool (*cmp)(struct ws_object* const)
+    struct ws_object const* cmp
 ) {
     struct ws_object* res = NULL;
 
@@ -174,7 +174,7 @@ ws_array_find(
 
         size_t i;
         for (i = 0; i < self->len && res == NULL; i++) {
-            if (cmp(self->ary[i])) {
+            if (0 == ws_object_cmp(self->ary[i], cmp)) {
                 res = self->ary[i];
             }
         }

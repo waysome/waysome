@@ -133,15 +133,12 @@ ws_array_has(
  *
  * @memberof ws_array
  *
- * @note Iterates through the array. If the `cmp` function returns non-false,
- * the function returns immediately.
- *
  * @return the object or NULL on failure or not found
  */
 struct ws_object*
 ws_array_find(
     struct ws_array* const self, //!< Array object
-    bool (*cmp)(struct ws_object* const) //!< Predicate for finding the object
+    struct ws_object const* cmp //!< Object to compare to
 );
 
 /**
