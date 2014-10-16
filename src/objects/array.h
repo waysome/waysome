@@ -186,6 +186,9 @@ ws_array_set_at(
  *
  * @warning stops iteration whenever `iter` returns false
  *
+ * @note Gets a ref on the object before passing it to the iteration function
+ * and releases the ref afterwards
+ *
  * @return true if the iteration exited normally (over elements was iterated),
  * else false
  */

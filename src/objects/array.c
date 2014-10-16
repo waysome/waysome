@@ -247,7 +247,9 @@ ws_array_foreach(
 
         size_t i;
         for (i = 0, res = true; i < self->len && res; i++) {
+            ws_object_getref(self->ary[i]);
             res = iter(etc, self->ary[i]);
+            ws_object_unref(self->ary[i]);
         }
 
         ws_object_unlock(&self->obj);
