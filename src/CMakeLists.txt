@@ -61,6 +61,7 @@ set(SOURCE_FILES
     compositor/wayland_compositor.c
     compositor/wayland_shell.c
     compositor/wayland_shell_surface.c
+    connection/connbuf.c
     logger/module.c
     main.c
     objects/array.c
