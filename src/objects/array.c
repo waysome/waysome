@@ -146,7 +146,7 @@ ws_array_sort(
 bool
 ws_array_has(
     struct ws_array* const self,
-    void* const obj
+    struct ws_object* const obj
 ) {
     bool res = false;
 
@@ -162,10 +162,10 @@ ws_array_has(
     return res;
 }
 
-void*
+struct ws_object*
 ws_array_find(
     struct ws_array* const self,
-    bool (*cmp)(void* const)
+    bool (*cmp)(struct ws_object* const)
 ) {
     void* res = NULL;
 
@@ -185,7 +185,7 @@ ws_array_find(
     return res;
 }
 
-void*
+struct ws_object*
 ws_array_get_at(
     struct ws_array* const self,
     unsigned int i
@@ -205,10 +205,10 @@ ws_array_get_at(
     return res;
 }
 
-void*
+struct ws_object*
 ws_array_set_at(
     struct ws_array* self,
-    void* obj,
+    struct ws_object* obj,
     unsigned int i
 ) {
     void* res = NULL;
@@ -234,7 +234,7 @@ ws_array_set_at(
 bool
 ws_array_foreach(
     struct ws_array* const self,
-    bool (*iter)(void* etc, void* entry),
+    bool (*iter)(void* etc, struct ws_object* entry),
     void* etc
 ) {
     bool res = false;
@@ -256,7 +256,7 @@ ws_array_foreach(
 int
 ws_array_append(
     struct ws_array* const self,
-    void* element
+    struct ws_object* element
 ) {
     static const int realloc_fact = 2;
     if (!self) {
