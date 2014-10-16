@@ -197,6 +197,7 @@ ws_array_get_at(
         ws_object_lock_read(&self->obj);
 
         if (self->len > i) {
+            ws_object_getref(self->ary[i]);
             res = self->ary[i];
         }
 

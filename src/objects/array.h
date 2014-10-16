@@ -148,6 +148,8 @@ ws_array_find(
  *
  * @memberof ws_array
  *
+ * @note gets a ref for you if it returns an object
+ *
  * @warning returns NULL if index is out of bounds
  *
  * @return the object at position `i`
