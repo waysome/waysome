@@ -106,3 +106,27 @@ ws_connbuf_append(
     return 0;
 }
 
+int
+ws_connbuf_discard(
+    struct ws_connbuf* self,
+    size_t amount
+) {
+    if (amount == 0) {
+        return -EINVAL;
+    }
+
+    if (self->blocked) {
+        return -EINTR;
+    }
+
+    if (amount >= self->data) {
+        self->data = 0;
+        return 0;
+    }
+
+    self->data -= amount;
+    memmove(self->buffer, self->buffer + amount, self->data);
+
+    return 0;
+}
+
