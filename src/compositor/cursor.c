@@ -38,6 +38,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
 
+#define CURSOR_SIZE 128
 
 /**
  *  Deinit the global cursor
@@ -46,6 +47,7 @@ static bool
 deinit_cursor(
         struct ws_object* self //!< The cursor to deinit
 );
+
 
 ws_object_type_id WS_OBJECT_TYPE_ID_CURSOR = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
@@ -75,7 +77,7 @@ ws_cursor_new(
     ws_object_init((struct ws_object*) self);
     self->obj.id = &WS_OBJECT_TYPE_ID_CURSOR;
     self->cur_fb_dev = dev;
-    self->cursor_fb = ws_frame_buffer_new(dev, 128, 128);
+    self->cursor_fb = ws_frame_buffer_new(dev, CURSOR_SIZE, CURSOR_SIZE);
     self->x_hp = 1;
     self->y_hp = 1;
     self->x = 350;
@@ -93,9 +95,11 @@ ws_cursor_set_position(
     int x,
     int y
 ) {
-    //!< @todo do proper bound checks
-    self->x = x;
-    self->y = y;
+    int w = ws_buffer_width((struct ws_buffer*)self->cur_mon->buffer);
+    int h = ws_buffer_height((struct ws_buffer*)self->cur_mon->buffer);
+
+    self->x = CLAMP(-self->x_hp, x, w);
+    self->y = CLAMP(-self->y_hp, y, h);
 }
 
 void
@@ -104,9 +108,8 @@ ws_cursor_set_hotspot(
     int x,
     int y
 ) {
-    //!< @todo do proper bound checks
-    self->x_hp = x;
-    self->y_hp = y;
+    self->x = CLAMP(0, CURSOR_SIZE, 128);
+    self->y = CLAMP(0, CURSOR_SIZE, 128);
 }
 
 void
@@ -154,3 +157,4 @@ deinit_cursor(
 ) {
     return true;
 }
+
