@@ -34,7 +34,7 @@
  *
  */
 
-struct ws_command*
+struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
 ) {
