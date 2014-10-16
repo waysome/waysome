@@ -59,7 +59,7 @@ struct ws_array {
     size_t nused; //!< @protected Number of used elements in the array
     bool sorted; //! @protected Flag whether the array is sorted
 
-    void** ary; //!< @protected Actual array
+    struct ws_object** ary; //!< @protected Actual array
 };
 
 /**
@@ -126,7 +126,7 @@ ws_array_sort(
 bool
 ws_array_has(
     struct ws_array* const self, //!< Array object
-    void* const obj //!< Object to search for
+    struct ws_object* const obj //!< Object to search for
 );
 
 /**
@@ -139,10 +139,10 @@ ws_array_has(
  *
  * @return the object or NULL on failure or not found
  */
-void*
+struct ws_object*
 ws_array_find(
     struct ws_array* const self, //!< Array object
-    bool (*cmp)(void* const) //!< Predicate for finding the object
+    bool (*cmp)(struct ws_object* const) //!< Predicate for finding the object
 );
 
 /**
@@ -154,7 +154,7 @@ ws_array_find(
  *
  * @return the object at position `i`
  */
-void*
+struct ws_object*
 ws_array_get_at(
     struct ws_array* const self, //!< Array object
     unsigned int i //!< Index
@@ -170,10 +170,10 @@ ws_array_get_at(
  * @return Object which was inserted or object which was overridden by inserting
  * operation, if there was one.
  */
-void*
+struct ws_object*
 ws_array_set_at(
     struct ws_array* self, //!< Array object
-    void* obj, //!< object to insert
+    struct ws_object* obj, //!< object to insert
     unsigned int i //!< Index for insertion
 );
 
@@ -190,7 +190,7 @@ ws_array_set_at(
 bool
 ws_array_foreach(
     struct ws_array* const self, //!< Array object
-    bool (*iter)(void* etc, void* entry), //!< Iteration callback
+    bool (*iter)(void* etc, struct ws_object* entry), //!< Iteration callback
     void* etc //!< optional argument for iteration callback
 );
 
@@ -210,7 +210,7 @@ ws_array_foreach(
 int
 ws_array_append(
     struct ws_array* const self, //!< Array object
-    void* //!< object to append
+    struct ws_object* //!< object to append
 );
 
 #endif // __WS_OBJECTS_ARRAY_H__
