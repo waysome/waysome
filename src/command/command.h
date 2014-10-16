@@ -32,7 +32,7 @@
 
 // forward declarations
 struct ws_command_processor;
-struct ws_value;
+union ws_value_union;
 
 /**
  * A command argument
@@ -68,7 +68,7 @@ struct ws_command_args {
  * Functions of this type will implement commands which may be use in
  * transactions.
  */
-typedef int (*ws_regular_command_func)(struct ws_value*);
+typedef int (*ws_regular_command_func)(union ws_value_union*);
 
 /**
  * Function type for special commands
