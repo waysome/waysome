@@ -48,7 +48,7 @@
 /**
  * List holding all the commands in alphabetical order
  */
-extern struct ws_command ws_command_list[];
+extern struct ws_command const ws_command_list[];
 
 #endif // __WS_COMMAND_LIST_H__
 
