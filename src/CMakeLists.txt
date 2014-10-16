@@ -2,6 +2,8 @@
 # Building the waysome exetuable
 #
 
+add_subdirectory(command)
+
 #
 # Set include directories
 #
@@ -44,7 +46,9 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    command/arithmetical.c
     command/command.c
+    command/list.c
     compositor/background_surface.c
     compositor/buffer.c
     compositor/framebuffer_device.c
