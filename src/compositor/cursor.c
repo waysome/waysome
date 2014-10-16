@@ -31,6 +31,7 @@
 #include <xf86drmMode.h>
 
 #include "objects/object.h"
+#include "util/arithmetical.h"
 
 #include "compositor/cursor.h"
 #include "compositor/frame_buffer.h"
@@ -153,8 +154,12 @@ ws_cursor_set_monitor(
 
 static bool
 deinit_cursor(
-        struct ws_object* self
+        struct ws_object* s
 ) {
+    struct ws_cursor* self = (struct ws_cursor*) s;
+    drmModeSetCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
+            self->cursor_fb->handle, 0, 0);
+    ws_object_deinit((struct ws_object*) self->cursor_fb);
     return true;
 }
 
