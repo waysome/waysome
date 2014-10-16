@@ -211,7 +211,7 @@ ws_array_set_at(
     struct ws_object* obj,
     unsigned int i
 ) {
-    void* res = NULL;
+    struct ws_object* res = NULL;
 
     if (self) {
         ws_object_lock_write(&self->obj);
