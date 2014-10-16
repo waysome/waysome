@@ -132,12 +132,12 @@ ws_array_get_len(
 
 void
 ws_array_sort(
-    struct ws_array* self,
-    signed int (*cmp)(const void*, const void*)
+    struct ws_array* self
 ) {
     if (self) {
         ws_object_lock_write(&self->obj);
-        qsort(self->ary, sizeof(*self->ary), self->len, cmp);
+        qsort(self->ary, sizeof(*self->ary), self->len,
+                (int(*)(const void*, const void*)) ws_object_cmp);
         ws_object_unlock(&self->obj);
     }
     return;
@@ -146,7 +146,7 @@ ws_array_sort(
 bool
 ws_array_has(
     struct ws_array* const self,
-    void* const obj
+    struct ws_object* const obj
 ) {
     bool res = false;
 
@@ -154,7 +154,7 @@ ws_array_has(
         ws_object_lock_read(&self->obj);
         size_t i;
         for (i = 0; i < self->len && !res; i++) {
-            res = (self->ary[i] == obj);
+            res = (0 == ws_object_cmp(self->ary[i], obj));
         }
 
         ws_object_unlock(&self->obj);
@@ -162,19 +162,20 @@ ws_array_has(
     return res;
 }
 
-void*
+struct ws_object*
 ws_array_find(
     struct ws_array* const self,
-    bool (*cmp)(void* const)
+    struct ws_object const* cmp
 ) {
-    void* res = NULL;
+    struct ws_object* res = NULL;
 
     if (self) {
         ws_object_lock_read(&self->obj);
 
         size_t i;
         for (i = 0; i < self->len && res == NULL; i++) {
-            if (cmp(self->ary[i])) {
+            if (0 == ws_object_cmp(self->ary[i], cmp)) {
+                ws_object_getref(self->ary[i]);
                 res = self->ary[i];
             }
         }
@@ -185,17 +186,18 @@ ws_array_find(
     return res;
 }
 
-void*
+struct ws_object*
 ws_array_get_at(
     struct ws_array* const self,
     unsigned int i
 ) {
-    void* res = NULL;
+    struct ws_object* res = NULL;
 
     if (self) {
         ws_object_lock_read(&self->obj);
 
         if (self->len > i) {
+            ws_object_getref(self->ary[i]);
             res = self->ary[i];
         }
 
@@ -205,13 +207,13 @@ ws_array_get_at(
     return res;
 }
 
-void*
+struct ws_object*
 ws_array_set_at(
     struct ws_array* self,
-    void* obj,
+    struct ws_object* obj,
     unsigned int i
 ) {
-    void* res = NULL;
+    struct ws_object* res = NULL;
 
     if (self) {
         ws_object_lock_write(&self->obj);
@@ -222,6 +224,7 @@ ws_array_set_at(
             } else {
                 res = obj;
             }
+            ws_object_getref(obj);
             self->ary[i] = obj;
         }
 
@@ -234,7 +237,7 @@ ws_array_set_at(
 bool
 ws_array_foreach(
     struct ws_array* const self,
-    bool (*iter)(void* etc, void* entry),
+    bool (*iter)(void* etc, struct ws_object* entry),
     void* etc
 ) {
     bool res = false;
@@ -244,7 +247,9 @@ ws_array_foreach(
 
         size_t i;
         for (i = 0, res = true; i < self->len && res; i++) {
+            ws_object_getref(self->ary[i]);
             res = iter(etc, self->ary[i]);
+            ws_object_unref(self->ary[i]);
         }
 
         ws_object_unlock(&self->obj);
@@ -256,7 +261,7 @@ ws_array_foreach(
 int
 ws_array_append(
     struct ws_array* const self,
-    void* element
+    struct ws_object* element
 ) {
     static const int realloc_fact = 2;
     if (!self) {
@@ -266,7 +271,7 @@ ws_array_append(
     ws_object_lock_write(&self->obj);
 
     size_t newsize = sizeof(*self->ary) * self->len * realloc_fact;
-    void** newbuf = realloc(self->ary, newsize);
+    struct ws_object** newbuf = realloc(self->ary, newsize);
 
     if (!newbuf) {
         ws_object_unlock(&self->obj);
@@ -274,6 +279,7 @@ ws_array_append(
     }
 
     self->ary = newbuf;
+    ws_object_getref(element);
     self->ary[self->len] = element;
     self->len *= realloc_fact;
     self->nused++;

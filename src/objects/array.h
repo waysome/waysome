@@ -59,7 +59,7 @@ struct ws_array {
     size_t nused; //!< @protected Number of used elements in the array
     bool sorted; //! @protected Flag whether the array is sorted
 
-    void** ary; //!< @protected Actual array
+    struct ws_object** ary; //!< @protected Actual array
 };
 
 /**
@@ -108,12 +108,11 @@ ws_array_get_len(
  *
  * @memberof ws_array
  *
- * @note Sorts ascending pointers if `cmp` is NULL
+ * @note Uses object sort mechanism
  */
 void
 ws_array_sort(
-    struct ws_array* self, //!< Array object
-    signed int (*cmp)(const void* , const void*) //!< compare function
+    struct ws_array* self //!< Array object
 );
 
 /**
@@ -126,7 +125,7 @@ ws_array_sort(
 bool
 ws_array_has(
     struct ws_array* const self, //!< Array object
-    void* const obj //!< Object to search for
+    struct ws_object* const obj //!< Object to search for
 );
 
 /**
@@ -134,15 +133,14 @@ ws_array_has(
  *
  * @memberof ws_array
  *
- * @note Iterates through the array. If the `cmp` function returns non-false,
- * the function returns immediately.
+ * @note gets a ref for you if it returns an object
  *
  * @return the object or NULL on failure or not found
  */
-void*
+struct ws_object*
 ws_array_find(
     struct ws_array* const self, //!< Array object
-    bool (*cmp)(void* const) //!< Predicate for finding the object
+    struct ws_object const* cmp //!< Object to compare to
 );
 
 /**
@@ -150,11 +148,13 @@ ws_array_find(
  *
  * @memberof ws_array
  *
+ * @note gets a ref for you if it returns an object
+ *
  * @warning returns NULL if index is out of bounds
  *
  * @return the object at position `i`
  */
-void*
+struct ws_object*
 ws_array_get_at(
     struct ws_array* const self, //!< Array object
     unsigned int i //!< Index
@@ -167,13 +167,15 @@ ws_array_get_at(
  *
  * @warning returns NULL if index is out of bounds
  *
+ * @note Gets a ref on the object before storing it, but not when returning it
+ *
  * @return Object which was inserted or object which was overridden by inserting
  * operation, if there was one.
  */
-void*
+struct ws_object*
 ws_array_set_at(
     struct ws_array* self, //!< Array object
-    void* obj, //!< object to insert
+    struct ws_object* obj, //!< object to insert
     unsigned int i //!< Index for insertion
 );
 
@@ -184,13 +186,16 @@ ws_array_set_at(
  *
  * @warning stops iteration whenever `iter` returns false
  *
+ * @note Gets a ref on the object before passing it to the iteration function
+ * and releases the ref afterwards
+ *
  * @return true if the iteration exited normally (over elements was iterated),
  * else false
  */
 bool
 ws_array_foreach(
     struct ws_array* const self, //!< Array object
-    bool (*iter)(void* etc, void* entry), //!< Iteration callback
+    bool (*iter)(void* etc, struct ws_object* entry), //!< Iteration callback
     void* etc //!< optional argument for iteration callback
 );
 
@@ -201,6 +206,8 @@ ws_array_foreach(
  *
  * @note Tries to resize the array if there is not enough space
  *
+ * @note Gets a ref on the objects before storing it
+ *
  * @warning Does not set empty entries, does _always_ append.
  *
  * @return 0 on success, else error numbers from errno.h
@@ -210,7 +217,7 @@ ws_array_foreach(
 int
 ws_array_append(
     struct ws_array* const self, //!< Array object
-    void* //!< object to append
+    struct ws_object* //!< object to append
 );
 
 #endif // __WS_OBJECTS_ARRAY_H__
