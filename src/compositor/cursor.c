@@ -39,7 +39,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
 
-#define CURSOR_SIZE 128
+#define CURSOR_SIZE 64
 
 /**
  *  Deinit the global cursor
