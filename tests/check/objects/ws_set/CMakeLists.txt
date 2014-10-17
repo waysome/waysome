@@ -11,14 +11,17 @@ set(TEST_SOURCES
 set(TEST_LIBRARIES
     ${Threads_LIBRARIES}
     ${libreset_LIBRARIES}
+    ${UUID_LIBRARIES}
     PARENT_SCOPE)
 
 set(TEST_INCLUDE_DIRS
     ${Threads_LIBRARIES}
     ${libreset_INCLUDE_DIRS}
+    ${UUID_INCLUDE_DIRS}
     PARENT_SCOPE)
 
 set(TEST_DEFINITIONS
     ${Threads_LIBRARIES}
     ${libreset_DEFINITIONS}
+    ${UUID_DEFINITIONS}
     PARENT_SCOPE)
