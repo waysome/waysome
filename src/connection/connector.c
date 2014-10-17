@@ -83,8 +83,28 @@ ws_connector_deinit(
 }
 
 int
-ws_connector_read(void){ 
-    return 0;  
+ws_connector_read(
+    struct ws_connector* self
+){
+    char* start;
+    int res;
+    size_t remaining_mem; //amount of free memory in outbuf
+
+    remaining_mem = self->inbuf.size - self->inbuf.data;
+    start = ws_connbuf_reserve(&self->inbuf, remaining_mem);
+
+    res = read(self->fd, start, remaining_mem);
+    if (res < 0) {
+        ws_connbuf_append(&self->inbuf, 0); //unblocks the buffer
+        return res;
+    }
+
+    res = ws_connbuf_append(&self->inbuf, res);
+    if (res != 0) {
+        return res;
+    }
+
+    return 0;
 }
 
 void
