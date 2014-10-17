@@ -71,6 +71,7 @@ set(SOURCE_FILES
     main.c
     objects/array.c
     objects/message/message.c
+    objects/message/transaction.c
     objects/object.c
     objects/set.c
     objects/string.c
