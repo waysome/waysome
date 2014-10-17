@@ -210,3 +210,23 @@ ws_monitor_set_mode_with_id(
                 &self->modes,
                 (struct ws_object*)&mode);
 }
+
+struct ws_monitor_mode*
+ws_monitor_add_mode(
+    struct ws_monitor* self,
+    int width,
+    int height
+) {
+    struct ws_monitor_mode* mode = ws_monitor_mode_new();
+    if (!mode) {
+        ws_log(&log_ctx, LOG_ERR, "Could not create mode.");
+        return NULL;
+    }
+    mode->id = self->mode_count++;
+    mode->mode.hdisplay = width;
+    mode->mode.vdisplay = height;
+    //!< @todo: Add more information like vsync etc...
+    ws_set_insert(&self->modes, (struct ws_object*) mode);
+    return mode;
+}
+
