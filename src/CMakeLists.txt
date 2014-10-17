@@ -59,13 +59,13 @@ set(SOURCE_FILES
     compositor/module.c
     compositor/monitor.c
     compositor/monitor_mode.c
-    compositor/seat.c
-    compositor/surface.c
-    compositor/wayland_buffer.c
-    compositor/wayland_compositor.c
-    compositor/wayland_pointer.c
-    compositor/wayland_shell.c
-    compositor/wayland_shell_surface.c
+    compositor/wayland/seat.c
+    compositor/wayland/surface.c
+    compositor/wayland/wayland_buffer.c
+    compositor/wayland/wayland_compositor.c
+    compositor/wayland/wayland_pointer.c
+    compositor/wayland/wayland_shell.c
+    compositor/wayland/wayland_shell_surface.c
     connection/connbuf.c
     logger/module.c
     main.c

@@ -41,13 +41,13 @@
 #include "util/wayland.h"
 #include "logger/module.h"
 #include "compositor/internal_context.h"
-#include "compositor/wayland_compositor.h"
-#include "compositor/wayland_shell.h"
+#include "compositor/wayland/wayland_compositor.h"
+#include "compositor/wayland/wayland_shell.h"
 #include "compositor/cursor.h"
 #include "buffer/image_buffer.h"
 #include "monitor_mode.h"
 #include "monitor.h"
-#include "seat.h"
+#include "compositor/wayland/seat.h"
 
 struct ws_compositor_context ws_comp_ctx;
 struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };

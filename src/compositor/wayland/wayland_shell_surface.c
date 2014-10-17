@@ -28,7 +28,7 @@
 #include <malloc.h>
 #include <wayland-server.h>
 
-#include "compositor/wayland_shell_surface.h"
+#include "compositor/wayland/wayland_shell_surface.h"
 
 /**
  * Version of the wayland surface interface we're implementing
