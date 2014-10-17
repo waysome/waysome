@@ -47,6 +47,7 @@
 #include "background_surface.h"
 #include "monitor_mode.h"
 #include "monitor.h"
+#include "seat.h"
 
 struct ws_compositor_context ws_comp_ctx;
 struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };
@@ -203,6 +204,11 @@ ws_compositor_init(void) {
     }
 
     retval = ws_wayland_shell_init();
+    if (retval < 0) {
+        return retval;
+    }
+
+    retval = ws_wayland_seat_init();
     if (retval < 0) {
         return retval;
     }

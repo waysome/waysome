@@ -57,6 +57,7 @@ set(SOURCE_FILES
     compositor/module.c
     compositor/monitor.c
     compositor/monitor_mode.c
+    compositor/seat.c
     compositor/surface.c
     compositor/wayland_buffer.c
     compositor/wayland_pointer.c
