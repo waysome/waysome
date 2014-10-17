@@ -97,6 +97,5 @@ struct ws_transaction_command_list*
 ws_transaction_commands(
     struct ws_transaction* t
 ) {
-    //!< @todo implement
-    return NULL;
+    return t->cmds;
 }
