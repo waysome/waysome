@@ -29,17 +29,17 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <unistd.h>
 #include <sys/mman.h>
+#include <unistd.h>
+#include <unistd.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
 #include "logger/module.h"
 #include "objects/object.h"
 
-#include "compositor/background_surface.h"
-#include "compositor/frame_buffer.h"
+#include "compositor/buffer/frame_buffer.h"
+#include "compositor/buffer/image_buffer.h"
 #include "compositor/internal_context.h"
 
 

@@ -28,7 +28,7 @@
 #ifndef __WS_BACKGROUND_SERVICE_H__
 #define __WS_BACKGROUND_SERVICE_H__
 
-#include "compositor/buffer.h"
+#include "compositor/buffer/buffer.h"
 
 /**
  *

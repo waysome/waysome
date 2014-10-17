@@ -28,9 +28,9 @@
 #ifndef __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 #define __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 
-#include "objects/set.h"
-#include "compositor/framebuffer_device.h"
 #include "compositor/cursor.h"
+#include "compositor/framebuffer_device.h"
+#include "objects/set.h"
 
 /**
  * Internal compositor context

@@ -25,50 +25,33 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_WL_SURFACE_H__
-#define __WS_WL_SURFACE_H__
+#ifndef __WS_WAYLAND_SEAT_H__
+#define __WS_WAYLAND_SEAT_H__
 
-#include "compositor/wayland_buffer.h"
 #include "objects/wayland_obj.h"
-
+#include "util/wayland.h"
 
 /**
- * Waysome's implementation of wl_surface
+ * Waysome's implementation of ws_wayland_seat
  *
- * This struct represents a surface
+ * This struct represents a ws_wayland_seat
  */
-struct ws_surface {
+struct ws_wayland_seat {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
-    struct ws_wayland_buffer img_buf; //!< @protected image buffer
+    //!< @todo: Set to real structs once libinput is added
+    //struct devices;
+    //struct capabilities;
 };
 
-/**
- * Variable which holds type information about the wl_surface type
- */
-extern ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE;
 
 /**
- * Create a new surface
+ * Initialize the seat interface and register it to wayland
  *
- * create a new surface without any bufers attached to it
+ * @return 0 on success, else an error code
  */
-struct ws_surface*
-ws_surface_new(
-    struct wl_client* client, //!< client requesting the surface creation
-    uint32_t serial //!< id of the newly created surface
-);
+int
+ws_wayland_seat_init(void);
 
-/**
- * Get a surface from a resource
- *
- * Extracts the surface from a resource.
- *
- * @return the surface or NULL, if the resource is not a wl_surface.
- */
-struct ws_surface*
-ws_surface_from_resource(
-    struct wl_resource* resource
-);
 
-#endif // __WS_WL_SURFACE_H__
+#endif // __WS_WAYLAND_SEAT_H__
 

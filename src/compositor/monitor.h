@@ -44,11 +44,10 @@
 #include <stdbool.h>
 #include <xf86drmMode.h>
 
+#include "compositor/buffer/frame_buffer.h"
+#include "compositor/monitor_mode.h"
 #include "objects/object.h"
 #include "objects/set.h"
-
-#include "monitor_mode.h"
-#include "compositor/frame_buffer.h"
 
 /**
  * ws_monitor type definition

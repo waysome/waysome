@@ -33,8 +33,8 @@
 #include "objects/object.h"
 #include "util/arithmetical.h"
 
+#include "compositor/buffer/frame_buffer.h"
 #include "compositor/cursor.h"
-#include "compositor/frame_buffer.h"
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"

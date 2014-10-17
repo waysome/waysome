@@ -30,8 +30,8 @@
 
 #include "util/arithmetical.h"
 
+#include "compositor/buffer/buffer.h"
 #include "compositor/internal_context.h"
-#include "compositor/buffer.h"
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
     .type = {

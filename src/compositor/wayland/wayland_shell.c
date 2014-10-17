@@ -28,9 +28,9 @@
 #include <stdbool.h>
 #include <wayland-server.h>
 
-#include "compositor/surface.h"
-#include "compositor/wayland_shell.h"
-#include "compositor/wayland_shell_surface.h"
+#include "compositor/wayland/surface.h"
+#include "compositor/wayland/wayland_shell.h"
+#include "compositor/wayland/wayland_shell_surface.h"
 #include "util/arithmetical.h"
 #include "util/wayland.h"
 
