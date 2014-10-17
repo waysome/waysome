@@ -88,10 +88,6 @@ ws_connbuf_append(
     struct ws_connbuf* self,
     size_t amount
 ) {
-    if (amount == 0) {
-        return -EINVAL;
-    }
-
     if (!self->blocked) {
         return -EINTR;
     }
