@@ -38,8 +38,22 @@ ws_transaction_new(
     enum ws_transaction_flags flags,
     struct ws_transaction_command_list* cmds
 ) {
-    //!< @todo implement
-    return NULL;
+    struct ws_transaction* t = calloc(1, sizeof(*t));
+
+    if (!t) {
+        return NULL;
+    }
+
+    if (!ws_message_init(&t->m, id)) {
+        free(t);
+        return NULL;
+    }
+
+    t->cmds = cmds;
+    t->name = getref(name);
+    t->flags = flags;
+
+    return t;
 }
 
 uintmax_t
