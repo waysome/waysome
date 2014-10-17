@@ -79,13 +79,14 @@ ws_cursor_new(
     self->obj.id = &WS_OBJECT_TYPE_ID_CURSOR;
     self->cur_fb_dev = dev;
     self->cursor_fb = ws_frame_buffer_new(dev, CURSOR_SIZE, CURSOR_SIZE);
+    // We set the cursor to sane values
     self->x_hp = 1;
     self->y_hp = 1;
     self->x = 350;
     self->y = 350;
     self->default_cursor = cur;
     ws_buffer_blit((struct ws_buffer*) self->cursor_fb,
-            (struct ws_buffer*) self->default_cursor);
+                    (struct ws_buffer*) self->default_cursor);
 
     return self;
 }
@@ -96,9 +97,11 @@ ws_cursor_set_position(
     int x,
     int y
 ) {
-    int w = ws_buffer_width((struct ws_buffer*)self->cur_mon->buffer);
-    int h = ws_buffer_height((struct ws_buffer*)self->cur_mon->buffer);
+    int w = ws_buffer_width((struct ws_buffer*) self->cur_mon->buffer);
+    int h = ws_buffer_height((struct ws_buffer*) self->cur_mon->buffer);
 
+    // We use the negative hotspot position because we don't want it to go
+    // off screen.
     self->x = CLAMP(-self->x_hp, x, w);
     self->y = CLAMP(-self->y_hp, y, h);
 }
@@ -120,16 +123,17 @@ ws_cursor_redraw(
     int w = ws_buffer_width((struct ws_buffer*) self->cursor_fb);
     int h = ws_buffer_height((struct ws_buffer*) self->cursor_fb);
 
-    if (drmModeSetCursor2(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->cursor_fb->handle, w, h,
-            self->x_hp, self->y_hp) != 0) {
+    int retval = drmModeSetCursor2(self->cur_fb_dev->fd, self->cur_mon->crtc,
+            self->cursor_fb->handle, w, h, self->x_hp, self->y_hp);
+    if (retval != 0) {
         ws_log(&log_ctx, LOG_CRIT, "Could not set cursor");
         ws_log(&log_ctx, LOG_CRIT, "State was: crtc: %d, handle: %d, "
                 "height: %d, width: %d",
                 self->cur_mon->crtc, self->cursor_fb->handle, w, h);
     }
-    if (drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->x, self->y) != 0) {
+    retval = drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
+            self->x, self->y);
+    if ( retval != 0) {
         ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
     }
 }

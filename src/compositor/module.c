@@ -213,6 +213,7 @@ ws_compositor_init(void) {
         return retval;
     }
 
+    //!< @todo: Make this more abstract
     struct ws_image_buffer* cursor =
         ws_image_buffer_from_png("share/waysome/cursor.png");
 
@@ -293,8 +294,8 @@ set_monitor_modes(
     if (!monitor->connected) {
         return 0;
     }
-    ws_monitor_set_mode_with_id(monitor,
-            0); // Set to the biggest mode
+    // Set to the biggest mode
+    ws_monitor_set_mode_with_id(monitor, 0);
     if (monitor->current_mode) {
         ws_log(&log_ctx, LOG_DEBUG,
                 "Found a valid connector with %dx%d dimensions.",
