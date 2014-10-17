@@ -25,12 +25,11 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stdbool.h"
+#include <stdbool.h>
 
+#include "compositor/wayland/seat.h"
+#include "compositor/wayland/wayland_pointer.h"
 #include "util/arithmetical.h"
-#include "util/wayland.h"
-#include "wayland_pointer.h"
-#include "seat.h"
 
 
 #define WAYLAND_SEAT_VERSION (3)

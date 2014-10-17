@@ -33,11 +33,10 @@
 #include <unistd.h>
 #include <xf86drm.h>
 
-#include "logger/module.h"
-#include "objects/object.h"
-
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
+#include "logger/module.h"
+#include "objects/object.h"
 
 
 /*

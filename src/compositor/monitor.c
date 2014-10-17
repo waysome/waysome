@@ -38,10 +38,9 @@
 #include "compositor/buffer/image_buffer.h"
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
+#include "compositor/monitor.h"
 #include "logger/module.h"
 #include "objects/object.h"
-
-#include "compositor/monitor.h"
 
 /*
  *

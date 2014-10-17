@@ -40,8 +40,8 @@
 #ifndef __WS_OBJECTS_FRAMEBUFFER_DEVICE_H__
 #define __WS_OBJECTS_FRAMEBUFFER_DEVICE_H__
 
-#include <stdbool.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 #include "objects/object.h"
 

@@ -28,9 +28,9 @@
 #ifndef __WS_CURSOR_H__
 #define __WS_CURSOR_H__
 
-#include "objects/object.h"
-#include "compositor/buffer/image_buffer.h"
 #include "compositor/buffer/buffer.h"
+#include "compositor/buffer/image_buffer.h"
+#include "objects/object.h"
 
 /**
  * Waysome's implementation of wl_cursor

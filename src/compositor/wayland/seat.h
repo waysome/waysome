@@ -29,6 +29,7 @@
 #define __WS_WAYLAND_SEAT_H__
 
 #include "objects/wayland_obj.h"
+#include "util/wayland.h"
 
 /**
  * Waysome's implementation of ws_wayland_seat

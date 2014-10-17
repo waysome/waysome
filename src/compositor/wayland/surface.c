@@ -31,8 +31,8 @@
 #include <wayland-server.h>
 #include <wayland-server-protocol.h>
 
-#include "compositor/monitor.h"
 #include "compositor/internal_context.h"
+#include "compositor/monitor.h"
 #include "compositor/wayland/surface.h"
 #include "objects/set.h"
 #include "util/wayland.h"

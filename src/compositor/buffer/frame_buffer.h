@@ -40,11 +40,11 @@
 #ifndef __WS_OBJECTS_FRAME_BUFFER_H__
 #define __WS_OBJECTS_FRAME_BUFFER_H__
 
-#include <stdbool.h>
 #include <pthread.h>
+#include <stdbool.h>
 
+#include "compositor/buffer/image_buffer.h"
 #include "objects/object.h"
-#include "image_buffer.h"
 
 /**
  * ws_framebuffer type definition

@@ -31,23 +31,23 @@
 #include <fcntl.h>
 #include <stdbool.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <wayland-server.h>
 #include <xf86drm.h>
 
-#include "util/cleaner.h"
-#include "util/wayland.h"
-#include "logger/module.h"
+#include "compositor/buffer/image_buffer.h"
+#include "compositor/cursor.h"
 #include "compositor/internal_context.h"
+#include "compositor/monitor.h"
+#include "compositor/monitor_mode.h"
+#include "compositor/wayland/seat.h"
 #include "compositor/wayland/wayland_compositor.h"
 #include "compositor/wayland/wayland_shell.h"
-#include "compositor/cursor.h"
-#include "buffer/image_buffer.h"
-#include "monitor_mode.h"
-#include "monitor.h"
-#include "compositor/wayland/seat.h"
+#include "logger/module.h"
+#include "util/cleaner.h"
+#include "util/wayland.h"
 
 struct ws_compositor_context ws_comp_ctx;
 struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };
