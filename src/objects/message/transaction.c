@@ -90,8 +90,7 @@ struct ws_string*
 ws_transaction_name(
     struct ws_transaction* t
 ) {
-    //!< @todo implement
-    return NULL;
+    return getref(t->name);
 }
 
 struct ws_transaction_command_list*
