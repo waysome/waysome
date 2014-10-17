@@ -25,7 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "objects/message.h"
+#include "objects/message/message.h"
 #include "serialize/deserializer.h"
 
 /**
