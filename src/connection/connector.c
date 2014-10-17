@@ -38,6 +38,21 @@ ws_connector_init(
     struct ws_connector* self,
     int fd
 ){
+    int res;
+    res = ws_connbuf_init(&self->inbuf, BUFFSIZE);
+    if (res != 0) {
+        return res;
+    }
+
+    res = ws_connbuf_init(&self->outbuf, BUFFSIZE);
+    if (res != 0) {
+        return res;
+    }
+    
+    self->readonly = false;
+    self->fd = fd;
+
+    return 0;
 }
 
 int ws_connector_init_readonly(
