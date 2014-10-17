@@ -43,9 +43,11 @@
 #include "compositor/internal_context.h"
 #include "compositor/wayland_compositor.h"
 #include "compositor/wayland_shell.h"
+#include "compositor/cursor.h"
 #include "background_surface.h"
 #include "monitor_mode.h"
 #include "monitor.h"
+#include "seat.h"
 
 struct ws_compositor_context ws_comp_ctx;
 struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };
@@ -206,6 +208,21 @@ ws_compositor_init(void) {
         return retval;
     }
 
+    retval = ws_wayland_seat_init();
+    if (retval < 0) {
+        return retval;
+    }
+
+    //!< @todo: Make this more abstract
+    struct ws_image_buffer* cursor =
+        ws_image_buffer_from_png("share/waysome/cursor.png");
+
+    ws_comp_ctx.cursor = ws_cursor_new(ws_comp_ctx.fb, cursor);
+    struct ws_monitor* any =
+        (struct ws_monitor*) ws_set_select_any(&ws_comp_ctx.monitors);
+    ws_cursor_set_monitor(ws_comp_ctx.cursor, any);
+    ws_cursor_redraw(ws_comp_ctx.cursor);
+
     is_init = true;
     return 0;
 
@@ -257,6 +274,11 @@ ws_compositor_deinit(
         close(ws_comp_ctx.fb->fd);
     }
 
+    if (ws_comp_ctx.cursor) {
+        ws_cursor_unset(ws_comp_ctx.cursor);
+        ws_object_deinit((struct ws_object*) ws_comp_ctx.cursor);
+    }
+
     //!< @todo: free all of the framebuffers
 
     //!< @todo: prelimary: free the preloaded PNG
@@ -272,8 +294,8 @@ set_monitor_modes(
     if (!monitor->connected) {
         return 0;
     }
-    ws_monitor_set_mode_with_id(monitor,
-            ws_set_cardinality(&monitor->modes) - 1);
+    // Set to the biggest mode
+    ws_monitor_set_mode_with_id(monitor, 0);
     if (monitor->current_mode) {
         ws_log(&log_ctx, LOG_DEBUG,
                 "Found a valid connector with %dx%d dimensions.",
@@ -412,6 +434,7 @@ populate_connectors(void) {
             struct ws_monitor_mode* mode = ws_monitor_mode_new();
             memcpy(&mode->mode, &conn->modes[j],
                     sizeof(mode->mode));
+            mode->id = j;
             ws_set_insert(&new_monitor->modes, (struct ws_object*)mode);
         }
 

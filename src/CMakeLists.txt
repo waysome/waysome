@@ -53,13 +53,16 @@ set(SOURCE_FILES
     command/list.c
     compositor/background_surface.c
     compositor/buffer.c
+    compositor/cursor.c
     compositor/framebuffer_device.c
     compositor/frame_buffer.c
     compositor/module.c
     compositor/monitor.c
     compositor/monitor_mode.c
+    compositor/seat.c
     compositor/surface.c
     compositor/wayland_buffer.c
+    compositor/wayland_pointer.c
     compositor/wayland_compositor.c
     compositor/wayland_shell.c
     compositor/wayland_shell_surface.c

@@ -55,6 +55,13 @@
  */
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
+/**
+ * Returns the clamped value between the two arguments
+ *
+ * @returns y if x <= y <= z else if y > z, z else x
+ */
+#define CLAMP(x,y,z) MAX(x,MIN(y,z))
+
 #endif // __WS_UTIL_ARITHMETICAL_H__
 
 /**

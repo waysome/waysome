@@ -25,27 +25,32 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
-#define __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
+#ifndef __WS_WAYLAND_SEAT_H__
+#define __WS_WAYLAND_SEAT_H__
 
-#include "objects/set.h"
-#include "compositor/framebuffer_device.h"
-#include "compositor/cursor.h"
+#include "objects/wayland_obj.h"
 
 /**
- * Internal compositor context
+ * Waysome's implementation of ws_wayland_seat
  *
- * This context holds the internal state of the compositor.
+ * This struct represents a ws_wayland_seat
  */
-extern struct ws_compositor_context {
-    struct ws_framebuffer_device* fb; //<! The Framebuffer device
-    struct ws_set monitors; //<! A set of monitors (connected or not)
-    struct ws_monitor* conns; //<! A linked list of ws_monitors
-    struct ws_cursor* cursor; //<! The cursor
-} ws_comp_ctx;
-
-// We make the object available for others to use
-extern struct ws_logger_context log_ctx;
+struct ws_wayland_seat {
+    struct ws_wayland_obj wl_obj; //!< @protected Base class.
+    //!< @todo: Set to real structs once libinput is added
+    //struct devices;
+    //struct capabilities;
+};
 
 
-#endif // __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
+/**
+ * Initialize the seat interface and register it to wayland
+ *
+ * @return 0 on success, else an error code
+ */
+int
+ws_wayland_seat_init(void);
+
+
+#endif // __WS_WAYLAND_SEAT_H__
+
