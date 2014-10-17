@@ -60,8 +60,13 @@ uintmax_t
 ws_transaction_connection_id(
     struct ws_transaction* t
 ) {
-    //!< @todo implement
-    return 0;
+    uintmax_t id;
+
+    ws_object_lock_read(&t->m.obj);
+    id = t->connection_id;
+    ws_object_unlock(&t->m.obj);
+
+    return id;
 }
 
 void
