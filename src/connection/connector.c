@@ -107,8 +107,26 @@ ws_connector_read(
     return 0;
 }
 
-void
+int
 ws_connector_flush(
     struct ws_connector* self
 ){
+    if (self->readonly) {
+        return -1;
+    }
+
+    size_t used_mem = self->outbuf.data;
+    int res;
+
+    res = write(self->fd, self->outbuf.buffer, used_mem);
+    if (res < 0 ) {
+        return res;
+    }
+
+    res = ws_connbuf_discard(&self->outbuf, used_mem);
+    if (res != 0) {
+        return res;
+    }
+    
+    return 0;
 }
