@@ -1,0 +1,84 @@
+/*
+ * waysome - wayland based window manager
+ *
+ * Copyright in alphabetical order:
+ *
+ * Copyright (C) 2014-2015 Julian Ganz
+ * Copyright (C) 2014-2015 Manuel Messner
+ * Copyright (C) 2014-2015 Marcel Müller
+ * Copyright (C) 2014-2015 Matthias Beyer
+ * Copyright (C) 2014-2015 Nadja Sommerfeld
+ *
+ * This file is part of waysome.
+ *
+ * waysome is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * waysome is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with waysome. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <stdlib.h>
+
+#include "command/command.h"
+#include "objects/message/message.h"
+#include "objects/message/transaction.h"
+
+struct ws_transaction*
+ws_transaction_new(
+    size_t id,
+    struct ws_string* name,
+    enum ws_transaction_flags flags,
+    struct ws_transaction_command_list* cmds
+) {
+    //!< @todo implement
+    return NULL;
+}
+
+uintmax_t
+ws_transaction_connection_id(
+    struct ws_transaction* t
+) {
+    //!< @todo implement
+    return 0;
+}
+
+void
+ws_transaction_set_connection_id(
+    struct ws_transaction* t,
+    uintmax_t connection_id
+) {
+    //!< @todo implement
+    return;
+}
+
+enum ws_transaction_flags
+ws_transaction_action(
+    struct ws_transaction* t
+) {
+    //!< @todo implement
+    return 0;
+}
+
+struct ws_string*
+ws_transaction_name(
+    struct ws_transaction* t
+) {
+    //!< @todo implement
+    return NULL;
+}
+
+struct ws_transaction_command_list*
+ws_transaction_commands(
+    struct ws_transaction* t
+) {
+    //!< @todo implement
+    return NULL;
+}
