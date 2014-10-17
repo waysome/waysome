@@ -75,6 +75,11 @@ void
 ws_connector_deinit(
     struct ws_connector* self
 ){
+    ws_connbuf_deinit(&self->inbuf);
+
+    if (!self->readonly) {
+        ws_connbuf_deinit(&self->outbuf);
+    }
 }
 
 int
