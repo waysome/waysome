@@ -32,6 +32,7 @@ find_package(WaylandServer REQUIRED)
 find_package(WaylandCursor REQUIRED)
 find_package(WaylandScanner REQUIRED)
 find_package(Yajl REQUIRED)
+find_package(UUID REQUIRED)
 
 #
 # Enable testing

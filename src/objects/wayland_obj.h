@@ -101,18 +101,6 @@ ws_wayland_obj_set_wl_resource(
     struct wl_resource* resource //!< resource to encapsulate
 );
 
-/**
- * Get the ID of the underlying wl_object object
- *
- * @warning Not NULL safe.
- *
- * @return the ID of the underlying wl_object object
- */
-uint32_t
-ws_wayland_obj_get_id(
-    struct ws_wayland_obj* self //!< The object
-);
-
 #endif // __WS_OBJECTS_WAYLAND_OBJ_H__
 
 /**

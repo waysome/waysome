@@ -40,6 +40,7 @@
 #ifndef __WS_OBJECTS_OBJECT_H__
 #define __WS_OBJECTS_OBJECT_H__
 
+#include <stdint.h>
 #include <stdbool.h>
 #include <pthread.h>
 
@@ -108,6 +109,12 @@ typedef size_t (*ws_object_hash_callback)(struct ws_object* const);
 typedef int (*ws_object_cmp_callback)(struct ws_object const*,
                                       struct ws_object const*);
 
+/**
+ * UUID creation callback
+ */
+typedef uintmax_t (*ws_object_uuid_callback)(struct ws_object*);
+
+
 /*
  *
  * Type implementation
@@ -127,6 +134,7 @@ struct ws_object_type {
     ws_object_run_callback run_callback; //!< Run callback for the type
     ws_object_hash_callback hash_callback; //!< Hash callback for the type
     ws_object_cmp_callback cmp_callback; //!< Compare callback for the type
+    ws_object_uuid_callback uuid_callback; //!< @protected UUID callback
 };
 
 /**
@@ -159,6 +167,8 @@ struct ws_object {
 
     enum ws_object_settings settings; //!< @private Object settings
     pthread_rwlock_t rw_lock; //!< @private Read/Write lock
+
+    uintmax_t uuid; // @protected Unique ID for the object
 };
 
 /**
@@ -439,6 +449,19 @@ int
 ws_object_cmp(
     struct ws_object const* o1, //!< The first operant of the comparison
     struct ws_object const* o2 //!< The second operant of the comparison
+);
+
+/**
+ * Get an UUID for an object
+ *
+ * This method creates the UUID for the object if there is no uuid available for
+ * it.
+ *
+ * @return The UUID of the object
+ */
+uintmax_t
+ws_object_uuid(
+    struct ws_object const* self //!< The object
 );
 
 #endif // __WS_OBJECTS_OBJECT_H__

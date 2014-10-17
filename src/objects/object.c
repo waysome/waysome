@@ -25,9 +25,10 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <pthread.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include <uuid/uuid.h>
 
 #include "objects/object.h"
 #include "logger/module.h"
@@ -55,6 +56,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = NULL,
+    .uuid_callback = NULL,
 };
 
 struct ws_object*
@@ -135,6 +137,8 @@ ws_object_init(
         pthread_rwlock_init(&self->rw_lock, NULL);
         pthread_rwlock_init(&self->ref_counting.rwl, NULL);
         self->ref_counting.refcnt = 1;
+
+        self->uuid = 0;
 
         if (self->id && self->id->init_callback) {
             self->id->init_callback(self);
@@ -364,6 +368,41 @@ ws_object_cmp(
     }
 
     return type->cmp_callback(o1, o2);
+}
+
+uintmax_t
+ws_object_uuid(
+    struct ws_object const* self //!< The object
+) {
+    while (self->uuid == 0) {
+        // This case is rare, so we must cast here
+        struct ws_object* _self = (struct ws_object*) self;
+        if (!ws_object_lock_try_write(_self)) {
+            // check again if uuid is set
+            continue;
+        }
+
+        ws_object_type_id* type = self->id;
+
+        while (!type->uuid_callback) {
+            if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
+                uintmax_t buff[(sizeof(uuid_t) / sizeof(uintmax_t)) + 1];
+                uuid_generate((unsigned char*) buff);
+                _self->uuid = buff[0];
+
+                goto iter_next;
+            }
+
+            type = type->supertype;
+        }
+
+        _self->uuid = type->uuid_callback(_self);
+
+iter_next:
+        ws_object_unlock(_self);
+    }
+
+    return self->uuid;
 }
 
 /*
