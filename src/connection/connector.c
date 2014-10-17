@@ -59,6 +59,16 @@ int ws_connector_init_readonly(
     struct ws_connector* self,
     int fd
 ){
+    int res;
+    res = ws_connbuf_init(&self->inbuf, BUFFSIZE);
+    if (res != 0) {
+        return res;
+    }
+
+    self->readonly = true;
+    self->fd = fd;
+
+    return 0;
 }
 
 void
