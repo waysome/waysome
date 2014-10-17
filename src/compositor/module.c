@@ -294,6 +294,10 @@ set_monitor_modes(
     if (!monitor->connected) {
         return 0;
     }
+    if (monitor->mode_count < 1) {
+        ws_log(&log_ctx, LOG_ERR, "No modes for a connected monitor.");
+        return 1;
+    }
     // Set to the biggest mode
     ws_monitor_set_mode_with_id(monitor, monitor->mode_count - 1);
     if (monitor->current_mode) {

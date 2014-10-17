@@ -131,6 +131,9 @@ ws_monitor_set_mode_with_id(
  *
  * @memberof ws_monitor
  *
+ * @warning DO NOT USE! This is not yet safe as critical features are to be
+ * implemented and it will stop waysome to save your Graphics Card
+ *
  * @returns the newly created mode
  */
 struct ws_monitor_mode*
