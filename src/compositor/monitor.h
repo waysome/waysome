@@ -73,6 +73,7 @@ struct ws_monitor {
 
     struct ws_set surfaces; //!< @public
     struct ws_set modes;
+    int mode_count;
 };
 
 /**
@@ -123,6 +124,20 @@ void
 ws_monitor_set_mode_with_id(
     struct ws_monitor* self,
     int id
+);
+
+/**
+ * Adds a monitor_mode to this monitor
+ *
+ * @memberof ws_monitor
+ *
+ * @returns the newly created mode
+ */
+struct ws_monitor_mode*
+ws_monitor_add_mode(
+    struct ws_monitor* self,
+    int width,
+    int height
 );
 
 #endif // __WS_OBJECTS_MONITOR_H__
