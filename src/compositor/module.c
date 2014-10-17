@@ -431,8 +431,14 @@ populate_connectors(void) {
         //!< @todo: Do not just take the biggest mode available
         int j = conn->count_modes;
         while (j--) {
-            ws_monitor_add_mode(new_monitor, conn->modes[j].hdisplay,
-                                    conn->modes[j].vdisplay);
+
+            struct ws_monitor_mode* mode =
+                ws_monitor_copy_mode(new_monitor, &conn->modes[j]);
+
+            ws_set_insert(&new_monitor->modes, (struct ws_object*)  mode);
+
+            // ws_monitor_add_mode(new_monitor, conn->modes[j].hdisplay,
+            //                        conn->modes[j].vdisplay);
         }
 
 
