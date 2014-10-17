@@ -50,7 +50,7 @@ struct ws_message;
  * the message.
  * If an internal error occurred, a negative error value may be returned.
  */
-typedef ssize_t (*ws_serialiize_f)(struct ws_serializer* self,
+typedef ssize_t (*ws_serialize_f)(struct ws_serializer* self,
                                    char* buf, size_t nbuf);
 
 
@@ -61,7 +61,7 @@ typedef ssize_t (*ws_serialiize_f)(struct ws_serializer* self,
  * callbacks and initializes the internal state to be used for parsing.
  */
 struct ws_serializer {
-    ws_serialiize_f serialize; //!< serialization function
+    ws_serialize_f serialize; //!< serialization function
     void (*deinit)(void*); //!< deinitialize the internal state
     void* state; //!< internal state of the serializer
     struct ws_message* buffer; //!< storage for an incompletely written message
