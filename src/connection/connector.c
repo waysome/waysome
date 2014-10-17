@@ -25,4 +25,40 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
+
 #include "connection/connector.h"
+
+#include "connection/connbuf.h"
+
+#define BUFFSIZE 4096
+
+int
+ws_connector_init(
+    struct ws_connector* self,
+    int fd
+){
+}
+
+int ws_connector_init_readonly(
+    struct ws_connector* self,
+    int fd
+){
+}
+
+void
+ws_connector_deinit(
+    struct ws_connector* self
+){
+}
+
+int
+ws_connector_read(void){ 
+    return 0;  
+}
+
+void
+ws_connector_flush(
+    struct ws_connector* self
+){
+}
