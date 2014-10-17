@@ -27,3 +27,36 @@
 
 #include "action/processor.h"
 
+int
+ws_processor_init(
+    struct ws_processor* self,
+    struct ws_processor_stack* stack,
+    struct ws_transaction_command_list* commands
+) {
+    //!< @todo implement
+    return -1;
+}
+
+void
+ws_processor_deinit(
+    struct ws_processor* self
+) {
+    //!< @todo implement
+}
+
+ssize_t
+ws_processor_exec(
+    struct ws_processor* self
+) {
+    //!< @todo implement
+    return -1;
+}
+
+size_t
+ws_processor_jump(
+    struct ws_processor* self,
+    size_t value
+) {
+    //!< @todo implement
+    return 0;
+}
