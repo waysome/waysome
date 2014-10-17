@@ -74,8 +74,9 @@ ws_transaction_set_connection_id(
     struct ws_transaction* t,
     uintmax_t connection_id
 ) {
-    //!< @todo implement
-    return;
+    ws_object_lock_write(&t->m.obj);
+    t->connection_id = connection_id;
+    ws_object_unlock(&t->m.obj);
 }
 
 enum ws_transaction_flags
