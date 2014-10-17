@@ -25,13 +25,5 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_COMMAND_PROCESSOR_H__
-#define __WS_COMMAND_PROCESSOR_H__
+#include "action/processor.h"
 
-/**
- */
-struct ws_command_processor {
-    //!< @todo implement
-};
-
-#endif // __WS_COMMAND_PROCESSOR_H__
