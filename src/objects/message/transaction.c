@@ -83,8 +83,7 @@ enum ws_transaction_flags
 ws_transaction_action(
     struct ws_transaction* t
 ) {
-    //!< @todo implement
-    return 0;
+    return t->flags;
 }
 
 struct ws_string*
