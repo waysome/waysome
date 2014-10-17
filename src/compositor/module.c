@@ -273,7 +273,7 @@ set_monitor_modes(
         return 0;
     }
     ws_monitor_set_mode_with_id(monitor,
-            ws_set_cardinality(&monitor->modes) - 1);
+            0); // Set to the biggest mode
     if (monitor->current_mode) {
         ws_log(&log_ctx, LOG_DEBUG,
                 "Found a valid connector with %dx%d dimensions.",
@@ -412,6 +412,7 @@ populate_connectors(void) {
             struct ws_monitor_mode* mode = ws_monitor_mode_new();
             memcpy(&mode->mode, &conn->modes[j],
                     sizeof(mode->mode));
+            mode->id = j;
             ws_set_insert(&new_monitor->modes, (struct ws_object*)mode);
         }
 
