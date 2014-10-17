@@ -44,7 +44,7 @@
 #include "compositor/wayland_compositor.h"
 #include "compositor/wayland_shell.h"
 #include "compositor/cursor.h"
-#include "background_surface.h"
+#include "buffer/image_buffer.h"
 #include "monitor_mode.h"
 #include "monitor.h"
 #include "seat.h"

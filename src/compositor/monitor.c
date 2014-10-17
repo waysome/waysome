@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <xf86drm.h>
 
-#include "compositor/background_surface.h"
+#include "compositor/buffer/image_buffer.h"
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "logger/module.h"

@@ -28,7 +28,7 @@
 #ifndef __WS_WAYLAND_BUFFER_H__
 #define __WS_WAYLAND_BUFFER_H__
 
-#include "compositor/buffer.h"
+#include "compositor/buffer/buffer.h"
 #include "objects/wayland_obj.h"
 
 /**

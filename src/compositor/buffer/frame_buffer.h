@@ -44,7 +44,7 @@
 #include <pthread.h>
 
 #include "objects/object.h"
-#include "compositor/background_surface.h"
+#include "image_buffer.h"
 
 /**
  * ws_framebuffer type definition

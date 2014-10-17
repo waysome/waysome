@@ -38,8 +38,8 @@
 #include "logger/module.h"
 #include "objects/object.h"
 
-#include "compositor/background_surface.h"
-#include "compositor/frame_buffer.h"
+#include "image_buffer.h"
+#include "frame_buffer.h"
 #include "compositor/internal_context.h"
 
 

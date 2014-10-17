@@ -8,7 +8,7 @@
 #include "util/arithmetical.h"
 #include "buffer.h"
 
-#include "background_surface.h"
+#include "image_buffer.h"
 
 /*
  *
