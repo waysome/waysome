@@ -140,6 +140,19 @@ ws_monitor_add_mode(
     int height
 );
 
+/**
+ * Adds a monitor_mode to this monitor by copying an existing one
+ *
+ * @memberof ws_monitor
+ *
+ * @returns the newly copied mode
+ */
+struct ws_monitor_mode*
+ws_monitor_copy_mode(
+    struct ws_monitor* self,
+    struct _drmModeModeInfo const* src
+);
+
 #endif // __WS_OBJECTS_MONITOR_H__
 
 /**

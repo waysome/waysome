@@ -211,6 +211,19 @@ ws_monitor_set_mode_with_id(
                 (struct ws_object*)&mode);
 }
 
+
+struct ws_monitor_mode*
+ws_monitor_copy_mode(
+    struct ws_monitor* self,
+    struct _drmModeModeInfo const* src
+) {
+    struct ws_monitor_mode* mode = ws_monitor_mode_new();
+    memcpy(&mode->mode, src, sizeof(*src));
+    mode->id = self->mode_count++;
+    ws_set_insert(&self->modes, (struct ws_object*) mode);
+    return mode;
+}
+
 struct ws_monitor_mode*
 ws_monitor_add_mode(
     struct ws_monitor* self,
