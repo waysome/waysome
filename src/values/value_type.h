@@ -38,7 +38,7 @@
  * Type identifiers for value objects
  */
 enum ws_value_type {
-    WS_VALUE_TYPE_NONE,     //!< Indicator: This is not a value object anymore
+    WS_VALUE_TYPE_NONE = 0, //!< Indicator: This is not a value object anymore
     WS_VALUE_TYPE_VALUE,
     WS_VALUE_TYPE_NIL,
     WS_VALUE_TYPE_BOOL,
