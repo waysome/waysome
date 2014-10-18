@@ -25,9 +25,39 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+
 #include "action/processor.h"
 #include "action/processor_stack.h"
 #include "objects/message/transaction.h"
+#include "values/union.h"
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Prepare arguments for command execution
+ *
+ * This function prepares the stack for command execution by copying everything
+ * to the right position.
+ */
+static int
+ws_processor_prepare_args(
+    struct ws_processor_stack* stack,
+    struct ws_command_args const* const args
+)
+__ws_nonnull__(1, 2)
+;
+
+
+/*
+ *
+ * Interface implementation
+ *
+ */
 
 int
 ws_processor_init(
@@ -69,3 +99,54 @@ ws_processor_jump(
     //!< @todo implement
     return 0;
 }
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static int
+ws_processor_prepare_args(
+    struct ws_processor_stack* stack,
+    struct ws_command_args const* const args
+) {
+    union ws_value_union* top = ws_processor_stack_top(stack);
+    size_t argc = args->num;
+
+    //!< @todo optimize for if arguments already are in the right position
+    {
+        int res = ws_processor_stack_push(stack, argc);
+        if (res < 0) {
+            return res;
+        }
+    }
+
+    // iterate over all the arguments and assemble the stack
+    while (argc--) {
+        // get the argument
+        struct ws_argument* cur_arg = args->vals + argc;
+
+        // determine the source of the argument
+        struct ws_value* src = NULL;
+        switch (cur_arg->type) {
+        case direct:
+            src = cur_arg->arg.val;
+
+        case indirect:
+            src = ws_processor_stack_value_at(stack, cur_arg->arg.pos);
+        }
+
+        if (!src) {
+            return -EINVAL;
+        }
+        int res = ws_value_union_init_from_val(top + argc, src);
+        if (res < 0) {
+            return res;
+        }
+    }
+
+    return 0;
+}
+
