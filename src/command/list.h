@@ -35,7 +35,7 @@
 )
 
 #define DECLARE_CMD_special(name_) int ws_builtin_cmd_##name_(\
-    struct ws_command_processor*,\
+    struct ws_processor*,\
     struct ws_command_args*\
 )
 
