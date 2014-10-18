@@ -33,6 +33,7 @@
 #include "util/attributes.h"
 
 // forward declarations
+struct ws_value;
 union ws_value_union;
 
 /**
@@ -133,6 +134,19 @@ __ws_nonnull__(1)
 union ws_value_union*
 ws_processor_stack_bottom(
     struct ws_processor_stack* self //!< the stack
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get a value at a given position
+ *
+ * @return value at given position
+ */
+struct ws_value*
+ws_processor_stack_value_at(
+    struct ws_processor_stack* self, //!< the stack
+    ssize_t pos //!< position of value
 )
 __ws_nonnull__(1)
 ;

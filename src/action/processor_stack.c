@@ -177,6 +177,27 @@ ws_processor_stack_bottom(
     return self->data;
 }
 
+struct ws_value*
+ws_processor_stack_value_at(
+    struct ws_processor_stack* self,
+    ssize_t pos
+) {
+    // determine whether pos of from top or bottom and calculate
+    if (pos >= 0) {
+        // check whether the position is valid
+        if ((size_t) pos >= self->top) {
+            return NULL;
+        }
+
+        return &(self->data + pos)->value;
+    }
+
+    // check whether the position is valid
+    if ((size_t) (-pos) >= self->top) {
+        return NULL;
+    }
+    return &(self->data + self->top + pos)->value;
+}
 
 size_t
 ws_processor_stack_start_frame(
