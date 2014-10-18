@@ -46,6 +46,7 @@ struct ws_processor_stack {
     union ws_value_union* data; //!< @private basepointer of the stack
     size_t size; //!< @private size of the stack
     size_t top; //!< @private top of the stack, as position from the basepointer
+    size_t frame; //!< @private base pointer of the current frame
 };
 
 /**
@@ -132,6 +133,34 @@ __ws_nonnull__(1)
 union ws_value_union*
 ws_processor_stack_bottom(
     struct ws_processor_stack* self //!< the stack
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Start a frame at the current position
+ *
+ * @return handle with which one may reset the frame
+ */
+size_t
+ws_processor_stack_start_frame(
+    struct ws_processor_stack* self //!< the stack
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Restore a frame
+ *
+ * Call this function to restore a frame previously started using
+ * `ws_processor_start_frame()`.
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_processor_stack_restore_frame(
+    struct ws_processor_stack* self, //!< the stack
+    size_t frame_handle //!< handle returned by `ws_processor_start_frame()`
 )
 __ws_nonnull__(1)
 ;

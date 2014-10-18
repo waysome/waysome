@@ -177,3 +177,35 @@ ws_processor_stack_bottom(
     return self->data;
 }
 
+
+size_t
+ws_processor_stack_start_frame(
+    struct ws_processor_stack* self
+) {
+    size_t old_frame = self->frame;
+
+    // the new frame base is at the top. The frame is empty
+    self->frame = self->top;
+
+    return old_frame;
+}
+
+int
+ws_processor_stack_restore_frame(
+    struct ws_processor_stack* self,
+    size_t frame_handle
+) {
+    // perform a sanity check: we can only restore old frames
+    if (frame_handle > self->frame) {
+        return -EINVAL;
+    }
+
+    // remove all the elements from the old frame
+    ws_processor_stack_pop(self, self->top - self->frame);
+
+    // restore the frame
+    self->frame = frame_handle;
+
+    return 0;
+}
+
