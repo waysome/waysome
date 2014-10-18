@@ -27,3 +27,52 @@
 
 #include "action/processor_stack.h"
 
+int
+ws_processor_stack_init(
+    struct ws_processor_stack* self
+) {
+    //!< @todo implement
+    return -1;
+}
+
+void
+ws_processor_stack_deinit(
+    struct ws_processor_stack* self
+) {
+    //!< @todo implement
+}
+
+int
+ws_processor_stack_push(
+    struct ws_processor_stack* self,
+    size_t slots
+) {
+    //!< @todo implement
+    return -1;
+}
+
+int
+ws_processor_stack_pop(
+    struct ws_processor_stack* self,
+    size_t slots
+) {
+    //!< @todo implement
+    return -1;
+}
+
+union ws_value_union*
+ws_processor_stack_top(
+    struct ws_processor_stack* self
+) {
+    //!< @todo implement
+    return NULL;
+}
+
+union ws_value_union*
+ws_processor_stack_bottom(
+    struct ws_processor_stack* self
+) {
+    //!< @todo implement
+    return NULL;
+}
+

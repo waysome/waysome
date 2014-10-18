@@ -30,17 +30,111 @@
 
 #include <stddef.h>
 
+#include "util/attributes.h"
+
 // forward declarations
 union ws_value_union;
 
 /**
  * A processor's stack
+ *
+ * This type represents a stack which may be used for executing commands.
+ *
+ * @see stack_semantics
  */
 struct ws_processor_stack {
     union ws_value_union* data; //!< @private basepointer of the stack
     size_t size; //!< @private size of the stack
     size_t top; //!< @private top of the stack, as position from the basepointer
 };
+
+/**
+ * Initialize a processor stack
+ *
+ * Initialize the processor stack with a default height
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_processor_stack_init(
+    struct ws_processor_stack* self //!< stack to initialize
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Deinitialize a processor stack
+ */
+void
+ws_processor_stack_deinit(
+    struct ws_processor_stack* self //!< stack to deinitialize
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Push values on the stack
+ *
+ * This function increases the top counter, initializing the values to nil-values.
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_processor_stack_push(
+    struct ws_processor_stack* self, //!< the stack
+    size_t slots //!< number of slots to push
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Pops from the stack
+ *
+ * This function decreases the top counter, deinitializing and invalidating the
+ * values popped.
+ *
+ * @return 0 if the operation succeeded, a negative error number otherwise
+ */
+int
+ws_processor_stack_pop(
+    struct ws_processor_stack* self, //!< the stack
+    size_t slots //!< number of slots to pop
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the top of the stack
+ *
+ * This function returns the top of the stack, which actually is an invalid
+ * value.
+ * If you subtract from that pointer, you get valid values _on_ the stack, so
+ * `-1`, for example, is the topmost element.
+ * At some point, you reach the bottom of the stack.
+ *
+ * @return pointer to the top of the stack
+ */
+union ws_value_union*
+ws_processor_stack_top(
+    struct ws_processor_stack* self //!< the stack
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the bottom of the stack
+ *
+ * This function returns the bottom of the stack.
+ * If you add to that pointer, you move toward the top of the stack.
+ *
+ * @return pointer to the bottom of the stack
+ */
+union ws_value_union*
+ws_processor_stack_bottom(
+    struct ws_processor_stack* self //!< the stack
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_ACTION_STACK_H__
 
