@@ -26,6 +26,8 @@
  */
 
 #include "action/processor.h"
+#include "action/processor_stack.h"
+#include "objects/message/transaction.h"
 
 int
 ws_processor_init(
@@ -33,15 +35,22 @@ ws_processor_init(
     struct ws_processor_stack* stack,
     struct ws_transaction_command_list* commands
 ) {
-    //!< @todo implement
-    return -1;
+    // initialize all the fields
+    self->stack         = stack;
+    self->commands      = commands;
+    self->pc            = commands->statements;
+    self->stack_frame   = ws_processor_stack_start_frame(stack);
+
+    // nothing can go wrong here
+    return 0;
 }
 
 void
 ws_processor_deinit(
     struct ws_processor* self
 ) {
-    //!< @todo implement
+    // restore the old frame
+    (void) ws_processor_stack_restore_frame(self->stack, self->stack_frame);
 }
 
 ssize_t
