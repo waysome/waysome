@@ -25,6 +25,16 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * @addtogroup values "Value types"
+ *
+ * @{
+ */
+
+#ifndef __WS_VALUES_UNION_H__
+#define __WS_VALUES_UNION_H__
+
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
@@ -37,8 +47,14 @@
 union ws_value_union {
     struct ws_value         value;  //!< plain value
     struct ws_value_nil     nil;    //!< nil value
-    struct ws_value_bool    bool;   //!< bool value
-    struct ws_value_int     int;    //!< int value
+    struct ws_value_bool    bool_;  //!< bool value
+    struct ws_value_int     int_;   //!< int value
     struct ws_value_string  string; //!< string value
 };
+
+#endif //__WS_VALUES_UNION_H__
+
+/**
+ * @}
+ */
 
