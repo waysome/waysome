@@ -159,15 +159,21 @@ union ws_value_union*
 ws_processor_stack_top(
     struct ws_processor_stack* self
 ) {
-    //!< @todo implement
-    return NULL;
+    if (!self->data) {
+        return NULL;
+    }
+
+    return self->data + self->top;
 }
 
 union ws_value_union*
 ws_processor_stack_bottom(
     struct ws_processor_stack* self
 ) {
-    //!< @todo implement
-    return NULL;
+    if (!self->top) {
+        return NULL;
+    }
+
+    return self->data;
 }
 
