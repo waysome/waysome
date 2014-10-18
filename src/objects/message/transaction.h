@@ -50,7 +50,7 @@ enum ws_transaction_flags {
  */
 struct ws_transaction_command_list {
     size_t n; //!< @protected length of the command array
-    struct ws_command* cmds; //!< @protected Command objects
+    struct ws_statement* statements; //!< @protected Statements of the transaction
 };
 
 /**
