@@ -101,8 +101,39 @@ ssize_t
 ws_processor_exec(
     struct ws_processor* self
 ) {
-    //!< @todo implement
-    return -1;
+    // keep a sentinel around for faster comparisons
+    struct ws_statement const* aend;
+    aend = self->commands->statements + self->commands->n;
+
+    while (self->pc < aend) {
+        // get the current pc and increment it afterwards
+        struct ws_statement const* cur = self->pc++;
+
+        // execute command
+        int res;
+        switch(cur->command->command_type) {
+        case regular:
+            res = exec_regular(self->stack, cur->command->func.regular,
+                               &cur->args);
+            break;
+
+        case special:
+            res = cur->command->func.special(self, &cur->args);
+            break;
+
+        default:
+            return -ENOTSUP;
+        }
+
+        if (res < 0) {
+            return res;
+        }
+    }
+
+    if (self->pc <= aend) {
+        return 0;
+    }
+    return self->pc - self->commands->statements;
 }
 
 size_t
