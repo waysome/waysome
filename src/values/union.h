@@ -52,6 +52,21 @@ union ws_value_union {
     struct ws_value_string  string; //!< string value
 };
 
+/**
+ * Initializes the union by copying another value
+ *
+ * Only valid values are copied, e.g. "none" and "value" are not.
+ *
+ * @return 0 on success, a negative error code otherwise
+ */
+int
+ws_value_union_init_from_val(
+    union ws_value_union* dest, //!< destination of the copy action
+    struct ws_value* src //!< source of the value to copy
+)
+__ws_nonnull__(1, 2)
+;
+
 #endif //__WS_VALUES_UNION_H__
 
 /**
