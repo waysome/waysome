@@ -141,7 +141,14 @@ ws_processor_jump(
     struct ws_processor* self,
     size_t value
 ) {
-    //!< @todo implement
+    //calculate the current position
+    size_t target_pos = (self->pc - self->commands->statements) + value;
+
+    // perform bound check
+    if (target_pos > self->commands->n) {
+        return target_pos;
+    }
+
     return 0;
 }
 
