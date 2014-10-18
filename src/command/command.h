@@ -82,7 +82,7 @@ typedef int (*ws_regular_command_func)(union ws_value_union*);
  *
  */
 typedef int (*ws_special_command_func)(struct ws_processor*,
-                                       struct ws_command_args*);
+                                       struct ws_command_args const* const);
 
 /**
  * Command type
