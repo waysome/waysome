@@ -114,7 +114,7 @@ ws_processor_stack_pop(
     size_t slots
 ) {
     // check whether there are at least that many values on the stack
-    if (slots > self->top) {
+    if (slots > (self->top - self->frame)) {
         return -EINVAL;
     }
 
