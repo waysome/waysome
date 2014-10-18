@@ -33,6 +33,7 @@
 #include "values/nil.h"
 #include "values/union.h"
 #include "values/value.h"
+#include "values/value_type.h"
 
 
 #define INITIAL_STACK_SIZE (4)
@@ -112,8 +113,46 @@ ws_processor_stack_pop(
     struct ws_processor_stack* self,
     size_t slots
 ) {
-    //!< @todo implement
-    return -1;
+    // check whether there are at least that many values on the stack
+    if (slots > self->top) {
+        return -EINVAL;
+    }
+
+    // calculate the new `top` and, assuming a resize, calculate the new size
+    size_t new_size = self->size;
+    size_t new_top  = self->top - slots;
+    while (((new_top + 1) > new_size) && ((new_top + 1) > INITIAL_STACK_SIZE)) {
+        new_size /= 2;
+    }
+
+    // deinitialize all the values on the way down
+    size_t cur = self->top;
+    while (cur > new_top) {
+        --cur;
+        ws_value_deinit(&self->data[cur].value);
+        self->data[cur].value.type = WS_VALUE_TYPE_NONE;
+    }
+
+    memset(self->data + new_top, 0, self->top - new_top);
+
+    // set the top
+    self->top = new_top;
+
+    // check whether we may resize
+    if (new_size != self->size) {
+        // try to reallocate
+        union ws_value_union* new_data;
+        new_data = realloc(self->data, sizeof(*(self->data)) * new_size);
+        if (!new_data) {
+            // noncritical error
+            return 0;
+        }
+
+        self->data = new_data;
+        self->size = new_size;
+    }
+
+    return 0;
 }
 
 union ws_value_union*
