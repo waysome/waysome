@@ -27,8 +27,11 @@
 
 #include <errno.h>
 #include <malloc.h>
+#include <string.h>
 
 #include "action/processor_stack.h"
+#include "values/nil.h"
+#include "values/union.h"
 #include "values/value.h"
 
 
@@ -68,8 +71,40 @@ ws_processor_stack_push(
     struct ws_processor_stack* self,
     size_t slots
 ) {
-    //!< @todo implement
-    return -1;
+    // calculate the new `top` and, assuming a resize, calculate the new size
+    size_t new_size = self->size;
+    size_t new_top  = self->top + slots;
+    while ((new_top + 1) > new_size) {
+        new_size *= 2;
+    }
+
+    // check whether we have to resize
+    if (new_size != self->size) {
+        // try to reallocate
+        union ws_value_union* new_data;
+        new_data = realloc(self->data, sizeof(*(self->data)) * new_size);
+        if (!new_data) {
+            return -ENOMEM;
+        }
+
+        // initialize all the things we have to initialize
+        self->data = new_data;
+        self->size = new_size;
+        memset(new_data + new_top, 0,
+               sizeof(*(self->data)) * (new_size - new_top));
+    }
+
+    // set the new top
+    self->top = new_top;
+
+    // initialize all the values pushed
+    size_t old_top = self->top;
+    while (new_top > old_top) {
+        --new_top;
+        ws_value_nil_init(&self->data[new_top].nil);
+    }
+
+    return 0;
 }
 
 int
