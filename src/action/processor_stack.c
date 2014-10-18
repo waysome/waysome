@@ -25,21 +25,42 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <malloc.h>
+
 #include "action/processor_stack.h"
+#include "values/value.h"
+
+
+#define INITIAL_STACK_SIZE (4)
+
 
 int
 ws_processor_stack_init(
     struct ws_processor_stack* self
 ) {
-    //!< @todo implement
-    return -1;
+    self->data = calloc(1, sizeof(*(self->data)) * INITIAL_STACK_SIZE);
+    if (!self->data) {
+        return -ENOMEM;
+    }
+
+    self->size = INITIAL_STACK_SIZE;
+    self->top  = 0;
+
+    return 0;
 }
 
 void
 ws_processor_stack_deinit(
     struct ws_processor_stack* self
 ) {
-    //!< @todo implement
+    union ws_value_union* cur = self->data +  self->top;
+    while (cur > self->data) {
+        --cur;
+        ws_value_deinit(&cur->value);
+    }
+
+    free(self->data);
 }
 
 int
