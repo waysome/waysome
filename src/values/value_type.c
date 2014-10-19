@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include "values/value_type.h"
+#include "util/arithmetical.h"
 
 const char* WS_VALUE_TYPE_NAMES[] = {
     [WS_VALUE_TYPE_NONE]        = "none",
@@ -46,7 +47,12 @@ enum ws_value_type
 ws_value_type_from_value_name(
     char const* name
 ) {
-    //!< @todo implement
+    for (enum ws_value_type i = 0; i < ARYLEN(WS_VALUE_TYPE_NAMES); i++) {
+        if (0 == strcmp(WS_VALUE_TYPE_NAMES[i], name)) {
+            return i;
+        }
+    }
+
     return WS_VALUE_TYPE_NONE;
 }
 
