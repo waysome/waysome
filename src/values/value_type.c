@@ -25,45 +25,28 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @addtogroup values "Value types"
- *
- * @{
- */
+#include <string.h>
 
-#ifndef __WS_VALUES_VALUE_TYPE_H__
-#define __WS_VALUES_VALUE_TYPE_H__
+#include "values/value_type.h"
 
-/**
- * Type identifiers for value objects
- */
-enum ws_value_type {
-    WS_VALUE_TYPE_NONE,     //!< Indicator: This is not a value object anymore
-    WS_VALUE_TYPE_VALUE,
-    WS_VALUE_TYPE_NIL,
-    WS_VALUE_TYPE_BOOL,
-    WS_VALUE_TYPE_INT,
-    WS_VALUE_TYPE_STRING,
-    WS_VALUE_TYPE_OBJECT_ID,
-    WS_VALUE_TYPE_SET,
-    WS_VALUE_TYPE_NAMED,
+const char* WS_VALUE_TYPE_NAMES[] = {
+    [WS_VALUE_TYPE_NONE]        = "none",
+    [WS_VALUE_TYPE_VALUE]       = "value",
+    [WS_VALUE_TYPE_NIL]         = "nil",
+    [WS_VALUE_TYPE_BOOL]        = "bool",
+    [WS_VALUE_TYPE_INT]         = "int",
+    [WS_VALUE_TYPE_STRING]      = "string",
+    [WS_VALUE_TYPE_OBJECT_ID]   = "object",
+    [WS_VALUE_TYPE_SET]         = "set",
+    [WS_VALUE_TYPE_NAMED]       = "name",
 };
 
-extern const char* WS_VALUE_TYPE_NAMES[];
 
-/**
- * Get a value type identifier by the value name
- *
- * @return The ws_value_type for the name or WS_VALUE_TYPE_NONE if name is not
- * a valid value name.
- */
 enum ws_value_type
 ws_value_type_from_value_name(
     char const* name
-);
+) {
+    //!< @todo implement
+    return WS_VALUE_TYPE_NONE;
+}
 
-#endif // __WS_VALUES_VALUE_TYPE_H__
-
-/**
- * @}
- */

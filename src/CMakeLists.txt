@@ -87,6 +87,7 @@ set(SOURCE_FILES
     values/string.c
     values/value.c
     values/value_named.c
+    values/value_type.c
     values/set.c
 )
 
