@@ -62,6 +62,13 @@
  */
 #define CLAMP(x,y,z) MAX(x,MIN(y,z))
 
+/**
+ * Get the length of an array
+ *
+ * @returns The length of the array
+ */
+#define ARYLEN(x) (sizeof((x))/sizeof((x)[0]))
+
 #endif // __WS_UTIL_ARITHMETICAL_H__
 
 /**
