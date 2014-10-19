@@ -34,7 +34,7 @@
 #include "logger/module.h"
 
 static struct ws_logger_context log_ctx = {
-    .prefix = "[Object]",
+    .prefix = "[Object] ",
 };
 
 /*
