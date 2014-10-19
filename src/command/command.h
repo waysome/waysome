@@ -56,6 +56,10 @@ struct ws_argument {
  * 
  * This struct represents command arguments applied to a command as part of a
  * statement.
+ *
+ * @note If `vals` is `NULL`, it indicates that the `num` topmost elements which
+ *       are currently on the stack are arguments which should be passed to the
+ *       command.
  */
 struct ws_command_args {
     size_t num; //!< @public number of arguments
