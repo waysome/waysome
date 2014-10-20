@@ -25,6 +25,16 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * @addtogroup values "Value types"
+ *
+ * @{
+ */
+
+#ifndef __WS_VALUES_UNION_H__
+#define __WS_VALUES_UNION_H__
+
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
@@ -37,8 +47,29 @@
 union ws_value_union {
     struct ws_value         value;  //!< plain value
     struct ws_value_nil     nil;    //!< nil value
-    struct ws_value_bool    bool;   //!< bool value
-    struct ws_value_int     int;    //!< int value
+    struct ws_value_bool    bool_;  //!< bool value
+    struct ws_value_int     int_;   //!< int value
     struct ws_value_string  string; //!< string value
 };
+
+/**
+ * Initializes the union by copying another value
+ *
+ * Only valid values are copied, e.g. "none" and "value" are not.
+ *
+ * @return 0 on success, a negative error code otherwise
+ */
+int
+ws_value_union_init_from_val(
+    union ws_value_union* dest, //!< destination of the copy action
+    struct ws_value* src //!< source of the value to copy
+)
+__ws_nonnull__(1, 2)
+;
+
+#endif //__WS_VALUES_UNION_H__
+
+/**
+ * @}
+ */
 

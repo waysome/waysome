@@ -85,6 +85,7 @@ set(SOURCE_FILES
     values/int.c
     values/nil.c
     values/string.c
+    values/union.c
     values/value.c
     values/value_named.c
     values/value_type.c
