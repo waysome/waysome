@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ev.h>
 #include <malloc.h>
 #include <unistd.h>
 
@@ -39,6 +40,30 @@
  * Forward declarations
  *
  */
+
+/*
+ * Dispatching watcher callback
+ *
+ * This callback processes input
+ */
+static void
+command_processor_dispatch(
+    struct ev_loop* loop, //!< loop on which the callback was called
+    ev_io* watcher, //!< watcher which triggered the update
+    int revents //!< events
+);
+
+/**
+ * Flushing watcher callback
+ *
+ * This callback flushes the connection
+ */
+static void
+command_processor_flush(
+    struct ev_loop* loop, //!< loop on which the callback was called
+    ev_prepare* watcher, //!< watcher which triggered the update
+    int revents //!< events
+);
 
 /**
  * Deinitialize a command processor
@@ -60,6 +85,8 @@ struct ws_command_processor {
     struct ws_connector conn; //!< @public connection to process
     struct ws_deserializer* deserializer; //!< @public deserializer to use
     struct ws_serializer* serializer; //!< @public serializer to use
+    ev_io dispatcher; //!< @public dispatching watcher
+    ev_prepare flusher; //!< @public flushing watcher
     bool is_init; //!< @public flag indicating whether it's initialized
 };
 
@@ -127,7 +154,26 @@ ws_command_processor_new(
     retval->deserializer    = deserializer;
     retval->serializer      = serializer;
 
-    //!< @todo initialize and start a handler
+    // now get the libev loop
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    if (!loop) {
+        goto cleanup_mem;
+    }
+
+    if (!getref(retval)) {
+        goto cleanup_mem;
+    }
+
+    // initialize watchers
+    ev_io_init(&retval->dispatcher, command_processor_dispatch, fd, EV_READ);
+    retval->dispatcher.data = retval;
+    ev_io_start(loop, &retval->dispatcher);
+
+    if (serializer) {
+        ev_prepare_init(&retval->flusher, command_processor_flush);
+        retval->flusher.data    = retval;
+        ev_prepare_start(loop, &retval->flusher);
+    }
 
     // mark the object as initialized
     retval->is_init = true;
@@ -151,6 +197,24 @@ cleanup_mem:
  *
  */
 
+static void
+command_processor_dispatch(
+    struct ev_loop* loop,
+    ev_io* watcher,
+    int revents
+) {
+    //!< @todo implement
+}
+
+static void
+command_processor_flush(
+    struct ev_loop* loop,
+    ev_prepare* watcher,
+    int revents
+) {
+    //!< @todo implement
+}
+
 bool
 command_processor_deinit(
     struct ws_object * obj
@@ -169,6 +233,18 @@ command_processor_deinit(
     if (proc->serializer) {
         ws_serializer_deinit(proc->serializer);
     }
+
+    // now get the libev loop
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    if (!loop) {
+        return true;
+    }
+
+    ev_io_stop(loop, &proc->dispatcher);
+    if (proc->serializer) {
+        ev_prepare_start(loop, &proc->flusher);
+    }
+
     return true;
 }
 
