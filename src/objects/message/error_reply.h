@@ -70,5 +70,49 @@ ws_error_reply_new(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Get the error code embedded in an error reply
+ *
+ * @return the error code
+ */
+unsigned int
+ws_error_reply_get_code(
+    struct ws_error_reply* self //!< error reply from which to extract the code
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the error description embedded in an error reply
+ *
+ * @note always returns a valid string, "" if it doesn't contain one
+ *
+ * @warning you must not `free()` any string returned by this function
+ *
+ * @return the error description
+ */
+char const*
+ws_error_reply_get_description(
+    struct ws_error_reply* self //!< error reply from which to extract the code
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the cause of the error embedded in an error reply
+ *
+ * @note always returns a valid string, "" if it doesn't contain one
+ *
+ * @warning you must not `free()` any string returned by this function
+ *
+ * @return cause of the error
+ */
+char const*
+ws_error_reply_get_cause(
+    struct ws_error_reply* self //!< error reply from which to extract the code
+)
+__ws_nonnull__(1)
+;
+
 #endif // __WS_OBJECTS_ERROR_REPLY_H__
 

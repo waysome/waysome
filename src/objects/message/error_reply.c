@@ -111,6 +111,32 @@ ws_error_reply_new(
     return retval;
 }
 
+unsigned int
+ws_error_reply_get_code(
+    struct ws_error_reply* self //!< error reply from which to extract the code
+) {
+    return self->code;
+}
+
+char const*
+ws_error_reply_get_description(
+    struct ws_error_reply* self //!< error reply from which to extract the code
+) {
+    if (self->description) {
+        return self->description;
+    }
+    return "";
+}
+
+char const*
+ws_error_reply_get_cause(
+    struct ws_error_reply* self //!< error reply from which to extract the code
+) {
+    if (self->cause) {
+        return self->cause;
+    }
+    return "";
+}
 
 /*
  *
