@@ -184,6 +184,24 @@ int
 deserialize_state_push_cmd(
     struct deserializer_state* s
 ) {
-    //!< @todo implement
+    if (!s->tmp_command || s->tmp_command_args.num == 0) {
+        return -EINVAL;
+    }
+
+    struct ws_statement* stat = calloc(1, sizeof(*stat));
+    if (!stat) {
+        return -ENOMEM;
+    }
+
+    struct ws_statement** write = wl_array_add(s->cmdbuf, 1);
+    if (!write) {
+        return -ENOMEM;
+    }
+
+    stat->command = s->tmp_command;
+    memcpy(&stat->args, &s->tmp_command_args, sizeof(stat->args));
+
+    write[0] = stat;
+
     return 0;
 }
