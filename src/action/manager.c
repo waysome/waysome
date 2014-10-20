@@ -61,6 +61,30 @@ run_transaction(
 
 /*
  *
+ * Interface implementation
+ *
+ */
+
+struct ws_reply*
+ws_action_manager_process(
+    struct ws_transaction* transaction
+) {
+    // get the flags
+    enum ws_transaction_flags flags = ws_transaction_flags(transaction);
+
+    //!< @todo store the transaction if requested
+
+    if (flags | WS_TRANSACTION_FLAGS_EXEC) {
+        // execute the transaction
+        return run_transaction(transaction);
+    }
+
+    return NULL;
+}
+
+
+/*
+ *
  * Internal implementation
  *
  */
