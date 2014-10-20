@@ -83,3 +83,11 @@ ws_command_get(
     return NULL;
 }
 
+bool
+ws_statement_deinit(
+    struct ws_statement* self
+) {
+    //!< @todo implement
+    return false;
+}
+

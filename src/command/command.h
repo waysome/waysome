@@ -29,6 +29,7 @@
 #define __WS_COMMAND_COMMAND_H__
 
 #include <malloc.h>
+#include <stdbool.h>
 
 // forward declarations
 struct ws_processor;
@@ -122,6 +123,16 @@ struct ws_statement {
 struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
+);
+
+/**
+ * Deinitialize a statement
+ *
+ * @return true if deinitialization was successfull, else false
+ */
+bool
+ws_statement_deinit(
+    struct ws_statement* self
 );
 
 #endif // __WS_COMMAND_COMMAND_H__
