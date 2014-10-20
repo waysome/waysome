@@ -46,7 +46,21 @@ deserialize_state_new(
     yajl_callbacks* cbs,
     void* ctx
 ) {
-    //!< @todo implement
+    size_t s = sizeof(struct deserializer_state);
+    struct deserializer_state* state;
+
+    state = (struct deserializer_state*) serializer_yajl_state_new(s, cbs, ctx);
+    if (!state) {
+        return NULL;
+    }
+
+    state->current_state    = STATE_INIT;
+    state->uid.uid          = NULL;
+    state->tmp_command      = NULL;
+
+    state->tmp_command_args.vals = NULL;
+    state->tmp_command_args.num = 0;
+
     return state;
 }
 
