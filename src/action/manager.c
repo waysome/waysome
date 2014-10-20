@@ -106,8 +106,15 @@ run_transaction(
         goto cleanup_stack;
     }
 
-
-    //!< @todo run processor
+    // run processor
+    res = ws_processor_exec(&proc);
+    if (res < 0) {
+        //!< @todo more elaborate error description
+        retval = (struct ws_reply*)
+                 ws_error_reply_new(transaction, -res,
+                                    "Could not exec transaction", NULL);
+        goto cleanup_processor;
+    }
 
     //!< @todo collect value
 
