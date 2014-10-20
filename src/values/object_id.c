@@ -25,5 +25,33 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+
+#include "objects/object.h"
 #include "values/object_id.h"
+
+static void
+value_object_id_deinit(
+    struct ws_value* self
+) {
+}
+
+void
+ws_value_object_id_init(
+    struct ws_value_object_id* self
+) {
+}
+
+struct ws_object*
+ws_value_object_id_get(
+    struct ws_value_object_id* self
+) {
+}
+
+void
+ws_value_object_id_set(
+    struct ws_value_object_id* self,
+    struct ws_object* obj
+) {
+}
 
