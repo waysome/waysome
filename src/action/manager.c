@@ -33,6 +33,7 @@
 #include "action/processor_stack.h"
 #include "objects/message/error_reply.h"
 #include "objects/message/transaction.h"
+#include "objects/message/value_reply.h"
 
 
 /*
@@ -116,9 +117,11 @@ run_transaction(
         goto cleanup_processor;
     }
 
-    //!< @todo collect value
+    // create the return message from the transaction and the value
+    struct ws_value* value = ws_processor_stack_value_at(&stack, -1);
+    retval = (struct ws_reply*) ws_value_reply_new(transaction, value);
 
-    //!< @todo generate result
+    // cleanup
 
 cleanup_processor:
     ws_processor_deinit(&proc);
