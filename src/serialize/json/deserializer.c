@@ -126,6 +126,19 @@ deserialize(
     char const* buf,
     size_t nbuf
 ) {
-    //!< @todo implement
-    return 0;
+    unsigned char* buffer = (unsigned char*) buf; // cast
+    struct deserializer_state* d = self->state;
+    yajl_status stat = yajl_parse(d->yajlstate.handle, buffer, nbuf);
+
+    if (yajl_status_error == stat) {
+        ws_log(&log_ctx, LOG_ERR, "We have an error in the JSON deserializing");
+        unsigned char* errstr;
+        errstr = yajl_get_error(d->yajlstate.handle, 1, buffer, nbuf);
+
+        //!< @todo Someone sucks. We have an error. Use it to do things!
+
+        yajl_free_error(d->yajlstate.handle, errstr);
+    }
+
+    return yajl_get_bytes_consumed(d->yajlstate.handle);
 }
