@@ -40,6 +40,13 @@ void
 ws_value_object_id_init(
     struct ws_value_object_id* self
 ) {
+    if (!self) {
+        return;
+    }
+
+    ws_value_init(&self->val);
+    self->val.type = WS_VALUE_TYPE_OBJECT_ID;
+    self->val.deinit_callback = value_object_id_deinit;
 }
 
 struct ws_object*
