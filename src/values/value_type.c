@@ -25,10 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <string.h>
 
-#include "values/value_type.h"
 #include "util/arithmetical.h"
+#include "values/bool.h"
+#include "values/int.h"
+#include "values/nil.h"
+#include "values/object_id.h"
+#include "values/set.h"
+#include "values/string.h"
+#include "values/value_named.h"
+#include "values/value_type.h"
 
 const char* WS_VALUE_TYPE_NAMES[] = {
     [WS_VALUE_TYPE_NONE]        = "none",
@@ -54,5 +62,58 @@ ws_value_type_from_value_name(
     }
 
     return WS_VALUE_TYPE_NONE;
+}
+
+struct ws_value*
+ws_value_type_instance_from_value_name(
+    char const* name
+) {
+    struct ws_value* v = NULL;
+
+    switch (ws_value_type_from_value_name(name)) {
+    case WS_VALUE_TYPE_NIL:
+        v = calloc(1, sizeof(struct ws_value_nil));
+        ws_value_nil_init((struct ws_value_nil*) v);
+        break;
+
+    case WS_VALUE_TYPE_BOOL:
+        v = calloc(1, sizeof(struct ws_value_bool));
+        ws_value_bool_init((struct ws_value_bool*) v);
+        break;
+
+    case WS_VALUE_TYPE_INT:
+        v = calloc(1, sizeof(struct ws_value_int));
+        ws_value_int_init((struct ws_value_int*) v);
+        break;
+
+    case WS_VALUE_TYPE_STRING:
+        v = calloc(1, sizeof(struct ws_value_string));
+        ws_value_string_init((struct ws_value_string*) v);
+        break;
+
+//    case WS_VALUE_TYPE_OBJECT_ID:
+//        v = calloc(1, sizeof(struct ws_value_obj_id));
+//        ws_value_obj_id_init((struct ws_value_obj_id*) v);
+//        break;
+//!< @todo implement object id value type and enable this (adapt names)
+
+    case WS_VALUE_TYPE_SET:
+        v = calloc(1, sizeof(struct ws_value_set));
+        ws_value_set_init((struct ws_value_set*) v);
+        break;
+
+    case WS_VALUE_TYPE_NAMED:
+        v = calloc(1, sizeof(struct ws_value_named_value));
+        ws_value_named_value_init((struct ws_value_named_value*) v);
+        break;
+
+    case WS_VALUE_TYPE_NONE:
+    case WS_VALUE_TYPE_VALUE:
+    default:
+        v = NULL;
+        break;
+    }
+
+    return v;
 }
 
