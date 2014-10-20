@@ -86,6 +86,7 @@ set(SOURCE_FILES
     objects/string.c
     objects/wayland_obj.c
     serialize/deserializer.c
+    serialize/json/string_jump_state.c
     serialize/serializer.c
     util/cleaner.c
     util/wayland.c
