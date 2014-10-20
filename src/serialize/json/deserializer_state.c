@@ -119,7 +119,15 @@ int
 deserialize_state_mod_last_arg_set_null(
     struct deserializer_state* s
 ) {
-    //!< @todo implement
+    s->tmp_command_args.vals[s->tmp_command_args.num].type = indirect;
+    struct ws_value_nil* nil = calloc(1, sizeof(*nil));
+    if (!nil) {
+        return -ENOMEM;
+    }
+    ws_value_nil_init(nil);
+    struct ws_value* nil_ = (struct ws_value*) nil; // cast helper
+    s->tmp_command_args.vals[s->tmp_command_args.num].arg.val = nil_;
+
     return 0;
 }
 
