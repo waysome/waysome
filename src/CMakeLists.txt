@@ -88,6 +88,7 @@ set(SOURCE_FILES
     serialize/deserializer.c
     serialize/json/string_jump_state.c
     serialize/json/common.c
+    serialize/json/deserializer.c
     serialize/serializer.c
     util/cleaner.c
     util/wayland.c
