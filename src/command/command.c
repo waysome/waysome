@@ -25,10 +25,13 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <string.h>
 
 #include "command/command.h"
 #include "command/list.h"
+
+#include "values/value.h"
 
 #define LINEAR_THRESHOLD (4)
 
@@ -87,7 +90,15 @@ bool
 ws_statement_deinit(
     struct ws_statement* self
 ) {
-    //!< @todo implement
-    return false;
+    while (self->args.num--) {
+        if (self->args.vals[self->args.num].type == direct) {
+            ws_value_deinit(self->args.vals[self->args.num].arg.val);
+            free(self->args.vals[self->args.num].arg.val);
+        }
+    }
+
+    free(self->args.vals);
+
+    return true;
 }
 
