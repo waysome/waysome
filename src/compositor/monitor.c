@@ -150,6 +150,13 @@ ws_monitor_populate_fb(
                 "Did not create FB for self %d.", self->crtc);
         return;
     }
+
+    if (!self->current_mode) {
+        ws_log(&log_ctx, LOG_ERR,
+                "No mode set, can't create Framebuffer");
+        return;
+    }
+
     self->buffer = ws_frame_buffer_new(
             self->fb_dev,
             self->current_mode->mode.hdisplay,
@@ -211,12 +218,30 @@ ws_monitor_set_mode_with_id(
                 (struct ws_object*)&mode);
 }
 
+
+struct ws_monitor_mode*
+ws_monitor_copy_mode(
+    struct ws_monitor* self,
+    struct _drmModeModeInfo const* src
+) {
+    struct ws_monitor_mode* mode = ws_monitor_mode_new();
+    memcpy(&mode->mode, src, sizeof(*src));
+    mode->id = self->mode_count++;
+    ws_set_insert(&self->modes, (struct ws_object*) mode);
+    return mode;
+}
+
 struct ws_monitor_mode*
 ws_monitor_add_mode(
     struct ws_monitor* self,
     int width,
     int height
 ) {
+    //!< We exit rather than letting the program finish as it will hang the
+    // graphic card
+    ws_log(&log_ctx, LOG_CRIT, "Looks like we're in a doozy! This is undefined"
+            " behaviour and shouldn't be called. 'ws_monitor_add_mode'");
+    exit(1);
     struct ws_monitor_mode* mode = ws_monitor_mode_new();
     if (!mode) {
         ws_log(&log_ctx, LOG_ERR, "Could not create mode.");
@@ -225,6 +250,7 @@ ws_monitor_add_mode(
     mode->id = self->mode_count++;
     mode->mode.hdisplay = width;
     mode->mode.vdisplay = height;
+    mode->mode.clock = 155;
     //!< @todo: Add more information like vsync etc...
     ws_set_insert(&self->modes, (struct ws_object*) mode);
     return mode;

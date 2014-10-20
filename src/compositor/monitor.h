@@ -131,6 +131,9 @@ ws_monitor_set_mode_with_id(
  *
  * @memberof ws_monitor
  *
+ * @warning DO NOT USE! This is not yet safe as critical features are to be
+ * implemented and it will stop waysome to save your Graphics Card
+ *
  * @returns the newly created mode
  */
 struct ws_monitor_mode*
@@ -138,6 +141,19 @@ ws_monitor_add_mode(
     struct ws_monitor* self,
     int width,
     int height
+);
+
+/**
+ * Adds a monitor_mode to this monitor by copying an existing one
+ *
+ * @memberof ws_monitor
+ *
+ * @returns the newly copied mode
+ */
+struct ws_monitor_mode*
+ws_monitor_copy_mode(
+    struct ws_monitor* self,
+    struct _drmModeModeInfo const* src
 );
 
 #endif // __WS_OBJECTS_MONITOR_H__

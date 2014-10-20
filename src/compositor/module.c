@@ -294,6 +294,10 @@ set_monitor_modes(
     if (!monitor->connected) {
         return 0;
     }
+    if (monitor->mode_count < 1) {
+        ws_log(&log_ctx, LOG_ERR, "No modes for a connected monitor.");
+        return 1;
+    }
     // Set to the biggest mode
     ws_monitor_set_mode_with_id(monitor, monitor->mode_count - 1);
     if (monitor->current_mode) {
@@ -431,8 +435,14 @@ populate_connectors(void) {
         //!< @todo: Do not just take the biggest mode available
         int j = conn->count_modes;
         while (j--) {
-            ws_monitor_add_mode(new_monitor, conn->modes[j].hdisplay,
-                                    conn->modes[j].vdisplay);
+
+            struct ws_monitor_mode* mode =
+                ws_monitor_copy_mode(new_monitor, &conn->modes[j]);
+
+            ws_set_insert(&new_monitor->modes, (struct ws_object*)  mode);
+
+            // ws_monitor_add_mode(new_monitor, conn->modes[j].hdisplay,
+            //                        conn->modes[j].vdisplay);
         }
 
 
