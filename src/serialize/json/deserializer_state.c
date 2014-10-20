@@ -156,7 +156,16 @@ deserialize_state_mod_last_arg_set_int(
     struct deserializer_state* s,
     int i
 ) {
-    //!< @todo implement
+    s->tmp_command_args.vals[s->tmp_command_args.num].type = indirect;
+    struct ws_value_int* int_ = calloc(1, sizeof(*int_));
+    if (!i) {
+        return -ENOMEM;
+    }
+    int_->i = i;
+
+    struct ws_value* v = (struct ws_value*) int_;
+
+    s->tmp_command_args.vals[s->tmp_command_args.num].arg.val = v;
     return 0;
 }
 
