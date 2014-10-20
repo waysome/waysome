@@ -56,6 +56,7 @@ set(SOURCE_FILES
     command/arithmetical.c
     command/command.c
     command/list.c
+    command/processor.c
     compositor/buffer/buffer.c
     compositor/buffer/frame_buffer.c
     compositor/buffer/image_buffer.c
