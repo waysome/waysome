@@ -110,8 +110,21 @@ static yajl_callbacks YAJL_CALLBACKS = {
 struct ws_deserializer*
 ws_serializer_json_deserializer_new(void)
 {
-    //!< @todo implement
-    return NULL;
+    struct ws_deserializer* d = calloc(1, sizeof(*d));
+    if (!d) {
+        return NULL;
+    }
+
+    d->state = (void*) deserialize_state_new(&YAJL_CALLBACKS, d);
+
+    if (!d->state) {
+        free(d);
+        return NULL;
+    }
+
+    d->deserialize = deserialize;
+
+    return d;
 }
 
 /*
