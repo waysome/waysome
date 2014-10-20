@@ -174,7 +174,9 @@ deserialize_state_mod_last_arg_set_string(
     struct deserializer_state* s,
     struct ws_value_string* str
 ) {
-    //!< @todo implement
+    s->tmp_command_args.vals[s->tmp_command_args.num].type = indirect;
+    struct ws_value* str_ = (struct ws_value*) str; // cast helper
+    s->tmp_command_args.vals[s->tmp_command_args.num].arg.val = str_;
     return 0;
 }
 
