@@ -32,6 +32,10 @@
 #include "values/union.h"
 
 
+// Forward declarations
+struct ws_transaction;
+
+
 /**
  * Reply message type
  *
@@ -47,6 +51,22 @@ struct ws_value_reply {
  * Variable which holds the type information about the ws_value_reply type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_VALUE_REPLY;
+
+/**
+ * Create a value reply
+ *
+ * This function creates a value reply from a transaction, initializing the
+ * embedded value with `value`.
+ *
+ * @return a new reply of `NULL`, if an error occurred
+ */
+struct ws_value_reply*
+ws_value_reply_new(
+    struct ws_transaction* src, //!< transaction for which this is the reply
+    struct ws_value* value //!< value to return. `NULL` for a nil value
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_OBJECTS_VALUE_REPLY_H__
 
