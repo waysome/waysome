@@ -28,6 +28,8 @@
 #include <stddef.h>
 
 #include "action/manager.h"
+#include "action/processor_stack.h"
+#include "objects/message/error_reply.h"
 
 
 /*
@@ -63,7 +65,23 @@ static struct ws_reply*
 run_transaction(
     struct ws_transaction* transaction // transaction to run
 ) {
-    //!< @todo prepare stack
+    struct ws_reply* retval = NULL;
+    int res;
+
+    // prepare the stack
+    struct ws_processor_stack stack;
+    res = ws_processor_stack_init(&stack);
+    if (res < 0) {
+        retval = (struct ws_reply*)
+                 ws_error_reply_new(transaction, -res, "Could not init stack",
+                                    NULL);
+        goto cleanup_stack;
+    }
+
+    //!< @todo push environment on the stack
+
+    // we start a new frame, but we will never restore the default frame
+    (void) ws_processor_stack_start_frame(&stack);
 
     //!< @todo prepare processor
 
@@ -73,6 +91,8 @@ run_transaction(
 
     //!< @todo generate result
 
-    return NULL;
+cleanup_stack:
+    ws_processor_stack_deinit(&stack);
+    return retval;
 }
 
