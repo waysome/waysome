@@ -12,6 +12,7 @@ include_directories(
 
     ${DRM_INCLUDE_DIRS}
     ${EGL_INCLUDE_DIRS}
+    ${EVDEV_INCLUDE_DIRS}
     ${EV_INCLUDE_DIRS}
     ${ICU_OP_INCLUDE_DIRS}
     ${ICU_UC_INCLUDE_DIRS}
@@ -30,6 +31,7 @@ include_directories(
 add_definitions(
     ${DRM_DEFINITIONS}
     ${EGL_DEFINITIONS}
+    ${EVDEV_DEFINITIONS}
     ${EV_DEFINITIONS}
     ${ICU_OP_DEFINITIONS}
     ${ICU_UC_DEFINITIONS}
@@ -130,6 +132,7 @@ add_executable(waysome ${SOURCE_FILES})
 target_link_libraries(waysome
     ${DRM_LIBRARIES}
     ${EGL_LIBRARIES}
+    ${EVDEV_LIBRARIES}
     ${EV_LIBRARIES}
     ${libreset_LIBRARIES}
     ${PNG_LIBRARIES}
