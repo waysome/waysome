@@ -79,7 +79,20 @@ int
 deserialize_state_new_arg(
     struct deserializer_state* s
 ) {
-    //!< @todo implement
+    size_t n = s->tmp_command_args.num;
+    struct ws_argument* a = s->tmp_command_args.vals;
+
+    a = realloc(a, sizeof(*s->tmp_command_args.vals) * (n + 1));
+
+    if (!a) {
+        return -ENOMEM;
+    }
+
+    s->tmp_command_args.vals            = a;
+    s->tmp_command_args.vals[n].type    = indirect; // We need something to init
+    s->tmp_command_args.vals[n].arg.pos = 0; // init to something sane
+
+    s->tmp_command_args.num++;
     return 0;
 }
 
