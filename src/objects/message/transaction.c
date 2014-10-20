@@ -62,6 +62,7 @@ ws_transaction_new(
         return NULL;
     }
     t->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
+    t->m.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     t->cmds = cmds;
     t->name = getref(name);
