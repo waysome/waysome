@@ -29,5 +29,4 @@
 #define __WS_ACTION_MANAGER_H__
 
 
-
 #endif // __WS_ACTION_MANAGER_H__

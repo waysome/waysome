@@ -48,6 +48,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    action/manager.c
     action/processor.c
     action/processor_stack.c
     command/arithmetical.c
