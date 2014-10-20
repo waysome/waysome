@@ -80,6 +80,10 @@ ws_connector_deinit(
     if (!self->readonly) {
         ws_connbuf_deinit(&self->outbuf);
     }
+
+    if (self->fd >= 0) {
+        close(self->fd);
+    }
 }
 
 int
