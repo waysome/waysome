@@ -101,6 +101,13 @@ cleanup:
     return NULL;
 }
 
+struct ws_value*
+ws_value_reply_get_value(
+    struct ws_value_reply* self
+) {
+    return &self->value.value;
+}
+
 
 /*
  *

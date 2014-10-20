@@ -68,5 +68,17 @@ ws_value_reply_new(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Get the embedded value
+ *
+ * @return the value embedded in the reply
+ */
+struct ws_value*
+ws_value_reply_get_value(
+    struct ws_value_reply* self
+)
+__ws_nonnull__(1)
+;
+
 #endif // __WS_OBJECTS_VALUE_REPLY_H__
 
