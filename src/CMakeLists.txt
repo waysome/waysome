@@ -74,6 +74,7 @@ set(SOURCE_FILES
     objects/message/message.c
     objects/message/reply.c
     objects/message/transaction.c
+    objects/message/value_reply.c
     objects/object.c
     objects/set.c
     objects/string.c
