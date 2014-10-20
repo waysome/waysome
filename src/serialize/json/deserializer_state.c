@@ -100,7 +100,8 @@ int
 deserialize_state_mod_last_arg_set_direct(
     struct deserializer_state* s
 ) {
-    //!< @todo implement
+    s->tmp_command_args.vals[s->tmp_command_args.num].type = indirect;
+    s->tmp_command_args.vals[s->tmp_command_args.num].arg.val = NULL;
     return 0;
 }
 
