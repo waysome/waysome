@@ -31,7 +31,7 @@
 #include <malloc.h>
 
 // forward declarations
-struct ws_command_processor;
+struct ws_processor;
 union ws_value_union;
 
 /**
@@ -81,8 +81,8 @@ typedef int (*ws_regular_command_func)(union ws_value_union*);
  * jumps.
  *
  */
-typedef int (*ws_special_command_func)(struct ws_command_processor*,
-                                       struct ws_command_args*);
+typedef int (*ws_special_command_func)(struct ws_processor*,
+                                       struct ws_command_args const* const);
 
 /**
  * Command type
