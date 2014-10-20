@@ -80,7 +80,7 @@ ws_transaction_set_connection_id(
 }
 
 enum ws_transaction_flags
-ws_transaction_action(
+ws_transaction_flags(
     struct ws_transaction* t
 ) {
     return t->flags;
