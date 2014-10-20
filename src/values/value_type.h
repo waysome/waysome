@@ -62,6 +62,20 @@ ws_value_type_from_value_name(
     char const* name
 );
 
+/**
+ * Get a value type instance for the appropriate value type by the name of the
+ * value
+ *
+ * @note The ws_value instance is initialized when returned
+ *
+ * @return `struct ws_value*` which contains the appropriate type for the name
+ * or NULL if the name is not valid.
+ */
+struct ws_value*
+ws_value_type_instance_from_value_name(
+    char const* name
+);
+
 #endif // __WS_VALUES_VALUE_TYPE_H__
 
 /**
