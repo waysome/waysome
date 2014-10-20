@@ -52,6 +52,20 @@ ws_processor_prepare_args(
 __ws_nonnull__(1, 2)
 ;
 
+/**
+ * Execute a regaular command function
+ *
+ * This function executes a regular command function.
+ * This includes preparing and cleaning up the stack.
+ */
+static int
+exec_regular(
+    struct ws_processor_stack* stack,
+    ws_regular_command_func func,
+    struct ws_command_args const* const args
+)
+__ws_nonnull__(1, 2, 3)
+;
 
 /*
  *
@@ -148,5 +162,46 @@ ws_processor_prepare_args(
     }
 
     return 0;
+}
+
+static int
+exec_regular(
+    struct ws_processor_stack* stack,
+    ws_regular_command_func func,
+    struct ws_command_args const* const args
+) {
+    union ws_value_union* top = NULL;
+    if (args->num <= 0) {
+        return -EINVAL;
+    }
+
+    int res;
+
+    // prepare the stack for command execution
+    if (&args->vals) {
+        // the parameters are given explicitely
+        top = ws_processor_stack_top(stack);
+        res = ws_processor_prepare_args(stack, args);
+        if (res < 0) {
+            return res;
+        }
+    } else {
+        // the parameters are given implicitely
+        top = (union ws_value_union*)
+              ws_processor_stack_value_at(stack, -(args->num));
+    }
+
+    // we somehow ended up with a bad stack
+    if (!top) {
+        return -EINVAL;
+    }
+
+    res = func(top);
+    if (res < 0) {
+        return res;
+    }
+
+    // pop the values
+    return ws_processor_stack_pop(stack, args->num - 1);
 }
 
