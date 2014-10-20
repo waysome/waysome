@@ -31,6 +31,10 @@
 #include "objects/message/reply.h"
 
 
+// forward declarations
+struct ws_transaction;
+
+
 /**
  * Error reply message type
  *
@@ -39,15 +43,32 @@
  */
 struct ws_error_reply {
     struct ws_reply reply; //!< @protected base class
-    unsigned int code; //!< error code (e.g. an errno.h value)
-    char const* description; //!< error description
-    char const* cause; //!< cause of the error
+    unsigned int code; //!< @protected error code (e.g. an errno.h value)
+    char const* description; //!< @protected error description
+    char const* cause; //!< @protected cause of the error
 };
 
 /**
  * Variable which holds the type information about the ws_error_reply type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_ERROR_REPLY;
+
+/**
+ * Create a new error reply message
+ *
+ * This function creates a new error reply message.
+ *
+ * @return a newly created error reply message or `NULL`, if an error occurred
+ */
+struct ws_error_reply*
+ws_error_reply_new(
+    struct ws_transaction* src, //!< transaction for which this is the reply
+    unsigned int code, //!< error code
+    char const* description, //!< description of the error (will be copied)
+    char const* cause //!< cause of the error (will be copied)
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_OBJECTS_ERROR_REPLY_H__
 
