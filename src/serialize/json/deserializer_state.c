@@ -69,7 +69,9 @@ deserialize_state_init_cmds(
     struct deserializer_state* s,
     size_t cnt
 ) {
-    //!< @todo implement
+    wl_array_init(s->cmdbuf);
+    wl_array_add(s->cmdbuf, cnt);
+
     return 0;
 }
 
