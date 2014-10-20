@@ -415,6 +415,8 @@ populate_connectors(void) {
         struct ws_monitor* new_monitor = ws_monitor_new();
         new_monitor->conn = conn->connector_id;
         new_monitor->fb_dev = ws_comp_ctx.fb;
+        new_monitor->phys_width = conn->mmWidth;
+        new_monitor->phys_height = conn->mmHeight;
 
         if (conn->connection != DRM_MODE_CONNECTED) {
             ws_log(&log_ctx, LOG_DEBUG, "Found unused connector %d", i);
@@ -457,6 +459,7 @@ populate_connectors(void) {
 
 insert:
         new_monitor->id = i;
+        ws_monitor_publish(new_monitor);
         ws_set_insert(&ws_comp_ctx.monitors, (struct ws_object*)new_monitor);
     }
     return 0;

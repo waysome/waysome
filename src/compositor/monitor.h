@@ -74,6 +74,11 @@ struct ws_monitor {
     struct ws_set surfaces; //!< @public
     struct ws_set modes;
     int mode_count;
+
+    struct wl_global* global;
+    struct wl_resource* resource;
+    int phys_width;
+    int phys_height;
 };
 
 /**
@@ -154,6 +159,14 @@ struct ws_monitor_mode*
 ws_monitor_copy_mode(
     struct ws_monitor* self,
     struct _drmModeModeInfo const* src
+);
+
+/**
+ * Publishes the monitor through the wayland protocol
+ */
+void
+ws_monitor_publish(
+    struct ws_monitor* self
 );
 
 #endif // __WS_OBJECTS_MONITOR_H__
