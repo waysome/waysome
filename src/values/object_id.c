@@ -34,6 +34,15 @@ static void
 value_object_id_deinit(
     struct ws_value* self
 ) {
+    struct ws_value_object_id* tmp = (struct ws_value_object_id*) self;
+
+    if (!tmp) {
+        return;
+    }
+
+    if (tmp->obj) {
+        ws_object_unref(tmp->obj);
+    }
 }
 
 void
