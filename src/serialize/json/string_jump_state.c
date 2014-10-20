@@ -58,6 +58,13 @@ get_next_state_for_string(
     enum json_backend_state current,
     const unsigned char * str
 ) {
-    //!< @todo implement
-    return 0;
+    for (size_t i = 0; MAP[i].str; i++) {
+        if (MAP[i].current == current) {
+            if (0 == strncmp(MAP[i].str, (char*) str, strlen(MAP[i].str))) {
+                return MAP[i].next;
+            }
+        }
+    }
+
+    return STATE_INVALID;
 }
