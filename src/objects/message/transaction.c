@@ -31,6 +31,19 @@
 #include "objects/message/message.h"
 #include "objects/message/transaction.h"
 
+ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
+    .supertype  = &WS_OBJECT_TYPE_ID_MESSAGE,
+    .typestr    = "ws_transaction",
+
+    .init_callback = NULL,
+    .deinit_callback = NULL,
+    .dump_callback = NULL,
+    .run_callback = NULL,
+    .hash_callback = NULL,
+    .cmp_callback = NULL,
+    .uuid_callback = NULL,
+};
+
 struct ws_transaction*
 ws_transaction_new(
     size_t id,
@@ -48,6 +61,7 @@ ws_transaction_new(
         free(t);
         return NULL;
     }
+    t->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
 
     t->cmds = cmds;
     t->name = getref(name);
