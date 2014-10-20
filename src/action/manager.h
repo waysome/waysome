@@ -28,6 +28,23 @@
 #ifndef __WS_ACTION_MANAGER_H__
 #define __WS_ACTION_MANAGER_H__
 
+#include "util/attributes.h"
+
+// forward declarations
+struct ws_transaction;
+struct ws_reply;
+
+/**
+ * Process a transaction
+ *
+ * @return the reply caused by the transaction being processed
+ */
+struct ws_reply*
+ws_action_manager_process(
+    struct ws_transaction* transaction //!< transaction to process
+)
+__ws_nonnull__(1)
+;
 
 
 #endif // __WS_ACTION_MANAGER_H__

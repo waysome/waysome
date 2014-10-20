@@ -29,6 +29,7 @@
 #define __WS_ACTION_STACK_H__
 
 #include <stddef.h>
+#include <malloc.h>
 
 #include "util/attributes.h"
 
