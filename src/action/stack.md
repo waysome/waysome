@@ -82,3 +82,33 @@ implicitly:
 After a function invocation, all the arguments are popped from the stack except
 the first one, which is the return value of the function.
 
+Frame semantics
+---------------
+
+A user may use for-each-loops in their transactions, in which she/he may also
+perform pushes or pops.
+Tracking the number of values being pushed or popped may be a tedious task,
+dependent on the complexity of the things done within the loop body.
+It is also necessary to match expectations when it comes to the position of
+`top` after a loop.
+We want to satisfy the assumption that, after a loop, `top` is at the position
+it was _before_ the loop.
+
+To achieve this, we need the possibility to restore `top` after any number of
+values pushed or popped from the stack, while at the same time preventing that
+the values up to `top` are destroyed by a pop.
+
+The concept of "frames" enables us to achieve such behavior in an easy way:
+a stack has a frame base pointer.
+A frame can be started by invoking `ws_processor_stack_start_frame()`.
+A handle is returned and one can push values on the stack.
+When popping, the top is compared against the frame base pointer rather than
+against the bottom pointer.
+If one tries to pop more values than there are in the current _frame_, an error
+is thrown.
+
+The current frame can be freed by _restoring_ the previous frame.
+`ws_processor_stack_restore_frame`, which takes the handle returned by
+`ws_processor_stack_start_frame()`, does that by restoring the old `top` and
+popping all the values which are in the current frame.
+
