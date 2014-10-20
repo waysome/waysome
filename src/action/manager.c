@@ -25,11 +25,14 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <stddef.h>
 
 #include "action/manager.h"
+#include "action/processor.h"
 #include "action/processor_stack.h"
 #include "objects/message/error_reply.h"
+#include "objects/message/transaction.h"
 
 
 /*
@@ -83,13 +86,35 @@ run_transaction(
     // we start a new frame, but we will never restore the default frame
     (void) ws_processor_stack_start_frame(&stack);
 
-    //!< @todo prepare processor
+    // get the commands from the transaction
+    struct ws_transaction_command_list* commands;
+    commands = ws_transaction_commands(transaction);
+    if (!commands) {
+        retval = (struct ws_reply*)
+                 ws_error_reply_new(transaction, EINVAL,
+                                    "Command list malformed", NULL);
+        goto cleanup_stack;
+    }
+
+    // prepare the processor
+    struct ws_processor proc;
+    res = ws_processor_init(&proc, &stack, commands);
+    if (res < 0) {
+        retval = (struct ws_reply*)
+                 ws_error_reply_new(transaction, -res,
+                                    "Could not init processor", NULL);
+        goto cleanup_stack;
+    }
+
 
     //!< @todo run processor
 
     //!< @todo collect value
 
     //!< @todo generate result
+
+cleanup_processor:
+    ws_processor_deinit(&proc);
 
 cleanup_stack:
     ws_processor_stack_deinit(&stack);
