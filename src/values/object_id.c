@@ -53,6 +53,11 @@ struct ws_object*
 ws_value_object_id_get(
     struct ws_value_object_id* self
 ) {
+    if (!self || !self->obj) {
+        return NULL;
+    }
+
+    return getref(self->obj);
 }
 
 void
