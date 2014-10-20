@@ -136,7 +136,18 @@ deserialize_state_mod_last_arg_set_bool(
     struct deserializer_state* s,
     bool b
 ) {
-    //!< @todo implement
+    s->tmp_command_args.vals[s->tmp_command_args.num].type = indirect;
+    struct ws_value_bool* bl = calloc(1, sizeof(*bl));
+
+    if (!bl) {
+        return -ENOMEM;
+    }
+
+    bl->b = b;
+
+    struct ws_value* bl_ = (struct ws_value*) bl; // cast helper
+    s->tmp_command_args.vals[s->tmp_command_args.num].arg.val = bl_;
+
     return 0;
 }
 
