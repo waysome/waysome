@@ -31,6 +31,45 @@
 #include "objects/message/message.h"
 #include "objects/message/transaction.h"
 
+/*
+ *
+ * static function declarations
+ *
+ */
+
+/**
+ * Deinitialize callback for ws_transaction
+ */
+static bool
+deinit_transaction(
+    struct ws_object* self
+);
+
+/*
+ *
+ * variables
+ *
+ */
+
+ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
+    .supertype  = &WS_OBJECT_TYPE_ID_MESSAGE,
+    .typestr    = "ws_transaction",
+
+    .init_callback = NULL,
+    .deinit_callback = deinit_transaction,
+    .dump_callback = NULL,
+    .run_callback = NULL,
+    .hash_callback = NULL,
+    .cmp_callback = NULL,
+    .uuid_callback = NULL,
+};
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
 struct ws_transaction*
 ws_transaction_new(
     size_t id,
@@ -48,6 +87,8 @@ ws_transaction_new(
         free(t);
         return NULL;
     }
+    t->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
+    t->m.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     t->cmds = cmds;
     t->name = getref(name);
@@ -98,4 +139,25 @@ ws_transaction_commands(
     struct ws_transaction* t
 ) {
     return t->cmds;
+}
+
+/*
+ *
+ * static function implementations
+ *
+ */
+
+static bool
+deinit_transaction(
+    struct ws_object* self
+) {
+    struct ws_transaction* t = (struct ws_transaction*) self;
+
+    ws_object_unref((struct ws_object*) t->name);
+
+    while (--t->cmds->n) {
+        ws_statement_deinit(&t->cmds->statements[t->cmds->n]);
+    }
+
+    return true;
 }

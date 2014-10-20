@@ -67,6 +67,8 @@ struct ws_transaction {
     struct ws_transaction_command_list* cmds; //!< @protected Commands
 };
 
+extern ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION;
+
 /**
  * Get a new `ws_transaction` object
  *
