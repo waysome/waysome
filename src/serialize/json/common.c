@@ -81,8 +81,22 @@ serializer_yajl_state_new(
     yajl_callbacks* callbacks,
     void* ctx
 ) {
-    //!< @todo implement
-    return NULL;
+    struct serializer_yajl_state* state = calloc(1, size);
+    if (!state) {
+        return NULL;
+    }
+
+    state->handle = yajl_alloc(callbacks, &YAJL_ALLOC_FUNCS, ctx);
+
+    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
+        !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
+        !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
+
+            yajl_free(state->handle);
+            return NULL;
+    }
+
+    return state;
 }
 
 void
