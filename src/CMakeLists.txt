@@ -71,6 +71,7 @@ set(SOURCE_FILES
     logger/module.c
     main.c
     objects/array.c
+    objects/message/error_reply.c
     objects/message/message.c
     objects/message/reply.c
     objects/message/transaction.c
