@@ -39,6 +39,9 @@ The arguments are
 
 * Objects, to pass constants to the command.
 
+Of course you can mix objects and integers in the array, if the related command
+takes them.
+
 For example:
 
     { "pop": 4 }
