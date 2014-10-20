@@ -31,13 +31,19 @@ the arguments of the command:
 
 The arguments are
 
-* Integers, to refer to a position on the execution stack, whereas positive
-  values are positions in the stack from the _bottom_ to the _top_ of the stack
-  and negative values are from the _top_ to the _bottom_ of the stack.
+* Integers, to tell waysome to use N positions from the stack
+
+* Integers in an array, to refer to positions on the execution stack, whereas
+  positive values are positions in the stack from the _bottom_ to the _top_ of
+  the stack and negative values are from the _top_ to the _bottom_ of the stack.
 
 * Objects, to pass constants to the command.
 
 For example:
+
+    { "pop": 4 }
+
+Pop four positions from the stack,
 
     { "pop": [-1] }
 
