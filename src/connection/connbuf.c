@@ -83,6 +83,13 @@ ws_connbuf_reserve(
     return self->buffer + self->data;
 }
 
+size_t
+ws_connbuf_available(
+    struct ws_connbuf* self
+) {
+    return self->size - self->data;
+}
+
 int
 ws_connbuf_append(
     struct ws_connbuf* self,
