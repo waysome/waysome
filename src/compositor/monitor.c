@@ -116,6 +116,7 @@ ws_monitor_new(
         goto cleanup_alloc;
     }
 
+
     return tmp;
 
 cleanup_alloc:
@@ -147,6 +148,7 @@ bind_output(
     struct ws_monitor* monitor = data;
 
     if (version >= 2) {
+        // We only support from 2 and ongoing, so let's say that!
         version = 2;
     }
 
@@ -157,6 +159,7 @@ bind_output(
         ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");
     }
 
+    // We don't set an implementation, instead we just set the data
     wl_resource_set_implementation(monitor->resource, NULL, data, NULL);
 
     // The origin of this monitor, 0,0 in this case
@@ -164,8 +167,10 @@ bind_output(
             // 0 is the subpixel type, and the two strings are monitor infos
             monitor->phys_height, 0, "unknown", "unknown",
             WL_OUTPUT_TRANSFORM_NORMAL);
+    // We publish all the modes we have right now through wayland
     ws_set_select(&monitor->modes, NULL, NULL, publish_modes, monitor->resource);
 
+    // We tell wayland that this output is done!
     wl_output_send_done(monitor->resource);
 }
 
@@ -176,8 +181,10 @@ publish_modes(
     void const* _mode
 ) {
     struct ws_monitor_mode* mode = (struct ws_monitor_mode*) _mode;
+    // The 0 here means that this isn't a preferred nor the current display
     wl_output_send_mode((struct wl_resource*) _data, 0,
             mode->mode.hdisplay, mode->mode.vdisplay,
+            // The buffer and wayland differ on which unit to use
             mode->mode.vrefresh * 1000);
     return 0;
 }
@@ -300,11 +307,11 @@ ws_monitor_set_mode_with_id(
     }
 
     // Let's tell wayland that this is the current mode!
-    wl_output_send_mode((struct wl_resource*) _data, WL_OUTPUT_CURRENT_MODE,
-            self->current_mode->mode.hdisplay,
+    wl_output_send_mode((struct wl_resource*) self->resource,
+            WL_OUTPUT_MODE_CURRENT, self->current_mode->mode.hdisplay,
             self->current_mode->mode.vdisplay,
             // The buffer and wayland differ on which unit to use
-            mode->mode.vrefresh * 1000);
+            self->current_mode->mode.vrefresh * 1000);
 }
 
 
