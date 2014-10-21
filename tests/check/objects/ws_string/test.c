@@ -65,6 +65,17 @@ START_TEST (test_string_init) {
 }
 END_TEST
 
+START_TEST (test_string_empty_len) {
+    struct ws_string* s = ws_string_new();
+
+    ck_assert(s != NULL);
+    ck_assert(0 == ws_string_len(s));
+
+    ws_object_deinit(&s->obj);
+    free(s);
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -75,6 +86,7 @@ string_suite(void)
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
     tcase_add_test(tc, test_string_init);
+    tcase_add_test(tc, test_string_empty_len);
 
     return s;
 }
