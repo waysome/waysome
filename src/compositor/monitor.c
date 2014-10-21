@@ -33,6 +33,8 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wayland-server.h>
+#include <wayland-server-protocol.h>
 #include <xf86drm.h>
 
 #include "compositor/buffer/image_buffer.h"
@@ -41,6 +43,7 @@
 #include "compositor/monitor.h"
 #include "logger/module.h"
 #include "objects/object.h"
+#include "util/wayland.h"
 
 /*
  *
@@ -62,6 +65,20 @@ static int
 ws_monitor_cmp(
     struct ws_object const* obj1,
     struct ws_object const* obj2
+);
+
+static void
+bind_output(
+    struct wl_client* client,
+    void* data,
+    uint32_t version,
+    uint32_t id
+);
+
+static int
+publish_modes(
+    void* _data,
+    void const* _mode
 );
 
 /*
@@ -119,6 +136,74 @@ ws_monitor_surfaces(
  * Internal implementation
  *
  */
+
+static void
+bind_output(
+    struct wl_client* client,
+    void* data,
+    uint32_t version,
+    uint32_t id
+) {
+
+    struct ws_monitor* monitor = data;
+
+    if (version >= 2) {
+        // We only support from 2 and ongoing, so let's say that!
+        version = 2;
+    }
+
+    monitor->resource = wl_resource_create(client, &wl_output_interface,
+            version, id);
+
+    if (!monitor->resource) {
+        ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");
+    }
+
+    // We don't set an implementation, instead we just set the data
+    wl_resource_set_implementation(monitor->resource, NULL, data, NULL);
+
+    // The origin of this monitor, 0,0 in this case
+    wl_output_send_geometry(monitor->resource, 0, 0, monitor->phys_width,
+            // 0 is the subpixel type, and the two strings are monitor infos
+            monitor->phys_height, 0, "unknown", "unknown",
+            WL_OUTPUT_TRANSFORM_NORMAL);
+    // We publish all the modes we have right now through wayland
+    ws_set_select(&monitor->modes, NULL, NULL, publish_modes, monitor->resource);
+
+    // We tell wayland that this output is done!
+    wl_output_send_done(monitor->resource);
+}
+
+
+static int
+publish_modes(
+    void* _data,
+    void const* _mode
+) {
+    struct ws_monitor_mode* mode = (struct ws_monitor_mode*) _mode;
+    // The 0 here means that this isn't a preferred nor the current display
+    wl_output_send_mode((struct wl_resource*) _data, 0,
+            mode->mode.hdisplay, mode->mode.vdisplay,
+            // The buffer and wayland differ on which unit to use
+            mode->mode.vrefresh * 1000);
+    return 0;
+}
+
+void
+ws_monitor_publish(
+    struct ws_monitor* self
+) {
+    struct wl_display* display = ws_wayland_acquire_display();
+    if (!display) {
+        return;
+    }
+
+    self->global = wl_global_create(display, &wl_output_interface, 2,
+                    self, &bind_output);
+
+    ws_wayland_release_display();
+
+}
 
 static bool
 ws_monitor_deinit(
@@ -216,6 +301,17 @@ ws_monitor_set_mode_with_id(
         (struct ws_monitor_mode*) ws_set_get(
                 &self->modes,
                 (struct ws_object*)&mode);
+
+    if (!self->current_mode) {
+        return;
+    }
+
+    // Let's tell wayland that this is the current mode!
+    wl_output_send_mode((struct wl_resource*) self->resource,
+            WL_OUTPUT_MODE_CURRENT, self->current_mode->mode.hdisplay,
+            self->current_mode->mode.vdisplay,
+            // The buffer and wayland differ on which unit to use
+            self->current_mode->mode.vrefresh * 1000);
 }
 
 
