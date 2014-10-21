@@ -160,6 +160,23 @@ START_TEST (test_string_from_raw_literal) {
 }
 END_TEST
 
+START_TEST (test_string_from_raw_heapbuf) {
+    struct ws_string* s = ws_string_new();
+    char* literal = "helloworld";
+    char* hbuf = strdup(literal);
+
+    ws_string_set_from_raw(s, hbuf);
+
+    char* buf = ws_string_raw(s);
+
+    ck_assert(0 == strcmp(buf, hbuf));
+
+    ws_object_deinit(&s->obj);
+    free(s);
+    free(hbuf);
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -177,6 +194,7 @@ string_suite(void)
     tcase_add_test(tc, test_string_empty_cmp);
     tcase_add_test(tc, test_string_empty_raw);
     tcase_add_test(tc, test_string_from_raw_literal);
+    tcase_add_test(tc, test_string_from_raw_heapbuf);
 
     return s;
 }
