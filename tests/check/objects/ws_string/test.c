@@ -177,14 +177,43 @@ START_TEST (test_string_from_raw_heapbuf) {
 }
 END_TEST
 
+/*
+ *
+ *
+ * Tests for multi string testing
+ *
+ *
+ */
+
+static struct ws_string* string_a;
+static struct ws_string* string_b;
+
+static void
+setup(void) {
+    string_a = ws_string_new();
+    ws_string_set_from_raw(string_a, "Hello, World!");
+    string_b = ws_string_new();
+    ws_string_set_from_raw(string_b, "Hello");
+}
+
+static void
+teardown(void) {
+    ws_object_unref(&string_a->obj);
+    ws_object_unref(&string_b->obj);
+}
+
 static Suite*
 string_suite(void)
 {
     Suite* s    = suite_create("String");
     TCase* tc   = tcase_create("main case");
+    TCase* tc_m = tcase_create("Multi string case");
 
     suite_add_tcase(s, tc);
-    // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
+    suite_add_tcase(s, tc_m);
+
+    tcase_add_checked_fixture(tc, setup, teardown); // Not used yet
+    tcase_add_checked_fixture(tc_m, setup, teardown); // Not used yet
 
     tcase_add_test(tc, test_string_init);
     tcase_add_test(tc, test_string_empty_len);
