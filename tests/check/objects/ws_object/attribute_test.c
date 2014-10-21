@@ -135,6 +135,9 @@ START_TEST (test_object_attribute_type) {
     type = ws_object_attr_type(&to->obj, "string");
     ck_assert(WS_OBJ_ATTR_TYPE_STRING == type);
 
+    type = ws_object_attr_type(&to->obj, "object");
+    ck_assert(WS_OBJ_ATTR_TYPE_OBJ == type);
+
     ws_object_unref(&to->obj);
 }
 END_TEST
