@@ -101,6 +101,27 @@ END_TEST
 //}
 //END_TEST
 
+START_TEST (test_string_empty_dupl) {
+    struct ws_string* s = ws_string_new();
+    struct ws_string* d = NULL;
+
+    ck_assert(0 == ws_string_len(s));
+    ck_assert(s != NULL);
+    ck_assert(d == NULL);
+
+    d = ws_string_dupl(s);
+    ck_assert(d != NULL);
+
+    ck_assert(0 == ws_string_len(s));
+    ck_assert(0 == ws_string_len(d));
+
+    ws_object_deinit(&s->obj);
+    ws_object_deinit(&d->obj);
+    free(s);
+    free(d);
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -114,6 +135,7 @@ string_suite(void)
     tcase_add_test(tc, test_string_empty_len);
     tcase_add_test(tc, test_string_cat_empty);
     //tcase_add_test(test_string_multicat_empty);
+    tcase_add_test(tc, test_string_empty_dupl);
 
     return s;
 }
