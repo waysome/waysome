@@ -419,6 +419,33 @@ int
 yajl_end_array_cb(
     void * ctx
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    state->nboxbrackets--;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_COMMAND_ARY:
+        // We are ready with the command array parsing now.
+        state->current_state = STATE_MSG;
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARGS:
+        // The command argument array closes now, we are ready with the command
+        // argument array parsing here. So we go back to the "new command"
+        // state. The finalization is done after the map for the new command
+        // closes.
+
+        state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    return 1;
 }
