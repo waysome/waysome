@@ -34,6 +34,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "command/processor.h"
+#include "serialize/json/deserializer.h"
 #include "util/arithmetical.h"
 #include "util/config_file.h"
 
@@ -74,8 +76,25 @@ open_config(void);
 
 int
 ws_config_load(void) {
-    //!< @todo implement
-    return -1;
+    int fd = open_config();
+    if (fd < 0) {
+        return fd;
+    }
+
+    // create the deserializer
+    struct ws_deserializer* deserializer;
+    deserializer = ws_serializer_json_deserializer_new();
+    if (!deserializer) {
+        return -1;
+    }
+
+    struct ws_command_processor* proc;
+    proc = ws_command_processor_new(fd, deserializer, NULL);
+    if (!proc) {
+        return -1;
+    }
+    ws_object_unref((struct ws_object*) proc);
+    return 0;
 }
 
 
