@@ -25,10 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <ev.h>
 #include <malloc.h>
 #include <unistd.h>
 
+#include "action/manager.h"
 #include "command/processor.h"
 #include "connection/connector.h"
 #include "objects/object.h"
@@ -216,7 +218,90 @@ command_processor_dispatch(
     ev_io* watcher,
     int revents
 ) {
-    //!< @todo implement
+    struct ws_command_processor* proc;
+    proc = (struct ws_command_processor*) watcher->data;
+    ssize_t res;
+
+    if (!ws_object_lock_try_write(&proc->obj)) {
+        return;
+    }
+
+    // if we intend to reply to the messages, we should first check this
+    if (proc->serializer) {
+        res = command_processor_flush_msg(proc, NULL);
+        if ((res < 0) && (res != -EAGAIN) && (res != -EINTR)) {
+            goto deinit;
+        }
+    }
+
+    res = ws_connector_read(&proc->conn);
+    // catch a few things that actually are not errors, but indicators
+    switch (res) {
+    case 0: // we reached the end of file
+        goto deinit;
+
+    case -EAGAIN:
+    case -EINTR:
+        // we have to come back later
+        ws_object_unlock(&proc->obj);
+        return;
+    }
+
+    // check whether we really have an error here
+    if (res < 0) {
+        goto error_handling;
+    }
+
+    struct ws_message* msg = NULL;
+    while (1) {
+        // deserialize a message
+        //!< @todo use getters as soon as they are available
+        res =  ws_deserialize(proc->deserializer, &msg,
+                              proc->conn.inbuf.buffer, proc->conn.inbuf.data);
+        if (res < 0) {
+            break;
+        }
+        res = ws_connbuf_discard(&proc->conn.inbuf, res);
+        if (res < 0) {
+            break;
+        }
+
+        // handle the message
+        if (!msg) {
+            // nothing to do!
+            ws_object_unlock(&proc->obj);
+            return;
+        }
+
+        // pass the message to the transaction manager
+        struct ws_reply* reply = ws_action_manager_process(msg);
+        ws_object_unref((struct ws_object*) msg);
+        if (!reply) {
+            // reply being `NULL` can have a number of reasons
+            continue;
+        }
+
+        // check whether we _can_ send a reply
+        if (!proc->serializer) {
+            // nope, we can't
+            ws_object_unref((struct ws_object*) reply);
+            continue;
+        }
+
+        // flush the buffer
+        res = command_processor_flush_msg(proc, (struct ws_message*) reply);
+        if (res < 0) {
+            break;
+        }
+    }
+
+error_handling:
+    //!< @todo error handling
+
+deinit:
+    command_processor_deinit(&proc->obj);
+    ws_object_unlock(&proc->obj);
+    ws_object_unref(&proc->obj);
 }
 
 static void
