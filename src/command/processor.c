@@ -225,7 +225,28 @@ command_processor_flush(
     ev_prepare* watcher,
     int revents
 ) {
-    //!< @todo implement
+    struct ws_command_processor* proc;
+    proc = (struct ws_command_processor*) watcher->data;
+
+    // try to lock the object
+    if (!ws_object_lock_try_write(&proc->obj)) {
+        goto unlock;
+    }
+
+    // flush the buffer
+    int res = command_processor_flush_msg(proc, NULL);
+    if ((res == 0) || (res == -EAGAIN) || (res == -EINTR)) {
+        goto unlock;
+    }
+
+    //!< @todo: error handling
+    command_processor_deinit(&proc->obj);
+    ws_object_unlock(&proc->obj);
+    ws_object_unref(&proc->obj);
+    return;
+
+unlock:
+    ws_object_unlock(&proc->obj);
 }
 
 static int
