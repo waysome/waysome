@@ -202,6 +202,13 @@ teardown(void) {
     ws_object_unref(&string_b->obj);
 }
 
+START_TEST (test_string_cmp) {
+    ck_assert(0 != ws_string_cmp(string_a, string_b));
+    ck_assert(0 == ws_string_cmp(string_a, string_a));
+    ck_assert(0 == ws_string_cmp(string_b, string_b));
+}
+END_TEST
+
 START_TEST (test_string_ncmp) {
     const size_t offset = 0;
     const size_t nchars = 3;
@@ -242,6 +249,7 @@ string_suite(void)
     tcase_add_test(tc, test_string_from_raw_literal);
     tcase_add_test(tc, test_string_from_raw_heapbuf);
 
+    tcase_add_test(tc_m, test_string_cmp);
     tcase_add_test(tc_m, test_string_ncmp);
     tcase_add_test(tc_m, test_string_substr);
 
