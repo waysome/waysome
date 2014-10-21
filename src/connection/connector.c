@@ -80,6 +80,10 @@ ws_connector_deinit(
     if (!self->readonly) {
         ws_connbuf_deinit(&self->outbuf);
     }
+
+    if (self->fd >= 0) {
+        close(self->fd);
+    }
 }
 
 int
@@ -90,7 +94,7 @@ ws_connector_read(
     int res;
     size_t remaining_mem; //amount of free memory in outbuf
 
-    remaining_mem = self->inbuf.size - self->inbuf.data;
+    remaining_mem = ws_connbuf_available(&self->inbuf);
     start = ws_connbuf_reserve(&self->inbuf, remaining_mem);
 
     res = read(self->fd, start, remaining_mem);

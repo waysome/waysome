@@ -56,6 +56,11 @@ ws_serialize(
         nbuf -= offset;
     }
 
+    // check whether the message is 
+    if (!msg) {
+        return offset;
+    }
+
     // now try to serialize the message we have now
     self->buffer = getref(msg);
     ssize_t retval = self->serialize(self, buf, nbuf);

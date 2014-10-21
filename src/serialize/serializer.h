@@ -74,9 +74,13 @@ struct ws_serializer {
  * It takes a buffer (and it's length) as the target for serialisation and will
  * return either the number of bytes written to that buffer or a negative error
  * code.
- * Note that in the case that the message could not be serialized because
- * another message is still pending, `-EAGAIN` will be returned, indicating that
- * the message may be serialized successfully later.
+ *
+ * @note in the case that the message could not be serialized because another
+ *       message is still pending, `-EAGAIN` will be returned, indicating that
+ *       the message may be serialized successfully later.
+ *
+ * @note `NULL` may be passed as `msg` to progress serialization of the current
+ *       message.
  *
  */
 ssize_t
@@ -86,7 +90,7 @@ ws_serialize(
     size_t nbuf, //!< the length of the buffer available
     struct ws_message* msg //!< message to serialize
 )
-__ws_nonnull__(1, 2, 4)
+__ws_nonnull__(1, 2)
 ;
 
 /**

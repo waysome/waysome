@@ -67,17 +67,27 @@ run_transaction(
 
 struct ws_reply*
 ws_action_manager_process(
-    struct ws_transaction* transaction
+    struct ws_message* message
 ) {
-    // get the flags
-    enum ws_transaction_flags flags = ws_transaction_flags(transaction);
+    // check whether the message is a transaction
+    if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
+        struct ws_transaction* transaction;
+        transaction = (struct ws_transaction*) message;
 
-    //!< @todo store the transaction if requested
+        // get the flags
+        enum ws_transaction_flags flags = ws_transaction_flags(transaction);
 
-    if (flags | WS_TRANSACTION_FLAGS_EXEC) {
-        // execute the transaction
-        return run_transaction(transaction);
+        //!< @todo store the transaction if requested
+
+        if (flags & WS_TRANSACTION_FLAGS_EXEC) {
+            // execute the transaction
+            return run_transaction(transaction);
+        }
+
+        return NULL;
     }
+
+    //!< @todo handle event messages
 
     return NULL;
 }

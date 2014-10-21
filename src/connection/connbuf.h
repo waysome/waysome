@@ -87,6 +87,19 @@ ws_connbuf_reserve(
 );
 
 /**
+ * Get the number of bytes which may be reserved
+ *
+ * This method will return the number of bytes which may be reserves using
+ * `ws_connbuf_reserve()`.
+ *
+ * @return the number of bytes available
+ */
+size_t
+ws_connbuf_available(
+    struct ws_connbuf* self //!< The object
+);
+
+/**
  * Increase the `data` member of the ws_connbuf struct and unblocks the buffer
  * from beeing discarded
  *
