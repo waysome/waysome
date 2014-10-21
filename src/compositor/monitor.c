@@ -294,6 +294,17 @@ ws_monitor_set_mode_with_id(
         (struct ws_monitor_mode*) ws_set_get(
                 &self->modes,
                 (struct ws_object*)&mode);
+
+    if (!self->current_mode) {
+        return;
+    }
+
+    // Let's tell wayland that this is the current mode!
+    wl_output_send_mode((struct wl_resource*) _data, WL_OUTPUT_CURRENT_MODE,
+            self->current_mode->mode.hdisplay,
+            self->current_mode->mode.vdisplay,
+            // The buffer and wayland differ on which unit to use
+            mode->mode.vrefresh * 1000);
 }
 
 
