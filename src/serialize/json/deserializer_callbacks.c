@@ -279,8 +279,56 @@ yajl_map_key_cb(
     const unsigned char * key,
     size_t len
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_MSG:
+        // We're running into a top-level key here, lets decide what comes next:
+        state->current_state = get_next_state_for_string(STATE_MSG, key);
+        break;
+
+    case STATE_COMMAND_ARY_NEW_COMMAND:
+        // This is now the KEY of the command, the command name.
+        // The next state should be the command argument array
+        {
+            char buf[len + 1];
+            strncpy(buf, (char*) key, len);
+            buf[len] = '\0';
+
+            state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
+            if (!state->tmp_statement) {
+                //!< @todo error?
+                return 0;
+            }
+
+            if (0 != ws_statement_init(state->tmp_statement, buf)) {
+                //!< @todo error?
+                return 0;
+            }
+
+            state->current_state = STATE_COMMAND_ARY_COMMAND_NAME;
+        }
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT:
+        // If the key is a "pos" key, for a stack position, we continue here
+
+        if (0 != strncmp((char*) key, POS, len)) {
+            return 0;
+        }
+        state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT_STACKPOS;
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    return 1;
 }
 
 int
