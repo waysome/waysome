@@ -107,6 +107,15 @@ ws_cursor_set_position(
 }
 
 void
+ws_cursor_add_position(
+    struct ws_cursor* self,
+    int x,
+    int y
+) {
+    ws_cursor_set_position(self, self->x + x, self->y + y);
+}
+
+void
 ws_cursor_set_hotspot(
     struct ws_cursor* self,
     int x,

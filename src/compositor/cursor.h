@@ -77,6 +77,16 @@ ws_cursor_set_position(
 );
 
 /**
+ * Move the cursor by the amounts
+ */
+void
+ws_cursor_add_position(
+    struct ws_cursor* self, //<! The object
+    int x, //<! The position
+    int y  //<! The position
+);
+
+/**
  * Move the cursor to a position
  */
 void
