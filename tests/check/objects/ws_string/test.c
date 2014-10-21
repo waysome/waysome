@@ -38,8 +38,32 @@
  */
 
 #include <check.h>
+#include <stdlib.h>
 
 #include "tests.h"
+#include "objects/string.h"
+
+START_TEST (test_string_init) {
+    struct ws_string ss;
+    memset(&ss, 0, sizeof(ss));
+
+    ck_assert(true == ws_string_init(&ss));
+
+    struct ws_string* sh = NULL;
+    ck_assert(false == ws_string_init(sh));
+    sh = calloc(1, sizeof(*sh));
+    ck_assert(true == ws_string_init(sh));
+
+    ws_object_deinit(&sh->obj);
+    free(sh);
+    sh = NULL;
+
+    sh = ws_string_new();
+    ck_assert(NULL != sh);
+    ws_object_deinit(&sh->obj);
+    free(sh);
+}
+END_TEST
 
 static Suite*
 string_suite(void)
@@ -50,7 +74,7 @@ string_suite(void)
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
-    // tcase_add_test(tc, test_string_init);
+    tcase_add_test(tc, test_string_init);
 
     return s;
 }
