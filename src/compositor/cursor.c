@@ -176,6 +176,12 @@ ws_cursor_unset(
     ws_log(&log_ctx, LOG_DEBUG, "Removing cursor: %d", retval);
 }
 
+struct ws_cursor*
+ws_cursor_get()
+{
+    return ws_comp_ctx.cursor;
+}
+
 static bool
 deinit_cursor(
         struct ws_object* s

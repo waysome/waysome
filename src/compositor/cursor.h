@@ -129,5 +129,14 @@ ws_cursor_set_monitor(
     struct ws_cursor* self, //<! The object
     struct ws_monitor* monitor //<! The buffer
 );
+
+/**
+ * Get the cursor pointer
+ *
+ * @warning, check for NULL pointers
+ */
+struct ws_cursor*
+ws_cursor_get();
+
 #endif // __WS_CURSOR_H__
 
