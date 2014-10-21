@@ -31,6 +31,7 @@
 #include "serialize/json/states.h"
 #include "serialize/json/string_jump_state.h"
 #include "values/nil.h"
+#include "values/bool.h"
 
 int
 yajl_null_cb(
@@ -75,8 +76,38 @@ yajl_boolean_cb(
     void * ctx,
     int b
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_COMMAND_ARY_COMMAND_ARGS:
+        {
+            struct ws_value_bool* boo = calloc(1, sizeof(*boo));
+            if (!boo) {
+                //!< @todo error
+                return 0;
+            }
+
+            ws_value_bool_init(boo);
+            ws_value_bool_set(boo, b);
+            if (0 != ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) boo)) {
+                //!< @todo error
+                return 0;
+            }
+            state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
+        }
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    return 1;
 }
 
 int
