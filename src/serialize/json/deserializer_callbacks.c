@@ -387,8 +387,32 @@ int
 yajl_start_array_cb(
     void * ctx
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    state->nboxbrackets++;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_COMMANDS:
+        setup_transaction(d);
+        state->current_state = STATE_COMMAND_ARY;
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_NAME:
+        // We are in the command name state and the next thing is an array, so
+        // we must allocate the command argument array here.
+        state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    return 1;
 }
 
 int
