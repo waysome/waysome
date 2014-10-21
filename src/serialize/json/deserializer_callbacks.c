@@ -243,8 +243,34 @@ int
 yajl_start_map_cb(
     void * ctx
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    state->ncurvedbrackets++;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_INIT:
+        state->current_state = STATE_MSG;
+        break;
+
+    case STATE_COMMAND_ARY:
+        // We run into a new command here
+        state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARGS:
+        state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT;
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    return 1;
 }
 
 int
