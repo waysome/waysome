@@ -66,6 +66,19 @@ command_processor_flush(
 );
 
 /**
+ * Try to flush the message currently queued
+ *
+ * @return 0 if the serializer may now take a new message, a negative error
+ *         code on failure, especially `-EAGAIN` if the message was not
+ *         flushed.
+ */
+static int
+command_processor_flush_msg(
+    struct ws_command_processor* proc,
+    struct ws_message* message
+);
+
+/**
  * Deinitialize a command processor
  */
 bool
@@ -213,6 +226,39 @@ command_processor_flush(
     int revents
 ) {
     //!< @todo implement
+}
+
+static int
+command_processor_flush_msg(
+    struct ws_command_processor* proc,
+    struct ws_message* message
+) {
+    int res;
+    // iterate until there's nothing left to do
+    do {
+        // allocate memory to write the reply
+        size_t avail = ws_connbuf_available(&proc->conn.outbuf);
+        char* buf = ws_connbuf_reserve(&proc->conn.outbuf, avail);
+        if (!buf) {
+            return -EAGAIN;
+        }
+
+        // serialize reply
+        res = ws_serialize(proc->serializer, buf, avail, message);
+        if (res < 0) {
+            break;
+        }
+
+        // communicate the changes to the buffer
+        res = ws_connbuf_append(&proc->conn.outbuf, res);
+        if (res < 0) {
+            break;
+        }
+
+        // flush
+        res = ws_connector_flush(&proc->conn);
+    } while (res > 0);
+    return res;
 }
 
 bool
