@@ -32,6 +32,7 @@
 #include "serialize/json/string_jump_state.h"
 #include "values/nil.h"
 #include "values/bool.h"
+#include "values/int.h"
 
 int
 yajl_null_cb(
@@ -115,8 +116,55 @@ yajl_integer_cb(
     void * ctx,
     long long i
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_UID:
+        if (d->buffer) {
+            // Hey, we have a message object, set the ID directly
+            d->buffer->id = i;
+        } else {
+            // cache the ID
+            state->id = i; //!< @todo visibility violation here
+        }
+        state->current_state = STATE_MSG;
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARGS:
+        {
+            struct ws_value_int* _i = calloc(1, sizeof(_i));
+            if (!_i) {
+                //!< @todo error
+                return 0;
+            }
+
+            ws_value_int_init(_i);
+            ws_value_int_set(_i, i);
+            if (0 != ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) _i)) {
+                //!< @todo error
+                return 0;
+            }
+
+            state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
+        }
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT_STACKPOS:
+        ws_statement_append_indirect(state->tmp_statement, i);
+        state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    return 1;
 }
 
 int
@@ -179,4 +227,3 @@ yajl_end_array_cb(
     //!< @todo implement
     return 0;
 }
-
