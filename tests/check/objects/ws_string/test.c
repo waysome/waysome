@@ -76,6 +76,26 @@ START_TEST (test_string_empty_len) {
 }
 END_TEST
 
+START_TEST (test_string_cat_empty) {
+    struct ws_string* sa = ws_string_new();
+    struct ws_string* sb = ws_string_new();
+
+    ck_assert(sa != NULL);
+    ck_assert(sb != NULL);
+
+    ck_assert(0 == ws_string_len(sa));
+    ck_assert(0 == ws_string_len(sb));
+
+    ck_assert(sa == ws_string_cat(sa, sb));
+    ck_assert(0 == ws_string_len(sa));
+
+    ws_object_deinit(&sa->obj);
+    ws_object_deinit(&sb->obj);
+    free(sa);
+    free(sb);
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -87,6 +107,7 @@ string_suite(void)
 
     tcase_add_test(tc, test_string_init);
     tcase_add_test(tc, test_string_empty_len);
+    tcase_add_test(tc, test_string_cat_empty);
 
     return s;
 }
