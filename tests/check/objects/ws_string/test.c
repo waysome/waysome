@@ -122,6 +122,19 @@ START_TEST (test_string_empty_dupl) {
 }
 END_TEST
 
+START_TEST (test_string_empty_cmp) {
+    struct ws_string* sa = ws_string_new();
+    struct ws_string* sb = ws_string_new();
+
+    ck_assert(0 == ws_string_cmp(sa, sb));
+
+    ws_object_deinit(&sa->obj);
+    ws_object_deinit(&sb->obj);
+    free(sa);
+    free(sb);
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -136,6 +149,7 @@ string_suite(void)
     tcase_add_test(tc, test_string_cat_empty);
     //tcase_add_test(test_string_multicat_empty);
     tcase_add_test(tc, test_string_empty_dupl);
+    tcase_add_test(tc, test_string_empty_cmp);
 
     return s;
 }
