@@ -118,9 +118,9 @@ static const struct {
         .type = WS_VALUE_TYPE_STRING,
     },
 
-//    [WS_OBJ_ATTR_TYPE_OBJ]      = {
-//        .type = WS_VALUE_TYPE_OBJECT_ID,
-//    },
+    [WS_OBJ_ATTR_TYPE_OBJ]      = {
+        .type = WS_VALUE_TYPE_OBJECT_ID,
+    },
 
 };
 
@@ -491,7 +491,8 @@ ws_object_attr_read(
         break;
 
     case WS_OBJ_ATTR_TYPE_OBJ:
-        //!< @todo implement casting to value type
+        ws_value_object_id_set((struct ws_value_object_id*) dest,
+                                *(struct ws_object**) member_pos);
         break;
 
     default:
