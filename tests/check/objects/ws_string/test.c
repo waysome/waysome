@@ -202,6 +202,15 @@ teardown(void) {
     ws_object_unref(&string_b->obj);
 }
 
+START_TEST (test_string_ncmp) {
+    const size_t offset = 0;
+    const size_t nchars = 3;
+    ck_assert(0 == ws_string_ncmp(string_a, string_b, offset, nchars));
+    ck_assert(0 != ws_string_ncmp(string_a, string_b, offset, 6));
+    ck_assert(0 != ws_string_ncmp(string_a, string_b, offset, 20));
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -224,6 +233,8 @@ string_suite(void)
     tcase_add_test(tc, test_string_empty_raw);
     tcase_add_test(tc, test_string_from_raw_literal);
     tcase_add_test(tc, test_string_from_raw_heapbuf);
+
+    tcase_add_test(tc_m, test_string_ncmp);
 
     return s;
 }
