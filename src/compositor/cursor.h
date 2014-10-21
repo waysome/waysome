@@ -77,6 +77,16 @@ ws_cursor_set_position(
 );
 
 /**
+ * Move the cursor by the amounts
+ */
+void
+ws_cursor_add_position(
+    struct ws_cursor* self, //<! The object
+    int x, //<! The position
+    int y  //<! The position
+);
+
+/**
  * Move the cursor to a position
  */
 void
@@ -119,5 +129,14 @@ ws_cursor_set_monitor(
     struct ws_cursor* self, //<! The object
     struct ws_monitor* monitor //<! The buffer
 );
+
+/**
+ * Get the cursor pointer
+ *
+ * @warning, check for NULL pointers
+ */
+struct ws_cursor*
+ws_cursor_get();
+
 #endif // __WS_CURSOR_H__
 

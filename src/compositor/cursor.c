@@ -107,6 +107,15 @@ ws_cursor_set_position(
 }
 
 void
+ws_cursor_add_position(
+    struct ws_cursor* self,
+    int x,
+    int y
+) {
+    ws_cursor_set_position(self, self->x + x, self->y + y);
+}
+
+void
 ws_cursor_set_hotspot(
     struct ws_cursor* self,
     int x,
@@ -165,6 +174,12 @@ ws_cursor_unset(
     int retval = drmModeSetCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
             self->cursor_fb->handle, 0, 0);
     ws_log(&log_ctx, LOG_DEBUG, "Removing cursor: %d", retval);
+}
+
+struct ws_cursor*
+ws_cursor_get()
+{
+    return ws_comp_ctx.cursor;
 }
 
 static bool
