@@ -3,6 +3,7 @@
 #
 set(SOURCE_FILES
     cleaner.c
+    config_file.c
     wayland.c
 )
 
