@@ -25,14 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer_state.h"
 #include "serialize/json/deserializer_callbacks.h"
+#include "serialize/json/keys.h"
 #include "serialize/json/states.h"
 #include "serialize/json/string_jump_state.h"
 #include "values/nil.h"
 #include "values/bool.h"
 #include "values/int.h"
+#include "values/string.h"
 
 int
 yajl_null_cb(
@@ -182,8 +186,57 @@ yajl_string_cb(
     const unsigned char * str,
     size_t len
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        return 1;
+
+    case STATE_INIT:
+        // a strange thing happened
+        return 0;
+
+    case STATE_TYPE:
+        if (0 == strncmp(TYPE_TRANSACTION, (char*) str,
+                    strlen(TYPE_TRANSACTION))) {
+            setup_transaction(d);
+        }
+        state->current_state = STATE_MSG;
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARGS:
+        {
+            char *buff = strndup((char*) str, len);
+
+            if (!buff) {
+                return 0;
+            }
+
+            struct ws_value_string* s = ws_value_string_new();
+            if (!s) {
+                return 0;
+            }
+            struct ws_string* str = ws_value_string_get(s);
+            ws_string_set_from_raw(str, buff);
+
+            free(buff); // ws_string_set_from_raw() copies.
+
+            if (0 != ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) s)) {
+                //!< @todo error
+                return 0;
+            }
+
+            state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
+        }
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+    return 1;
 }
 
 int
