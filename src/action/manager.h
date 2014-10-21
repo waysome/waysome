@@ -31,7 +31,7 @@
 #include "util/attributes.h"
 
 // forward declarations
-struct ws_transaction;
+struct ws_message;
 struct ws_reply;
 
 /**
@@ -41,7 +41,7 @@ struct ws_reply;
  */
 struct ws_reply*
 ws_action_manager_process(
-    struct ws_transaction* transaction //!< transaction to process
+    struct ws_message* message //!< transaction to process
 )
 __ws_nonnull__(1)
 ;
