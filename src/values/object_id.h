@@ -35,6 +35,52 @@
 #define __WS_VALUES_OBJECT_ID_H__
 
 
+#include "values/value.h"
+
+/**
+ * ws_value_object_id type definition
+ */
+struct ws_value_object_id {
+    struct ws_value val; //!< @protected Base class.
+    struct ws_object* obj; //!< @protected Reference to a ws_object
+};
+
+/**
+ * Initialize a ws_value_object_id object
+ *
+ * @memberof ws_value_object_id
+ */
+void
+ws_value_object_id_init(
+    struct ws_value_object_id* self
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the saved reference to a ws_object object from a given ws_value_object_id
+ * object
+ *
+ * @memberof ws_value_object_id
+ *
+ * @return the reference to the ws_object object or NULL on failure
+ */
+struct ws_object*
+ws_value_object_id_get(
+    struct ws_value_object_id* self
+);
+
+/**
+ * Set the `obj` member of a given ws_value_object_id object to a reference to
+ * a given ws_object object
+ *
+ * @memberof ws_value_object_id
+ */
+void
+ws_value_object_id_set(
+    struct ws_value_object_id* self,
+    struct ws_object* obj
+);
 
 #endif // __WS_VALUES_OBJECT_ID_H__
 

@@ -103,6 +103,7 @@ set(SOURCE_FILES
     values/value_named.c
     values/value_type.c
     values/set.c
+    values/object_id.c
 )
 
 #
