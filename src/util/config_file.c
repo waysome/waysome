@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -35,6 +36,10 @@
 
 #include "util/arithmetical.h"
 #include "util/config_file.h"
+
+#define HOME            "HOME"
+#define XDG_CONFIG_DIRS "XDG_CONFIG_DIRS"
+#define XDG_CONFIG_HOME "XDG_CONFIG_HOME"
 
 /*
  *
@@ -51,6 +56,14 @@ static int
 tryopen_variants(
     char const* directory //!< Directory to search in
 );
+
+/**
+ * `open()` the configuration
+ *
+ * @return a non-negative file descriptor or a negative error code
+ */
+static int
+open_config(void);
 
 
 /*
@@ -101,7 +114,7 @@ tryopen_variants(
         (void) strcpy(path + dirlen, *var);
 
         // try to open the file
-        int fd = open(path, O_RDONLY);
+        int fd = open(path, O_RDONLY | O_NONBLOCK);
         if (fd < 0) {
             continue;
         }
@@ -114,5 +127,67 @@ tryopen_variants(
     }
 
     return -ENOENT;
+}
+
+static int
+open_config(void) {
+    char* dir;
+    int res;
+
+    // check subdirectories of the home directory
+    {
+        char const* home = getenv(HOME);
+        size_t homelen = strlen(home);
+        char buf[homelen + 10]; // buffer to hold $HOME _and_ "/.config"
+
+        // check the xdg config home first
+        dir = getenv(XDG_CONFIG_HOME);
+        if (!dir || (*dir == '\0')) {
+            strcpy(buf, home);
+            strcpy(buf + homelen, "/.config");
+            dir = buf;
+        }
+
+        res = tryopen_variants(dir);
+        if (res >= 0) {
+            return res;
+        }
+
+        res = tryopen_variants(home);
+        if (res >= 0) {
+            return res;
+        }
+    }
+
+    // check the xdg config directories
+    {
+        // setup all the buffers and temporaries
+        char const* xdg_dirs = getenv(XDG_CONFIG_DIRS);
+        if (!xdg_dirs) {
+            xdg_dirs = "/etc/xdg";
+        }
+
+        char buf[strlen(xdg_dirs)+1];
+        (void) strcpy(buf, xdg_dirs);
+
+        // do the actual work
+        char* save;
+        char* dir = strtok_r(buf, ":", &save);
+        do {
+            int res = tryopen_variants(dir);
+            if (res >= 0) {
+                return res;
+            }
+        } while (strtok_r(NULL, ":", &save));
+    }
+
+    // now look in /etc
+    res = tryopen_variants("/etc");
+    if (res >= 0) {
+        return res;
+    }
+
+    // last resort ...
+    return tryopen_variants(".");
 }
 
