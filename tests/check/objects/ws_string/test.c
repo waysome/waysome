@@ -211,6 +211,14 @@ START_TEST (test_string_ncmp) {
 }
 END_TEST
 
+START_TEST (test_string_substr) {
+    ck_assert(true == ws_string_substr(string_a, string_b));
+    ck_assert(false == ws_string_substr(string_b, string_a));
+    ck_assert(true == ws_string_substr(string_b, string_b));
+    ck_assert(true == ws_string_substr(string_a, string_a));
+}
+END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -235,6 +243,7 @@ string_suite(void)
     tcase_add_test(tc, test_string_from_raw_heapbuf);
 
     tcase_add_test(tc_m, test_string_ncmp);
+    tcase_add_test(tc_m, test_string_substr);
 
     return s;
 }
