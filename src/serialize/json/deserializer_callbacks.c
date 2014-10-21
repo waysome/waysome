@@ -37,6 +37,7 @@
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/string.h"
+#include "wayland-util.h"
 
 int
 yajl_null_cb(
@@ -335,8 +336,51 @@ int
 yajl_end_map_cb(
     void * ctx
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_deserializer* d = (struct ws_deserializer*) ctx;
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    state->ncurvedbrackets--;
+
+    switch (state->current_state) {
+    case STATE_INVALID:
+        break;
+
+    case STATE_COMMAND_ARY_NEW_COMMAND:
+        // We are ready with the command parsing for one command now. Lets
+        // finalize the temporary stuff and go back to the command array state.
+
+        if (state->tmp_statement == NULL) {
+            // We are here because there was a command array but no commands.
+            // This is absolutely valid.
+            state->current_state = STATE_COMMAND_ARY;
+            return 1;
+        }
+
+        struct ws_transaction* t = (struct ws_transaction*) d->buffer;
+        ws_transaction_push_statement(t, state->tmp_statement);
+        state->tmp_statement = NULL;
+
+        state->current_state = STATE_COMMAND_ARY;
+        break;
+
+    case STATE_COMMAND_ARY_COMMAND_ARGS:
+        state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
+        break;
+
+    case STATE_MSG:
+        break;
+
+    default:
+        state->current_state = STATE_INVALID;
+        break;
+    }
+
+    if (state->nboxbrackets == 0 && state->ncurvedbrackets == 0) {
+        // Hey, we are ready now!
+        d->is_ready = true;
+        return 0;
+    }
+    return 1;
 }
 
 int
