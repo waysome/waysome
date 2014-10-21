@@ -43,6 +43,7 @@ struct ws_test_object {
     char    char_attribute;
 
     char*   string_attribute;
+    struct ws_object* object_attribute;
     /* more types here */
 };
 
@@ -61,6 +62,11 @@ struct ws_object_attribute const WS_OBJECT_ATTRS_TEST_OBJ[] = {
         .name = "string",
         .offset_in_struct = offsetof(struct ws_test_object, string_attribute),
         .type = WS_OBJ_ATTR_TYPE_STRING,
+    },
+    {
+        .name = "object",
+        .offset_in_struct = offsetof(struct ws_test_object, object_attribute),
+        .type = WS_OBJ_ATTR_TYPE_OBJ,
     },
     {
         .name = NULL,
@@ -95,6 +101,12 @@ static struct ws_test_object* ws_test_object_new(void)
         t->int_attribute        = TEST_INT;
         t->char_attribute       = TEST_CHR;
         t->string_attribute     = TEST_STR;
+
+        t->object_attribute     = ws_object_new_raw();
+        if (!t->object_attribute) {
+            ws_object_unref(&t->obj);
+            return NULL;
+        }
     }
 
     return t;
