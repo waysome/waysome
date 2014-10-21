@@ -96,6 +96,11 @@ START_TEST (test_string_cat_empty) {
 }
 END_TEST
 
+//!< @todo implement, ws_array is untested by now
+//START_TEST (test_string_multicat_empty) {
+//}
+//END_TEST
+
 static Suite*
 string_suite(void)
 {
@@ -108,6 +113,7 @@ string_suite(void)
     tcase_add_test(tc, test_string_init);
     tcase_add_test(tc, test_string_empty_len);
     tcase_add_test(tc, test_string_cat_empty);
+    //tcase_add_test(test_string_multicat_empty);
 
     return s;
 }
