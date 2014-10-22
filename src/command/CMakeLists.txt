@@ -23,6 +23,7 @@
 set(WS_COMMAND_FILES
     arithmetical.commands
     control.commands
+    logical.commands
 )
 
 
