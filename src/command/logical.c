@@ -127,7 +127,27 @@ ws_builtin_cmd_lxor(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
-    return -1;
+    bool have_true = false;
+    union ws_value_union* base = args;
+
+    while (ws_value_get_type(&args->value) != WS_VALUE_TYPE_NONE) {
+        if (ws_value_is_true(&args->value)) {
+            if (have_true) {
+                ws_value_deinit((struct ws_value*) base);
+                ws_value_bool_init((struct ws_value_bool*) base);
+                ws_value_bool_set(&base->bool_, false);
+                return 0;
+            }
+
+            have_true = true;
+        }
+
+        args++;
+    }
+
+    ws_value_deinit((struct ws_value*) base);
+    ws_value_bool_init((struct ws_value_bool*) base);
+    ws_value_bool_set(&base->bool_, have_true);
+    return 0;
 }
 
