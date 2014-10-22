@@ -67,6 +67,8 @@ enum json_backend_state {
     STATE_COMMAND_ARY_COMMAND_ARGS, //!< We parse the command argument array
 
     STATE_COMMAND_ARY_COMMAND_ARG_DIRECT, //!< We are parsing a direct value
+    STATE_COMMAND_ARY_COMMAND_ARG_DIRECT_STACKPOS, //!< stack position argument
+
     STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT, //!< We parsed a indirect value
 
     STATE_STRING,
