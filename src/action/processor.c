@@ -125,7 +125,7 @@ ws_processor_exec(
             return -ENOTSUP;
         }
 
-        if (res < 0) {
+        if (res != 0) {
             return res;
         }
     }
