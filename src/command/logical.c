@@ -25,16 +25,23 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+
 #include "command/logical.h"
 
 #include "values/union.h"
+#include "values/utils.h"
+#include "values/value.h"
 
 int
 ws_builtin_cmd_lnot(
     union ws_value_union* args
 ) {
-    //!< @todo implement
-    return -1;
+    bool val = ws_value_is_true(&args[0].value);
+    ws_value_deinit(&args[0].value);
+    ws_value_bool_init(&args[0].bool_);
+    ws_value_bool_set(&args[0].bool_, val);
+    return 0;
 }
 
 int
