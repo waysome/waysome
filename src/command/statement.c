@@ -25,8 +25,31 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+
 #include "command/statement.h"
 #include "values/value.h"
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Get a new `ws_argument` to write to
+ *
+ * @warning the memory is not nulled
+ *
+ * @return a new, uninitialized ws_argument or NULL
+ */
+static struct ws_argument*
+command_args_append(
+    struct ws_command_args* self //!< statement to append to
+)
+__ws_nonnull__(1)
+;
+
 
 /*
  *
@@ -58,5 +81,54 @@ ws_statement_deinit(
     free(self->args.vals);
 
     return true;
+}
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static struct ws_argument*
+command_args_append(
+    struct ws_command_args* self
+) {
+    if (!self->vals) {
+        // allocate memory for the first argument
+        self->vals = malloc(sizeof(*self->vals));
+        if (self->vals) {
+            self->num = 1;
+        }
+        return self->vals;
+    }
+
+    // check whether we have to resize by comparing the curren size to steps
+    // where we have to resize
+    size_t nsize = 1;
+    while (nsize < self->num) {
+        // we already have superseeded this step threshold
+        if (nsize > self->num) {
+            // the next step size is "far" away. We're fine
+            self->num++;
+            return self->vals;
+        }
+
+        // check the next stepping theshold
+        nsize *= 2;
+    }
+
+    // nsize == self->num now. This means we're _on_ a stepping threshold
+
+    // double the size of the memory area
+    nsize *= 2;
+    struct ws_argument* newargs;
+    newargs = realloc(self->vals, sizeof(*self->vals) * nsize);
+    if (!newargs) {
+        return NULL;
+    }
+
+    self->num++;
+    self->vals = newargs;
+    return newargs;
 }
 
