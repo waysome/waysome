@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <unistd.h>
 
 #include "connection/connector.h"
@@ -100,7 +101,7 @@ ws_connector_read(
     res = read(self->fd, start, remaining_mem);
     if (res < 0) {
         ws_connbuf_append(&self->inbuf, 0); //unblocks the buffer
-        return res;
+        return -errno;
     }
 
     res = ws_connbuf_append(&self->inbuf, res);
@@ -124,7 +125,7 @@ ws_connector_flush(
 
     res = write(self->fd, self->outbuf.buffer, used_mem);
     if (res < 0 ) {
-        return res;
+        return -errno;
     }
 
     res = ws_connbuf_discard(&self->outbuf, used_mem);
