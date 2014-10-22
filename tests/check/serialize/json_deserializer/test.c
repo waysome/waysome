@@ -48,6 +48,7 @@
 
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer.h"
+#include "serialize/json/keys.h"
 #include "objects/message/message.h"
 
 /*
@@ -149,6 +150,15 @@ START_TEST (test_json_deserializer_json_object_kv_string) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_message_id) {
+    char const* buf = "{ \"" UID "\": 42 }";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -174,6 +184,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_json_object_kv_bool);
     tcase_add_test(tcx, test_json_deserializer_json_object_kv_int);
     tcase_add_test(tcx, test_json_deserializer_json_object_kv_string);
+    tcase_add_test(tcx, test_json_deserializer_message_id);
 
     return s;
 }
