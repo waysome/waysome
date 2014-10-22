@@ -50,6 +50,7 @@
 #include "serialize/json/deserializer.h"
 #include "serialize/json/keys.h"
 #include "objects/message/message.h"
+#include "objects/message/transaction.h"
 
 /*
  *
@@ -159,6 +160,22 @@ START_TEST (test_json_deserializer_message_id) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_transaction_type) {
+    char const* buf = "{ \"" TYPE "\": \"" TYPE_TRANSACTION "\"}";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION);
+
+    struct ws_transaction* t = (struct ws_transaction*) messagebuf; // cast
+
+    ck_assert(t->name == NULL);
+    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->cmds == NULL);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -185,6 +202,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_json_object_kv_int);
     tcase_add_test(tcx, test_json_deserializer_json_object_kv_string);
     tcase_add_test(tcx, test_json_deserializer_message_id);
+    tcase_add_test(tcx, test_json_deserializer_transaction_type);
 
     return s;
 }
