@@ -55,6 +55,7 @@ set(SOURCE_FILES
     action/processor_stack.c
     command/arithmetical.c
     command/command.c
+    command/control.c
     command/list.c
     command/processor.c
     compositor/buffer/buffer.c
