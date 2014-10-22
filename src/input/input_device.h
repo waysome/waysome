@@ -25,49 +25,45 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @addtogroup input "Input Module"
- *
- * @{
- */
+#ifndef __WS_INPUT_DEVICE_H__
+#define __WS_INPUT_DEVICE_H__
+
+#include <ev.h>
+
+#include "objects/object.h"
 
 /**
- * @addtogroup input_pointers "Input Pointer Module"
+ * Input Device Type
  *
- * @{
+ * Objects of this type represent a specific event file which map to event
+ * devices
+ *
+ * @extends ws_object
  */
-
-#ifndef __WS_INPUT_UTILS_H__
-#define __WS_INPUT_UTILS_H__
-
-#include <stdbool.h>
-
-#include "objects/set.h"
-
-#define INPUT_DEVICE_NAME "event"
-
-extern struct ws_input_context {
-    struct ws_set devices;
-} ws_input_ctx;
+struct ws_input_device {
+    struct ws_object obj; //!< @protected parent object
+    struct libevdev* dev; //!< @protected the libevdev object
+    struct ev_io watcher; //!< @protected the evio watcher
+    int fd; //!< @protocted the associated file descriptor
+};
 
 /**
- * Checks if the file is a file suitable for inclusion as a device file
- *
- * @returns true if it is suitable, false if not
+ * Variable which holds the type information about the ws_message type
  */
-bool
-ws_input_filter_event_device_name(
-    const char* name
+extern ws_object_type_id WS_OBJECT_TYPE_ID_INPUT_DEVICE;
+
+/**
+ * Initialize a ws_message
+ *
+ * @note for use by the derived types
+ *
+ * @return 0 on success, or a negative error code
+ */
+struct ws_input_device*
+ws_input_device_new(
+    int fd //!< The filedescriptor to the event file
 );
 
-#endif // __WS_INPUT_UTILS_H__
-
-/**
- * @}
- */
-
-/**
- * @}
- */
+#endif //__WS_INPUT_DEVICE_H__
 
 

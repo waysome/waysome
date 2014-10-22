@@ -3,6 +3,7 @@
 #
 set(SOURCE_FILES
     module.c
+    input_device.c
     utils.c
 )
 

@@ -27,7 +27,10 @@
 
 #include <string.h>
 
+#include "logger/module.h"
 #include "input/utils.h"
+
+struct ws_input_context ws_input_ctx;
 
 bool
 ws_input_filter_event_device_name(

@@ -36,14 +36,13 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 
+#include "input/input_device.h"
 #include "input/module.h"
 #include "input/utils.h"
 #include "logger/module.h"
 #include "objects/set.h"
 
-static struct ws_logger_context log_ctx = { .prefix = "[Input] " };
-
-static struct ws_set devices;
+static struct ws_logger_context log_ctx = { .prefix = "[Input/Device] " };
 
 #define INPUT_PATH "/dev/input/"
 #define MAX_FULL_PATH_LEN 100
@@ -119,20 +118,9 @@ find_initial_devices(void) {
             continue;
         }
 
-        struct libevdev* dev;
-        libevdev_new_from_fd(fd, &dev);
-        if (!dev) {
-            ws_log(&log_ctx, LOG_ERR, "Could not create evdev struct %s",
-                    dir->d_name);
-            close(fd);
-            continue;
-        }
+        struct ws_input_device* new_dev = ws_input_device_new(fd);
 
-        ws_log(&log_ctx, LOG_DEBUG, "File %s is a mouse: %d keyboard: %d",
-                full_path, libevdev_has_event_type(dev, EV_REL),
-                libevdev_has_event_type(dev, EV_KEY));
-        libevdev_free(dev);
-        close(fd);
+        ws_set_insert(&ws_input_ctx.devices, (struct ws_object*) new_dev);
 
     }
     closedir(d);
@@ -143,7 +131,7 @@ find_initial_devices(void) {
 int
 ws_input_init(void)
 {
-    ws_set_init(&devices);
+    ws_set_init(&ws_input_ctx.devices);
 
     int inotfd = inotify_init1(IN_NONBLOCK);
 
