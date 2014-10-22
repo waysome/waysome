@@ -37,6 +37,7 @@
 #include <unistd.h>
 
 #include "input/module.h"
+#include "input/utils.h"
 #include "logger/module.h"
 #include "objects/set.h"
 
@@ -45,7 +46,6 @@ static struct ws_logger_context log_ctx = { .prefix = "[Input] " };
 static struct ws_set devices;
 
 #define INPUT_PATH "/dev/input/"
-#define DEVICE_NAME "event"
 #define MAX_FULL_PATH_LEN 100
 
 /**
@@ -85,27 +85,6 @@ watch_devices(
 }
 
 /**
- * Checks if the file is a file suitable for inclusion as a device file
- *
- * @returns true if it is suitable, false if not
- */
-static bool
-filter_name(
-    const char* name
-) {
-    if (!(strcmp(".", name) && strcmp("..", name))) {
-        return false;
-    }
-    // strcmp also makes note of the length between the strings, we only want
-    // it to check the beginning of the file name, in this case it has to match
-    // "event*"
-    if (strncmp(DEVICE_NAME, name, sizeof(DEVICE_NAME)-1)) {
-        return false;
-    }
-    return true;
-}
-
-/**
  * Iterates over the existing devices at startup to make a list which can be
  * complete later
  */
@@ -125,7 +104,7 @@ find_initial_devices(void) {
 
 
     while ((dir = readdir(d)) != NULL) {
-        if (!filter_name(dir->d_name)) {
+        if (!ws_input_filter_event_device_name(dir->d_name)) {
             ws_log(&log_ctx, LOG_DEBUG, "Skipping directory %s", dir->d_name);
             continue;
         }
