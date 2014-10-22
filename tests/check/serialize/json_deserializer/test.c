@@ -48,6 +48,7 @@
 
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer.h"
+#include "objects/message/message.h"
 
 /*
  *
@@ -112,6 +113,42 @@ START_TEST (test_json_deserializer_json_object) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_json_object_kv_null) {
+    char const* buf = "{ \"\": null }";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
+START_TEST (test_json_deserializer_json_object_kv_bool) {
+    char const* buf = "{ \"\": true }";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
+START_TEST (test_json_deserializer_json_object_kv_int) {
+    char const* buf = "{ \"\": 1 }";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
+START_TEST (test_json_deserializer_json_object_kv_string) {
+    char const* buf = "{ \"\": \"\" }";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -133,6 +170,10 @@ json_deserializer_suite(void)
 
     tcase_add_test(tcx, test_json_deserializer_minimal);
     tcase_add_test(tcx, test_json_deserializer_json_object);
+    tcase_add_test(tcx, test_json_deserializer_json_object_kv_null);
+    tcase_add_test(tcx, test_json_deserializer_json_object_kv_bool);
+    tcase_add_test(tcx, test_json_deserializer_json_object_kv_int);
+    tcase_add_test(tcx, test_json_deserializer_json_object_kv_string);
 
     return s;
 }
