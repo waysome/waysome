@@ -86,19 +86,3 @@ ws_command_get(
     return NULL;
 }
 
-bool
-ws_statement_deinit(
-    struct ws_statement* self
-) {
-    while (self->args.num--) {
-        if (self->args.vals[self->args.num].type == direct) {
-            ws_value_deinit(self->args.vals[self->args.num].arg.val);
-            free(self->args.vals[self->args.num].arg.val);
-        }
-    }
-
-    free(self->args.vals);
-
-    return true;
-}
-

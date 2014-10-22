@@ -29,6 +29,8 @@
 
 #include "action/processor.h"
 #include "action/processor_stack.h"
+#include "command/command.h"
+#include "command/statement.h"
 #include "objects/message/transaction.h"
 #include "values/union.h"
 
