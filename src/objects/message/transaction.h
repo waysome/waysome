@@ -50,6 +50,7 @@ enum ws_transaction_flags {
  */
 struct ws_transaction_command_list {
     size_t n; //!< @protected length of the command array
+    size_t next; //!< @protected next free position for a statement
     struct ws_statement* statements; //!< @protected Statements of the transaction
 };
 
@@ -133,6 +134,19 @@ ws_transaction_name(
 struct ws_transaction_command_list*
 ws_transaction_commands(
     struct ws_transaction* t //!< The transaction
+);
+
+/**
+ * Append a statement to the transaction
+ *
+ * @note The passed statement can be free()'d afterwards.
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_transaction_push_statement(
+    struct ws_transaction* t, //!< The transaction
+    struct ws_statement* statement //!< The statement to add
 );
 
 #endif //__WS_OBJECTS_TRANSACTION_H__
