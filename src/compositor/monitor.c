@@ -157,6 +157,7 @@ bind_output(
 
     if (!monitor->resource) {
         ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");
+        return;
     }
 
     // We don't set an implementation, instead we just set the data
@@ -305,6 +306,12 @@ ws_monitor_set_mode_with_id(
     if (!self->current_mode) {
         return;
     }
+
+    if (!self->resource) {
+        ws_log(&log_ctx, LOG_DEBUG, "Did not publish mode.");
+        return;
+    }
+    ws_log(&log_ctx, LOG_DEBUG, "Published a mode.");
 
     // Let's tell wayland that this is the current mode!
     wl_output_send_mode((struct wl_resource*) self->resource,
