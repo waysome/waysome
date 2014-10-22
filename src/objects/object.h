@@ -46,6 +46,7 @@
 
 #include "util/attributes.h"
 #include "logger/module.h"
+#include "values/value.h"
 
 /*
  *
@@ -122,6 +123,36 @@ typedef uintmax_t (*ws_object_uuid_callback)(struct ws_object*);
  */
 
 /**
+ * Attribute type identifier
+ */
+enum ws_object_attribute_type {
+    WS_OBJ_ATTR_NO_TYPE = 0,
+
+    WS_OBJ_ATTR_TYPE_CHAR,
+    WS_OBJ_ATTR_TYPE_INT32,
+    WS_OBJ_ATTR_TYPE_INT64,
+    WS_OBJ_ATTR_TYPE_UINT32,
+    WS_OBJ_ATTR_TYPE_UINT64,
+    WS_OBJ_ATTR_TYPE_DOUBLE,
+    WS_OBJ_ATTR_TYPE_STRING,
+    WS_OBJ_ATTR_TYPE_OBJ,
+};
+
+/**
+ * Attribute type
+ *
+ * For storing information about an attribute of an object
+ *
+ * @note When specifying the table for a type, this _should_ be NULL termiated
+ */
+struct ws_object_attribute {
+    char const* const   name; //!< Name of the attribute
+    size_t              offset_in_struct; //!< Offset in the struct
+    enum ws_object_attribute_type type; //!< Attribute type
+
+};
+
+/**
  * Object type identifier for identifiying an object type
  */
 struct ws_object_type {
@@ -135,6 +166,8 @@ struct ws_object_type {
     ws_object_hash_callback hash_callback; //!< Hash callback for the type
     ws_object_cmp_callback cmp_callback; //!< Compare callback for the type
     ws_object_uuid_callback uuid_callback; //!< @protected UUID callback
+
+    struct ws_object_attribute const* attribute_table; //!< Attr table
 };
 
 /**
@@ -429,6 +462,67 @@ bool
 ws_object_deinit(
     struct ws_object* self //!< The object
 );
+
+/**
+ * Get an attribute of an object
+ *
+ * @memberof ws_object
+ *
+ * How this works:
+ *
+ * Each object type has to embedd a attribute table into its type information
+ * table (@see ws_object_attribute, @see ws_object_type). Each entry in this
+ * table has three members:
+ *
+ * - The name of the attribute, so how it can be addressed/referenced. This can
+ *   be a name of a member, but also something else, so forward-compatibility
+ *   is granted.
+ * - The offset in the struct definition. This one is compiletime generated and
+ *   simply stores the offset of the member to reference, E.G:
+ *      @code{.c}
+ *      struct a {
+ *         int b;
+ *         int c;
+ *      };
+ *      @endcode
+ *   So, `c` has the offset `sizeof(b) == sizeof(int)`. This is neccessary to get
+ *   a pointer on the actual member and retreiving the data from it.
+ * - The third member is the actual type information about the attribute to
+ *   read. According to this, and an internal table, the type of the destination
+ *   `ws_value` subtype is decided.
+ *
+ * The overall approach of the method is simple: Find the entry in the table
+ * which matches the specified identifier. If the type of the member can be
+ * parsed into the type of the passed ws_value type, get the data from the
+ * object and put it into the `dest` ws_value type.
+ *
+ * @note Does string-match the attribute name with the `ident` parameter in O(n)
+ *
+ * @return zero on success, else negative error code from errno.h
+ *      -EINVAL - if the passed `dest` type does not match the attribute type
+ */
+int
+ws_object_attr_read(
+    struct ws_object* self, //!< The object
+    char const* ident, //!< The identifier for the attribute
+    struct ws_value* dest //!< Destination of the data
+)
+__ws_nonnull__(1, 2, 3)
+;
+
+/**
+ * Get the type of an attribute identified by its name
+ *
+ * @return The attribute type of the attribute identified by name or
+ * WS_OBJ_ATTR_NO_TYPE
+ */
+enum ws_object_attribute_type
+ws_object_attr_type(
+    struct ws_object* self, //!< The object
+    char* ident //!< The identifier for the attribute
+)
+__ws_nonnull__(1, 2)
+;
 
 /**
  * Compare two ws_object instances

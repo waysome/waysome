@@ -35,9 +35,11 @@ if (${CHECK_FOUND})
         unset(TEST_DEFINITIONS)
         add_subdirectory("${TEST_SUITE}")
 
-        if (DEFINED TEST_INCLUDE_DIRS)
-            include_directories(${TEST_INCLUDE_DIRS})
-        endif()
+        include_directories(
+            ${TEST_SUITE}
+            ${TEST_INCLUDE_DIRS}
+        )
+
         if (DEFINED TEST_DEFINITIONS)
             add_definitions(${TEST_DEFINITIONS})
         endif()

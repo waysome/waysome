@@ -50,7 +50,7 @@
 struct ws_value_int {
     struct ws_value value; //!< @protected Base class.
 
-    uint32_t i; //!< @private
+    intmax_t i; //!< @private
 };
 
 /**
@@ -73,7 +73,7 @@ ws_value_int_init(
 int
 ws_value_int_set(
     struct ws_value_int* self, //!< The object
-    uint32_t i //!< The value to set to
+    intmax_t i //!< The value to set to
 );
 
 /**
@@ -83,7 +83,7 @@ ws_value_int_set(
  *
  * @return the value of the object
  */
-uint32_t
+intmax_t
 ws_value_int_get(
     struct ws_value_int* self //!< The object
 );
