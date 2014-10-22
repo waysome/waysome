@@ -41,8 +41,7 @@ bool
 ws_value_is_nil(
     struct ws_value* self
 ) {
-    //!< @todo implement
-    return false;
+    return ws_value_get_type(self) == WS_VALUE_TYPE_NIL;
 }
 
 bool
