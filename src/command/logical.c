@@ -112,8 +112,14 @@ ws_builtin_cmd_lnor(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
-    return -1;
+    int res = ws_builtin_cmd_lor(args);
+
+    if (res != 0) {
+        return res;
+    }
+
+    ws_value_bool_set(&args->bool_, !ws_value_bool_plain(&args->bool_));
+    return 0;
 }
 
 int
