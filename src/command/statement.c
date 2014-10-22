@@ -82,6 +82,21 @@ ws_statement_append_direct(
     return 0;
 }
 
+int
+ws_statement_append_indirect(
+    struct ws_statement* self,
+    size_t pos
+) {
+    struct ws_argument* arg = command_args_append(&self->args);
+    if (!arg) {
+        return -ENOMEM;
+    }
+
+    arg->type = indirect;
+    arg->arg.pos = pos;
+    return 0;
+}
+
 bool
 ws_statement_deinit(
     struct ws_statement* self

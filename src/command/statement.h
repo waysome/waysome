@@ -103,6 +103,19 @@ __ws_nonnull__(1, 2)
 ;
 
 /**
+ * Add a indirect argument to a statement
+ *
+ * @return 0 if the operation was successful, a negative error value otherwise
+ */
+int
+ws_statement_append_indirect(
+    struct ws_statement* self, //!< statement to append argument to
+    size_t pos //!< position of indirect argument
+)
+__ws_nonnull__(1)
+;
+
+/**
  * Deinitialize a statement
  *
  * @return true if deinitialization was successfull, else false
