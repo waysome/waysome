@@ -34,6 +34,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
 #include "compositor/wayland/compositor.h"
+#include "compositor/wayland/region.h"
 #include "compositor/wayland/surface.h"
 #include "objects/wayland_obj.h"
 #include "util/arithmetical.h"
@@ -188,7 +189,7 @@ create_region(
     struct wl_resource* resource,
     uint32_t serial
 ) {
-    //!< @todo: implement
+    (void) ws_region_new(client, serial);
 }
 
 static void
