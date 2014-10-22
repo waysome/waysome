@@ -67,6 +67,21 @@ ws_statement_init(
     return 0;
 }
 
+int
+ws_statement_append_direct(
+    struct ws_statement* self,
+    struct ws_value* val
+) {
+    struct ws_argument* arg = command_args_append(&self->args);
+    if (!arg) {
+        return -ENOMEM;
+    }
+
+    arg->type = direct;
+    arg->arg.val = val;
+    return 0;
+}
+
 bool
 ws_statement_deinit(
     struct ws_statement* self
