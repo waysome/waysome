@@ -49,8 +49,24 @@ ws_builtin_cmd_land(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
-    return -1;
+    struct ws_value* base = &args->value;
+
+    while (ws_value_get_type(&args->value) != WS_VALUE_TYPE_NONE) {
+        if (ws_value_is_true(&args->value)) {
+            args++;
+            continue;
+        }
+
+        ws_value_deinit((struct ws_value*) base);
+        ws_value_bool_init((struct ws_value_bool*) base);
+        ws_value_bool_set((struct ws_value_bool*) base, false);
+        return 0;
+    }
+
+    ws_value_deinit((struct ws_value*) base);
+    ws_value_bool_init((struct ws_value_bool*) base);
+    ws_value_bool_set((struct ws_value_bool*) base, true);
+    return 0;
 }
 
 int
