@@ -61,6 +61,8 @@
 
 #define TYPE_TRANSACTION "transaction"
 
+#define POS         "pos" // key for argument: stack position
+
 #endif //__WS_SERIALIZE_JSON_KEYS_H__
 
 /**
