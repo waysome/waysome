@@ -48,6 +48,19 @@ bool
 ws_value_is_true(
     struct ws_value* self
 ) {
-    //!< @todo implement
-    return false;
+    switch (ws_value_get_type(self)) {
+    case WS_VALUE_TYPE_NONE:
+    case WS_VALUE_TYPE_VALUE:
+    case WS_VALUE_TYPE_NIL:
+        return false;
+
+    case WS_VALUE_TYPE_BOOL:
+        return ws_value_bool_plain((struct ws_value_bool*) self);
+
+    case WS_VALUE_TYPE_INT:
+        return ws_value_int_get((struct ws_value_int*) self) != 0;
+
+    default:
+        return true;
+    }
 }
