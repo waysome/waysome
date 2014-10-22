@@ -40,6 +40,7 @@
 struct ws_surface {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
     struct ws_wayland_buffer img_buf; //!< @protected image buffer
+    struct ws_region* input_region; //!< @protected input region
 };
 
 /**

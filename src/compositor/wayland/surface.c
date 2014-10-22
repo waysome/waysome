@@ -33,6 +33,7 @@
 
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
+#include "compositor/wayland/region.h"
 #include "compositor/wayland/surface.h"
 #include "objects/set.h"
 #include "util/wayland.h"
@@ -350,7 +351,15 @@ surface_set_input_region_cb(
     struct wl_resource* resource,
     struct wl_resource* region
 ) {
-    //!< @todo: implement
+    struct ws_surface* surface = ws_surface_from_resource(resource);
+
+    if (!surface) {
+        return;
+    }
+    if (surface->input_region) {
+        ws_object_unref((struct ws_object*) surface->input_region);
+    }
+    surface->input_region = getref(ws_region_from_resource(region));
 }
 
 static void
