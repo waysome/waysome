@@ -596,6 +596,27 @@ iter_next:
     return self->uuid;
 }
 
+bool
+ws_object_is_instance_of(
+    struct ws_object const* self,
+    ws_object_type_id* type
+) {
+    ws_object_type_id* curtype = self->id;
+
+    // iterate over all the base types
+    while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
+        if (curtype == type) {
+            // yay! found it!
+            return true;
+        }
+
+        curtype = curtype->supertype;
+    }
+
+    // nothing found
+    return type == &WS_OBJECT_TYPE_ID_OBJECT;
+}
+
 /*
  *
  * static function implementations

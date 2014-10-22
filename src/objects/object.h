@@ -558,6 +558,22 @@ ws_object_uuid(
     struct ws_object const* self //!< The object
 );
 
+/**
+ * Check whether an object if of a specific type
+ *
+ * @note an object is also an instance of a type if it's really an instance
+ *       of a _subtype_.
+ *
+ * @return true if the object is of the type supplied, false if it is not
+ */
+bool
+ws_object_is_instance_of(
+    struct ws_object const* self, //!< The object
+    ws_object_type_id* type //!< The type to check against
+)
+__ws_nonnull__(1)
+;
+
 #endif // __WS_OBJECTS_OBJECT_H__
 
 /**
