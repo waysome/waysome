@@ -32,7 +32,13 @@
  */
 
 /**
- * @addtogroup tests_serialize "Testing: Serialize"
+ * @addtogroup tests_objects "Testing: Serializer"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup tests_objects "Testing: Serializer: JSON Deserializer"
  *
  * @{
  */
@@ -41,20 +47,20 @@
 #include "tests.h"
 
 static Suite*
-serialize_suite(void)
+json_deserializer_suite(void)
 {
-    Suite* s    = suite_create("Serialize");
+    Suite* s    = suite_create("Objects");
     TCase* tc   = tcase_create("main case");
 
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
-    //tcase_add_tests(tc, ...);
+    //tcase_add_test(tc, test_object_init);
 
     return s;
 }
 
-WS_TESTS_CHECK_MAIN(serialize_suite);
+WS_TESTS_CHECK_MAIN(json_deserializer_suite);
 
 /**
  * @}
@@ -63,3 +69,8 @@ WS_TESTS_CHECK_MAIN(serialize_suite);
 /**
  * @}
  */
+
+/**
+ * @}
+ */
+

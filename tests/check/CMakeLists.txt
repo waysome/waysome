@@ -17,7 +17,6 @@ set (TEST_SUITES
     compositor
     connection
     logger
-    serialize
     session
     storage
     util
@@ -69,3 +68,4 @@ else()
 endif()
 
 add_subdirectory("objects")
+add_subdirectory("serialize")
