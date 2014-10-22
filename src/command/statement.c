@@ -28,6 +28,22 @@
 #include "command/statement.h"
 #include "values/value.h"
 
+/*
+ *
+ * Interface implementation
+ *
+ */
+
+int
+ws_statement_init(
+    struct ws_statement* self
+) {
+    self->command = NULL;
+    self->args.num = 0;
+    self->args.vals = NULL;
+    return 0;
+}
+
 bool
 ws_statement_deinit(
     struct ws_statement* self

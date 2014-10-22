@@ -31,6 +31,8 @@
 #include <malloc.h>
 #include <stdbool.h>
 
+#include "util/attributes.h"
+
 // forward declarations
 struct ws_command;
 
@@ -76,6 +78,16 @@ struct ws_statement {
     struct ws_command const* command; //!< @public command to invoke
     struct ws_command_args args; //!< @public arguments to invoke the command with
 };
+
+/**
+ * Initialize a statement
+ */
+int
+ws_statement_init(
+    struct ws_statement* self //!< statement to initialize
+)
+__ws_nonnull__(1)
+;
 
 /**
  * Deinitialize a statement
