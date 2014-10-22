@@ -46,6 +46,32 @@
 #include <check.h>
 #include "tests.h"
 
+#include "serialize/deserializer.h"
+#include "serialize/json/deserializer.h"
+
+/*
+ *
+ * Test cases
+ *
+ */
+
+START_TEST (test_json_deserializer_setup) {
+    struct ws_deserializer* d = ws_serializer_json_deserializer_new();
+
+    ck_assert(d != NULL);
+    ck_assert(d->deserialize != NULL);
+
+    ws_deserializer_deinit(d);
+    free(d);
+}
+END_TEST
+
+/*
+ *
+ * main()
+ *
+ */
+
 static Suite*
 json_deserializer_suite(void)
 {
@@ -55,7 +81,7 @@ json_deserializer_suite(void)
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
-    //tcase_add_test(tc, test_object_init);
+    tcase_add_test(tc, test_json_deserializer_setup);
 
     return s;
 }
