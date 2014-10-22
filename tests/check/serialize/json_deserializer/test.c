@@ -68,6 +68,43 @@ END_TEST
 
 /*
  *
+ * setup/teardown helpers
+ *
+ */
+
+struct ws_deserializer* d = NULL;
+struct ws_message* messagebuf;
+
+void
+setup(void) {
+    d = ws_serializer_json_deserializer_new();
+}
+
+void
+teardown(void) {
+    ws_deserializer_deinit(d);
+    free(d);
+    d = NULL;
+}
+
+/*
+ *
+ * testing with setup/teardown helper
+ *
+ */
+
+START_TEST (test_json_deserializer_minimal) {
+    char const* buf = "";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert(s == 0);
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
+/*
+ *
  * main()
  *
  */
@@ -77,11 +114,15 @@ json_deserializer_suite(void)
 {
     Suite* s    = suite_create("Objects");
     TCase* tc   = tcase_create("main case");
+    TCase* tcx  = tcase_create("main case with buffers");
 
     suite_add_tcase(s, tc);
-    // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
+    suite_add_tcase(s, tcx);
+    tcase_add_checked_fixture(tcx, setup, teardown);
 
     tcase_add_test(tc, test_json_deserializer_setup);
+
+    tcase_add_test(tcx, test_json_deserializer_minimal);
 
     return s;
 }
