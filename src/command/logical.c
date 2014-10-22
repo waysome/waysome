@@ -89,8 +89,22 @@ ws_builtin_cmd_lor(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
-    return -1;
+    union ws_value_union* base = args;
+
+    while (ws_value_get_type(&args->value) != WS_VALUE_TYPE_NONE) {
+        if (ws_value_is_true(&args->value)) {
+            ws_value_deinit((struct ws_value*) base);
+            ws_value_bool_init((struct ws_value_bool*) base);
+            ws_value_bool_set(&base->bool_, true);
+            return 0;
+        }
+        args++;
+    }
+
+    ws_value_deinit((struct ws_value*) base);
+    ws_value_bool_init((struct ws_value_bool*) base);
+    ws_value_bool_set(&base->bool_, false);
+    return 0;
 }
 
 int
