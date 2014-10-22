@@ -205,3 +205,14 @@ deserialize_state_push_cmd(
 
     return 0;
 }
+
+bool
+deserialize_state_is_ready(
+    struct deserializer_state* s
+) {
+    return s->nboxbrackets == 0 && s->ncurvedbrackets == 0 &&
+        (s->current_state == STATE_MSG      ||
+         s->current_state == STATE_INVALID  ||
+         s->current_state == STATE_INIT);
+}
+

@@ -49,6 +49,7 @@
 #define __WS_SERIALIZE_JSON_DESERIALIZER_STATE_H__
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "command/command.h"
 #include "command/statement.h"
@@ -81,6 +82,9 @@ struct deserializer_state {
 
     struct ws_command* tmp_command;
     struct ws_command_args tmp_command_args;
+
+    uintmax_t nboxbrackets;
+    uintmax_t ncurvedbrackets;
 };
 
 /**
@@ -199,6 +203,19 @@ deserialize_state_mod_last_arg_set_string(
 int
 deserialize_state_push_cmd(
     struct deserializer_state* s
+);
+
+/**
+ * Check whether the state says that we are ready with the current object
+ * parsing
+ *
+ * @memberof deserializer_state
+ *
+ * @return true when ready, else false
+ */
+bool
+deserialize_state_is_ready(
+    struct deserializer_state* s // The current state object
 );
 
 #endif //__WS_SERIALIZE_JSON_DESERIALIZER_STATE_H__
