@@ -55,7 +55,7 @@ deserialize_state_new(
     }
 
     state->current_state    = STATE_INIT;
-    state->uid.uid          = NULL;
+    state->uid              = 0;
     state->tmp_command      = NULL;
 
     state->tmp_command_args.vals = NULL;
