@@ -109,37 +109,31 @@ command argument parsing step, which is described in another state chart.
 
 #### Command Argument parsing
 
-An "indirect" value is a simple integer in the command array, which refers to a
-position on the execution stack. The parsing here is fairly easy: The moment
-when the number is recognized by the yajl library, we are in the argument array
-parsing state. The number gets recognized and we do not change the state, as the
-parsing for that argument is finished immediately.
+There are two possible ways to pass something to a command using arguments:
+Via the stack and positions on the stack or directly by specifying the arguments
+in the array.
 
-So, indirect value parsing is relatively simple, whereas the direct value types
-are a bit more complex to parse. They include type information and
-data information, whereas the type information is a string (the key of an
-object) and the value of combined with that key is the value of the argument.
-E.G.:
+Parsing arguments passed via the array is simple, you only have to check if
+you are in the argument array or not and push the appropriate argument to the
+command. Stack positions have to be passed through an object, though. So do more
+complex objects as named values (sets can be passed as arrays).
 
-    { "int" : 1 }
-    { "string" : "Hello World" }
-
-(No claim for correct key names here)
-
-So, the state chart for the combined argument parsing looks like this:
-
-                                "{"
-    Command Arguments -------------------> Command Argument Direct value
-        ^           |                                   |
-        |           | <number>                          |
-        |<----------+                                   |
-        |                                               |
-    "}" |                                               | <typename>
-        |                                               |
-        |                                               |
-        |                                               |
-        |                                               v
-    Command Arg Direct Value <------------ Command Arg Direct Value Type
+    Command Arguments ------+-----------------------+
+        ^   ^               | <nil>,                |
+        |   |               | <boolean>,            |
+        |   |               | <integer>,            |
+        |   |               | <double>,             |
+        |   |               | <string>              | "{"
+        |   +---------------+                       |
+        |                                           v
+        |                                   Argument object
+        |                                           |
+        |                   +-----------------------+
+        |                   |                       |
+        |                   | "pos"*                | "named"*
+        |                   |                       |
+        |   <number>        v                       v
+        +-------------- Argument: position      Argument: Named val
 
 (*) The used strings are as constants in the code and are defined in a central
 place.

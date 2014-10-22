@@ -29,15 +29,21 @@ the arguments of the command:
 
     { "add": [1, 2] }
 
-The arguments are
+The value can be a
 
-* Integers, to tell waysome to use N positions from the stack
+* Integer, to tell waysome to use N positions from the stack
 
-* Integers in an array, to refer to positions on the execution stack, whereas
-  positive values are positions in the stack from the _bottom_ to the _top_ of
-  the stack and negative values are from the _top_ to the _bottom_ of the stack.
-
-* Objects, to pass constants to the command.
+* Array, for arguments to the command, whereas
+- "null" is NIL
+- "true"/"false" as booleans
+- Integers as integers
+- Doubles as doubles (not supported yet)
+- Strings as strings
+- Arrays to specify a set
+- An object: '{ "pos": 1 }' to refer to a position on the stack (first in this
+  case)
+- An object: '{ "name": "a name", "value": <value> }' for a named value, whereas
+  the name is a string and the value can be one out of this list.
 
 Of course you can mix objects and integers in the array, if the related command
 takes them.
@@ -48,25 +54,13 @@ For example:
 
 Pop four positions from the stack,
 
-    { "pop": [-1] }
+    { "pop": [{ "pos": -1 }] }
 
 means "Pop the first value on top of the stack", but
 
-    { "pop": [ { "int": 1 } ] }
+    { "pop": [ 1 ] }
 
 does not make sense, as the argument to "pop" is a constant.
-
-As the previous example shows, the arguments can be constants. These constants
-are described using another JSON object, whereas the _key_ is the _type_ and the
-_value_ is the _value_. Possible types are
-
-* "nil", whereas the _value_ of the object should then be "null"
-* "bool", whereas the _value_ of the object should then be one of "true",
-  "false" (as JSON literals), 0 or 1
-* "int", whereas the _value_ of the object is a number
-* "string", whereas the _value_ of the object should be a string
-
-More values to come.
 
 ## Summary
 
@@ -78,9 +72,9 @@ containing a integer value 3.
     {
         "UID": "my awesome uid",
         "commands": [
-            { "push": [ { "int": 1 } ] },
-            { "push": [ { "int": 2 } ] },
-            { "add": [ -1, -2 ] }
+            { "push": [ 1 ] },
+            { "push": [ 2 ] },
+            { "add": [ { "pos": -1 }, { "pos": -2 } ] }
         ]
     }
 
