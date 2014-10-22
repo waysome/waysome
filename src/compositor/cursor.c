@@ -125,8 +125,8 @@ ws_cursor_set_hotspot(
     int x,
     int y
 ) {
-    self->x = CLAMP(0, CURSOR_SIZE, 128);
-    self->y = CLAMP(0, CURSOR_SIZE, 128);
+    self->x_hp = CLAMP(0, x, CURSOR_SIZE);
+    self->y_hp = CLAMP(0, y, CURSOR_SIZE);
 }
 
 void
