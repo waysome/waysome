@@ -103,6 +103,15 @@ START_TEST (test_json_deserializer_minimal) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_json_object) {
+    char const* buf = "{}";
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf == NULL);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -123,6 +132,7 @@ json_deserializer_suite(void)
     tcase_add_test(tc, test_json_deserializer_setup);
 
     tcase_add_test(tcx, test_json_deserializer_minimal);
+    tcase_add_test(tcx, test_json_deserializer_json_object);
 
     return s;
 }
