@@ -29,7 +29,9 @@
 
 #include "action/processor.h"
 #include "action/processor_stack.h"
+#include "command/command.h"
 #include "command/control.h"
+#include "command/statement.h"
 #include "values/int.h"
 
 

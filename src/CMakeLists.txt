@@ -60,6 +60,7 @@ set(SOURCE_FILES
     command/control.c
     command/list.c
     command/processor.c
+    command/statement.c
     compositor/buffer/buffer.c
     compositor/buffer/frame_buffer.c
     compositor/buffer/image_buffer.c

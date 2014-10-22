@@ -29,6 +29,7 @@
 #include <stdlib.h>
 
 #include "command/command.h"
+#include "command/statement.h"
 #include "objects/message/message.h"
 #include "objects/message/transaction.h"
 

@@ -51,6 +51,7 @@
 #include <stdbool.h>
 
 #include "command/command.h"
+#include "command/statement.h"
 
 #include "serialize/json/common.h"
 #include "serialize/json/states.h"
