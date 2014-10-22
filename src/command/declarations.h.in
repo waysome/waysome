@@ -25,12 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_COMMAND_DECLARATION_H__
-#define __WS_COMMAND_DECLARATION_H__
-
 #include "list.h"
 
 ${COMMAND_DECLS}
-
-#endif // __WS_COMMAND_DECLARATION_H__
 
