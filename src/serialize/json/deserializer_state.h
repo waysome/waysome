@@ -77,8 +77,7 @@ struct deserializer_state {
 
     struct wl_array* cmdbuf;
 
-    struct ws_command* tmp_command;
-    struct ws_command_args tmp_command_args;
+    struct ws_statement* tmp_statement;
 
     uintmax_t nboxbrackets;
     uintmax_t ncurvedbrackets;
