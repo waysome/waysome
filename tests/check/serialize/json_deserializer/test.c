@@ -51,6 +51,9 @@
 #include "serialize/json/keys.h"
 #include "objects/message/message.h"
 #include "objects/message/transaction.h"
+#include "command/statement.h"
+
+#include "values/int.h"
 
 /*
  *
@@ -198,6 +201,50 @@ START_TEST (test_json_deserializer_transaction_valid_nocmds) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_transaction_one_command) {
+    char const* buf =   "{ \"" TYPE "\": \"" TYPE_TRANSACTION "\","
+                        " \"" UID "\": 1337, "
+                        " \"" COMMANDS "\": ["
+                            "{ \"add\": [ 1, 2 ] }"
+                        "] }";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    // We have a transaction, but without commands. So this is not a
+    // transaction.
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION);
+    ck_assert(messagebuf->id == 1337);
+    struct ws_transaction* t = (struct ws_transaction*) messagebuf;
+
+    ck_assert(t->name == NULL);
+    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->cmds != NULL);
+    ck_assert(t->cmds->next == 1);
+    ck_assert(t->cmds->statements != NULL);
+    ck_assert(t->cmds->statements[0].command->name != NULL);
+    ck_assert(0 == strcmp(t->cmds->statements[0].command->name, "add"));
+    ck_assert(t->cmds->statements[0].command->command_type == regular);
+    ck_assert(t->cmds->statements[0].args.num == 2);
+    ck_assert(t->cmds->statements[0].args.vals[0].arg.val != NULL);
+    ck_assert(t->cmds->statements[0].args.vals[0].arg.val[0].type == WS_VALUE_TYPE_INT);
+
+    struct ws_value* val_one = t->cmds->statements[0].args.vals[0].arg.val;
+    struct ws_value* val_two = t->cmds->statements[0].args.vals[1].arg.val;
+
+    struct ws_value_int* one = (struct ws_value_int*) val_one;
+    struct ws_value_int* two = (struct ws_value_int*) val_two;
+
+    ck_assert(one->value.type == WS_VALUE_TYPE_INT);
+    ck_assert(one->i == 1);
+
+    ck_assert(two->value.type == WS_VALUE_TYPE_INT);
+    ck_assert(two->i == 2);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -226,6 +273,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_message_id);
     tcase_add_test(tcx, test_json_deserializer_transaction_type);
     tcase_add_test(tcx, test_json_deserializer_transaction_valid_nocmds);
+    tcase_add_test(tcx, test_json_deserializer_transaction_one_command);
 
     return s;
 }
