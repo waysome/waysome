@@ -59,6 +59,7 @@ set(SOURCE_FILES
     command/command.c
     command/control.c
     command/list.c
+    command/logical.c
     command/processor.c
     command/statement.c
     compositor/buffer/buffer.c

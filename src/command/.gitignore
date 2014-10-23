@@ -2,4 +2,5 @@
 list.c
 arithmetical.h
 control.h
+logical.h
 
