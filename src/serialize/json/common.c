@@ -33,44 +33,6 @@
 
 /*
  *
- * static function declarations
- *
- */
-
-static void *
-yajl_malloc_func_cb(
-    void *ctx,
-    size_t sz
-);
-
-static void
-yajl_free_func_cb(
-    void *ctx,
-    void * ptr
-);
-
-static void *
-yajl_realloc_func_cb(
-    void *ctx,
-    void * ptr,
-    size_t sz
-);
-
-/*
- *
- * variables
- *
- */
-
-yajl_alloc_funcs YAJL_ALLOC_FUNCS = {
-    .malloc     = yajl_malloc_func_cb,
-    .realloc    = yajl_realloc_func_cb,
-    .free       = yajl_free_func_cb,
-    .ctx        = NULL,
-};
-
-/*
- *
  * Interface implementation
  *
  */
@@ -86,7 +48,7 @@ serializer_yajl_state_new(
         return NULL;
     }
 
-    state->handle = yajl_alloc(callbacks, &YAJL_ALLOC_FUNCS, ctx);
+    state->handle = yajl_alloc(callbacks, NULL, ctx);
 
     if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
         !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
@@ -107,36 +69,3 @@ serializer_yajl_state_free(
     free(state);
 }
 
-/*
- *
- * static function implementations
- *
- */
-
-static void *
-yajl_malloc_func_cb(
-    void *ctx,
-    size_t sz
-) {
-    //!< @todo implement
-    return NULL;
-}
-
-static void
-yajl_free_func_cb(
-    void *ctx,
-    void * ptr
-) {
-    //!< @todo implement
-    return;
-}
-
-static void *
-yajl_realloc_func_cb(
-    void *ctx,
-    void * ptr,
-    size_t sz
-) {
-    //!< @todo implement
-    return NULL;
-}
