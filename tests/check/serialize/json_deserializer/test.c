@@ -176,6 +176,28 @@ START_TEST (test_json_deserializer_transaction_type) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_transaction_valid_nocmds) {
+    char const* buf =   "{ \"" TYPE "\": \"" TYPE_TRANSACTION "\","
+                        " \"" UID "\": 1337, "
+                        " \"" COMMANDS "\": [] }";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    // We have a transaction, but without commands. So this is not a
+    // transaction.
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION);
+    ck_assert(messagebuf->id == 1337);
+    struct ws_transaction* t = (struct ws_transaction*) messagebuf;
+
+    ck_assert(t->name == NULL);
+    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->cmds == NULL);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -203,6 +225,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_json_object_kv_string);
     tcase_add_test(tcx, test_json_deserializer_message_id);
     tcase_add_test(tcx, test_json_deserializer_transaction_type);
+    tcase_add_test(tcx, test_json_deserializer_transaction_valid_nocmds);
 
     return s;
 }
