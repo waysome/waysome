@@ -226,7 +226,7 @@ ws_string_cmp(
     res = u_strcmp(self->str, other->str);
 
     ws_object_unlock(&self->obj);
-    ws_object_unlock(&self->obj);
+    ws_object_unlock(&other->obj);
 
     return res;
 }
@@ -246,7 +246,7 @@ ws_string_ncmp(
     res = u_strncmp(self->str + offset, other->str, n);
 
     ws_object_unlock(&self->obj);
-    ws_object_unlock(&self->obj);
+    ws_object_unlock(&other->obj);
 
     return res;
 }
