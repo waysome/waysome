@@ -406,22 +406,6 @@ ws_object_lock_try_write(
 );
 
 /**
- * Read-unlock the object
- *
- * @memberof ws_object
- *
- * @deprecated
- *
- * @return true if the lock was unlocked, else false
- */
-bool
-ws_object_unlock_read(
-    struct ws_object* self //!< The object
-)
-__ws_deprecated__
-;
-
-/**
  * Write-unlock the object
  *
  * @memberof ws_object
