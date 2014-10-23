@@ -359,13 +359,6 @@ ws_object_lock_try_write(
 }
 
 bool
-ws_object_unlock_write(
-    struct ws_object* self
-) {
-    return ws_object_unlock(self);
-}
-
-bool
 ws_object_unlock(
     struct ws_object* self
 ) {
