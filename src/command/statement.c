@@ -145,8 +145,7 @@ command_args_append(
         // we already have superseeded this step threshold
         if (nsize > self->num) {
             // the next step size is "far" away. We're fine
-            self->num++;
-            return self->vals;
+            return self->vals + self->num++;
         }
 
         // check the next stepping theshold
@@ -163,8 +162,7 @@ command_args_append(
         return NULL;
     }
 
-    self->num++;
     self->vals = newargs;
-    return newargs;
+    return newargs + self->num++;
 }
 
