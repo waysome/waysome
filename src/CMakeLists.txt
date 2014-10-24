@@ -53,21 +53,7 @@ add_definitions(
 set(SOURCE_FILES
     $<TARGET_OBJECTS:action>
     $<TARGET_OBJECTS:command>
-    compositor/buffer/buffer.c
-    compositor/buffer/frame_buffer.c
-    compositor/buffer/image_buffer.c
-    compositor/cursor.c
-    compositor/framebuffer_device.c
-    compositor/module.c
-    compositor/monitor.c
-    compositor/monitor_mode.c
-    compositor/wayland/seat.c
-    compositor/wayland/surface.c
-    compositor/wayland/wayland_buffer.c
-    compositor/wayland/wayland_compositor.c
-    compositor/wayland/wayland_pointer.c
-    compositor/wayland/wayland_shell.c
-    compositor/wayland/wayland_shell_surface.c
+    $<TARGET_OBJECTS:compositor>
     connection/connbuf.c
     connection/connector.c
     input/module.c
@@ -135,6 +121,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 #
 add_subdirectory(action)
 add_subdirectory(command)
+add_subdirectory(compositor)
 
 #
 # Add waysome executable
