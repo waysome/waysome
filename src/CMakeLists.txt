@@ -2,7 +2,6 @@
 # Building the waysome exetuable
 #
 
-add_subdirectory(command)
 
 #
 # Set include directories
@@ -53,13 +52,7 @@ add_definitions(
 #
 set(SOURCE_FILES
     $<TARGET_OBJECTS:action>
-    command/arithmetical.c
-    command/command.c
-    command/control.c
-    command/list.c
-    command/logical.c
-    command/processor.c
-    command/statement.c
+    $<TARGET_OBJECTS:command>
     compositor/buffer/buffer.c
     compositor/buffer/frame_buffer.c
     compositor/buffer/image_buffer.c
@@ -141,6 +134,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 # Pull in all the modules
 #
 add_subdirectory(action)
+add_subdirectory(command)
 
 #
 # Add waysome executable

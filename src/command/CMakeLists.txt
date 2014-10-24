@@ -28,6 +28,17 @@ set(WS_COMMAND_FILES
 
 
 #
+# List of source files
+#
+set(SOURCE_FILES
+    command.c
+    list.c
+    processor.c
+    statement.c
+)
+
+
+#
 # Process all command definition files
 #
 foreach(COMMAND_FILE IN LISTS WS_COMMAND_FILES)
@@ -52,11 +63,12 @@ foreach(COMMAND_FILE IN LISTS WS_COMMAND_FILES)
     endforeach()
 
     # Generate header file for commands
-    string(REPLACE ".commands" ".h" COMMAND_HEADER ${COMMAND_FILE})
-    configure_file("declarations.h.in" ${COMMAND_HEADER})
+    string(REPLACE ".commands" "" COMMAND_BASENAME ${COMMAND_FILE})
+    configure_file("declarations.h.in" "${COMMAND_BASENAME}.h")
 
-    # Add to header list
-    set(HEADER_INCLUSION "${HEADER_INCLUSION}\n#include \"${COMMAND_HEADER}\"")
+    # Add to header and source list
+    set(HEADER_INCLUSION "${HEADER_INCLUSION}\n#include \"${COMMAND_BASENAME}.h\"")
+    set(SOURCE_FILES ${SOURCE_FILES} "${COMMAND_BASENAME}.c")
 endforeach()
 
 #
@@ -83,4 +95,11 @@ foreach(COMMAND IN LISTS WS_COMMANDS)
     )
 endforeach()
 configure_file("list.c.in" "list.c")
+
+#
+# Finally link everything in this module
+#
+add_library(command OBJECT
+    ${SOURCE_FILES}
+)
 
