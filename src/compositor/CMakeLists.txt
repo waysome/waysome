@@ -14,8 +14,8 @@ set(SOURCE_FILES
     wayland/compositor.c
     wayland/pointer.c
     wayland/seat.c
+    wayland/shell.c
     wayland/surface.c
-    wayland/wayland_shell.c
     wayland/wayland_shell_surface.c
 )
 
