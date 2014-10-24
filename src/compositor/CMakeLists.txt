@@ -11,6 +11,7 @@ set(SOURCE_FILES
     monitor.c
     monitor_mode.c
     wayland/buffer.c
+    wayland/client.c
     wayland/compositor.c
     wayland/pointer.c
     wayland/region.c
