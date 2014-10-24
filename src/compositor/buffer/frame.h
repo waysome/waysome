@@ -43,7 +43,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#include "compositor/buffer/image_buffer.h"
+#include "compositor/buffer/image.h"
 #include "objects/object.h"
 
 /**

@@ -37,7 +37,7 @@
 #include <wayland-server-protocol.h>
 #include <xf86drm.h>
 
-#include "compositor/buffer/image_buffer.h"
+#include "compositor/buffer/image.h"
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"

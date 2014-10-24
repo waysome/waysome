@@ -44,7 +44,7 @@
 #include <stdbool.h>
 #include <xf86drmMode.h>
 
-#include "compositor/buffer/frame_buffer.h"
+#include "compositor/buffer/frame.h"
 #include "compositor/monitor_mode.h"
 #include "objects/object.h"
 #include "objects/set.h"

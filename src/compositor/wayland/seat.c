@@ -27,8 +27,8 @@
 
 #include <stdbool.h>
 
+#include "compositor/wayland/pointer.h"
 #include "compositor/wayland/seat.h"
-#include "compositor/wayland/wayland_pointer.h"
 #include "util/arithmetical.h"
 
 

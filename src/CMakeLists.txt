@@ -2,7 +2,21 @@
 # Building the waysome exetuable
 #
 
-add_subdirectory(command)
+#
+# This variable holds all the modules
+#
+set(WS_MODULES
+    action
+    command
+    compositor
+    connection
+    input
+    logger
+    objects
+    serialize
+    util
+    values
+)
 
 #
 # Set include directories
@@ -52,65 +66,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
-    action/manager.c
-    action/processor.c
-    action/processor_stack.c
-    command/arithmetical.c
-    command/command.c
-    command/control.c
-    command/list.c
-    command/logical.c
-    command/processor.c
-    command/statement.c
-    compositor/buffer/buffer.c
-    compositor/buffer/frame_buffer.c
-    compositor/buffer/image_buffer.c
-    compositor/cursor.c
-    compositor/framebuffer_device.c
-    compositor/module.c
-    compositor/monitor.c
-    compositor/monitor_mode.c
-    compositor/wayland/seat.c
-    compositor/wayland/surface.c
-    compositor/wayland/wayland_buffer.c
-    compositor/wayland/wayland_compositor.c
-    compositor/wayland/wayland_pointer.c
-    compositor/wayland/wayland_shell.c
-    compositor/wayland/wayland_shell_surface.c
-    connection/connbuf.c
-    connection/connector.c
-    input/module.c
-    logger/module.c
     main.c
-    objects/array.c
-    objects/message/error_reply.c
-    objects/message/message.c
-    objects/message/reply.c
-    objects/message/transaction.c
-    objects/message/value_reply.c
-    objects/object.c
-    objects/set.c
-    objects/string.c
-    objects/wayland_obj.c
-    serialize/deserializer.c
-    serialize/json/common.c
-    serialize/json/deserializer.c
-    serialize/json/deserializer_state.c
-    serialize/json/string_jump_state.c
-    serialize/serializer.c
-    util/cleaner.c
-    util/wayland.c
-    values/bool.c
-    values/int.c
-    values/nil.c
-    values/string.c
-    values/union.c
-    values/utils.c
-    values/value.c
-    values/value_named.c
-    values/value_type.c
-    values/set.c
-    values/object_id.c
 )
 
 #
@@ -138,8 +94,17 @@ endif()
 #
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 
+
 #
-# Libreset will be a shared object
+# Pull in all the modules
+#
+foreach(MODULE IN LISTS WS_MODULES)
+    add_subdirectory(${MODULE})
+    set(SOURCE_FILES ${SOURCE_FILES} $<TARGET_OBJECTS:${MODULE}>)
+endforeach()
+
+#
+# Add waysome executable
 #
 add_executable(waysome ${SOURCE_FILES})
 

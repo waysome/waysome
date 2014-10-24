@@ -32,7 +32,7 @@
 #include <xf86drmMode.h>
 
 #include "compositor/buffer/buffer.h"
-#include "compositor/buffer/image_buffer.h"
+#include "compositor/buffer/image.h"
 #include "logger/module.h"
 #include "util/arithmetical.h"
 

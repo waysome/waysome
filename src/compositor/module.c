@@ -37,14 +37,14 @@
 #include <wayland-server.h>
 #include <xf86drm.h>
 
-#include "compositor/buffer/image_buffer.h"
+#include "compositor/buffer/image.h"
 #include "compositor/cursor.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
 #include "compositor/monitor_mode.h"
+#include "compositor/wayland/compositor.h"
 #include "compositor/wayland/seat.h"
-#include "compositor/wayland/wayland_compositor.h"
-#include "compositor/wayland/wayland_shell.h"
+#include "compositor/wayland/shell.h"
 #include "logger/module.h"
 #include "util/cleaner.h"
 #include "util/wayland.h"

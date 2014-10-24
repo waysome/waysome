@@ -29,7 +29,7 @@
 #include <malloc.h>
 #include <wayland-server.h>
 
-#include "compositor/wayland/wayland_buffer.h"
+#include "compositor/wayland/buffer.h"
 
 /*
  *
