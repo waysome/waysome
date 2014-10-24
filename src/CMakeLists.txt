@@ -57,17 +57,8 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:connection>
     $<TARGET_OBJECTS:input>
     $<TARGET_OBJECTS:logger>
+    $<TARGET_OBJECTS:objects>
     main.c
-    objects/array.c
-    objects/message/error_reply.c
-    objects/message/message.c
-    objects/message/reply.c
-    objects/message/transaction.c
-    objects/message/value_reply.c
-    objects/object.c
-    objects/set.c
-    objects/string.c
-    objects/wayland_obj.c
     serialize/deserializer.c
     serialize/json/common.c
     serialize/json/deserializer.c
@@ -124,6 +115,7 @@ add_subdirectory(compositor)
 add_subdirectory(connection)
 add_subdirectory(input)
 add_subdirectory(logger)
+add_subdirectory(objects)
 
 #
 # Add waysome executable
