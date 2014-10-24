@@ -59,9 +59,8 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:logger>
     $<TARGET_OBJECTS:objects>
     $<TARGET_OBJECTS:serialize>
+    $<TARGET_OBJECTS:util>
     main.c
-    util/cleaner.c
-    util/wayland.c
     values/bool.c
     values/int.c
     values/nil.c
@@ -112,6 +111,7 @@ add_subdirectory(input)
 add_subdirectory(logger)
 add_subdirectory(objects)
 add_subdirectory(serialize)
+add_subdirectory(util)
 
 #
 # Add waysome executable
