@@ -56,7 +56,7 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:compositor>
     $<TARGET_OBJECTS:connection>
     $<TARGET_OBJECTS:input>
-    logger/module.c
+    $<TARGET_OBJECTS:logger>
     main.c
     objects/array.c
     objects/message/error_reply.c
@@ -123,6 +123,7 @@ add_subdirectory(command)
 add_subdirectory(compositor)
 add_subdirectory(connection)
 add_subdirectory(input)
+add_subdirectory(logger)
 
 #
 # Add waysome executable
