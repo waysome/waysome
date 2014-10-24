@@ -58,13 +58,8 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:input>
     $<TARGET_OBJECTS:logger>
     $<TARGET_OBJECTS:objects>
+    $<TARGET_OBJECTS:serialize>
     main.c
-    serialize/deserializer.c
-    serialize/json/common.c
-    serialize/json/deserializer.c
-    serialize/json/deserializer_state.c
-    serialize/json/string_jump_state.c
-    serialize/serializer.c
     util/cleaner.c
     util/wayland.c
     values/bool.c
@@ -116,6 +111,7 @@ add_subdirectory(connection)
 add_subdirectory(input)
 add_subdirectory(logger)
 add_subdirectory(objects)
+add_subdirectory(serialize)
 
 #
 # Add waysome executable
