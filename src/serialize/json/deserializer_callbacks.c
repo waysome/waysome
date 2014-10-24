@@ -25,8 +25,10 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <string.h>
 
+#include "objects/message/transaction.h"
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer_state.h"
 #include "serialize/json/deserializer_callbacks.h"
@@ -38,6 +40,28 @@
 #include "values/int.h"
 #include "values/string.h"
 #include "wayland-util.h"
+
+/*
+ *
+ * static function definitions
+ *
+ */
+
+/**
+ * Setup the deserializer_state object to hold a transaction
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+setup_transaction(
+    struct ws_deserializer* s // The current state object
+);
+
+/*
+ *
+ * Interface implementation
+ *
+ */
 
 int
 yajl_null_cb(
@@ -449,3 +473,37 @@ yajl_end_array_cb(
 
     return 1;
 }
+
+/*
+ *
+ * static function implementations
+ *
+ */
+
+int
+setup_transaction(
+    struct ws_deserializer* self
+) {
+    if (!self) {
+        return -EINVAL;
+    }
+
+    if (self->buffer != NULL) {
+        return 0;
+    }
+
+    //!< @todo assign real name, flags
+    uintmax_t id = 0;
+    if (self->buffer) {
+        id = ((struct deserializer_state*) self->buffer)->id;
+    }
+
+    struct ws_string* name = NULL;
+    enum ws_transaction_flags flags = WS_TRANSACTION_FLAGS_EXEC;
+    struct ws_transaction_command_list* cmds = NULL;
+    self->buffer = (struct ws_message*) ws_transaction_new(id, name,
+                                                           flags, cmds);
+
+    return 0;
+}
+
