@@ -2,6 +2,21 @@
 # Building the waysome exetuable
 #
 
+#
+# This variable holds all the modules
+#
+set(WS_MODULES
+    action
+    command
+    compositor
+    connection
+    input
+    logger
+    objects
+    serialize
+    util
+    values
+)
 
 #
 # Set include directories
@@ -51,16 +66,6 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
-    $<TARGET_OBJECTS:action>
-    $<TARGET_OBJECTS:command>
-    $<TARGET_OBJECTS:compositor>
-    $<TARGET_OBJECTS:connection>
-    $<TARGET_OBJECTS:input>
-    $<TARGET_OBJECTS:logger>
-    $<TARGET_OBJECTS:objects>
-    $<TARGET_OBJECTS:serialize>
-    $<TARGET_OBJECTS:util>
-    $<TARGET_OBJECTS:values>
     main.c
 )
 
@@ -93,16 +98,10 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 #
 # Pull in all the modules
 #
-add_subdirectory(action)
-add_subdirectory(command)
-add_subdirectory(compositor)
-add_subdirectory(connection)
-add_subdirectory(input)
-add_subdirectory(logger)
-add_subdirectory(objects)
-add_subdirectory(serialize)
-add_subdirectory(util)
-add_subdirectory(values)
+foreach(MODULE IN LISTS WS_MODULES)
+    add_subdirectory(${MODULE})
+    set(SOURCE_FILES ${SOURCE_FILES} $<TARGET_OBJECTS:${MODULE}>)
+endforeach()
 
 #
 # Add waysome executable
