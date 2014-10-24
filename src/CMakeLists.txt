@@ -60,18 +60,8 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:objects>
     $<TARGET_OBJECTS:serialize>
     $<TARGET_OBJECTS:util>
+    $<TARGET_OBJECTS:values>
     main.c
-    values/bool.c
-    values/int.c
-    values/nil.c
-    values/string.c
-    values/union.c
-    values/utils.c
-    values/value.c
-    values/value_named.c
-    values/value_type.c
-    values/set.c
-    values/object_id.c
 )
 
 #
@@ -112,6 +102,7 @@ add_subdirectory(logger)
 add_subdirectory(objects)
 add_subdirectory(serialize)
 add_subdirectory(util)
+add_subdirectory(values)
 
 #
 # Add waysome executable
