@@ -12,9 +12,9 @@ set(SOURCE_FILES
     monitor_mode.c
     wayland/buffer.c
     wayland/compositor.c
+    wayland/pointer.c
     wayland/seat.c
     wayland/surface.c
-    wayland/wayland_pointer.c
     wayland/wayland_shell.c
     wayland/wayland_shell_surface.c
 )

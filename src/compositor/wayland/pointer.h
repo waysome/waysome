@@ -31,6 +31,7 @@
 #include "objects/wayland_obj.h"
 
 // forward declarations
+struct wl_client;
 struct ws_surface; // definition in compositor/surface.h
 
 

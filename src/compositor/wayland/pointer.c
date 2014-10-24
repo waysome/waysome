@@ -29,8 +29,8 @@
 #include <wayland-server.h>
 
 #include "compositor/internal_context.h"
+#include "compositor/wayland/pointer.h"
 #include "compositor/wayland/surface.h"
-#include "compositor/wayland/wayland_pointer.h"
 
 /**
  * version of the wayland compositor interface we're implementing
