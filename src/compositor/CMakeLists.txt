@@ -4,7 +4,7 @@
 set(SOURCE_FILES
     buffer/buffer.c
     buffer/frame.c
-    buffer/image_buffer.c
+    buffer/image.c
     cursor.c
     framebuffer_device.c
     module.c

@@ -39,7 +39,7 @@
 #include "objects/object.h"
 
 #include "compositor/buffer/frame.h"
-#include "compositor/buffer/image_buffer.h"
+#include "compositor/buffer/image.h"
 #include "compositor/internal_context.h"
 
 

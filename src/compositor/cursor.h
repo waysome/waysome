@@ -29,7 +29,7 @@
 #define __WS_CURSOR_H__
 
 #include "compositor/buffer/buffer.h"
-#include "compositor/buffer/image_buffer.h"
+#include "compositor/buffer/image.h"
 #include "objects/object.h"
 
 /**
