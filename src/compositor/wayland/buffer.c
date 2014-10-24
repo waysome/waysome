@@ -248,6 +248,9 @@ get_width(
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
+    if (!res) {
+        return 0;
+    }
     // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_width(shm_buffer);
@@ -261,6 +264,9 @@ get_height(
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
+    if (!res) {
+        return 0;
+    }
     // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_height(shm_buffer);

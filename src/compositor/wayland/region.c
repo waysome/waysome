@@ -217,6 +217,9 @@ ws_region_inside(
     int x,
     int y
 ) {
+    if (!region) {
+        return true;
+    }
     if (!ws_buffer_data((struct ws_buffer*) &region->img_buf)) {
         return true;
     }
