@@ -15,8 +15,8 @@ set(SOURCE_FILES
     wayland/pointer.c
     wayland/seat.c
     wayland/shell.c
+    wayland/shell_surface.c
     wayland/surface.c
-    wayland/wayland_shell_surface.c
 )
 
 add_library(compositor OBJECT
