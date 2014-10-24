@@ -55,7 +55,7 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:command>
     $<TARGET_OBJECTS:compositor>
     $<TARGET_OBJECTS:connection>
-    input/module.c
+    $<TARGET_OBJECTS:input>
     logger/module.c
     main.c
     objects/array.c
@@ -122,6 +122,7 @@ add_subdirectory(action)
 add_subdirectory(command)
 add_subdirectory(compositor)
 add_subdirectory(connection)
+add_subdirectory(input)
 
 #
 # Add waysome executable
