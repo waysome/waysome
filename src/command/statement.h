@@ -111,7 +111,7 @@ __ws_nonnull__(1, 2)
 int
 ws_statement_append_indirect(
     struct ws_statement* self, //!< statement to append argument to
-    size_t pos //!< position of indirect argument
+    ssize_t pos //!< position of indirect argument
 )
 __ws_nonnull__(1)
 ;

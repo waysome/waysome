@@ -91,7 +91,7 @@ ws_statement_append_direct(
 int
 ws_statement_append_indirect(
     struct ws_statement* self,
-    size_t pos
+    ssize_t pos
 ) {
     struct ws_argument* arg = command_args_append(&self->args);
     if (!arg) {
