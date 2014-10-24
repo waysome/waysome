@@ -27,6 +27,7 @@
 
 #include <errno.h>
 
+#include "command/command.h"
 #include "command/statement.h"
 #include "values/value.h"
 
@@ -59,9 +60,14 @@ __ws_nonnull__(1)
 
 int
 ws_statement_init(
-    struct ws_statement* self
+    struct ws_statement* self,
+    char const* name
 ) {
-    self->command = NULL;
+    self->command = ws_command_get(name);
+    if (!self->command) {
+        return -EINVAL;
+    }
+
     self->args.num = 0;
     self->args.vals = NULL;
     return 0;

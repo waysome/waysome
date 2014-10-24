@@ -84,9 +84,10 @@ struct ws_statement {
  */
 int
 ws_statement_init(
-    struct ws_statement* self //!< statement to initialize
+    struct ws_statement* self, //!< statement to initialize
+    char const* name //!< name of the command to initialize the statement with
 )
-__ws_nonnull__(1)
+__ws_nonnull__(1, 2)
 ;
 
 /**
