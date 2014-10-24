@@ -155,26 +155,28 @@ ws_transaction_push_statement(
         }
 
         t->cmds->statements = NULL;
-        t->cmds->n          = 0;
-    } else {
-        if (t->cmds->n + 1 >= t->cmds->next) {
-            struct ws_statement* tmp;
-            size_t newsize = (t->cmds->n * 2) * sizeof(*t->cmds->statements);
-
-            tmp = realloc(t->cmds->statements, newsize);
-
-            if (!tmp) {
-                return -ENOMEM;
-            }
-
-            t->cmds->statements = tmp;
-            t->cmds->n *= 2;
-        }
-        t->cmds->statements[t->cmds->next].command = statement->command;
-        t->cmds->statements[t->cmds->next].args.num = statement->args.num;
-        t->cmds->statements[t->cmds->next].args.vals = statement->args.vals;
-        t->cmds->next++;
+        t->cmds->n          = 1;
+        t->cmds->next       = 0;
     }
+
+    if (t->cmds->n + 1 >= t->cmds->next) {
+        struct ws_statement* tmp;
+        size_t newsize = (t->cmds->n * 2) * sizeof(*t->cmds->statements);
+
+        tmp = realloc(t->cmds->statements, newsize);
+
+        if (!tmp) {
+            return -ENOMEM;
+        }
+
+        t->cmds->statements = tmp;
+        t->cmds->n *= 2;
+    }
+
+    t->cmds->statements[t->cmds->next].command = statement->command;
+    t->cmds->statements[t->cmds->next].args.num = statement->args.num;
+    t->cmds->statements[t->cmds->next].args.vals = statement->args.vals;
+    t->cmds->next++;
 
     return 0;
 }
