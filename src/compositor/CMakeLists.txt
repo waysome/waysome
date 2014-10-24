@@ -10,9 +10,9 @@ set(SOURCE_FILES
     module.c
     monitor.c
     monitor_mode.c
+    wayland/buffer.c
     wayland/seat.c
     wayland/surface.c
-    wayland/wayland_buffer.c
     wayland/wayland_compositor.c
     wayland/wayland_pointer.c
     wayland/wayland_shell.c

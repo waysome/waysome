@@ -28,7 +28,7 @@
 #ifndef __WS_WL_SURFACE_H__
 #define __WS_WL_SURFACE_H__
 
-#include "compositor/wayland/wayland_buffer.h"
+#include "compositor/wayland/buffer.h"
 #include "objects/wayland_obj.h"
 
 
