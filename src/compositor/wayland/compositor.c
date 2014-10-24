@@ -33,8 +33,8 @@
 
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
+#include "compositor/wayland/compositor.h"
 #include "compositor/wayland/surface.h"
-#include "compositor/wayland/wayland_compositor.h"
 #include "objects/wayland_obj.h"
 #include "util/arithmetical.h"
 #include "util/wayland.h"
