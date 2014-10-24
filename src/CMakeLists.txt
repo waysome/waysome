@@ -52,9 +52,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
-    action/manager.c
-    action/processor.c
-    action/processor_stack.c
+    $<TARGET_OBJECTS:action>
     command/arithmetical.c
     command/command.c
     command/control.c
@@ -138,8 +136,14 @@ endif()
 #
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 
+
 #
-# Libreset will be a shared object
+# Pull in all the modules
+#
+add_subdirectory(action)
+
+#
+# Add waysome executable
 #
 add_executable(waysome ${SOURCE_FILES})
 
