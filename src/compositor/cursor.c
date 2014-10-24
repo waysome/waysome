@@ -156,9 +156,10 @@ ws_cursor_set_image(
     struct ws_cursor* self,
     struct ws_buffer* img
 ) {
-    memset(self->cursor_fb, 0,
+    memset(self->cursor_fb->obj.buffer, 0,
             ws_buffer_stride((struct ws_buffer*) self->cursor_fb) *
             ws_buffer_height((struct ws_buffer*) self->cursor_fb));
+    ws_log(&log_ctx, LOG_DEBUG, "Setting new cursor image");
     ws_buffer_blit((struct ws_buffer*) self->cursor_fb, img);
 }
 
