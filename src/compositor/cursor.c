@@ -228,8 +228,14 @@ ws_cursor_set_hotspot(
     int x,
     int y
 ) {
+    int old_hs_x = self->x_hp;
+    int old_hs_y = self->y_hp;
+    ws_cursor_add_position(ws_comp_ctx.cursor,
+                            old_hs_x - x,
+                            old_hs_y - y);
     self->x_hp = CLAMP(0, x, CURSOR_SIZE);
     self->y_hp = CLAMP(0, y, CURSOR_SIZE);
+    ws_cursor_add_position(self, 0, 0);
 }
 
 void
@@ -263,7 +269,11 @@ ws_cursor_set_image(
             ws_buffer_stride((struct ws_buffer*) self->cursor_fb) *
             ws_buffer_height((struct ws_buffer*) self->cursor_fb));
     ws_log(&log_ctx, LOG_DEBUG, "Setting new cursor image");
-    ws_buffer_blit((struct ws_buffer*) self->cursor_fb, img);
+    if (!img) {
+        img = (struct ws_buffer*) self->default_cursor;
+        ws_cursor_set_hotspot(self, 1, 1);
+    }
+        ws_buffer_blit((struct ws_buffer*) self->cursor_fb, img);
 }
 
 void
