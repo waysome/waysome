@@ -54,8 +54,7 @@ set(SOURCE_FILES
     $<TARGET_OBJECTS:action>
     $<TARGET_OBJECTS:command>
     $<TARGET_OBJECTS:compositor>
-    connection/connbuf.c
-    connection/connector.c
+    $<TARGET_OBJECTS:connection>
     input/module.c
     logger/module.c
     main.c
@@ -122,6 +121,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 add_subdirectory(action)
 add_subdirectory(command)
 add_subdirectory(compositor)
+add_subdirectory(connection)
 
 #
 # Add waysome executable
