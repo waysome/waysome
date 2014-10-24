@@ -29,6 +29,7 @@
 #include <wayland-server.h>
 
 #include "compositor/internal_context.h"
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/pointer.h"
 #include "compositor/wayland/surface.h"
 
@@ -135,7 +136,7 @@ ws_wayland_pointer_new(
     }
 
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_pointer_interface,
+    resource = ws_wayland_client_create_resource(client, &wl_pointer_interface,
             WAYLAND_POINTER_VERSION, serial);
 
     if (!resource) {

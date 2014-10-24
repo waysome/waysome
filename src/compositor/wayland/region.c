@@ -34,6 +34,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
 #include "compositor/buffer/buffer.h"
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/region.h"
 #include "objects/set.h"
 #include "util/wayland.h"
@@ -139,7 +140,7 @@ ws_region_new(
 
     // try to set up the resource
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_region_interface,
+    resource = ws_wayland_client_create_resource(client, &wl_region_interface,
                                   WAYLAND_REGION_VERSION, serial);
     if (!resource) {
         goto cleanup_region;

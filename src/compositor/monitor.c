@@ -41,6 +41,7 @@
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
+#include "compositor/wayland/client.h"
 #include "logger/module.h"
 #include "objects/object.h"
 #include "util/wayland.h"
@@ -151,8 +152,8 @@ bind_output(
         version = 2;
     }
 
-    monitor->resource = wl_resource_create(client, &wl_output_interface,
-            version, id);
+    monitor->resource = ws_wayland_client_create_resource(client,
+            &wl_output_interface, version, id);
 
     if (!monitor->resource) {
         ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");

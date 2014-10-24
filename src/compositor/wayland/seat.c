@@ -27,6 +27,7 @@
 
 #include <stdbool.h>
 
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/pointer.h"
 #include "compositor/wayland/seat.h"
 #include "util/arithmetical.h"
@@ -158,7 +159,7 @@ bind_seat(
     uint32_t serial
 ) {
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_seat_interface,
+    resource = ws_wayland_client_create_resource(client, &wl_seat_interface,
                                   MIN(version, WAYLAND_SEAT_VERSION),
                                   serial);
     if (!resource) {

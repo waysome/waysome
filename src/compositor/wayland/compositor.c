@@ -33,6 +33,7 @@
 
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/compositor.h"
 #include "compositor/wayland/region.h"
 #include "compositor/wayland/surface.h"
@@ -200,9 +201,9 @@ bind_compositor(
     uint32_t serial
 ) {
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_compositor_interface,
-                                  MIN(version, WAYLAND_COMPOSITOR_VERSION),
-                                  serial);
+    resource = ws_wayland_client_create_resource(client,
+            &wl_compositor_interface, MIN(version, WAYLAND_COMPOSITOR_VERSION),
+            serial);
     if (!resource) {
         wl_client_post_no_memory(client);
     }
