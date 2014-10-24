@@ -27,6 +27,7 @@
 
 #include <malloc.h>
 #include <wayland-server.h>
+#include <wayland-server-protocol.h>
 
 #include "compositor/internal_context.h"
 #include "compositor/wayland/client.h"
@@ -155,6 +156,15 @@ ws_wayland_pointer_new(
 cleanup_pointer:
     free(self);
     return NULL;
+}
+
+
+bool
+ws_wayland_pointer_instance_of(
+    struct wl_resource* res
+) {
+    return wl_resource_instance_of(res,
+                    &wl_pointer_interface, &interface);
 }
 
 static void
