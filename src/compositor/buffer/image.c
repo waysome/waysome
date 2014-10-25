@@ -196,7 +196,7 @@ static bool
 deinit_buffer(
     struct ws_object* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     free(buff->buffer);
     return true;
 }
@@ -206,8 +206,8 @@ cmp_buffer(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 ) {
-    struct ws_image_buffer* buff1 = (struct ws_image_buffer*)obj1;
-    struct ws_image_buffer* buff2 = (struct ws_image_buffer*)obj2;
+    struct ws_image_buffer* buff1 = (struct ws_image_buffer*) obj1;
+    struct ws_image_buffer* buff2 = (struct ws_image_buffer*) obj2;
     int cmp = strcmp(buff1->path, buff2->path);
     return signum(cmp);
 }
@@ -216,7 +216,7 @@ static void*
 get_data(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->buffer;
 }
 
@@ -224,7 +224,7 @@ static int32_t
 get_height(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return  buff->height;
 }
 
@@ -232,7 +232,7 @@ static int32_t
 get_width(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->width;
 }
 
@@ -240,7 +240,7 @@ static int32_t
 get_stride(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->stride;
 }
 
