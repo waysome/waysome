@@ -40,8 +40,28 @@ struct ws_command;
 /**
  * A command argument
  *
- * There are two types of arguments: the ones passed directly and the ones which
- * are already on the stack.
+ * Naturally arguments may be passed to commands.
+ * This type represents an argument being passed to a command which may be
+ * processed by a processor.
+ *
+ * In most cases, commands take values (@see ws_command), which may be passed
+ * via a stack (@see stack_semantics) or directly.
+ *
+ * To differentiate between those two modes of argument passing, this type
+ * contains an enumeration `type`, which may either be set to `direct` or
+ * `indirect` denoting whether the argument is to be passed directly or
+ * indirectly.
+ *
+ * Of course, each mode requires the argument to be present in a format
+ * suitable for the mode.
+ * While the argument is a `ws_value` for an argument passed directly, the
+ * argument is given as an _offset_ if it's passed indirectly.
+ * Hence, the argument is embedded in a union.
+ *
+ * The correct usage of this struct is imperative for both construction and
+ * usage of instances of this type.
+ * To facilitate construction, the functions `ws_statement_append_direct()`
+ * and `ws_statement_append_direct()` should be used.
  */
 struct ws_argument {
     enum {
