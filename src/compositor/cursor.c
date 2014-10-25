@@ -65,13 +65,11 @@ ws_object_type_id WS_OBJECT_TYPE_ID_CURSOR = {
     .hash_callback      = NULL,
 };
 
-
-/**
+/*
  *
  * Implementations
  *
  */
-
 
 struct ws_cursor*
 ws_cursor_new(
