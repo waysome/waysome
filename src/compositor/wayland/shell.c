@@ -53,7 +53,7 @@ static struct {
  *
  */
 
-void
+static void
 create_shell_surface_cb(
     struct wl_client* client, //!< client requesting the surface
     struct wl_resource* resource, //!< the resource of the compositor
@@ -139,7 +139,7 @@ cleanup_display:
  *
  */
 
-void
+static void
 create_shell_surface_cb(
     struct wl_client* client,
     struct wl_resource* resource,
