@@ -41,7 +41,6 @@
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
-#include "compositor/wayland/client.h"
 #include "logger/module.h"
 #include "objects/object.h"
 #include "util/wayland.h"
@@ -84,7 +83,7 @@ publish_modes(
 
 /*
  *
- * Interface Implementation
+ * type variable
  *
  */
 
@@ -97,6 +96,12 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR = {
     .run_callback = NULL,
     .cmp_callback = monitor_cmp
 };
+
+/*
+ *
+ * Interface Implementation
+ *
+ */
 
 struct ws_monitor*
 ws_monitor_new(
@@ -131,67 +136,6 @@ ws_monitor_surfaces(
     return &self->surfaces;
 }
 
-/*
- *
- * Internal implementation
- *
- */
-
-static void
-bind_output(
-    struct wl_client* client,
-    void* data,
-    uint32_t version,
-    uint32_t id
-) {
-
-    struct ws_monitor* monitor = data;
-
-    if (version >= 2) {
-        // We only support from 2 and ongoing, so let's say that!
-        version = 2;
-    }
-
-    monitor->resource = ws_wayland_client_create_resource(client,
-            &wl_output_interface, version, id);
-
-    if (!monitor->resource) {
-        ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");
-        return;
-    }
-
-    ws_log(&log_ctx, LOG_DEBUG, "Created output resource");
-
-    // We don't set an implementation, instead we just set the data
-    wl_resource_set_implementation(monitor->resource, NULL, data, NULL);
-
-    // The origin of this monitor, 0,0 in this case
-    wl_output_send_geometry(monitor->resource, 0, 0, monitor->phys_width,
-            // 0 is the subpixel type, and the two strings are monitor infos
-            monitor->phys_height, 0, "unknown", "unknown",
-            WL_OUTPUT_TRANSFORM_NORMAL);
-    // We publish all the modes we have right now through wayland
-    ws_set_select(&monitor->modes, NULL, NULL, publish_modes, monitor->resource);
-
-    // We tell wayland that this output is done!
-    wl_output_send_done(monitor->resource);
-}
-
-
-static int
-publish_modes(
-    void* _data,
-    void const* _mode
-) {
-    struct ws_monitor_mode* mode = (struct ws_monitor_mode*) _mode;
-    // The 0 here means that this isn't a preferred nor the current display
-    wl_output_send_mode((struct wl_resource*) _data, 0,
-            mode->mode.hdisplay, mode->mode.vdisplay,
-            // The buffer and wayland differ on which unit to use
-            mode->mode.vrefresh * 1000);
-    return 0;
-}
-
 void
 ws_monitor_publish(
     struct ws_monitor* self
@@ -202,37 +146,10 @@ ws_monitor_publish(
     }
 
     self->global = wl_global_create(display, &wl_output_interface, 2,
-                    self, bind_output);
-
-    if (!self->global) {
-        ws_log(&log_ctx, LOG_ERR, "Could not create output global.");
-    } else {
-        ws_log(&log_ctx, LOG_ERR, "Created output global.");
-    }
-
+                    self, &bind_output);
 
     ws_wayland_release_display();
 
-}
-
-static bool
-monitor_deinit(
-    struct ws_object* obj
-) {
-    struct ws_monitor* self = (struct ws_monitor*) obj;
-    if (self->connected) {
-        drmModeSetCrtc(self->fb_dev->fd,
-                self->saved_crtc->crtc_id,
-                self->saved_crtc->buffer_id,
-                self->saved_crtc->x,
-                self->saved_crtc->y,
-                &self->conn,
-                1,
-                &self->saved_crtc->mode);
-    }
-
-    ws_object_deinit((struct ws_object*) &self->surfaces);
-    return true;
 }
 
 void
@@ -271,33 +188,6 @@ ws_monitor_populate_fb(
     return;
 }
 
-static size_t
-monitor_hash(
-    struct ws_object* obj
-) {
-    struct ws_monitor* self = (struct ws_monitor*) obj;
-    return SIZE_MAX / (self->crtc * self->fb_dev->fd + 1);
-}
-
-static int
-monitor_cmp(
-    struct ws_object const* obj1,
-    struct ws_object const* obj2
-) {
-    struct ws_monitor* mon1 = (struct ws_monitor*) obj1;
-    struct ws_monitor* mon2 = (struct ws_monitor*) obj2;
-
-    if (mon1->id != mon2->id) {
-        return (mon1->id > mon2->id) - (mon1->id < mon2->id);
-    }
-
-    if (mon1->fb_dev->fd != mon2->fb_dev->fd) {
-        return (mon1->fb_dev->fd > mon2->fb_dev->fd) -
-            (mon1->fb_dev->fd < mon2->fb_dev->fd);
-    }
-    return 0;
-}
-
 void
 ws_monitor_set_mode_with_id(
     struct ws_monitor* self,
@@ -329,7 +219,6 @@ ws_monitor_set_mode_with_id(
             // The buffer and wayland differ on which unit to use
             self->current_mode->mode.vrefresh * 1000);
 }
-
 
 struct ws_monitor_mode*
 ws_monitor_copy_mode(
@@ -366,5 +255,111 @@ ws_monitor_add_mode(
     //!< @todo: Add more information like vsync etc...
     ws_set_insert(&self->modes, (struct ws_object*) mode);
     return mode;
+}
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static void
+bind_output(
+    struct wl_client* client,
+    void* data,
+    uint32_t version,
+    uint32_t id
+) {
+
+    struct ws_monitor* monitor = data;
+
+    if (version >= 2) {
+        // We only support from 2 and ongoing, so let's say that!
+        version = 2;
+    }
+
+    monitor->resource = wl_resource_create(client, &wl_output_interface,
+            version, id);
+
+    if (!monitor->resource) {
+        ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");
+        return;
+    }
+
+    // We don't set an implementation, instead we just set the data
+    wl_resource_set_implementation(monitor->resource, NULL, data, NULL);
+
+    // The origin of this monitor, 0,0 in this case
+    wl_output_send_geometry(monitor->resource, 0, 0, monitor->phys_width,
+            // 0 is the subpixel type, and the two strings are monitor infos
+            monitor->phys_height, 0, "unknown", "unknown",
+            WL_OUTPUT_TRANSFORM_NORMAL);
+    // We publish all the modes we have right now through wayland
+    ws_set_select(&monitor->modes, NULL, NULL, publish_modes, monitor->resource);
+
+    // We tell wayland that this output is done!
+    wl_output_send_done(monitor->resource);
+}
+
+
+static int
+publish_modes(
+    void* _data,
+    void const* _mode
+) {
+    struct ws_monitor_mode* mode = (struct ws_monitor_mode*) _mode;
+    // The 0 here means that this isn't a preferred nor the current display
+    wl_output_send_mode((struct wl_resource*) _data, 0,
+            mode->mode.hdisplay, mode->mode.vdisplay,
+            // The buffer and wayland differ on which unit to use
+            mode->mode.vrefresh * 1000);
+    return 0;
+}
+
+static bool
+monitor_deinit(
+    struct ws_object* obj
+) {
+    struct ws_monitor* self = (struct ws_monitor*) obj;
+    if (self->connected) {
+        drmModeSetCrtc(self->fb_dev->fd,
+                self->saved_crtc->crtc_id,
+                self->saved_crtc->buffer_id,
+                self->saved_crtc->x,
+                self->saved_crtc->y,
+                &self->conn,
+                1,
+                &self->saved_crtc->mode);
+    }
+
+    ws_object_deinit((struct ws_object*) &self->surfaces);
+    return true;
+}
+
+static size_t
+monitor_hash(
+    struct ws_object* obj
+) {
+    struct ws_monitor* self = (struct ws_monitor*) obj;
+    return SIZE_MAX / (self->crtc * self->fb_dev->fd + 1);
+}
+
+static int
+monitor_cmp(
+    struct ws_object const* obj1,
+    struct ws_object const* obj2
+) {
+    struct ws_monitor* mon1 = (struct ws_monitor*) obj1;
+    struct ws_monitor* mon2 = (struct ws_monitor*) obj2;
+
+    if (mon1->id != mon2->id) {
+        return (mon1->id > mon2->id) - (mon1->id < mon2->id);
+    }
+
+    if (mon1->fb_dev->fd != mon2->fb_dev->fd) {
+        return (mon1->fb_dev->fd > mon2->fb_dev->fd) -
+            (mon1->fb_dev->fd < mon2->fb_dev->fd);
+    }
+    return 0;
 }
 
