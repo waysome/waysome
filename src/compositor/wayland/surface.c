@@ -379,9 +379,11 @@ sf_commit_blit(
     void const* mon
 ) {
     struct ws_monitor* monitor = (void*) mon;
-    struct ws_buffer* buffer = ws_wayland_buffer_get_buffer((struct ws_wayland_buffer*)buf);
+    struct ws_buffer* buffer;
+    buffer = ws_wayland_buffer_get_buffer((struct ws_wayland_buffer*) buf);
 
-    if (!monitor->buffer || !ws_buffer_data((struct ws_buffer*)monitor->buffer)) {
+    if (!monitor->buffer ||
+            !ws_buffer_data((struct ws_buffer*) monitor->buffer)) {
         return 0;
     }
 
