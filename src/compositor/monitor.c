@@ -53,17 +53,17 @@
  */
 
 static bool
-ws_monitor_deinit(
+monitor_deinit(
     struct ws_object* self
 );
 
 static size_t
-ws_monitor_hash(
+monitor_hash(
     struct ws_object* self
 );
 
 static int
-ws_monitor_cmp(
+monitor_cmp(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 );
@@ -91,11 +91,11 @@ publish_modes(
 ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR = {
     .supertype = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr = "ws_monitor",
-    .deinit_callback = ws_monitor_deinit,
-    .hash_callback = ws_monitor_hash,
+    .deinit_callback = monitor_deinit,
+    .hash_callback = monitor_hash,
     .dump_callback = NULL,
     .run_callback = NULL,
-    .cmp_callback = ws_monitor_cmp
+    .cmp_callback = monitor_cmp
 };
 
 struct ws_monitor*
@@ -216,7 +216,7 @@ ws_monitor_publish(
 }
 
 static bool
-ws_monitor_deinit(
+monitor_deinit(
     struct ws_object* obj
 ) {
     struct ws_monitor* self = (struct ws_monitor*) obj;
@@ -272,7 +272,7 @@ ws_monitor_populate_fb(
 }
 
 static size_t
-ws_monitor_hash(
+monitor_hash(
     struct ws_object* obj
 ) {
     struct ws_monitor* self = (struct ws_monitor*) obj;
@@ -280,7 +280,7 @@ ws_monitor_hash(
 }
 
 static int
-ws_monitor_cmp(
+monitor_cmp(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 ) {
