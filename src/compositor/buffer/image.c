@@ -42,46 +42,76 @@
  *
  */
 
+/**
+ * Deinit callback for buffer type
+ */
 static bool
 deinit_buffer(
     struct ws_object* self
 );
 
+/**
+ * Compare callback for buffer type
+ */
 static int
 cmp_buffer(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 );
 
+/**
+ * Data getter callback for buffer type
+ */
 static void*
 get_data(
     struct ws_buffer const* self
 );
 
+/**
+ * Height getter callback for buffer type
+ */
 static int32_t
 get_height(
     struct ws_buffer const* self
 );
 
+/**
+ * Width getter callback for buffer type
+ */
 static int32_t
 get_width(
     struct ws_buffer const* self
 );
 
+/**
+ * Stride getter callback for buffer type
+ */
 static int32_t
 get_stride(
     struct ws_buffer const* self
 );
 
+/**
+ * Format getter callback for buffer type
+ */
 static uint32_t
 get_format(
     struct ws_buffer const* self
 );
 
+/**
+ * BPP getter callback for buffer type
+ */
 static uint32_t
 get_bpp(
     struct ws_buffer const* self
 );
+
+/*
+ *
+ * Type information variable
+ *
+ */
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .type = {
@@ -105,8 +135,11 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .end_access = NULL,
 };
 
-
-
+/*
+ *
+ * interface implementation
+ *
+ */
 
 struct ws_image_buffer*
 ws_image_buffer_from_png(
