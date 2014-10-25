@@ -28,6 +28,7 @@
 #include <errno.h>
 
 #include "command/binary.h"
+#include "command/util.h"
 #include "values/value_type.h"
 #include "values/union.h"
 
@@ -75,7 +76,20 @@ ws_builtin_cmd_band(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
+    intmax_t res = ~0;
+    intmax_t val;
+    union ws_value_union* it;
+
+    ITERATE_ARGS_TYPE(it, args, val, int) {
+        res &= val;
+    }
+
+    if (!AT_END(it)) {
+        return -EINVAL;
+    }
+
+    ws_value_union_reinit(args, WS_VALUE_TYPE_INT);
+    ws_value_int_set(&args->int_, res);
     return 0;
 }
 
