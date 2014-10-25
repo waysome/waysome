@@ -85,7 +85,7 @@ ws_transaction_new(
         return NULL;
     }
 
-    if (!ws_message_init(&t->m, id)) {
+    if (0 != ws_message_init(&t->m, id)) {
         free(t);
         return NULL;
     }
