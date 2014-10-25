@@ -94,13 +94,15 @@ ws_builtin_cmd_band(
 }
 
 int
-
 ws_builtin_cmd_bnand(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
-    return 0;
+    int ret = ws_builtin_cmd_band(args);
+    if (ret != 0) {
+        return ret;
+    }
+    return bnot(args);
 }
 
 int
