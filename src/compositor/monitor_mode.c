@@ -48,7 +48,7 @@ monitor_mode_cmp(
 
 /*
  *
- * Interface Implementation
+ * Type variable
  *
  */
 
@@ -62,6 +62,12 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR_MODE = {
     .cmp_callback = monitor_mode_cmp
 };
 
+/*
+ *
+ * Interface implementation
+ *
+ */
+
 struct ws_monitor_mode*
 ws_monitor_mode_new(
     void
@@ -73,6 +79,12 @@ ws_monitor_mode_new(
 
     return tmp;
 }
+
+/*
+ *
+ * static function implementations
+ *
+ */
 
 static size_t
 monitor_mode_hash(
