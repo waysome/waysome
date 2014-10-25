@@ -92,7 +92,16 @@ struct ws_command_args {
 /**
  * Statement
  *
- * This datatype represents a statement, which is part of an transaction
+ * This type represents a statement which may be executed by the command
+ * processor.
+ * A statement is a command invocation, hence a statement only consists of a
+ * command (or, to be more precise, of a _pointer_ to a command) and the
+ * arguments passed to that very command.
+ *
+ * Statements should _only_ be constructed using `ws_statement_init()`, which
+ * takes care of the `command` field.
+ * After construction, arguments may be appended by calls to
+ * `ws_statement_append_direct` or `ws_statement_append_indirect`.
  */
 struct ws_statement {
     struct ws_command const* command; //!< @public command to invoke
