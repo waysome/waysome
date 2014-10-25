@@ -132,8 +132,11 @@ ws_builtin_cmd_bnor(
     union ws_value_union* args
 
 ) {
-    //!< @todo implement
-    return 0;
+    int ret = ws_builtin_cmd_bor(args);
+    if (ret != 0) {
+        return ret;
+    }
+    return bnot(args);
 }
 
 int
