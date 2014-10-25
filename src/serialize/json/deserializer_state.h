@@ -69,13 +69,7 @@ struct deserializer_state {
 
     enum json_backend_state current_state; //!< @protected State identifier
 
-    long long int uid; //!< @protected UID temporary storage
-
-    enum {
-        ALLOC_TYPE_TRANSACTION,
-    } alloc_type; //!< @protected Allocation type flag
-
-    struct wl_array* cmdbuf;
+    uintmax_t id;
 
     struct ws_statement* tmp_statement;
 
