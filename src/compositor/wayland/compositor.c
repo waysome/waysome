@@ -62,7 +62,7 @@ static struct {
 /**
  * Create a surface
  */
-void
+static void
 create_surface(
     struct wl_client* client, //!< client requesting the surface
     struct wl_resource* resource, //!< the resource of the compositor
@@ -72,7 +72,7 @@ create_surface(
 /**
  * Create a region
  */
-void
+static void
 create_region(
     struct wl_client* client, //!< the client requesting the region
     struct wl_resource* resource, //!< the resource of the compositor
@@ -163,7 +163,7 @@ cleanup_display:
  *
  */
 
-void
+static void
 create_surface(
     struct wl_client* client,
     struct wl_resource* resource,
@@ -184,7 +184,7 @@ create_surface(
     ws_object_unref(&surface->wl_obj.obj);
 }
 
-void
+static void
 create_region(
     struct wl_client* client,
     struct wl_resource* resource,
