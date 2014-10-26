@@ -55,8 +55,12 @@ deserialize_state_new(
     }
 
     state->current_state    = STATE_INIT;
-    state->uid              = 0;
     state->tmp_statement    = NULL;
+
+    state->nboxbrackets     = 0;
+    state->ncurvedbrackets  = 0;
+
+    state->id               = 0;
 
     return state;
 }
