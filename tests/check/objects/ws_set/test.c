@@ -68,7 +68,6 @@ ws_object_type_id TEST_ID = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_set_test_obj",
 
-    .init_callback = NULL,
     .deinit_callback = NULL,
     .dump_callback = NULL,
     .run_callback = NULL,

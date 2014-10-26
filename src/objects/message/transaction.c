@@ -57,7 +57,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
     .supertype  = &WS_OBJECT_TYPE_ID_MESSAGE,
     .typestr    = "ws_transaction",
 
-    .init_callback = NULL,
     .deinit_callback = deinit_transaction,
     .dump_callback = NULL,
     .run_callback = NULL,

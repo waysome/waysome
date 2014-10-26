@@ -113,7 +113,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
     .typestr    = "ws_command_processor",
 
     .hash_callback = NULL,
-    .init_callback = NULL,
     .deinit_callback = command_processor_deinit,
     .dump_callback = NULL,
     .run_callback = NULL,

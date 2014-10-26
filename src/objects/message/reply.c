@@ -32,7 +32,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_REPLY = {
     .typestr    = "ws_reply",
 
     .hash_callback = NULL,
-    .init_callback = NULL,
     .deinit_callback = NULL,
     .dump_callback = NULL,
     .run_callback = NULL,
