@@ -114,6 +114,23 @@ int
 ws_builtin_cmd_div(
     union ws_value_union* args
 ) {
-    //!< @todo: implement
+    if (ws_value_get_type(&args->value) != WS_VALUE_TYPE_INT ||
+            ws_value_get_type(&args[1].value) != WS_VALUE_TYPE_INT) {
+        return -EINVAL;
+    }
+
+    if (ws_value_get_type(&args[2].value) != WS_VALUE_TYPE_NONE) {
+        return -E2BIG;
+    }
+
+    intmax_t tmp_dividend = ws_value_int_get(&args->int_);
+    intmax_t tmp_divisor = ws_value_int_get(&args[1].int_);
+
+    if (tmp_divisor == 0) {
+        return -EFAULT;
+    }
+
+    ws_value_int_set(&args->int_, tmp_dividend / tmp_divisor);
+
     return 0;
 }
