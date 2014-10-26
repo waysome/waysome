@@ -77,11 +77,6 @@ typedef struct ws_object_type const ws_object_type_id;
  */
 
 /**
- * Constructor callback
- */
-typedef bool (*ws_object_init_callback)(struct ws_object* const);
-
-/**
  * Destructor callback
  */
 typedef bool (*ws_object_deinit_callback)(struct ws_object* const);
@@ -159,7 +154,6 @@ struct ws_object_type {
     ws_object_type_id* supertype;     //!< supertype. Ref to itself if there is none
     const char* const typestr;  //!< string which represents the type
 
-    ws_object_init_callback init_callback; //!< Init callback for the type
     ws_object_deinit_callback deinit_callback; //!< Free callback for the type
     ws_object_dump_callback dump_callback; //!< Log callback for the type
     ws_object_run_callback run_callback; //!< Run callback for the type

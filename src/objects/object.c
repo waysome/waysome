@@ -77,7 +77,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_object",
 
-    .init_callback = NULL,
     .deinit_callback = NULL,
     .dump_callback = NULL,
     .run_callback = NULL,
@@ -205,11 +204,7 @@ ws_object_init(
 
         self->uuid = 0;
 
-        if (self->id && self->id->init_callback) {
-            self->id->init_callback(self);
-        } else {
-            self->id = &WS_OBJECT_TYPE_ID_OBJECT;
-        }
+        self->id = &WS_OBJECT_TYPE_ID_OBJECT;
 
         return true;
     }
