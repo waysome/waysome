@@ -273,21 +273,27 @@ ws_string_raw(
 ){
     ws_object_lock_read(&self->obj);
 
-    if (!self->is_utf8) {
-        ws_object_unlock(&self->obj);
+    int32_t dest_len;
+    UErrorCode err = U_ZERO_ERROR;
+
+    (void) u_strToUTF8(NULL, 0, &dest_len, self->str, self->charcount, &err);
+    if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return NULL;
     }
 
-    char* output = calloc(self->charcount + 1, sizeof(*output));
-    int32_t dest_len;
-    UErrorCode err;
+    char* output;
+    output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
+    if (!output) {
+        return NULL;
+    }
 
+    err = U_ZERO_ERROR;
     output = u_strToUTF8(output, self->charcount, &dest_len, self->str,
                          self->charcount, &err);
 
     ws_object_unlock(&self->obj);
 
-    if (U_FAILURE(err)) {
+    if (U_FAILURE(err) || (dest_len <= 0)) {
         free(output);
         return NULL;
     }
