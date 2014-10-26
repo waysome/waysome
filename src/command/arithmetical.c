@@ -91,7 +91,22 @@ int
 ws_builtin_cmd_mul(
     union ws_value_union* args
 ) {
-    //!< @todo: implement
+    intmax_t prod = 1;
+    intmax_t val;
+    union ws_value_union* it;
+
+    // iterate over all the arguments, checking whether they are ints
+    ITERATE_ARGS_TYPE(it, args, val, int) {
+        prod *= val;
+    }
+
+    if (!AT_END(it)) {
+        // Arrr! We must've hit something, captn!
+        return -EINVAL;
+    }
+
+    ws_value_union_reinit(args, WS_VALUE_TYPE_INT);
+    ws_value_int_set(&args->int_, prod);
     return 0;
 }
 
