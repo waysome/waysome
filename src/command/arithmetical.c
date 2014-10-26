@@ -62,7 +62,28 @@ int
 ws_builtin_cmd_sub(
     union ws_value_union* args
 ) {
-    //!< @todo: implement
+    intmax_t sum = 0;
+    intmax_t val;
+    union ws_value_union* it;
+
+    if (ws_value_get_type(&args->value) != WS_VALUE_TYPE_INT) {
+        return -EINVAL;
+    }
+
+    sum = ws_value_int_get(&args[0].int_);
+
+    // iterate over all the arguments, checking whether they are ints
+    ITERATE_ARGS_TYPE(it, args + 1, val, int) {
+        sum -= val;
+    }
+
+    if (!AT_END(it)) {
+        // Arrr! We must've hit something, captn!
+        return -EINVAL;
+    }
+
+    ws_value_union_reinit(args, WS_VALUE_TYPE_INT);
+    ws_value_int_set(&args->int_, sum);
     return 0;
 }
 
