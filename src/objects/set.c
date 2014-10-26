@@ -85,7 +85,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_SET = {
 
     .deinit_callback = deinit_set,
 
-    .init_callback = NULL,
     .dump_callback = NULL,
     .run_callback = NULL,
     .hash_callback = NULL,

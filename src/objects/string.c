@@ -60,7 +60,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_STRING = {
     .supertype = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr = "ws_string",
 
-    .init_callback = NULL,
     .deinit_callback = deinit_callback,
     .dump_callback = NULL,
     .run_callback = NULL,
