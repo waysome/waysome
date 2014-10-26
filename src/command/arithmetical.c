@@ -39,7 +39,6 @@ int
 ws_builtin_cmd_add(
     union ws_value_union* args
 ) {
-
     intmax_t sum = 0;
     intmax_t val;
     union ws_value_union* it;
