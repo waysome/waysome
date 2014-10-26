@@ -67,7 +67,6 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_FRAME_BUFFER = {
 
         .hash_callback = NULL,
 
-        .init_callback = NULL,
         .deinit_callback = frame_buffer_deinit,
         .dump_callback = NULL,
         .run_callback = NULL,
