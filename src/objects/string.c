@@ -84,8 +84,6 @@ ws_string_init(
         ws_object_init(&self->obj);
         self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
 
-        self->is_utf8 = false;
-
         return true;
     }
 
@@ -198,7 +196,6 @@ ws_string_dupl(
         ws_object_lock_read(&self->obj);
 
         nstr->charcount = self->charcount;
-        nstr->is_utf8 = self->is_utf8;
         nstr->str = realloc(nstr->str, (self->charcount + 1) * sizeof(*self->str));
         nstr->str = u_strcpy(nstr->str, self->str);
 
@@ -338,7 +335,6 @@ ws_string_set_from_raw(
     free(self->str);
 
     self->str = conv_raw;
-    self->is_utf8 = true;
     self->charcount = len;
 
     ws_object_unlock(&self->obj);
