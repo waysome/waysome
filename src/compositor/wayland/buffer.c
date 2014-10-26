@@ -130,7 +130,6 @@ static ws_buffer_type_id buffer_type = {
 
         .hash_callback = NULL,
 
-        .init_callback = NULL,
         .deinit_callback = NULL,
         .dump_callback = NULL,
         .run_callback = NULL,
@@ -157,7 +156,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_BUFFER = {
     .typestr    = "ws_wayland_buffer",
 
     .hash_callback = NULL,
-    .init_callback = NULL,
     .deinit_callback = NULL,
     .dump_callback = NULL,
     .run_callback = NULL,
