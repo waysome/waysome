@@ -33,9 +33,30 @@
 #include "connection/connbuf.h"
 
 /**
- * ws_connector type definition
+ * Connector
+ *
+ * A `ws_connector` wraps a file descriptor which may be used to send or receive
+ * data.
+ * For this purpose, it features two embedded `ws_connbuf`s, of which one is an
+ * input buffer and one is an output buffer.
+ * Both of them are meant to be accessed from external modules and can also be
+ * thought of as an "inbox" and an "outbox".
+ *
+ * If an entity wishes to read data from a connection, it will call
+ * `ws_connector_read()`, which performs a `read()` on the embedded file
+ * descriptor, filling up `inbuf`.
+ * After invoking that function, the reading entity may read data from the
+ * `inbuf` and `ws_connbuf_discard()` that data.
+ *
+ * If an entity wishes to write to a connection, it may feed that data to the
+ * `outbuf` and, at some point, call `ws_connector_flush()`.
+ * That call will try to `write()` the buffered data to the file descriptor
+ * passed and discard the data written, making room for more data.
+ *
+ * A connection may be read-only.
+ * A read-only connection holds an uninitialized `outbuf` which it will not use.
+ * E.g. `ws_connector_flush()` will fail on a read-only connection.
  */
-
 struct ws_connector {
     int fd; //!< @protected file descriptor
     struct ws_connbuf inbuf; //!< @public buffer for read data
