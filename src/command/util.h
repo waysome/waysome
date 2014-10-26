@@ -28,6 +28,25 @@
 #ifndef __WS_COMMAND_UTILS_H__
 #define __WS_COMMAND_UTILS_H__
 
+/**
+ * Check whether we are at the end of a command list
+ */
+#define AT_END(it_) \
+    (ws_value_get_type(&it_->value) != WS_VALUE_TYPE_NONE)
+
+
+/**
+ * Iterate over all the arguments passed to a regular function
+ *
+ * This macro expands to a loop head.
+ * Use it like:
+ *
+ *     ITERATE_ARGS(it, args) {
+ *         // do stuff
+ *     }
+ */
+#define ITERATE_ARGS(it_, args_) \
+    for (it_ = (args_); AT_END(it_); ++it_)
 
 #endif // __WS_COMMAND_UTILS_H__
 
