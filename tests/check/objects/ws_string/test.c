@@ -153,6 +153,7 @@ START_TEST (test_string_from_raw_literal) {
 
     char* buf = ws_string_raw(s);
 
+    ck_assert(buf != NULL);
     ck_assert(0 == strcmp(buf, literal));
 
     ws_object_deinit(&s->obj);
@@ -164,11 +165,13 @@ START_TEST (test_string_from_raw_heapbuf) {
     struct ws_string* s = ws_string_new();
     char* literal = "helloworld";
     char* hbuf = strdup(literal);
+    ck_assert(hbuf != NULL);
 
     ws_string_set_from_raw(s, hbuf);
 
     char* buf = ws_string_raw(s);
 
+    ck_assert(buf != NULL);
     ck_assert(0 == strcmp(buf, hbuf));
 
     ws_object_deinit(&s->obj);
