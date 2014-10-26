@@ -312,17 +312,22 @@ ws_string_set_from_raw(
 
     UErrorCode err = U_ZERO_ERROR;
 
+    // get the length of the buffer to allocate
     int32_t len;
     (void) u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
-    if (U_FAILURE(err)) {
+    if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return;
     }
 
-    UChar* conv_raw = calloc(len, sizeof(*conv_raw));
+    // allocate buffer
+    ++len;
+    UChar* conv_raw = calloc(1, sizeof(*conv_raw) * len);
     if (!conv_raw) {
         return;
      }
 
+    // convert string (write into buffer)
+    err = U_ZERO_ERROR;
     conv_raw = u_strFromUTF8(conv_raw, len, NULL, raw, -1, &err);
     if (U_FAILURE(err)) {
         return;
