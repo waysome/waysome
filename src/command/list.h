@@ -30,15 +30,40 @@
 
 #include "command/command.h"
 
+/**
+ * Regular command declaration macro
+ *
+ * This macro expands to the declaration of a regular command function for the
+ * command `name_`.
+ *
+ * The macro is used in generated command function headers.
+ */
 #define DECLARE_CMD_regular(name_) int ws_builtin_cmd_##name_(\
     union ws_value_union*\
 )
 
+/**
+ * Special command declaration macro
+ *
+ * This macro expands to the declaration of a special command function for the
+ * command `name_`.
+ *
+ * The macro is used in generated command function headers.
+ */
 #define DECLARE_CMD_special(name_) int ws_builtin_cmd_##name_(\
     struct ws_processor*,\
     struct ws_command_args const* const\
 )
 
+/**
+ * Command list entry
+ *
+ * This macro expands to a command list entry for a command which the name
+ * `name_` and the type `type_`.
+ * Valid types are `regular` and `special`.
+ *
+ * The macro is intended for use in the (generated) command list.
+ */
 #define COMMAND(name_, type_) {\
     .name = #name_,\
     .command_type = type_,\
