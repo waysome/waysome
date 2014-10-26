@@ -48,5 +48,39 @@
 #define ITERATE_ARGS(it_, args_) \
     for (it_ = (args_); AT_END(it_); ++it_)
 
+
+/*
+ * Ugly block of macros for pure conversion, because _someone_ insisted on using
+ * uppercase names for his enum values...
+ */
+#define WS_VALUE_TYPE_none      WS_VALUE_TYPE_NONE
+#define WS_VALUE_TYPE_value     WS_VALUE_TYPE_VALUE
+#define WS_VALUE_TYPE_nil       WS_VALUE_TYPE_NIL
+#define WS_VALUE_TYPE_bool      WS_VALUE_TYPE_BOOL
+#define WS_VALUE_TYPE_int       WS_VALUE_TYPE_INT
+#define WS_VALUE_TYPE_string    WS_VALUE_TYPE_STRING
+#define WS_VALUE_TYPE_object_id WS_VALUE_TYPE_OBJECT_ID
+#define WS_VALUE_TYPE_set       WS_VALUE_TYPE_SET
+#define WS_VALUE_TYPE_named     WS_VALUE_TYPE_NAMED
+
+
+/**
+ * Iterate over all the arguments passed to a regular function, type checking
+ *
+ * This macro expands to a loop head.
+ * Use it like:
+ *
+ *      int foo;
+ *      ITERATE_ARGS_TYPE(it, args, foo, int) {
+ *          // do stuff
+ *      }
+ */
+#define ITERATE_ARGS_TYPE(it_, args_, varname_, type_) \
+    for (it_ = (args_); \
+         (ws_value_get_type(&it_->value) == WS_VALUE_TYPE_##type_ ) && \
+         (((varname_) = ws_value_##type_##_get((struct ws_value_##type_ *) \
+                                               it_)), 1); \
+         ++it_)
+
 #endif // __WS_COMMAND_UTILS_H__
 
