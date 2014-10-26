@@ -30,7 +30,10 @@
 
 #include "command/arithmetical.h"
 #include "command/util.h"
+#include "values/int.h"
 #include "values/union.h"
+#include "values/value.h"
+#include "values/value_type.h"
 
 int
 ws_builtin_cmd_add(
@@ -79,4 +82,3 @@ ws_builtin_cmd_div(
     //!< @todo: implement
     return 0;
 }
-
