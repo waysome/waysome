@@ -39,8 +39,12 @@
 #include <xkbcommon/xkbcommon.h>
 
 #include "objects/object.h"
+#include "objects/wayland_obj.h"
 #include "compositor/keyboard.h"
 #include "compositor/internal_context.h"
+#include "compositor/wayland/client.h"
+#include "compositor/wayland/keyboard.h"
+#include "util/wayland.h"
 
 static const char keymap_file_template[] = "waysome-xkb-keymap-XXXXXX";
 
@@ -132,7 +136,25 @@ void
 ws_keyboard_send_keymap(
     struct ws_keyboard* self
 ) {
-    //!< @todo
+    // Did we leave the old surface? Well, send a leave event
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
+            (struct ws_wayland_obj*) self->active_surface);
+
+    if (self->active_surface && res) {
+        struct ws_wayland_client* client = ws_wayland_client_get(res->client);
+
+        struct ws_deletable_resource* keyboard;
+        wl_list_for_each(keyboard, &client->resources, link) {
+            int retval = ws_wayland_keyboard_instance_of(keyboard->resource);
+            if (!retval) {
+                continue;
+            }
+            wl_keyboard_send_keymap(keyboard->resource,
+                                    WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
+                                    self->xkb->keymap.fd,
+                                    self->xkb->keymap.size - 1);
+        }
+    }
 }
 
 void
@@ -156,7 +178,31 @@ ws_keyboard_send_key(
     uint32_t key,
     uint32_t state
 ) {
-    //!< @todo
+    struct wl_display* d = ws_wayland_acquire_display();
+
+    if (!d) {
+        return;
+    }
+
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
+            (struct ws_wayland_obj*) self->active_surface);
+
+    if (self->active_surface && res) {
+        struct ws_wayland_client* client = ws_wayland_client_get(res->client);
+
+        struct ws_deletable_resource* keyboard;
+        wl_list_for_each(keyboard, &client->resources, link) {
+            int retval = ws_wayland_keyboard_instance_of(keyboard->resource);
+            if (!retval) {
+                continue;
+            }
+            uint32_t serial = wl_display_next_serial(d);
+            uint32_t t = (time->tv_sec * 1000) + (time->tv_usec / 1000);
+            wl_keyboard_send_key(keyboard->resource, serial, t, key, state);
+        }
+    }
+
+    ws_wayland_release_display();
 }
 
 void
