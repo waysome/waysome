@@ -13,6 +13,7 @@ set(SOURCE_FILES
     wayland/buffer.c
     wayland/client.c
     wayland/compositor.c
+    wayland/keyboard.c
     wayland/pointer.c
     wayland/region.c
     wayland/seat.c
