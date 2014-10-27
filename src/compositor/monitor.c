@@ -295,7 +295,8 @@ bind_output(
             monitor->phys_height, 0, "unknown", "unknown",
             WL_OUTPUT_TRANSFORM_NORMAL);
     // We publish all the modes we have right now through wayland
-    ws_set_select(&monitor->modes, NULL, NULL, publish_modes, monitor->resource);
+    ws_set_select(&monitor->modes, NULL, NULL, publish_modes,
+                  monitor->resource);
 
     // We tell wayland that this output is done!
     wl_output_send_done(monitor->resource);
