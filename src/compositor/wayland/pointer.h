@@ -60,5 +60,13 @@ ws_wayland_pointer_new(
     uint32_t serial //!< id of the newly created pointer
 );
 
+/**
+ * Check if a given resource is a pointer
+ */
+bool
+ws_wayland_pointer_instance_of(
+    struct wl_resource* res
+);
+
 #endif // __WS_WL_POINTER_H__
 

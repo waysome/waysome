@@ -27,8 +27,10 @@
 
 #include <malloc.h>
 #include <wayland-server.h>
+#include <wayland-server-protocol.h>
 
 #include "compositor/internal_context.h"
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/pointer.h"
 #include "compositor/wayland/surface.h"
 
@@ -135,7 +137,7 @@ ws_wayland_pointer_new(
     }
 
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_pointer_interface,
+    resource = ws_wayland_client_create_resource(client, &wl_pointer_interface,
             WAYLAND_POINTER_VERSION, serial);
 
     if (!resource) {
@@ -156,6 +158,15 @@ cleanup_pointer:
     return NULL;
 }
 
+
+bool
+ws_wayland_pointer_instance_of(
+    struct wl_resource* res
+) {
+    return wl_resource_instance_of(res,
+                    &wl_pointer_interface, &interface);
+}
+
 static void
 set_cursor(
     struct wl_client* client,
@@ -166,7 +177,7 @@ set_cursor(
     int32_t hotspot_y
 ) {
     struct ws_surface* sf = ws_surface_from_resource(surface);
-    struct ws_buffer* buffer = (struct ws_buffer*) &sf->img_buf;
+    struct ws_buffer* buffer = (struct ws_buffer*) &sf->img_buf.buf;
 
     ws_cursor_set_image(ws_comp_ctx.cursor, buffer);
     ws_cursor_set_hotspot(ws_comp_ctx.cursor, hotspot_x, hotspot_y);

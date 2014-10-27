@@ -38,6 +38,11 @@
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
+#include "compositor/wayland/client.h"
+#include "compositor/wayland/pointer.h"
+#include "compositor/wayland/surface.h"
+#include "compositor/wayland/region.h"
+#include "util/wayland.h"
 
 #define CURSOR_SIZE 64
 
@@ -90,6 +95,42 @@ ws_cursor_new(
     return self;
 }
 
+
+static int
+get_surface_under_cursor(
+    void* target,
+    void const* _surface
+) {
+    struct ws_cursor* self = ws_comp_ctx.cursor;
+    int real_x = self->x + self->x_hp;
+    int real_y = self->y + self->y_hp;
+
+    struct ws_surface* surface = (struct ws_surface*) _surface;
+
+    //<! @todo: Once a surface has a position, we can really check if the
+    // cursor is inside
+    int x = 0;
+    int y = 0;
+    struct ws_buffer* buff = ws_wayland_buffer_get_buffer(&surface->img_buf);
+    int w = ws_buffer_width(buff);
+    int h = ws_buffer_height(buff);
+
+    if (real_x < x || real_x > (x + w)) {
+        return 0;
+    }
+
+    if (real_y < y || real_y > (y + h)) {
+        return 0;
+    }
+
+    if (ws_region_inside(surface->input_region, x - real_x, y - real_y)) {
+        *((struct ws_surface**) target) = (struct ws_surface*) _surface;
+        return 1;
+    }
+
+    return 0;
+}
+
 void
 ws_cursor_set_position(
     struct ws_cursor* self,
@@ -108,6 +149,68 @@ ws_cursor_set_position(
     if (retval != 0) {
         ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
     }
+
+    struct ws_set* surfaces = ws_monitor_surfaces(self->cur_mon);
+    struct ws_surface* nxt_surface = NULL;
+    ws_set_select(surfaces, NULL, NULL, get_surface_under_cursor, &nxt_surface);
+
+    if (self->active_surface == nxt_surface) {
+        return;
+    }
+    struct ws_surface* old_surface = self->active_surface;
+    self->active_surface = nxt_surface;
+
+
+    struct wl_display* display = ws_wayland_acquire_display();
+    if (!display) {
+        return;
+    }
+
+    // Did we leave the old surface? Well, send a leave event
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
+            (struct ws_wayland_obj*) old_surface);
+    if (old_surface != self->active_surface && res) {
+        struct ws_wayland_client* client = ws_wayland_client_get(res->client);
+
+        struct ws_deletable_resource* cursor;
+        wl_list_for_each(cursor, &client->resources, link) {
+            int retval = ws_wayland_pointer_instance_of(cursor->resource);
+            if (!retval) {
+                continue;
+            }
+            uint32_t serial = wl_display_next_serial(display);
+            wl_pointer_send_leave(cursor->resource, serial, res);
+        }
+
+        ws_cursor_set_image(self, NULL);
+        ws_log(&log_ctx, LOG_DEBUG, "Left surface!");
+    }
+
+    // Did we enter a new surface? Send a enter event!
+    res = ws_wayland_obj_get_wl_resource(
+            (struct ws_wayland_obj*) self->active_surface);
+    if (self->active_surface && res) {
+        struct ws_wayland_client* client = ws_wayland_client_get(res->client);
+
+        struct ws_deletable_resource* cursor = NULL;
+        //<! @todo once windows have a real position, set it here!
+        int surface_x = 0;
+        int surface_y = 0;
+        wl_list_for_each(cursor, &client->resources, link) {
+            int retval = ws_wayland_pointer_instance_of(cursor->resource);
+            if (!retval) {
+                continue;
+            }
+            uint32_t serial = wl_display_next_serial(display);
+            wl_pointer_send_enter(cursor->resource, serial, res,
+                    self->x - surface_x,
+                    self->y - surface_y);
+        }
+        ws_log(&log_ctx, LOG_DEBUG, "Entered surface!");
+    }
+
+    ws_wayland_release_display();
+
 }
 
 void
@@ -125,8 +228,14 @@ ws_cursor_set_hotspot(
     int x,
     int y
 ) {
-    self->x = CLAMP(0, CURSOR_SIZE, 128);
-    self->y = CLAMP(0, CURSOR_SIZE, 128);
+    int old_hs_x = self->x_hp;
+    int old_hs_y = self->y_hp;
+    ws_cursor_add_position(ws_comp_ctx.cursor,
+                            old_hs_x - x,
+                            old_hs_y - y);
+    self->x_hp = CLAMP(0, x, CURSOR_SIZE);
+    self->y_hp = CLAMP(0, y, CURSOR_SIZE);
+    ws_cursor_add_position(self, 0, 0);
 }
 
 void
@@ -156,10 +265,15 @@ ws_cursor_set_image(
     struct ws_cursor* self,
     struct ws_buffer* img
 ) {
-    memset(self->cursor_fb, 0,
+    memset(self->cursor_fb->obj.buffer, 0,
             ws_buffer_stride((struct ws_buffer*) self->cursor_fb) *
             ws_buffer_height((struct ws_buffer*) self->cursor_fb));
-    ws_buffer_blit((struct ws_buffer*) self->cursor_fb, img);
+    ws_log(&log_ctx, LOG_DEBUG, "Setting new cursor image");
+    if (!img) {
+        img = (struct ws_buffer*) self->default_cursor;
+        ws_cursor_set_hotspot(self, 1, 1);
+    }
+        ws_buffer_blit((struct ws_buffer*) self->cursor_fb, img);
 }
 
 void

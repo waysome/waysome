@@ -41,6 +41,7 @@
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
+#include "compositor/wayland/client.h"
 #include "logger/module.h"
 #include "objects/object.h"
 #include "util/wayland.h"
@@ -151,13 +152,15 @@ bind_output(
         version = 2;
     }
 
-    monitor->resource = wl_resource_create(client, &wl_output_interface,
-            version, id);
+    monitor->resource = ws_wayland_client_create_resource(client,
+            &wl_output_interface, version, id);
 
     if (!monitor->resource) {
         ws_log(&log_ctx, LOG_ERR, "Wayland couldn't create object");
         return;
     }
+
+    ws_log(&log_ctx, LOG_DEBUG, "Created output resource");
 
     // We don't set an implementation, instead we just set the data
     wl_resource_set_implementation(monitor->resource, NULL, data, NULL);
@@ -199,7 +202,14 @@ ws_monitor_publish(
     }
 
     self->global = wl_global_create(display, &wl_output_interface, 2,
-                    self, &bind_output);
+                    self, bind_output);
+
+    if (!self->global) {
+        ws_log(&log_ctx, LOG_ERR, "Could not create output global.");
+    } else {
+        ws_log(&log_ctx, LOG_ERR, "Created output global.");
+    }
+
 
     ws_wayland_release_display();
 

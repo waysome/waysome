@@ -28,6 +28,7 @@
 #include <malloc.h>
 #include <wayland-server.h>
 
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/shell_surface.h"
 
 /**
@@ -220,8 +221,8 @@ ws_shell_surface_new(
 
     // try to set up the resource
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_shell_surface_interface,
-                                  WAYLAND_SHELL_SURFACE_VERSION, serial);
+    resource = ws_wayland_client_create_resource(client,
+            &wl_shell_surface_interface, WAYLAND_SHELL_SURFACE_VERSION, serial);
     if (!resource) {
         goto cleanup_surface;
     }

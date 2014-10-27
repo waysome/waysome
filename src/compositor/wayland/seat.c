@@ -27,8 +27,10 @@
 
 #include <stdbool.h>
 
+#include "compositor/wayland/client.h"
 #include "compositor/wayland/pointer.h"
 #include "compositor/wayland/seat.h"
+#include "logger/module.h"
 #include "util/arithmetical.h"
 
 
@@ -40,6 +42,7 @@
  *
  */
 
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Seat]" };
 
 /**
  * Gets a reference to the current pointer
@@ -129,6 +132,7 @@ get_pointer(
     struct wl_resource* resource,
     uint32_t id
 ) {
+    ws_log(&log_ctx, LOG_DEBUG, "Creationg Pointer...");
     (void) ws_wayland_pointer_new(client, id);
 }
 
@@ -158,7 +162,7 @@ bind_seat(
     uint32_t serial
 ) {
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_seat_interface,
+    resource = ws_wayland_client_create_resource(client, &wl_seat_interface,
                                   MIN(version, WAYLAND_SEAT_VERSION),
                                   serial);
     if (!resource) {

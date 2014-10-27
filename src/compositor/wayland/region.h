@@ -25,51 +25,60 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_WL_SURFACE_H__
-#define __WS_WL_SURFACE_H__
+#ifndef __WS_WL_REGION_H__
+#define __WS_WL_REGION_H__
 
 #include "compositor/wayland/buffer.h"
 #include "objects/wayland_obj.h"
 
 
 /**
- * Waysome's implementation of wl_surface
+ * Waysome's implementation of wl_region
  *
- * This struct represents a surface
+ * This struct represents a region
  */
-struct ws_surface {
+struct ws_region {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
-    struct ws_wayland_buffer img_buf; //!< @protected image buffer
-    struct ws_region* input_region; //!< @protected input region
+    struct ws_image_buffer img_buf; //!< @protected image buffer
 };
 
 /**
- * Variable which holds type information about the wl_surface type
+ * Variable which holds type information about the wl_region type
  */
-extern ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE;
+extern ws_object_type_id WS_OBJECT_TYPE_ID_REGION;
 
 /**
- * Create a new surface
+ * Create a new region
  *
- * create a new surface without any bufers attached to it
+ * create a new region without any buffers attached to it
  */
-struct ws_surface*
-ws_surface_new(
-    struct wl_client* client, //!< client requesting the surface creation
-    uint32_t serial //!< id of the newly created surface
+struct ws_region*
+ws_region_new(
+    struct wl_client* client, //!< client requesting the region creation
+    uint32_t serial //!< id of the newly created region
 );
 
 /**
- * Get a surface from a resource
+ * Get a region from a resource
  *
- * Extracts the surface from a resource.
+ * Extracts the region from a resource.
  *
- * @return the surface or NULL, if the resource is not a wl_surface.
+ * @return the region or NULL, if the resource is not a wl_region.
  */
-struct ws_surface*
-ws_surface_from_resource(
+struct ws_region*
+ws_region_from_resource(
     struct wl_resource* resource
 );
 
-#endif // __WS_WL_SURFACE_H__
+/**
+ * Check if a given position is inside the input region
+ */
+bool
+ws_region_inside(
+    struct ws_region* region, //!< the region to check against
+    int x, //!< the position
+    int y //!< the position
+);
+
+#endif // __WS_WL_REGION_H__
 
