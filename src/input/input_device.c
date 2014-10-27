@@ -136,6 +136,28 @@ cmp_callback(
     return signum((int32_t)(dev1->fd > dev2->fd));
 }
 
+
+static void
+handle_relative_event(
+    struct input_event* ev
+) {
+    //ws_log(&log_ctx, LOG_DEBUG, "It's a mouse event!");
+
+    int x = 0;
+    int y = 0;
+
+    if (ev->code == REL_X) {
+        x = ev->value;
+    }
+    if (ev->code == REL_Y) {
+        y = ev->value;
+    }
+
+    struct ws_cursor* pointer = ws_cursor_get();
+
+    ws_cursor_add_position(pointer, x, y);
+}
+
 static void
 watch_pointers(
     struct ev_loop* loop,
@@ -166,24 +188,9 @@ watch_pointers(
             continue;
         }
 
-        if (ev.type != EV_REL) {
-            continue;
+        if (ev.type == EV_REL) {
+            handle_relative_event(&ev);
         }
 
-        //ws_log(&log_ctx, LOG_DEBUG, "It's a mouse event!");
-
-        int x = 0;
-        int y = 0;
-
-        if (ev.code == REL_X) {
-            x = ev.value;
-        }
-        if (ev.code == REL_Y) {
-            y = ev.value;
-        }
-
-        struct ws_cursor* pointer = ws_cursor_get();
-
-        ws_cursor_add_position(pointer, x, y);
     }
 }
