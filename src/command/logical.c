@@ -80,7 +80,7 @@ ws_builtin_cmd_lnand(
         return res;
     }
 
-    ws_value_bool_set(&args->bool_, !ws_value_bool_plain(&args->bool_));
+    ws_value_bool_set(&args->bool_, !ws_value_bool_get(&args->bool_));
     return 0;
 }
 
@@ -118,7 +118,7 @@ ws_builtin_cmd_lnor(
         return res;
     }
 
-    ws_value_bool_set(&args->bool_, !ws_value_bool_plain(&args->bool_));
+    ws_value_bool_set(&args->bool_, !ws_value_bool_get(&args->bool_));
     return 0;
 }
 
