@@ -7,6 +7,7 @@ set(SOURCE_FILES
     buffer/image.c
     cursor.c
     framebuffer_device.c
+    keyboard.c
     module.c
     monitor.c
     monitor_mode.c
