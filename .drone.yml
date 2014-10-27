@@ -1,5 +1,6 @@
 image: neikos/waysome_fedora
 script:
+    - git pull --no-commit origin $DRONE_BRANCH
     - cmake -DHARD_MODE=ON .
     - make
     - ctest -VV
