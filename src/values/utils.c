@@ -55,7 +55,7 @@ ws_value_is_true(
         return false;
 
     case WS_VALUE_TYPE_BOOL:
-        return ws_value_bool_plain((struct ws_value_bool*) self);
+        return ws_value_bool_get((struct ws_value_bool*) self);
 
     case WS_VALUE_TYPE_INT:
         return ws_value_int_get((struct ws_value_int*) self) != 0;

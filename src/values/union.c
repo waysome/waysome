@@ -50,7 +50,7 @@ ws_value_union_init_from_val(
     case WS_VALUE_TYPE_BOOL:
         ws_value_bool_init(&dest->bool_);
         {
-            bool buf = ws_value_bool_plain(&dest->bool_);
+            bool buf = ws_value_bool_get(&dest->bool_);
             return ws_value_bool_set(&dest->bool_, buf);
         }
 
@@ -64,7 +64,7 @@ ws_value_union_init_from_val(
     case WS_VALUE_TYPE_STRING:
         ws_value_string_init(&dest->string);
         {
-            struct ws_string* buf = ws_value_string_get_str(&dest->string);
+            struct ws_string* buf = ws_value_string_get(&dest->string);
             if (!buf) {
                 return -EINVAL;
             }
