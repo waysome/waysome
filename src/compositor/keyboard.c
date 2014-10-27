@@ -193,7 +193,31 @@ void
 ws_keyboard_send_leave(
     struct ws_keyboard* self
 ) {
-    //!< @todo
+    struct wl_display* d = ws_wayland_acquire_display();
+
+    if (!d) {
+        return;
+    }
+
+    // Did we leave the old surface? Well, send a leave event
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
+            (struct ws_wayland_obj*) self->active_surface);
+
+    if (self->active_surface && res) {
+        struct ws_wayland_client* client = ws_wayland_client_get(res->client);
+
+        struct ws_deletable_resource* keyboard;
+        wl_list_for_each(keyboard, &client->resources, link) {
+            int retval = ws_wayland_keyboard_instance_of(keyboard->resource);
+            if (!retval) {
+                continue;
+            }
+            uint32_t serial = wl_display_next_serial(d);
+            wl_keyboard_send_leave(keyboard->resource, serial, res);
+        }
+    }
+
+    ws_wayland_release_display();
 }
 
 void
