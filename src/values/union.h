@@ -73,6 +73,18 @@ ws_value_union_init_from_val(
 __ws_nonnull__(1, 2)
 ;
 
+/**
+ * Reinit
+ */
+int
+ws_value_union_reinit(
+    union ws_value_union* self, //!< union to reinitialize
+    enum ws_value_type type //!< type to initialize dest with
+)
+__ws_nonnull__(1)
+;
+
+
 #endif //__WS_VALUES_UNION_H__
 
 /**

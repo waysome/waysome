@@ -96,3 +96,49 @@ ws_value_union_init_from_val(
 }
 
 
+int
+ws_value_union_reinit(
+    union ws_value_union* self,
+    enum ws_value_type type
+) {
+    ws_value_deinit(&self->value);
+
+    switch(type) {
+    default:
+    case WS_VALUE_TYPE_NONE:
+    case WS_VALUE_TYPE_VALUE:
+        return -EINVAL;
+
+    case WS_VALUE_TYPE_NIL:
+        ws_value_nil_init(&self->nil);
+        break;
+
+    case WS_VALUE_TYPE_BOOL:
+        ws_value_bool_init(&self->bool_);
+        break;
+
+    case WS_VALUE_TYPE_INT:
+        ws_value_int_init(&self->int_);
+        break;
+
+    case WS_VALUE_TYPE_STRING:
+        ws_value_string_init(&self->string);
+        break;
+
+    case WS_VALUE_TYPE_OBJECT_ID:
+        ws_value_object_id_init(&self->object_id);
+
+    case WS_VALUE_TYPE_SET:
+        return ws_value_set_init(&self->set);
+
+    case WS_VALUE_TYPE_NAMED:
+        ws_value_named_value_init(&self->named_value);
+        break;
+
+        //!< @todo implement
+        return -ENOTSUP;
+    }
+    return 0;
+}
+
+
