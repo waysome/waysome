@@ -169,7 +169,43 @@ static int
 xkb_init(
     struct ws_keyboard* self //!< keyboard
 ) {
-    //!< @todo implement
-    return -1;
+    self->xkb = calloc(1, sizeof(*self->xkb));
+
+    if (!self->xkb) {
+        return -ENOMEM;
+    }
+
+    self->xkb->context = xkb_context_new(0);
+
+    if (!self->xkb->context) {
+        return -ENOMEM;
+    }
+
+    // NULL and zero are defaults here, so they are hardcoded
+    self->xkb->keymap.map = xkb_keymap_new_from_names(self->xkb->context,
+                                                      NULL, 0);
+
+    if (!self->xkb->keymap.map) {
+        xkb_context_unref(self->xkb->context);
+        return -ENOENT;
+    }
+
+    self->xkb->state = xkb_state_new(self->xkb->keymap.map);
+
+    if (!self->xkb->state) {
+        xkb_keymap_unref(self->xkb->keymap.map);
+        xkb_context_unref(self->xkb->context);
+        return -ENOMEM;
+    }
+
+    int ret = update_keymap(self->xkb);
+    if (ret != 0) {
+        xkb_state_unref(self->xkb->state);
+        xkb_keymap_unref(self->xkb->keymap.map);
+        xkb_context_unref(self->xkb->context);
+        return ret;
+    }
+
+    return 0;
 }
 
