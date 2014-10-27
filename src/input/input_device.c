@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <wayland-server-protocol.h>
 
 #include "compositor/cursor.h"
 #include "input/input_device.h"
@@ -113,6 +114,18 @@ ws_input_device_new(
         return NULL;
     }
 
+    if (libevdev_has_event_code(self->dev, EV_KEY, KEY_A)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Device is a keyboard");
+        self->capabilities |= WL_SEAT_CAPABILITY_KEYBOARD;
+    }
+
+    if (libevdev_has_event_code(self->dev, EV_REL, REL_Y) &&
+            libevdev_has_event_code(self->dev, EV_REL, REL_X) &&
+            libevdev_has_event_code(self->dev, EV_KEY, BTN_MOUSE)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Device is a mouse");
+        self->capabilities |= WL_SEAT_CAPABILITY_POINTER;
+    }
+
     ev_io_start(default_loop, &self->watcher);
 
     return self;
@@ -134,6 +147,44 @@ cmp_callback(
     struct ws_input_device* dev2 = (struct ws_input_device*) obj2;
     // It's short signum function
     return signum((int32_t)(dev1->fd > dev2->fd));
+}
+
+
+static void
+handle_relative_event(
+    struct input_event* ev
+) {
+    //ws_log(&log_ctx, LOG_DEBUG, "It's a mouse event!");
+
+    switch (ev->code) {
+    case REL_X:
+        {
+            struct ws_cursor* pointer = ws_cursor_get();
+            ws_cursor_add_position(pointer, ev->value, 0);
+            break;
+        }
+    case REL_Y:
+        {
+            struct ws_cursor* pointer = ws_cursor_get();
+            ws_cursor_add_position(pointer, 0, ev->value);
+            break;
+        }
+    }
+
+
+}
+
+static void
+handle_mouse_click_event(
+    struct input_event* ev
+) {
+    ws_log(&log_ctx, LOG_DEBUG, "It's a mouse click! %x", ev->code);
+
+    int state = ev->value ? WL_POINTER_BUTTON_STATE_PRESSED :
+                            WL_POINTER_BUTTON_STATE_RELEASED;
+
+    struct ws_cursor* pointer = ws_cursor_get();
+    ws_cursor_set_button_state(pointer, &ev->time, ev->code, state);
 }
 
 static void
@@ -166,24 +217,19 @@ watch_pointers(
             continue;
         }
 
-        if (ev.type != EV_REL) {
-            continue;
+        if (ev.type == EV_REL) {
+            handle_relative_event(&ev);
+            return;
         }
 
-        //ws_log(&log_ctx, LOG_DEBUG, "It's a mouse event!");
-
-        int x = 0;
-        int y = 0;
-
-        if (ev.code == REL_X) {
-            x = ev.value;
-        }
-        if (ev.code == REL_Y) {
-            y = ev.value;
+        if (ev.type == EV_KEY) {
+            if (BTN_MISC <= ev.code && ev.code <= BTN_GEAR_UP) {
+                handle_mouse_click_event(&ev);
+                return;
+            }
         }
 
-        struct ws_cursor* pointer = ws_cursor_get();
+        ws_log(&log_ctx, LOG_DEBUG, "Unhandled event: %x %x", ev.type, ev.code);
 
-        ws_cursor_add_position(pointer, x, y);
     }
 }
