@@ -45,7 +45,7 @@ ws_value_bool_init(
 }
 
 bool
-ws_value_bool_plain(
+ws_value_bool_get(
     struct ws_value_bool* self
 ) {
     if (self) {
