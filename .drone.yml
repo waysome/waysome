@@ -1,5 +1,7 @@
 image: neikos/waysome_fedora
 script:
+    - git config user.email "drone@localdomain"
+    - git config user.name "drone build script"
     - git pull --no-commit origin $DRONE_BRANCH
     - cmake -DHARD_MODE=ON .
     - make
