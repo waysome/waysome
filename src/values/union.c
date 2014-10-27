@@ -75,9 +75,20 @@ ws_value_union_init_from_val(
         }
 
     case WS_VALUE_TYPE_OBJECT_ID:
+        ws_value_object_id_init(&dest->object_id);
+        {
+            struct ws_object* buf;
+            buf = ws_value_object_id_get((struct ws_value_object_id*) src);
+            if (!buf) {
+                return -EINVAL;
+            }
+            ws_value_object_id_set(&dest->object_id, buf);
+            ws_object_unref(buf);
+            return 0;
+        }
+
     case WS_VALUE_TYPE_SET:
     case WS_VALUE_TYPE_NAMED:
-
         //!< @todo implement
         return -ENOTSUP;
     }
