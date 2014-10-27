@@ -202,8 +202,9 @@ ws_string_multicat(
      * the final locking implementation, this might have to be adjusted later.
      */
     for (unsigned int i = 0; i < others->len; i++) {
-        self->str = u_strcat(self->str,
-                            ((struct ws_string*)ws_array_get_at(others, i))->str);
+        UChar* tmp;
+        tmp = ((struct ws_string*) ws_array_get_at(others, i))->str;
+        self->str = u_strcat(self->str, tmp);
 
         if (!self) {
             ws_object_unlock(&self->obj);
