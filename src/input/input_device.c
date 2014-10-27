@@ -197,7 +197,8 @@ watch_pointers(
     struct input_event ev;
 
     while (true) {
-        int retval = libevdev_next_event(self->dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
+        int retval = libevdev_next_event(self->dev, LIBEVDEV_READ_FLAG_NORMAL,
+                                         &ev);
         if (retval == -EAGAIN) {
             break;
         }
