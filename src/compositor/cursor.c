@@ -103,6 +103,11 @@ ws_cursor_set_position(
     // off screen.
     self->x = CLAMP(-self->x_hp, x, w);
     self->y = CLAMP(-self->y_hp, y, h);
+    int retval = drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
+                                    self->x, self->y);
+    if (retval != 0) {
+        ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
+    }
 }
 
 void
