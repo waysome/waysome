@@ -76,7 +76,7 @@ ws_value_string_new(void)
 }
 
 struct ws_string*
-ws_value_string_get_str(
+ws_value_string_get(
     struct ws_value_string* self
 ){
     if (self) {
