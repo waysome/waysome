@@ -226,7 +226,8 @@ static int add_surface_to_monitor(
         goto cleanup_monitor;
     }
 
-    int retval = ws_set_insert(surfaces, ws_object_getref(&surface->wl_obj.obj));
+    int retval = ws_set_insert(surfaces,
+                               ws_object_getref(&surface->wl_obj.obj));
     if (retval < 0) {
         // if the insertion failed, we unref and carry on
         ws_object_unref(&surface->wl_obj.obj);
