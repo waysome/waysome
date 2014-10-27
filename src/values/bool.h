@@ -67,7 +67,7 @@ ws_value_bool_init(
  * @return The `bool` representation of the `ws_value_bool` object
  */
 bool
-ws_value_bool_plain(
+ws_value_bool_get(
     struct ws_value_bool* self //!< The object
 );
 
