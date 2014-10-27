@@ -41,6 +41,7 @@
 #include "input/utils.h"
 #include "logger/module.h"
 #include "objects/set.h"
+#include "util/cleaner.h"
 
 static struct ws_logger_context log_ctx = { .prefix = "[Input/Device] " };
 
@@ -127,10 +128,35 @@ find_initial_devices(void) {
     return 0;
 }
 
+static void
+cleanup_input(
+    void* dummy
+) {
+    int size = ws_set_cardinality(&ws_input_ctx.devices);
+
+    while (size--) {
+        struct ws_input_device* dev =
+            (struct ws_input_device*) ws_set_select_any(&ws_input_ctx.devices);
+
+        ws_set_remove(&ws_input_ctx.devices, (struct ws_object*) dev);
+
+        libevdev_free(dev->dev);
+        ev_io_stop(ev_default_loop(EVFLAG_AUTO), &dev->watcher);
+        close(dev->fd);
+        ws_object_unref((struct ws_object*) dev);
+    }
+
+    ws_object_deinit((struct ws_object*) &ws_input_ctx.devices);
+}
 
 int
 ws_input_init(void)
 {
+    static bool is_init = false;
+
+    if (is_init) {
+        return 0;
+    }
     ws_set_init(&ws_input_ctx.devices);
 
     int inotfd = inotify_init1(IN_NONBLOCK);
@@ -165,6 +191,9 @@ ws_input_init(void)
         return retval;
     }
 
+    ws_cleaner_add(cleanup_input, NULL);
+
+    is_init = true;
     return 0;
 }
 
