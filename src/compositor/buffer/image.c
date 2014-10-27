@@ -248,7 +248,7 @@ static uint32_t
 get_format(
     struct ws_buffer const* self
 ) {
-    //struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    //struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return 0; //!< @todo: unused (But maybe of use later)
 }
 

@@ -82,7 +82,7 @@ ws_framebuffer_device_new(
     char* path
 ) {
     struct ws_framebuffer_device* tmp = calloc(1, sizeof(*tmp));
-    ws_object_init((struct ws_object*)tmp);
+    ws_object_init((struct ws_object*) tmp);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE;
     tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
     tmp->fd = open(path, O_RDWR | O_CLOEXEC);

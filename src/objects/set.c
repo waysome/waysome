@@ -275,7 +275,7 @@ get_reference(
     void* dest,
     void const* src
 ) {
-    *(struct ws_object**)dest = (void*)src;
+    *(struct ws_object**) dest = (void*) src;
     return 1;
 }
 

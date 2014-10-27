@@ -254,8 +254,8 @@ blit_duck_on_monitor(
     void* img,
     void const* mon
 ) {
-    struct ws_monitor* monitor = (struct ws_monitor*)mon;
-    struct ws_image_buffer* duck = (struct ws_image_buffer*)img;
+    struct ws_monitor* monitor = (struct ws_monitor*) mon;
+    struct ws_image_buffer* duck = (struct ws_image_buffer*) img;
 
     if (!monitor->connected) {
         ws_log(&log_ctx, LOG_DEBUG, "Monitor %d is not connected",
@@ -268,8 +268,8 @@ blit_duck_on_monitor(
     }
     ws_log(&log_ctx, LOG_DEBUG, "Copying into monitor with name: %s",
             monitor->current_mode->mode.name);
-    ws_buffer_blit((struct ws_buffer*)monitor->buffer,
-            (struct ws_buffer*)duck);
+    ws_buffer_blit((struct ws_buffer*) monitor->buffer,
+            (struct ws_buffer*) duck);
     return 0;
 }
 
@@ -297,7 +297,7 @@ set_monitor_modes(
     void* dummy,
     void const* mon
 ) {
-    struct ws_monitor* monitor = (struct ws_monitor*)mon;
+    struct ws_monitor* monitor = (struct ws_monitor*) mon;
 
     if (!monitor->connected) {
         return 0;
@@ -330,7 +330,7 @@ find_connector_with_crtc(
     dummy.obj.id = &WS_OBJECT_TYPE_ID_MONITOR;
     dummy.crtc = crtc;
     dummy.fb_dev = ws_comp_ctx.fb;
-    return (struct ws_monitor*)ws_set_get(&ws_comp_ctx.monitors,
+    return (struct ws_monitor*) ws_set_get(&ws_comp_ctx.monitors,
             (struct ws_object*)&dummy);
 }
 
@@ -392,8 +392,8 @@ find_crtc(
 
     ws_log(&log_ctx, LOG_DEBUG,
             "Could not find suitable Encoder for crtc with dim: %dx%d.",
-            ws_buffer_width((struct ws_buffer*)connector->buffer),
-            ws_buffer_height((struct ws_buffer*)connector->buffer));
+            ws_buffer_width((struct ws_buffer*) connector->buffer),
+            ws_buffer_height((struct ws_buffer*) connector->buffer));
     return -ENOENT;
 }
 
@@ -467,7 +467,7 @@ populate_connectors(void) {
 
 insert:
         new_monitor->id = i;
-        ws_set_insert(&ws_comp_ctx.monitors, (struct ws_object*)new_monitor);
+        ws_set_insert(&ws_comp_ctx.monitors, (struct ws_object*) new_monitor);
     }
     return 0;
 }

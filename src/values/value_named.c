@@ -93,7 +93,7 @@ ws_value_named_get_name(
     struct ws_value_named_value* self
 ) {
     if (self) {
-        ws_object_getref((struct ws_object*)self->name);
+        ws_object_getref((struct ws_object*) self->name);
         return self->name;
     }
 
