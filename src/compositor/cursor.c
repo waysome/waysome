@@ -300,6 +300,39 @@ ws_cursor_get()
     return ws_comp_ctx.cursor;
 }
 
+void
+ws_cursor_set_button_state(
+    struct ws_cursor* self,
+    struct timeval* time,
+    short code,
+    int state
+) {
+    struct wl_display* display = ws_wayland_acquire_display();
+    if (!display) {
+        return;
+    }
+
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
+            (struct ws_wayland_obj*) self->active_surface);
+    if (self->active_surface && res) {
+        struct ws_wayland_client* client = ws_wayland_client_get(res->client);
+
+        struct ws_deletable_resource* cursor = NULL;
+        wl_list_for_each(cursor, &client->resources, link) {
+            int retval = ws_wayland_pointer_instance_of(cursor->resource);
+            if (!retval) {
+                continue;
+            }
+            uint32_t serial = wl_display_next_serial(display);
+            uint32_t t = time->tv_sec * 1000 + time->tv_usec / 1000;
+            wl_pointer_send_button(cursor->resource, serial, t, code, state);
+        }
+        ws_log(&log_ctx, LOG_DEBUG, "Entered surface!");
+    }
+
+    ws_wayland_release_display();
+}
+
 static bool
 deinit_cursor(
         struct ws_object* s

@@ -408,6 +408,22 @@ surface_set_buffer_scale_cb(
     //!< @todo: implement
 }
 
+static int
+sf_remove_surface(
+    void* _surface,
+    void const* mon
+) {
+    struct ws_surface* surface = (struct ws_surface*) _surface;
+    struct ws_monitor* monitor = (struct ws_monitor*) mon;
+
+    struct ws_set* surfaces = ws_monitor_surfaces(monitor);
+
+    ws_set_remove(surfaces, (struct ws_object*) surface);
+    ws_object_unref(&surface->wl_obj.obj);
+
+    return 0;
+}
+
 static void
 resource_destroy(
     struct wl_resource* resource
@@ -415,6 +431,16 @@ resource_destroy(
     struct ws_surface* surface;
     surface = (struct ws_surface*) wl_resource_get_user_data(resource);
     // we don't need a null-check since we rely on the resource to ref a surface
+
+    // Right now *every* monitor has this surface! So let's change that
+    ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
+                  sf_remove_surface, surface);
+
+    struct ws_cursor* cursor = ws_cursor_get();
+
+    if (cursor->active_surface == surface) {
+        ws_cursor_set_image(cursor, NULL);
+    }
 
     // invalidate
     ws_object_lock_write(&surface->wl_obj.obj);

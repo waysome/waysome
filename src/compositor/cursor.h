@@ -28,6 +28,8 @@
 #ifndef __WS_CURSOR_H__
 #define __WS_CURSOR_H__
 
+#include <sys/time.h>
+
 #include "compositor/buffer/buffer.h"
 #include "compositor/buffer/image.h"
 #include "objects/object.h"
@@ -129,6 +131,18 @@ void
 ws_cursor_set_monitor(
     struct ws_cursor* self, //<! The object
     struct ws_monitor* monitor //<! The buffer
+);
+
+/**
+ * Set the state of the mouse buttons
+ *
+ */
+void
+ws_cursor_set_button_state(
+    struct ws_cursor* self, //!< The cursor
+    struct timeval* time, //!< The time when it got pressed
+    short code, //!< The code of the input
+    int state //!< The state of the button
 );
 
 /**
