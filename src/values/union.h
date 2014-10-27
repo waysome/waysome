@@ -38,18 +38,24 @@
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
+#include "values/object_id.h"
+#include "values/set.h"
 #include "values/string.h"
 #include "values/value.h"
+#include "values/value_named.h"
 
 /**
  * Union for all the value types in existence
  */
 union ws_value_union {
-    struct ws_value         value;  //!< plain value
-    struct ws_value_nil     nil;    //!< nil value
-    struct ws_value_bool    bool_;  //!< bool value
-    struct ws_value_int     int_;   //!< int value
-    struct ws_value_string  string; //!< string value
+    struct ws_value             value;          //!< plain value
+    struct ws_value_nil         nil;            //!< nil value
+    struct ws_value_bool        bool_;          //!< bool value
+    struct ws_value_int         int_;           //!< int value
+    struct ws_value_string      string;         //!< string value
+    struct ws_value_object_id   object_id;      //!< object id value
+    struct ws_value_set         set;            //!< set value
+    struct ws_value_named_value named_value;    //!< named value
 };
 
 /**
