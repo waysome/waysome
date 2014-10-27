@@ -40,8 +40,28 @@ struct ws_command;
 /**
  * A command argument
  *
- * There are two types of arguments: the ones passed directly and the ones which
- * are already on the stack.
+ * Naturally arguments may be passed to commands.
+ * This type represents an argument being passed to a command which may be
+ * processed by a processor.
+ *
+ * In most cases, commands take values (@see ws_command), which may be passed
+ * via a stack (@see stack_semantics) or directly.
+ *
+ * To differentiate between those two modes of argument passing, this type
+ * contains an enumeration `type`, which may either be set to `direct` or
+ * `indirect` denoting whether the argument is to be passed directly or
+ * indirectly.
+ *
+ * Of course, each mode requires the argument to be present in a format
+ * suitable for the mode.
+ * While the argument is a `ws_value` for an argument passed directly, the
+ * argument is given as an _offset_ if it's passed indirectly.
+ * Hence, the argument is embedded in a union.
+ *
+ * The correct usage of this struct is imperative for both construction and
+ * usage of instances of this type.
+ * To facilitate construction, the functions `ws_statement_append_direct()`
+ * and `ws_statement_append_direct()` should be used.
  */
 struct ws_argument {
     enum {
@@ -72,7 +92,16 @@ struct ws_command_args {
 /**
  * Statement
  *
- * This datatype represents a statement, which is part of an transaction
+ * This type represents a statement which may be executed by the command
+ * processor.
+ * A statement is a command invocation, hence a statement only consists of a
+ * command (or, to be more precise, of a _pointer_ to a command) and the
+ * arguments passed to that very command.
+ *
+ * Statements should _only_ be constructed using `ws_statement_init()`, which
+ * takes care of the `command` field.
+ * After construction, arguments may be appended by calls to
+ * `ws_statement_append_direct` or `ws_statement_append_indirect`.
  */
 struct ws_statement {
     struct ws_command const* command; //!< @public command to invoke
@@ -111,7 +140,7 @@ __ws_nonnull__(1, 2)
 int
 ws_statement_append_indirect(
     struct ws_statement* self, //!< statement to append argument to
-    size_t pos //!< position of indirect argument
+    ssize_t pos //!< position of indirect argument
 )
 __ws_nonnull__(1)
 ;

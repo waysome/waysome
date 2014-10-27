@@ -57,7 +57,42 @@ typedef int (*ws_special_command_func)(struct ws_processor*,
 /**
  * Command type
  *
- * This datatype represents a command, which may be invoked in a transaction.
+ * This type represents a command exposed via the API.
+ * Commands may be invoked in transactions.
+ *
+ * There are two types of commands:
+ *  * Regular commands
+ *  * Special commands
+ *
+ * ### Regular commands
+ *
+ * Regular commands are commands which consume arguments, have one result and
+ * don't have any side effects concerning the processor's operation or state.
+ * Arguments and results are passed via a stack (see @ref stack_semantics).
+ *
+ * Preparation of the stack is done by the `ws_processor`.
+ *
+ * ### Special commands
+ *
+ * Special commands _do_ have side effects on the processor.
+ * E.g. a jump will increment a processor's (virtual) program counter.
+ *
+ * Another property of a special command is that it _should not_ have any effect
+ * on the stack, _unless_ the command is intended to alter the stack itself.
+ * E.g. a `jump` will have no effect on the stack while a `push` will _only_
+ * affect the stack.
+ * Because of this, parameter passing is done in a completely different way.
+ * Instead of receiving a prepared stack, a raw argument list will be passed to
+ * the command, along with the processor's context.
+ *
+ * ### Command type differentiation
+ *
+ * While both command types do have a name and an implementation in form of a
+ * function, the parameters being passed to the function differ considerably.
+ * Hence, an additional member, the `command_type` denotes whether the command
+ * is a `regular` or a `special` one.
+ * A processor may then use the appropriate member of the embedded union `func`.
+ *
  */
 struct ws_command {
     char const* const name; //!< @public name of the command
