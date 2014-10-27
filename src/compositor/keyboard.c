@@ -40,6 +40,7 @@
 
 #include "objects/object.h"
 #include "compositor/keyboard.h"
+#include "compositor/internal_context.h"
 
 static const char keymap_file_template[] = "waysome-xkb-keymap-XXXXXX";
 
@@ -124,7 +125,7 @@ ws_keyboard_new(void)
 struct ws_keyboard*
 ws_keyboard_get(void)
 {
-    //!< @todo
+    return ws_comp_ctx.keyboard;
 }
 
 void
