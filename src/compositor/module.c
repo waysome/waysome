@@ -40,6 +40,7 @@
 #include "compositor/buffer/image.h"
 #include "compositor/cursor.h"
 #include "compositor/internal_context.h"
+#include "compositor/keyboard.h"
 #include "compositor/monitor.h"
 #include "compositor/monitor_mode.h"
 #include "compositor/wayland/compositor.h"
@@ -230,6 +231,8 @@ ws_compositor_init(void) {
         (struct ws_monitor*) ws_set_select_any(&ws_comp_ctx.monitors);
     ws_cursor_set_monitor(ws_comp_ctx.cursor, any);
     ws_cursor_redraw(ws_comp_ctx.cursor);
+
+    ws_comp_ctx.keyboard = ws_keyboard_new();
 
     is_init = true;
     return 0;

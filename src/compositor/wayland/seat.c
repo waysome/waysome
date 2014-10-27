@@ -180,5 +180,6 @@ bind_seat(
     wl_resource_set_implementation(resource, &interface, NULL, NULL);
 
     //<! @todo: Set this on a device basis
-    wl_seat_send_capabilities(resource, WL_SEAT_CAPABILITY_POINTER);
+    wl_seat_send_capabilities(resource,
+            WL_SEAT_CAPABILITY_POINTER | WL_SEAT_CAPABILITY_KEYBOARD);
 }
