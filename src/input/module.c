@@ -109,7 +109,8 @@ find_initial_devices(void) {
             continue;
         }
         char full_path[MAX_FULL_PATH_LEN] = INPUT_PATH;
-        strncat(full_path, dir->d_name, MAX_FULL_PATH_LEN - 1 - sizeof(INPUT_PATH));
+        strncat(full_path, dir->d_name,
+                MAX_FULL_PATH_LEN - 1 - sizeof(INPUT_PATH));
 
         int fd = open(full_path, O_RDONLY | O_NONBLOCK);
 
