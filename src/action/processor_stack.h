@@ -78,7 +78,8 @@ __ws_nonnull__(1)
 /**
  * Push values on the stack
  *
- * This function increases the top counter, initializing the values to nil-values.
+ * This function increases the top counter, initializing the values to
+ * nil-values.
  *
  * @return 0 on success, a negative error number otherwise
  */

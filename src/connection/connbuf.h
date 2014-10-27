@@ -125,7 +125,8 @@ ws_connbuf_deinit(
  *
  * @memberof ws_connbuf
  *
- * @return The address of the first free byte in the buffer on success, else NULL
+ * @return The address of the first free byte in the buffer on success,
+ * else NULL
  */
 char*
 ws_connbuf_reserve(

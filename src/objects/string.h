@@ -124,7 +124,8 @@ ws_string_cat(
  * @memberof ws_string
  *
  * @return ws_string object with contents of other consecutively appended
- * to self, NULL if ws_array contains at least one non-string element or is NULL */
+ * to self, NULL if ws_array contains at least one non-string element or is NULL
+ */
 
 struct ws_string*
 ws_string_multicat(

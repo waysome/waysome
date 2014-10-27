@@ -151,8 +151,8 @@ struct ws_object_attribute {
  * Object type identifier for identifiying an object type
  */
 struct ws_object_type {
-    ws_object_type_id* supertype;     //!< supertype. Ref to itself if there is none
-    const char* const typestr;  //!< string which represents the type
+    ws_object_type_id* supertype; //!< supertype. Ref to itself if there is none
+    const char* const typestr; //!< string which represents the type
 
     ws_object_deinit_callback deinit_callback; //!< Free callback for the type
     ws_object_dump_callback dump_callback; //!< Log callback for the type
@@ -447,8 +447,8 @@ ws_object_deinit(
  *         int c;
  *      };
  *      @endcode
- *   So, `c` has the offset `sizeof(b) == sizeof(int)`. This is neccessary to get
- *   a pointer on the actual member and retreiving the data from it.
+ *   So, `c` has the offset `sizeof(b) == sizeof(int)`. This is neccessary to
+ *   get a pointer on the actual member and retreiving the data from it.
  * - The third member is the actual type information about the attribute to
  *   read. According to this, and an internal table, the type of the destination
  *   `ws_value` subtype is decided.
