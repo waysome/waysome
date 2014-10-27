@@ -50,21 +50,22 @@ ws_value_union_init_from_val(
     case WS_VALUE_TYPE_BOOL:
         ws_value_bool_init(&dest->bool_);
         {
-            bool buf = ws_value_bool_get(&dest->bool_);
+            bool buf = ws_value_bool_get((struct ws_value_bool*) src);
             return ws_value_bool_set(&dest->bool_, buf);
         }
 
     case WS_VALUE_TYPE_INT:
         ws_value_int_init(&dest->int_);
         {
-            uint32_t buf = ws_value_int_get(&dest->int_);
+            uint32_t buf = ws_value_int_get((struct ws_value_int*) src);
             return ws_value_int_set(&dest->int_, buf);
         }
 
     case WS_VALUE_TYPE_STRING:
         ws_value_string_init(&dest->string);
         {
-            struct ws_string* buf = ws_value_string_get(&dest->string);
+            struct ws_string* buf;
+            buf = ws_value_string_get((struct ws_value_string*) src);
             if (!buf) {
                 return -EINVAL;
             }
