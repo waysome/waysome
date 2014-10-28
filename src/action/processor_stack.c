@@ -180,12 +180,20 @@ ws_processor_stack_bottom(
 struct ws_value*
 ws_processor_stack_value_at(
     struct ws_processor_stack* self,
-    ssize_t pos
+    ssize_t pos,
+    struct ws_value* opttop
 ) {
+    size_t top = self->top;
+
+    // if `opttop` is `NULL`, we want to use the value we have
+    if (opttop) {
+        top = ((union ws_value_union*) opttop) - self->data;
+    }
+
     // determine whether pos of from top or bottom and calculate
     if (pos >= 0) {
         // check whether the position is valid
-        if ((size_t) pos >= self->top) {
+        if ((size_t) pos >= top) {
             return NULL;
         }
 
@@ -193,10 +201,10 @@ ws_processor_stack_value_at(
     }
 
     // check whether the position is valid
-    if ((size_t) (-pos) > self->top) {
+    if ((size_t) (-pos) > top) {
         return NULL;
     }
-    return &(self->data + self->top + pos)->value;
+    return &(self->data + top + pos)->value;
 }
 
 size_t

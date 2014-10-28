@@ -147,7 +147,8 @@ __ws_nonnull__(1)
 struct ws_value*
 ws_processor_stack_value_at(
     struct ws_processor_stack* self, //!< the stack
-    ssize_t pos //!< position of value
+    ssize_t pos, //!< position of value
+    struct ws_value* top //!< top to use (`NULL` for internal top)
 )
 __ws_nonnull__(1)
 ;
