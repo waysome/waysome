@@ -223,7 +223,7 @@ START_TEST (test_json_deserializer_transaction_one_command) {
     ck_assert(t->name == NULL);
     ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
     ck_assert(t->cmds != NULL);
-    ck_assert(t->cmds->next == 1);
+    ck_assert(t->cmds->num == 1);
     ck_assert(t->cmds->statements != NULL);
     ck_assert(t->cmds->statements[0].command->name != NULL);
     ck_assert(0 == strcmp(t->cmds->statements[0].command->name, "add"));
@@ -276,7 +276,7 @@ START_TEST (test_json_deserializer_transaction_commands) {
     ck_assert(t->name == NULL);
     ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
     ck_assert(t->cmds != NULL);
-    ck_assert(t->cmds->next == 10);
+    ck_assert(t->cmds->num == 10);
     ck_assert(t->cmds->statements != NULL);
     ck_assert(t->cmds->statements[0].command->name != NULL);
 

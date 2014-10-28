@@ -154,13 +154,13 @@ ws_transaction_push_statement(
         }
 
         t->cmds->statements = NULL;
-        t->cmds->n          = 1;
-        t->cmds->next       = 0;
+        t->cmds->len          = 1;
+        t->cmds->num        = 0;
     }
 
-    if (t->cmds->n + 1 >= t->cmds->next) {
+    if (t->cmds->len + 1 >= t->cmds->num) {
         struct ws_statement* tmp;
-        size_t newsize = (t->cmds->n * 2) * sizeof(*t->cmds->statements);
+        size_t newsize = (t->cmds->len * 2) * sizeof(*t->cmds->statements);
 
         tmp = realloc(t->cmds->statements, newsize);
 
@@ -169,13 +169,13 @@ ws_transaction_push_statement(
         }
 
         t->cmds->statements = tmp;
-        t->cmds->n *= 2;
+        t->cmds->len *= 2;
     }
 
-    t->cmds->statements[t->cmds->next].command = statement->command;
-    t->cmds->statements[t->cmds->next].args.num = statement->args.num;
-    t->cmds->statements[t->cmds->next].args.vals = statement->args.vals;
-    t->cmds->next++;
+    t->cmds->statements[t->cmds->num].command = statement->command;
+    t->cmds->statements[t->cmds->num].args.num = statement->args.num;
+    t->cmds->statements[t->cmds->num].args.vals = statement->args.vals;
+    t->cmds->num++;
 
     return 0;
 }
@@ -194,8 +194,8 @@ deinit_transaction(
 
     ws_object_unref((struct ws_object*) t->name);
 
-    while (--t->cmds->n) {
-        ws_statement_deinit(&t->cmds->statements[t->cmds->n]);
+    while (--t->cmds->len) {
+        ws_statement_deinit(&t->cmds->statements[t->cmds->len]);
     }
 
     return true;

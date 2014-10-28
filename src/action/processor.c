@@ -105,7 +105,7 @@ ws_processor_exec(
 ) {
     // keep a sentinel around for faster comparisons
     struct ws_statement const* aend;
-    aend = self->commands->statements + self->commands->n;
+    aend = self->commands->statements + self->commands->num;
 
     while (self->pc < aend) {
         // get the current pc and increment it afterwards
@@ -147,7 +147,7 @@ ws_processor_jump(
     size_t target_pos = (self->pc - self->commands->statements) + value;
 
     // perform bound check
-    if (target_pos > self->commands->n) {
+    if (target_pos > self->commands->num) {
         return target_pos;
     }
 

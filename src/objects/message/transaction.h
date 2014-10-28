@@ -49,8 +49,8 @@ enum ws_transaction_flags {
  * Type for command list
  */
 struct ws_transaction_command_list {
-    size_t n; //!< @protected length of the command array
-    size_t next; //!< @protected next free position for a statement
+    size_t len; //!< @protected length of the command array
+    size_t num; //!< @protected next free position/number of statements
     struct ws_statement* statements; //!< @protected Statements of the transaction
 };
 
