@@ -169,7 +169,6 @@ ws_processor_prepare_args(
     union ws_value_union* top = ws_processor_stack_top(stack);
     size_t argc = args->num;
 
-    //!< @todo optimize for if arguments already are in the right position
     {
         int res = ws_processor_stack_push(stack, argc);
         if (res < 0) {
