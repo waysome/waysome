@@ -91,8 +91,8 @@ ws_processor_stack_push(
         // initialize all the things we have to initialize
         self->data = new_data;
         self->size = new_size;
-        memset(new_data + new_top, 0,
-               sizeof(*(self->data)) * (new_size - new_top));
+        memset(new_data + self->top, 0,
+               sizeof(*(self->data)) * (new_size - self->top));
     }
 
     // set the new top
