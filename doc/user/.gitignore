@@ -1,0 +1,6 @@
+#
+# Ignore all files generated from the TeX files
+#
+*.texi
+*.info
+*.1
