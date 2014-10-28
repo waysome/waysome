@@ -183,7 +183,7 @@ yajl_integer_cb(
         }
         break;
 
-    case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT_STACKPOS:
+    case STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS:
         ws_statement_append_indirect(state->tmp_statement, i);
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
         break;
@@ -345,7 +345,7 @@ yajl_map_key_cb(
         if (0 != strncmp((char*) key, POS, len)) {
             return 0;
         }
-        state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT_STACKPOS;
+        state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS;
         break;
 
     default:
