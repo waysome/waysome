@@ -93,6 +93,8 @@ ws_error_reply_new(
         free(retval);
         return NULL;
     }
+    ((struct ws_object*) retval)->id = &WS_OBJECT_TYPE_ID_ERROR_REPLY;
+    ((struct ws_object*) retval)->settings = WS_OBJECT_HEAPALLOCED;
 
     // optimistical writes
     retval->code        = code;

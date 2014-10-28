@@ -32,7 +32,7 @@
  * Check whether we are at the end of a command list
  */
 #define AT_END(it_) \
-    (ws_value_get_type(&it_->value) != WS_VALUE_TYPE_NONE)
+    (ws_value_get_type(&it_->value) == WS_VALUE_TYPE_NONE)
 
 
 /**
@@ -46,7 +46,7 @@
  *     }
  */
 #define ITERATE_ARGS(it_, args_) \
-    for (it_ = (args_); AT_END(it_); ++it_)
+    for (it_ = (args_); !AT_END(it_); ++it_)
 
 
 /*

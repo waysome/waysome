@@ -178,19 +178,23 @@ ws_processor_prepare_args(
     }
 
     // iterate over all the arguments and assemble the stack
+    struct ws_argument* cur_arg = args->vals;
     while (argc--) {
-        // get the argument
-        struct ws_argument* cur_arg = args->vals + argc;
 
         // determine the source of the argument
         struct ws_value* src = NULL;
         switch (cur_arg->type) {
         case direct:
             src = cur_arg->arg.val;
+            break;
 
         case indirect:
             src = ws_processor_stack_value_at(stack, cur_arg->arg.pos);
+            break;
         }
+
+        // we're done with this argument
+        ++cur_arg;
 
         if (!src) {
             return -EINVAL;

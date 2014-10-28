@@ -193,7 +193,7 @@ ws_processor_stack_value_at(
     }
 
     // check whether the position is valid
-    if ((size_t) (-pos) >= self->top) {
+    if ((size_t) (-pos) > self->top) {
         return NULL;
     }
     return &(self->data + self->top + pos)->value;

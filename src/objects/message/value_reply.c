@@ -83,6 +83,8 @@ ws_value_reply_new(
     if (res < 0) {
         goto cleanup;
     }
+    ((struct ws_object*) retval)->id = &WS_OBJECT_TYPE_ID_VALUE_REPLY;
+    ((struct ws_object*) retval)->settings = WS_OBJECT_HEAPALLOCED;
 
     if (value) {
         res = ws_value_union_init_from_val(&retval->value, value);

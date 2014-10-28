@@ -33,6 +33,7 @@
 #include "input/module.h"
 #include "logger/module.h"
 #include "util/cleaner.h"
+#include "util/config_file.h"
 #include "util/wayland.h"
 
 static void
@@ -75,6 +76,11 @@ main(
     ev_signal_start(default_loop, &sigterm_watcher);
 
     retval = ws_logger_init();
+    if (retval != 0) {
+        goto cleanup;
+    }
+
+    retval = ws_config_load();
     if (retval != 0) {
         goto cleanup;
     }
