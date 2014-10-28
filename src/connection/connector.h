@@ -107,6 +107,8 @@ ws_connector_deinit(
  *
  * @memberof ws_connector
  *
+ * @note this function returns EOF if the end of file is reached
+ *
  * @return zero on success, else negative error code from errno.h
  */
 int

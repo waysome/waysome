@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #include "connection/connector.h"
@@ -99,6 +100,12 @@ ws_connector_read(
     start = ws_connbuf_reserve(&self->inbuf, remaining_mem);
 
     res = read(self->fd, start, remaining_mem);
+    if (res == 0) {
+        // we hit the end of file
+        ws_connbuf_append(&self->inbuf, 0); //unblock the buffer
+        return EOF;
+    }
+
     if (res < 0) {
         ws_connbuf_append(&self->inbuf, 0); //unblocks the buffer
         return -errno;
