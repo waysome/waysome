@@ -177,8 +177,8 @@ ws_processor_prepare_args(
     }
 
     // iterate over all the arguments and assemble the stack
-    struct ws_argument* cur_arg = args->vals;
     while (argc--) {
+        struct ws_argument* cur_arg = args->vals + argc;
 
         // determine the source of the argument
         struct ws_value* src = NULL;
@@ -192,9 +192,6 @@ ws_processor_prepare_args(
                                               &top->value);
             break;
         }
-
-        // we're done with this argument
-        ++cur_arg;
 
         if (!src) {
             return -EINVAL;
