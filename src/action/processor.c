@@ -188,7 +188,8 @@ ws_processor_prepare_args(
             break;
 
         case indirect:
-            src = ws_processor_stack_value_at(stack, cur_arg->arg.pos);
+            src = ws_processor_stack_value_at(stack, cur_arg->arg.pos,
+                                              &top->value);
             break;
         }
 
@@ -231,7 +232,7 @@ exec_regular(
     } else {
         // the parameters are given implicitely
         top = (union ws_value_union*)
-              ws_processor_stack_value_at(stack, -(args->num));
+              ws_processor_stack_value_at(stack, -(args->num), NULL);
     }
 
     // we somehow ended up with a bad stack
