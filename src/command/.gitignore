@@ -1,6 +1,7 @@
 # Ignore files we generated
 list.c
 arithmetical.h
+binary.h
 control.h
 logical.h
 

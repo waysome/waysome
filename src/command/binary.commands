@@ -1,0 +1,6 @@
+bnot;regular
+band;regular
+bnand;regular
+bor;regular
+bnor;regular
+bxor;regular
