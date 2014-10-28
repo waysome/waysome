@@ -152,7 +152,7 @@ run_transaction(
     }
 
     // create the return message from the transaction and the value
-    struct ws_value* value = ws_processor_stack_value_at(&stack, -1);
+    struct ws_value* value = ws_processor_stack_value_at(&stack, -1, NULL);
     retval = (struct ws_reply*) ws_value_reply_new(transaction, value);
 
     // cleanup
