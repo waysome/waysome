@@ -60,7 +60,7 @@ ws_builtin_cmd_jump(
         struct ws_value* val;
         switch(arg->type) {
         case indirect: // the value must be extracted from the stack
-            val = ws_processor_stack_value_at(proc->stack, arg->arg.pos);
+            val = ws_processor_stack_value_at(proc->stack, arg->arg.pos, NULL);
             break;
 
         case direct: // the value is passed directly
