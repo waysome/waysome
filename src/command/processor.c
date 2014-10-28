@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <ev.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #include "action/manager.h"
@@ -233,20 +234,8 @@ command_processor_dispatch(
         }
     }
 
+    // try to read from the connection
     res = ws_connector_read(&proc->conn);
-    // catch a few things that actually are not errors, but indicators
-    switch (res) {
-    case 0: // we reached the end of file
-        goto deinit;
-
-    case -EAGAIN:
-    case -EINTR:
-        // we have to come back later
-        ws_object_unlock(&proc->obj);
-        return;
-    }
-
-    // check whether we really have an error here
     if (res < 0) {
         goto error_handling;
     }
@@ -295,7 +284,21 @@ command_processor_dispatch(
     }
 
 error_handling:
-    //!< @todo error handling
+    //!< error handling
+    switch(-res) {
+        case -EAGAIN:
+        case -EINTR:
+        // we have to come back later
+        ws_object_unlock(&proc->obj);
+        return;
+
+        default:
+        //!< @todo report an error
+
+        case EOF:
+        // we reached the end of file
+        ;
+    }
 
 deinit:
     command_processor_deinit(&proc->obj);
