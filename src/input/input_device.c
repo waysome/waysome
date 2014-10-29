@@ -219,13 +219,13 @@ watch_pointers(
 
         if (ev.type == EV_REL) {
             handle_relative_event(&ev);
-            return;
+            continue;
         }
 
         if (ev.type == EV_KEY) {
             if (BTN_MISC <= ev.code && ev.code <= BTN_GEAR_UP) {
                 handle_mouse_click_event(&ev);
-                return;
+                continue;
             }
         }
 
