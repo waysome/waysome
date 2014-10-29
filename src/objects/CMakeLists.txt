@@ -4,6 +4,7 @@
 set(SOURCE_FILES
     array.c
     message/error_reply.c
+    message/event.c
     message/message.c
     message/reply.c
     message/transaction.c
