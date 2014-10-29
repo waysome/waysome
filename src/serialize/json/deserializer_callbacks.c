@@ -190,6 +190,13 @@ yajl_integer_cb(
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS;
         break;
 
+    case STATE_COMMAND_ARY_COMMAND_NAME:
+        state->tmp_statement->args.num = i;
+        state->tmp_statement->args.vals = NULL;
+
+        state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
