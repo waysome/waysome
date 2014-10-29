@@ -130,7 +130,8 @@ static bool
 deinit_event(
     struct ws_object* self
 ) {
-    //!< @todo implement
-    return false;
+    struct ws_event* e = (struct ws_event*) self;
+    ws_object_deinit(&e->name.obj);
+    return true;
 }
 
