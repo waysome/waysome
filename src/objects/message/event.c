@@ -108,8 +108,7 @@ struct ws_string*
 ws_event_get_name(
     struct ws_event* self
 ) {
-    //!< @todo implement
-    return NULL;
+    return &self->name;
 }
 
 union ws_value_union*
