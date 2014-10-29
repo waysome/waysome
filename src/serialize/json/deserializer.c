@@ -35,6 +35,7 @@
  * yajl library, see: https://lloyd.github.io/yajl/
  */
 
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <yajl/yajl_common.h>
@@ -132,6 +133,17 @@ deserialize(
 ) {
     unsigned char* buffer = (unsigned char*) buf; // cast
     struct deserializer_state* d = self->state;
+    size_t consumed = 0;
+
+    while (isspace(*buffer)) {
+        buffer++;
+        consumed++;
+        --nbuf;
+        if (nbuf == 0) {
+            self->is_ready = true;
+            return consumed;
+        }
+    }
 
     yajl_status stat = yajl_parse(d->yajlstate.handle, buffer, nbuf);
 
@@ -142,5 +154,5 @@ deserialize(
         yajl_free_error(d->yajlstate.handle, errstr);
     }
 
-    return yajl_get_bytes_consumed(d->yajlstate.handle);
+    return yajl_get_bytes_consumed(d->yajlstate.handle) + consumed;
 }
