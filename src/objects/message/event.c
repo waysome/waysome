@@ -25,7 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+
 #include "objects/message/event.h"
+#include "objects/string.h"
+#include "util/condition.h"
+#include "values/union.h"
 
 /*
  *
@@ -68,8 +73,35 @@ ws_event_init(
     struct ws_string* name,
     struct ws_value* ctx
 ) {
-    //!< @todo implement
+    int ret = ws_message_init(&self->m, 0);
+    if (unlikely(ret != 0)) {
+        goto out;
+    }
+
+    ret = ws_string_init(&self->name);
+    if (unlikely(ret != 0)) {
+        goto deinit_obj;
+    }
+
+    if (!ws_string_set_from_str(&self->name, name)) {
+        goto deinit_obj;
+    }
+
+    ret = ws_value_union_init_from_val(&self->context, ctx);
+    if (unlikely(ret != 0)) {
+        goto deinit_str;
+    }
+
     return 0;
+
+deinit_str:
+    ws_object_deinit(&self->name.obj);
+
+deinit_obj:
+    ws_object_deinit(&self->m.obj);
+
+out:
+    return ret;
 }
 
 struct ws_string*
