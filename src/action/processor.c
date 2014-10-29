@@ -166,7 +166,6 @@ ws_processor_prepare_args(
     struct ws_processor_stack* stack,
     struct ws_command_args const* const args
 ) {
-    union ws_value_union* top = ws_processor_stack_top(stack);
     size_t argc = args->num;
 
     {
@@ -175,6 +174,8 @@ ws_processor_prepare_args(
             return res;
         }
     }
+
+    union ws_value_union* top = ws_processor_stack_top(stack) - argc;
 
     // iterate over all the arguments and assemble the stack
     while (argc--) {
