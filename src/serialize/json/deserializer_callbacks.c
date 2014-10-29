@@ -405,6 +405,7 @@ yajl_end_map_cb(
         break;
 
     case STATE_MSG:
+        state->current_state = STATE_INIT;
         break;
 
     default:
