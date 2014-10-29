@@ -115,8 +115,7 @@ union ws_value_union*
 ws_event_get_context(
     struct ws_event* self
 ) {
-    //!< @todo implement
-    return NULL;
+    return &self->context;
 }
 
 /*
