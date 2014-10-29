@@ -1,6 +1,7 @@
 set(TEST_SUITES_OBJECTS
     ws_object
     ws_set
+    ws_string
 )
 
 foreach(TEST IN LISTS TEST_SUITES_OBJECTS)

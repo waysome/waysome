@@ -57,7 +57,6 @@ ws_value_string_init(
         struct ws_string* str = ws_string_new();
 
         if (str) {
-            str->is_utf8 = true;
             self->str = str;
         }
     }

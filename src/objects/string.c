@@ -84,8 +84,6 @@ ws_string_init(
         ws_object_init(&self->obj);
         self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
 
-        self->is_utf8 = false;
-
         return true;
     }
 
@@ -198,7 +196,6 @@ ws_string_dupl(
         ws_object_lock_read(&self->obj);
 
         nstr->charcount = self->charcount;
-        nstr->is_utf8 = self->is_utf8;
         nstr->str = realloc(nstr->str, (self->charcount + 1) * sizeof(*self->str));
         nstr->str = u_strcpy(nstr->str, self->str);
 
@@ -224,8 +221,8 @@ ws_string_cmp(
 
     res = u_strcmp(self->str, other->str);
 
-    ws_object_unlock(&self->obj);
     ws_object_unlock(&other->obj);
+    ws_object_unlock(&self->obj);
 
     return res;
 }
@@ -273,20 +270,27 @@ ws_string_raw(
 ){
     ws_object_lock_read(&self->obj);
 
-    if (!self->is_utf8) {
+    int32_t dest_len;
+    UErrorCode err = U_ZERO_ERROR;
+
+    (void) u_strToUTF8(NULL, 0, &dest_len, self->str, self->charcount, &err);
+    if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return NULL;
     }
 
-    char* output = calloc(self->charcount + 1, sizeof(*output));
-    int32_t dest_len;
-    UErrorCode err;
+    char* output;
+    output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
+    if (!output) {
+        return NULL;
+    }
 
+    err = U_ZERO_ERROR;
     output = u_strToUTF8(output, self->charcount, &dest_len, self->str,
                          self->charcount, &err);
 
     ws_object_unlock(&self->obj);
 
-    if (U_FAILURE(err)) {
+    if (U_FAILURE(err) || (dest_len <= 0)) {
         free(output);
         return NULL;
     }
@@ -303,18 +307,25 @@ ws_string_set_from_raw(
         return;
     }
 
-    int32_t len = strlen(raw);
-    UChar* conv_raw = calloc(len + 1, sizeof(*conv_raw));
+    UErrorCode err = U_ZERO_ERROR;
 
+    // get the length of the buffer to allocate
+    int32_t len;
+    (void) u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
+    if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
+        return;
+    }
+
+    // allocate buffer
+    ++len;
+    UChar* conv_raw = calloc(1, sizeof(*conv_raw) * len);
     if (!conv_raw) {
         return;
      }
 
-    int32_t dest_len;
-    UErrorCode err;
-
-    conv_raw = u_strFromUTF8(conv_raw, len + 1, &dest_len, raw, len, &err);
-
+    // convert string (write into buffer)
+    err = U_ZERO_ERROR;
+    conv_raw = u_strFromUTF8(conv_raw, len, NULL, raw, -1, &err);
     if (U_FAILURE(err)) {
         return;
     }
@@ -324,7 +335,6 @@ ws_string_set_from_raw(
     free(self->str);
 
     self->str = conv_raw;
-    self->is_utf8 = true;
     self->charcount = len;
 
     ws_object_unlock(&self->obj);
