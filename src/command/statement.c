@@ -107,6 +107,11 @@ bool
 ws_statement_deinit(
     struct ws_statement* self
 ) {
+    if (!self->args.vals) {
+        // nothing to einit
+        return true;
+    }
+
     while (self->args.num--) {
         if (self->args.vals[self->args.num].type == direct) {
             ws_value_deinit(self->args.vals[self->args.num].arg.val);
