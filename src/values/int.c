@@ -66,11 +66,7 @@ ws_value_int_get(
 ) {
     if (self) {
         if (self->value.type == WS_VALUE_TYPE_INT) {
-            struct ws_value_int* obj = (struct ws_value_int*) self;
-
-            uint32_t i = obj->i;
-
-            return i;
+            return (((struct ws_value_int*) self)->i);
         }
     }
     return 0;
