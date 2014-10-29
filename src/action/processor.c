@@ -220,7 +220,7 @@ exec_regular(
     int res;
 
     // prepare the stack for command execution
-    if (&args->vals) {
+    if (args->vals) {
         // the parameters are given explicitely
         res = ws_processor_prepare_args(stack, args);
         if (res < 0) {
