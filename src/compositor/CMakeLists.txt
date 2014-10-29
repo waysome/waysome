@@ -21,6 +21,8 @@ set(SOURCE_FILES
     wayland/shell.c
     wayland/shell_surface.c
     wayland/surface.c
+    wayland/xdg_shell.c
+    wayland/xdg_surface.c
 )
 
 add_library(compositor OBJECT
