@@ -194,10 +194,20 @@ deinit_transaction(
 
     ws_object_unref((struct ws_object*) t->name);
 
+    if (!t->cmds) {
+        return true;
+    }
+
+    if (!t->cmds->statements) {
+        goto out;
+    }
+
     size_t statement = t->cmds->num;
     while (statement--) {
         ws_statement_deinit(&t->cmds->statements[statement]);
     }
 
+out:
+    t->cmds->num = 0;
     return true;
 }
