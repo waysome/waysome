@@ -4,6 +4,7 @@
 set(SOURCE_FILES
     hotkey_dag.c
     hotkey_event.c
+    hotkeys.c
     input_device.c
     module.c
     utils.c
