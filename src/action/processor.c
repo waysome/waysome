@@ -221,16 +221,14 @@ exec_regular(
     // prepare the stack for command execution
     if (&args->vals) {
         // the parameters are given explicitely
-        top = ws_processor_stack_top(stack);
         res = ws_processor_prepare_args(stack, args);
         if (res < 0) {
             return res;
         }
-    } else {
-        // the parameters are given implicitely
-        top = (union ws_value_union*)
-              ws_processor_stack_value_at(stack, -(args->num), NULL);
     }
+    // extract the base pointer to pass to the function
+    top = (union ws_value_union*)
+          ws_processor_stack_value_at(stack, -(args->num), NULL);
 
     // we somehow ended up with a bad stack
     if (!top) {

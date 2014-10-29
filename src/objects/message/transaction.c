@@ -194,8 +194,9 @@ deinit_transaction(
 
     ws_object_unref((struct ws_object*) t->name);
 
-    while (--t->cmds->len) {
-        ws_statement_deinit(&t->cmds->statements[t->cmds->len]);
+    size_t statement = t->cmds->num;
+    while (statement--) {
+        ws_statement_deinit(&t->cmds->statements[statement]);
     }
 
     return true;
