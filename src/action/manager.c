@@ -34,7 +34,43 @@
 #include "objects/message/error_reply.h"
 #include "objects/message/transaction.h"
 #include "objects/message/value_reply.h"
+#include "objects/set.h"
+#include "objects/string.h"
 
+/**
+ * Event-transaction mapping
+ *
+ * Helper type for mapping a name of a event to the transactions for the event.
+ */
+struct evt_mapping {
+    /**
+     * Name of the event
+     *
+     * @warning This member _MUST_ be the first member of the struct.
+     *
+     * This member is the first member of the struct because the ws_set_get
+     * function casts this type to `struct ws_object*` when doing `ws_set_get()`
+     * and finds the string then. Then it does the compare stuff with the string
+     * objects (and their compare callbacks). This gives us the possibility to
+     * pass a `struct ws_string` object to `ws_set_get()` and we do not have to
+     * (stack-)allocate a `struct evt_mapping` for a comparison. We also do not
+     * have to make it a `struct ws_object` subtype this way.
+     */
+    struct ws_string ev_name;
+    struct ws_set transactions; //!< Set holding the transactions
+};
+
+/**
+ * Internal context type
+ */
+struct actman_ctx {
+    struct ws_set event_transaction_mappings; //!< event-transaction mapping
+};
+
+/*
+ * Variable for holding the internal context
+ */
+static struct actman_ctx ctx;
 
 /*
  *
