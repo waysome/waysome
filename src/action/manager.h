@@ -35,6 +35,22 @@ struct ws_message;
 struct ws_reply;
 
 /**
+ * Initialize the action manager
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_action_manager_init(void);
+
+/**
+ * Deinit the action manager
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_action_manager_deinit(void);
+
+/**
  * Process a transaction
  *
  * @return the reply caused by the transaction being processed

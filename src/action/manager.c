@@ -101,6 +101,20 @@ run_transaction(
  *
  */
 
+int
+ws_action_manager_init(void)
+{
+    //!< @todo implement
+    return 0;
+}
+
+int
+ws_action_manager_deinit(void)
+{
+    //!< @todo implement
+    return 0;
+}
+
 struct ws_reply*
 ws_action_manager_process(
     struct ws_message* message
