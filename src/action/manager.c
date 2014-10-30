@@ -120,8 +120,13 @@ ws_action_manager_init(void)
 int
 ws_action_manager_deinit(void)
 {
-    //!< @todo implement
-    return 0;
+    bool r;
+    r = ws_object_deinit((struct ws_object*) &ctx.event_transaction_mappings);
+
+    if (r) {
+        return 0;
+    }
+    return -1;
 }
 
 struct ws_reply*
