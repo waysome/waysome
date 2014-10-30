@@ -202,7 +202,14 @@ ws_string_multicat(
         }
     }
 
-    self->str = realloc(self->str, (len + 1) * sizeof(*self->str));
+    UChar* temp;
+    temp = realloc(self->str, (len + 1) * sizeof(*self->str));
+    if (!temp) {
+        ws_object_unlock(&self->obj);
+        return NULL;
+    }
+
+    self->str = temp;
 
     /* This loop doesn't check for NULL in `others`, assuming that in the final
      * (threadsafe) implementation, the array will be locked during the process,
