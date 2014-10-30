@@ -64,13 +64,8 @@ ws_value_union_init_from_val(
     case WS_VALUE_TYPE_STRING:
         ws_value_string_init(&dest->string);
         {
-            struct ws_string* buf;
-            buf = ws_value_string_get((struct ws_value_string*) src);
-            if (!buf) {
-                return -EINVAL;
-            }
-            ws_value_string_set_str(&dest->string, buf);
-            ws_object_unref(&buf->obj);
+            ws_string_set_from_str(dest->string.str, 
+                                    ((struct ws_value_string*)src)->str);
             return 0;
         }
 
