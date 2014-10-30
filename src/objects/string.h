@@ -62,11 +62,25 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_STRING;
  * @memberof ws_string
  *
  * @return true if ws_string object was successfully initialized,
- * NULL on failire
+ * false on failure
  */
 bool
 ws_string_init(
     struct ws_string* self
+);
+
+/**
+ * Sets a ws_string's attributes from another ws_string
+ *
+ * @memberof ws_string
+ *
+ * @return true if ws_string object was successfully set,
+ * false on failure
+ */
+bool
+ws_string_set_from_str(
+    struct ws_string* self,
+    struct ws_string* other
 );
 
 /**

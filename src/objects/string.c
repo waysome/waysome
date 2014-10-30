@@ -90,6 +90,37 @@ ws_string_init(
     return false;
 }
 
+bool
+ws_string_set_from_str(
+    struct ws_string* self,
+    struct ws_string* other
+) {
+    if (!self || !other) {
+        return false;
+    }
+
+    ws_object_lock_write(&self->obj);
+    ws_object_lock_read(&other->obj);
+
+    UChar* temp;
+    temp = realloc(self->str, (other->charcount + 1) * sizeof(*self->str));
+    if (!temp) {
+        ws_object_unlock(&other->obj);
+        ws_object_unlock(&self->obj);
+        return false;
+    }
+    
+    self->str = temp;
+    self->charcount = other->charcount;
+
+    self->str = u_strcpy(self->str, other->str);
+
+    ws_object_unlock(&other->obj);
+    ws_object_unlock(&self->obj);
+
+    return !!self->str;
+}
+
 struct ws_string*
 ws_string_new(void)
 {
@@ -193,15 +224,10 @@ ws_string_dupl(
     struct ws_string* nstr = ws_string_new();
 
     if (nstr) {
-        ws_object_lock_read(&self->obj);
+        bool res;
+        res = ws_string_set_from_str(nstr, self);
 
-        nstr->charcount = self->charcount;
-        nstr->str = realloc(nstr->str, (self->charcount + 1) * sizeof(*self->str));
-        nstr->str = u_strcpy(nstr->str, self->str);
-
-        ws_object_unlock(&self->obj);
-
-        if (nstr->str) {
+        if (res) {
             return nstr;
         }
     }
