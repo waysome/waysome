@@ -36,6 +36,7 @@
 #include "objects/message/value_reply.h"
 #include "objects/set.h"
 #include "objects/string.h"
+#include "util/condition.h"
 
 /**
  * Event-transaction mapping
@@ -94,6 +95,19 @@ run_transaction(
     struct ws_transaction* transaction // transaction to run
 );
 
+/**
+ * Register a transaction for an event
+ *
+ * Register a transaction for an event by name. The `name` parameter can be
+ * free()'d afterwards, it is put into the mapping by
+ * `ws_string_set_from_str()`, so no need to keep the `name` parameter. The `t`
+ * is put directly into the set of the mappings and shouldn't be free()'d.
+ */
+int
+register_transaction_on_event_by_name(
+    struct ws_string* name, //!< The name of the event
+    struct ws_transaction* t //!< The transaction to register
+);
 
 /*
  *
@@ -229,3 +243,49 @@ cleanup_stack:
     return retval;
 }
 
+int
+register_transaction_on_event_by_name(
+    struct ws_string* name,
+    struct ws_transaction* t
+) {
+    struct ws_object* map = NULL;
+
+    map = ws_set_get(&ctx.event_transaction_mappings,
+                     (struct ws_object*) name);
+
+    if (!map) {
+        // There is no mapping yet, we must create one
+
+        struct evt_mapping* tmp = calloc(1, sizeof(*tmp));
+        if (unlikely(!tmp)) {
+            return -ENOMEM;
+        }
+
+        int ret = ws_set_init(&tmp->transactions);
+        if (unlikely(ret != 0)) {
+            goto err_new_map_tmp;
+        }
+
+        ret = ws_string_set_from_str(&tmp->ev_name, name);
+        if (unlikely(ret != 0)) {
+            goto err_new_map;
+        }
+
+        ret = ws_set_insert(&tmp->transactions, (struct ws_object*) t);
+        if (unlikely(ret != 0)) {
+            goto err_new_map;
+        }
+
+        return 0;
+
+err_new_map:
+        ws_object_deinit((struct ws_object*) &tmp->transactions);
+err_new_map_tmp:
+        free(tmp);
+        return ret;
+    }
+
+    struct evt_mapping* evt = (struct evt_mapping*) map; // cast
+
+    return ws_set_insert(&evt->transactions, (struct ws_object*) t);
+}
