@@ -53,7 +53,7 @@ static struct {
  *
  */
 
-void
+static void
 create_shell_surface_cb(
     struct wl_client* client, //!< client requesting the surface
     struct wl_resource* resource, //!< the resource of the compositor
@@ -61,6 +61,18 @@ create_shell_surface_cb(
     struct wl_resource* surface //!< surface to attach to the shell surface
 );
 
+/**
+ * Binding function for the shell
+ *
+ * Creates a resource for the shell
+ */
+static void
+bind_shell(
+    struct wl_client* client, //!< client requesting the shell
+    void* data, //!< userdata (not used)
+    uint32_t version, //!< interface version
+    uint32_t serial //!< serial to give the shell
+);
 
 /*
  *
@@ -76,20 +88,6 @@ create_shell_surface_cb(
 static struct wl_shell_interface interface = {
     .get_shell_surface = create_shell_surface_cb,
 };
-
-/**
- * Binding function for the shell
- *
- * Creates a resource for the shell
- */
-static void
-bind_shell(
-    struct wl_client* client, //!< client requesting the shell
-    void* data, //!< userdata (not used)
-    uint32_t version, //!< interface version
-    uint32_t serial //!< serial to give the shell
-);
-
 
 /*
  *
@@ -139,7 +137,7 @@ cleanup_display:
  *
  */
 
-void
+static void
 create_shell_surface_cb(
     struct wl_client* client,
     struct wl_resource* resource,

@@ -56,8 +56,8 @@
  * underscores, to produce a hint to the __attribute__ macro.
  *
  * We also define some aliases for ourselves in here, such as WS_FORCE_INLINE,
- * which evaluates to 'inline __ws_always_inline__'. As this is not _just_ an alias
- * for an compiler macro, we use the normal naming convention here.
+ * which evaluates to 'inline __ws_always_inline__'. As this is not _just_ an
+ * alias for an compiler macro, we use the normal naming convention here.
  *
  */
 

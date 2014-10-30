@@ -42,46 +42,76 @@
  *
  */
 
+/**
+ * Deinit callback for buffer type
+ */
 static bool
 deinit_buffer(
     struct ws_object* self
 );
 
+/**
+ * Compare callback for buffer type
+ */
 static int
 cmp_buffer(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 );
 
+/**
+ * Data getter callback for buffer type
+ */
 static void*
 get_data(
     struct ws_buffer const* self
 );
 
+/**
+ * Height getter callback for buffer type
+ */
 static int32_t
 get_height(
     struct ws_buffer const* self
 );
 
+/**
+ * Width getter callback for buffer type
+ */
 static int32_t
 get_width(
     struct ws_buffer const* self
 );
 
+/**
+ * Stride getter callback for buffer type
+ */
 static int32_t
 get_stride(
     struct ws_buffer const* self
 );
 
+/**
+ * Format getter callback for buffer type
+ */
 static uint32_t
 get_format(
     struct ws_buffer const* self
 );
 
+/**
+ * BPP getter callback for buffer type
+ */
 static uint32_t
 get_bpp(
     struct ws_buffer const* self
 );
+
+/*
+ *
+ * Type information variable
+ *
+ */
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .type = {
@@ -105,8 +135,11 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .end_access = NULL,
 };
 
-
-
+/*
+ *
+ * interface implementation
+ *
+ */
 
 struct ws_image_buffer*
 ws_image_buffer_from_png(
@@ -163,7 +196,7 @@ static bool
 deinit_buffer(
     struct ws_object* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     free(buff->buffer);
     return true;
 }
@@ -173,8 +206,8 @@ cmp_buffer(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 ) {
-    struct ws_image_buffer* buff1 = (struct ws_image_buffer*)obj1;
-    struct ws_image_buffer* buff2 = (struct ws_image_buffer*)obj2;
+    struct ws_image_buffer* buff1 = (struct ws_image_buffer*) obj1;
+    struct ws_image_buffer* buff2 = (struct ws_image_buffer*) obj2;
     int cmp = strcmp(buff1->path, buff2->path);
     return signum(cmp);
 }
@@ -183,7 +216,7 @@ static void*
 get_data(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->buffer;
 }
 
@@ -191,7 +224,7 @@ static int32_t
 get_height(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return  buff->height;
 }
 
@@ -199,7 +232,7 @@ static int32_t
 get_width(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->width;
 }
 
@@ -207,7 +240,7 @@ static int32_t
 get_stride(
     struct ws_buffer const* self
 ) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->stride;
 }
 
@@ -215,7 +248,7 @@ static uint32_t
 get_format(
     struct ws_buffer const* self
 ) {
-    //struct ws_image_buffer* buff = (struct ws_image_buffer*)self;
+    //struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return 0; //!< @todo: unused (But maybe of use later)
 }
 

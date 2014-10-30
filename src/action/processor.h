@@ -45,7 +45,7 @@ struct ws_transaction_command_list;
  */
 struct ws_processor {
     struct ws_processor_stack* stack; //!< @public the stack buffer
-    struct ws_transaction_command_list* commands; //!< @public commands to process
+    struct ws_transaction_command_list* commands; //!< @public cmds to process
     struct ws_statement* pc; //!< @private current statement
     size_t stack_frame; //!< @private stack frame of the processor
 };

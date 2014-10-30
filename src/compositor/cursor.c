@@ -51,7 +51,7 @@
  */
 static bool
 deinit_cursor(
-        struct ws_object* self //!< The cursor to deinit
+    struct ws_object* self //!< The cursor to deinit
 );
 
 
@@ -65,13 +65,11 @@ ws_object_type_id WS_OBJECT_TYPE_ID_CURSOR = {
     .hash_callback      = NULL,
 };
 
-
-/**
+/*
  *
  * Implementations
  *
  */
-
 
 struct ws_cursor*
 ws_cursor_new(
@@ -245,16 +243,18 @@ ws_cursor_redraw(
     int w = ws_buffer_width((struct ws_buffer*) self->cursor_fb);
     int h = ws_buffer_height((struct ws_buffer*) self->cursor_fb);
 
-    int retval = drmModeSetCursor2(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->cursor_fb->handle, w, h, self->x_hp, self->y_hp);
+    int retval = drmModeSetCursor2(self->cur_fb_dev->fd,
+                                    self->cur_mon->crtc,
+                                    self->cursor_fb->handle,
+                                    w, h, self->x_hp, self->y_hp);
     if (retval != 0) {
         ws_log(&log_ctx, LOG_CRIT, "Could not set cursor");
-        ws_log(&log_ctx, LOG_CRIT, "State was: crtc: %d, handle: %d, "
-                "height: %d, width: %d",
+        ws_log(&log_ctx, LOG_CRIT,
+                "State was: crtc: %d, handle: %d, height: %d, width: %d",
                 self->cur_mon->crtc, self->cursor_fb->handle, w, h);
     }
     retval = drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->x, self->y);
+                               self->x, self->y);
     if ( retval != 0) {
         ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
     }
@@ -290,7 +290,7 @@ ws_cursor_unset(
 ) {
     //<! @todo: Make unsetting work
     int retval = drmModeSetCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
-            self->cursor_fb->handle, 0, 0);
+                                  self->cursor_fb->handle, 0, 0);
     ws_log(&log_ctx, LOG_DEBUG, "Removing cursor: %d", retval);
 }
 

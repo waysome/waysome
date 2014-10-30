@@ -46,17 +46,17 @@
  */
 
 static bool
-ws_framebuffer_device_deinit(
+device_deinit(
     struct ws_object* self
 );
 
 static size_t
-ws_framebuffer_device_hash(
+device_hash(
     struct ws_object* obj
 );
 
 static int
-ws_framebuffer_device_cmp(
+device_cmp(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 );
@@ -70,11 +70,11 @@ ws_framebuffer_device_cmp(
 ws_object_type_id WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE = {
     .supertype = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr = "ws_framebuffer_device",
-    .deinit_callback = ws_framebuffer_device_deinit,
-    .hash_callback = ws_framebuffer_device_hash,
+    .deinit_callback = device_deinit,
+    .hash_callback = device_hash,
     .dump_callback = NULL,
     .run_callback = NULL,
-    .cmp_callback = ws_framebuffer_device_cmp
+    .cmp_callback = device_cmp
 };
 
 struct ws_framebuffer_device*
@@ -82,7 +82,7 @@ ws_framebuffer_device_new(
     char* path
 ) {
     struct ws_framebuffer_device* tmp = calloc(1, sizeof(*tmp));
-    ws_object_init((struct ws_object*)tmp);
+    ws_object_init((struct ws_object*) tmp);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE;
     tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
     tmp->fd = open(path, O_RDWR | O_CLOEXEC);
@@ -111,7 +111,7 @@ ws_framebuffer_device_new(
  */
 
 static bool
-ws_framebuffer_device_deinit(
+device_deinit(
     struct ws_object* obj
 ) {
     struct ws_framebuffer_device* self = (struct ws_framebuffer_device*) obj;
@@ -123,7 +123,7 @@ ws_framebuffer_device_deinit(
 }
 
 static size_t
-ws_framebuffer_device_hash(
+device_hash(
     struct ws_object* obj
 ) {
     struct ws_framebuffer_device* self = (struct ws_framebuffer_device*) obj;
@@ -131,7 +131,7 @@ ws_framebuffer_device_hash(
 }
 
 static int
-ws_framebuffer_device_cmp(
+device_cmp(
     struct ws_object const* obj1,
     struct ws_object const* obj2
 ) {

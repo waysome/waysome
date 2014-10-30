@@ -92,6 +92,11 @@ bind_seat(
     uint32_t serial
 );
 
+/*
+ *
+ * Interface implementation
+ *
+ */
 
 int
 ws_wayland_seat_init(void)
@@ -124,7 +129,11 @@ cleanup_display:
     return -1;
 }
 
-
+/*
+ *
+ * static function implementations
+ *
+ */
 
 static void
 get_pointer(

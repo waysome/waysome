@@ -62,7 +62,7 @@ static struct {
 /**
  * Create a surface
  */
-void
+static void
 create_surface(
     struct wl_client* client, //!< client requesting the surface
     struct wl_resource* resource, //!< the resource of the compositor
@@ -72,7 +72,7 @@ create_surface(
 /**
  * Create a region
  */
-void
+static void
 create_region(
     struct wl_client* client, //!< the client requesting the region
     struct wl_resource* resource, //!< the resource of the compositor
@@ -163,7 +163,7 @@ cleanup_display:
  *
  */
 
-void
+static void
 create_surface(
     struct wl_client* client,
     struct wl_resource* resource,
@@ -184,7 +184,7 @@ create_surface(
     ws_object_unref(&surface->wl_obj.obj);
 }
 
-void
+static void
 create_region(
     struct wl_client* client,
     struct wl_resource* resource,
@@ -226,7 +226,8 @@ static int add_surface_to_monitor(
         goto cleanup_monitor;
     }
 
-    int retval = ws_set_insert(surfaces, ws_object_getref(&surface->wl_obj.obj));
+    int retval = ws_set_insert(surfaces,
+                               ws_object_getref(&surface->wl_obj.obj));
     if (retval < 0) {
         // if the insertion failed, we unref and carry on
         ws_object_unref(&surface->wl_obj.obj);

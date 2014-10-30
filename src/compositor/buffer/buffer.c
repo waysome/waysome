@@ -228,8 +228,8 @@ ws_buffer_blit(
     int stride_dst = ws_buffer_stride(dest);
     int stride_src = ws_buffer_stride(src);
     for (int y = 0; y < min_y; ++y) {
-        memcpy(((char*)buf_dst) + (y * stride_dst),
-                ((char*)buf_src) + (y * stride_src),
+        memcpy(((char*) buf_dst) + (y * stride_dst),
+                ((char*) buf_src) + (y * stride_src),
                 min_x
         );
     }

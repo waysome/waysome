@@ -196,14 +196,15 @@ ws_string_multicat(
 
     self->str = realloc(self->str, (len + 1) * sizeof(*self->str));
 
-/* This loop doesn't check for NULL in `others`, assuming that in the final
- * (threadsafe) implementation, the array will be locked during the process, so that
- * it was already completely checked at this point. Depending on the final locking
- * implementation, this might have to be adjusted later.
- */
+    /* This loop doesn't check for NULL in `others`, assuming that in the final
+     * (threadsafe) implementation, the array will be locked during the process,
+     * so that it was already completely checked at this point. Depending on
+     * the final locking implementation, this might have to be adjusted later.
+     */
     for (unsigned int i = 0; i < others->len; i++) {
-        self->str = u_strcat(self->str,
-                            ((struct ws_string*)ws_array_get_at(others, i))->str);
+        UChar* tmp;
+        tmp = ((struct ws_string*) ws_array_get_at(others, i))->str;
+        self->str = u_strcat(self->str, tmp);
 
         if (!self) {
             ws_object_unlock(&self->obj);

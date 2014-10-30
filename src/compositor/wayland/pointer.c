@@ -75,7 +75,6 @@ set_cursor(
  * @warning only call on resources which hold surfaces as constructed by
  *          ws_surface_new()
  */
-
 static void
 release(
     struct wl_client* client, //!< The wayland client associated to this req
@@ -138,7 +137,8 @@ ws_wayland_pointer_new(
 
     struct wl_resource* resource;
     resource = ws_wayland_client_create_resource(client, &wl_pointer_interface,
-            WAYLAND_POINTER_VERSION, serial);
+                                                 WAYLAND_POINTER_VERSION,
+                                                 serial);
 
     if (!resource) {
         goto cleanup_pointer;
@@ -146,7 +146,7 @@ ws_wayland_pointer_new(
 
     struct ws_wayland_pointer* user_data = getref(self);
     wl_resource_set_implementation(resource, &interface, user_data,
-            resource_destroy);
+                                   resource_destroy);
 
     ws_wayland_obj_init(&self->wl_obj, resource);
     self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_WAYLAND_POINTER;

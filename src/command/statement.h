@@ -105,7 +105,7 @@ struct ws_command_args {
  */
 struct ws_statement {
     struct ws_command const* command; //!< @public command to invoke
-    struct ws_command_args args; //!< @public arguments to invoke the command with
+    struct ws_command_args args; //!< @public arguments to invoke command with
 };
 
 /**

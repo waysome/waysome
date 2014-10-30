@@ -43,7 +43,7 @@ struct ws_cursor {
     struct ws_object obj; //<! @protected Supertype
     struct ws_framebuffer_device* cur_fb_dev; //!< @private The associated fb
     struct ws_monitor* cur_mon; //!< @private the associated monitor
-    struct ws_image_buffer* default_cursor; //!< @private The buffer for a cursor
+    struct ws_image_buffer* default_cursor; //!< @private Buffer for a cursor
     struct ws_frame_buffer* cursor_fb; //!< @private The fb for the cursor
     int x; //!< @private position in the current monitor
     int y; //!< @private position in the current monitor

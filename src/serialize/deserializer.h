@@ -77,10 +77,10 @@ struct ws_deserializer {
  *
  * This function tries to deserialize a message.
  * It takes a buffer (and it's length) as the source for the deserialisation and
- * will return either the number of bytes read from that buffer or a negative error
- * code.
- * `msg` will be set either to the message which was extracted or to `NULL`, if no
- * message could be extracted.
+ * will return either the number of bytes read from that buffer or a negative
+ * error code.
+ * `msg` will be set either to the message which was extracted or to `NULL`, if
+ * no message could be extracted.
  *
  * @return the number of bytes processed of a negative error code
  *

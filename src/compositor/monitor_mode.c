@@ -48,7 +48,7 @@ monitor_mode_cmp(
 
 /*
  *
- * Interface Implementation
+ * Type variable
  *
  */
 
@@ -62,17 +62,29 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR_MODE = {
     .cmp_callback = monitor_mode_cmp
 };
 
+/*
+ *
+ * Interface implementation
+ *
+ */
+
 struct ws_monitor_mode*
 ws_monitor_mode_new(
     void
 ) {
     struct ws_monitor_mode* tmp = calloc(1, sizeof(*tmp));
-    ws_object_init((struct ws_object*)tmp);
+    ws_object_init((struct ws_object*) tmp);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_MONITOR_MODE;
     tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     return tmp;
 }
+
+/*
+ *
+ * static function implementations
+ *
+ */
 
 static size_t
 monitor_mode_hash(

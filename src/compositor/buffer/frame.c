@@ -62,7 +62,7 @@ frame_buffer_deinit(
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_FRAME_BUFFER = {
     .type = {
-        .supertype  = (ws_object_type_id*)&WS_OBJECT_TYPE_ID_IMAGE_BUFFER,
+        .supertype  = (ws_object_type_id*) &WS_OBJECT_TYPE_ID_IMAGE_BUFFER,
         .typestr    = "ws_frame_buffer",
 
         .hash_callback = NULL,
@@ -91,7 +91,7 @@ ws_frame_buffer_new(
     struct ws_frame_buffer* tmp = calloc(1, sizeof(*tmp));
     ws_buffer_init(&tmp->obj.obj);
     tmp->obj.obj.obj.settings |= WS_OBJECT_HEAPALLOCED;
-    tmp->obj.obj.obj.id = (ws_object_type_id *)&WS_OBJECT_TYPE_ID_FRAME_BUFFER;
+    tmp->obj.obj.obj.id = (ws_object_type_id *) &WS_OBJECT_TYPE_ID_FRAME_BUFFER;
     tmp->fb_dev = fb_dev;
 
     struct drm_mode_create_dumb creq; //Create Request
@@ -134,9 +134,8 @@ ws_frame_buffer_new(
         goto err_fb;
     }
 
-    tmp->obj.buffer = mmap(0, tmp->obj.size,
-            PROT_READ | PROT_WRITE, MAP_SHARED,
-            ws_comp_ctx.fb->fd, mreq.offset);
+    tmp->obj.buffer = mmap(0, tmp->obj.size, PROT_READ | PROT_WRITE, MAP_SHARED,
+                           ws_comp_ctx.fb->fd, mreq.offset);
 
     if (tmp->obj.buffer == MAP_FAILED) {
         ws_log(&log_ctx, LOG_CRIT, "Could not MMAP FB");
@@ -183,6 +182,6 @@ frame_buffer_deinit(
         dreq.handle = self->handle;
         drmIoctl(self->fb_dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
     }
-    ws_object_unref((struct ws_object*)self->fb_dev);
+    ws_object_unref((struct ws_object*) self->fb_dev);
     return true;
 }
