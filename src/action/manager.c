@@ -104,7 +104,16 @@ run_transaction(
 int
 ws_action_manager_init(void)
 {
-    //!< @todo implement
+    static bool done = false;
+    if (done) {
+        return 0;
+    }
+
+    if (ws_set_init(&ctx.event_transaction_mappings) != 0) {
+        return -ENOMEM;
+    }
+
+    done = true;
     return 0;
 }
 
