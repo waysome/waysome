@@ -224,15 +224,10 @@ ws_string_dupl(
     struct ws_string* nstr = ws_string_new();
 
     if (nstr) {
-        ws_object_lock_read(&self->obj);
+        bool res;
+        res = ws_string_set_from_str(nstr, self);
 
-        nstr->charcount = self->charcount;
-        nstr->str = realloc(nstr->str, (self->charcount + 1) * sizeof(*self->str));
-        nstr->str = u_strcpy(nstr->str, self->str);
-
-        ws_object_unlock(&self->obj);
-
-        if (nstr->str) {
+        if (res) {
             return nstr;
         }
     }
