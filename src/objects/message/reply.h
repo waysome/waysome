@@ -36,6 +36,8 @@
  *
  * This is a purely abstract reply message type, from which the value reply and
  * the error reply are derived.
+ *
+ * @extends ws_message
  */
 struct ws_reply {
     struct ws_message m; //!< @protected base class
