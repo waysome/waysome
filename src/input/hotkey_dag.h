@@ -93,6 +93,19 @@ __ws_nonnull__(1)
 ;
 
 /**
+ * Get next DAG node
+ *
+ * @return the next DAG node, if it exists, or NULL
+ */
+struct ws_hotkey_dag_node*
+ws_hotkey_dag_next(
+    struct ws_hotkey_dag_node* node,
+    uint16_t code
+)
+__ws_nonnull__(1)
+;
+
+/**
  * Insert an event in a DAG
  *
  * @return 0 if the operation was successful, a negative error number otherwise
