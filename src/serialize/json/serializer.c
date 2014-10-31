@@ -34,11 +34,19 @@
  * yajl library, see: https://lloyd.github.io/yajl/
  */
 
+#include <errno.h>
 #include <stdlib.h>
+#include <yajl/yajl_common.h>
+#include <yajl/yajl_gen.h>
 
+#include "objects/message/error_reply.h"
+#include "objects/message/event.h"
+#include "objects/message/message.h"
+#include "objects/message/value_reply.h"
 #include "serialize/json/serializer.h"
 #include "serialize/json/serializer_state.h"
 #include "serialize/serializer.h"
+#include "util/arithmetical.h"
 
 /*
  *
@@ -129,8 +137,87 @@ serialize(
     char* buf,
     size_t nbuf
 ) {
-    //!< @todo implement
-    return -1;
+    if (!self->buffer) {
+        return -ENOENT;
+    }
+
+    ws_object_type_id* type = self->buffer->obj.id;
+
+    struct serializer_context* ctx = (struct serializer_context*) self->state;
+    if (ctx->current_state == STATE_NO_STATE ||
+            ctx->current_state == STATE_INIT_STATE) {
+        // We are starting with parsing right now.
+        ctx->current_state = STATE_INIT_STATE; // if in NO_STATE
+
+        yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
+
+        if (stat != yajl_gen_status_ok) {
+            //!< @todo error opening map, what to do now?
+            return -1;
+        }
+
+        ctx->current_state = STATE_MESSAGE_STATE;
+    }
+
+    if (ctx->current_state == STATE_MESSAGE_READY) {
+        goto write_buffer;
+    }
+
+    do {
+        int retval = 0;
+        if (type == &WS_OBJECT_TYPE_ID_EVENT) {
+            retval = serialize_event(self);
+            if (retval < 0) {
+                //!< @todo something went wrong serializing the event. Error?
+                return retval;
+            }
+            break;
+        }
+
+        if (type == &WS_OBJECT_TYPE_ID_ERROR_REPLY) {
+            retval = serialize_reply_error_reply(self);
+            if (retval < 0) {
+                //!< @todo something went wrong serializing the error. Error?
+                return retval;
+            }
+            break;
+        }
+
+        if (type == &WS_OBJECT_TYPE_ID_VALUE_REPLY) {
+            retval = serialize_reply_value_reply(self);
+            if (retval < 0) {
+                //!< @todo something went wrong serializing the reply. Error?
+                return retval;
+            }
+            break;
+        }
+
+        return -EINVAL;
+    } while (0);
+
+write_buffer:
+    // put the serilized stuff into the buffer
+    if (ctx->yajl_buffer == NULL) {
+        yajl_gen_get_buf(ctx->yajlgen,
+                         (const unsigned char**) &ctx->yajl_buffer,
+                         &ctx->yajl_buffer_size);
+    }
+
+    size_t write = MIN(ctx->yajl_buffer_size, nbuf);
+    strncpy(buf, (char*) ctx->yajl_buffer, write);
+
+    if (ctx->yajl_buffer_size <= nbuf) {
+        // We are ready now, as the yajl buffer is smaller or of equal size
+        // as the buffer we just wrote to
+        self->buffer = NULL; // "I am ready here!"
+    } else {
+        // We must wait until we get a buffer where we can write the rest
+        // to.
+        ctx->yajl_buffer        += MIN(ctx->yajl_buffer_size, nbuf);
+        ctx->yajl_buffer_size   -= MIN(ctx->yajl_buffer_size, nbuf);
+    }
+
+    return write;
 }
 
 static int
