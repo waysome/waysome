@@ -40,6 +40,8 @@ struct ws_transaction;
  *
  * This reply message type is intended for communication of errors back to the
  * issuer of a transaction.
+ *
+ * @extends ws_reply
  */
 struct ws_error_reply {
     struct ws_reply reply; //!< @protected base class
