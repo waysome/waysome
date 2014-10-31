@@ -56,6 +56,8 @@ struct ws_transaction_command_list {
 
 /**
  * Transaction type
+ *
+ * @extends ws_message
  */
 struct ws_transaction {
     struct ws_message m; //!< @protected Base class.
