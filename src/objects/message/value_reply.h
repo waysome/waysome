@@ -41,6 +41,8 @@ struct ws_transaction;
  *
  * This reply type is intended for transportation of return values back to the
  * source of the transaction.
+ *
+ * @extends ws_reply
  */
 struct ws_value_reply {
     struct ws_reply reply; //!< @protected base class
