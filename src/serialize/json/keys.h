@@ -74,6 +74,8 @@
 #define EVENT       "event" // reply-message key for event reply
 #define EVENT_CTX   "context" // "context" member of the event
 
+#define EVENT_CTX_OBJ_ID "objid" // "context" member is a objid
+
 #define EVENT_NAME  "name" // "name" member of the event
 
 #endif //__WS_SERIALIZE_JSON_KEYS_H__
