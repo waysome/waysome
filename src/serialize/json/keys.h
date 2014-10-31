@@ -71,6 +71,11 @@
 #define EVENT_NAME  "name" // key for event name
 #define EVENT_VALUE "value" // key for event value
 
+#define EVENT       "event" // reply-message key for event reply
+#define EVENT_CTX   "context" // "context" member of the event
+
+#define EVENT_NAME  "name" // "name" member of the event
+
 #endif //__WS_SERIALIZE_JSON_KEYS_H__
 
 /**
