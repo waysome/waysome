@@ -37,6 +37,8 @@
 #include <stdlib.h>
 
 #include "serialize/json/serializer.h"
+#include "serialize/json/serializer_state.h"
+#include "serialize/serializer.h"
 
 /*
  *
@@ -95,8 +97,24 @@ serialize_event(
 struct ws_serializer*
 ws_serializer_json_serializer_new(void)
 {
-    //!< @todo implement
-    return NULL;
+    struct ws_serializer* ser = calloc(1, sizeof(*ser));
+
+    if (!ser) {
+        return NULL;
+    }
+
+    ser->state = serializer_context_new();
+
+    if (!ser->state) {
+        free(ser);
+        return NULL;
+    }
+
+    ser->buffer = NULL;
+    ser->serialize = serialize;
+    ser->deinit = NULL;
+
+    return ser;
 }
 
 /*
