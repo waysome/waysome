@@ -30,10 +30,49 @@
 #include <string.h>
 
 #include "input/hotkey_dag.h"
+#include "input/hotkey_event.h"
 
 
 #define DAG_TAB_CHILD_NUM_EXP (4)
 #define DAG_TAB_CHILD_NUM (1 << DAG_TAB_CHILD_NUM_EXP)
+
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Get the next DAG node, creating it if it does not exist
+ */
+static struct ws_hotkey_dag_node*
+hotkey_dag_get(
+    struct ws_hotkey_dag_node* node, //!< node from which to get the next one
+    uint16_t code //!< code of the new next node
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Make sure a root may have a child suitable for a code
+ *
+ * @return 0 if the root is suitable for storing the code is initialized,
+ *         a negative error number otherwise
+ */
+static int
+add_roots_for(
+    struct ws_hotkey_dag_tab* tab, //!< tab which must be extended
+    uint16_t code //!< code which must be storable under the root
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Create new tab node
+ */
+static void**
+create_tab_node(void);
 
 
 /*
@@ -96,8 +135,23 @@ ws_hotkey_dag_insert(
     struct ws_hotkey_dag_node* node,
     struct ws_hotkey_event* event
 ) {
-    //!< @todo iterate over all the permutations possible, inserting
-    return -1;
+    uint16_t* code = event->codes;
+    uint16_t num = event->code_num;
+
+    // traverse the tree, creating nodes where neccessary
+    while (num--) {
+        node = hotkey_dag_get(node, *code);
+        ++code;
+    }
+
+    if (node->event) {
+        // the node already exists
+        return -EEXIST;
+    }
+
+    // finally, insert the event
+    node->event = getref(event);
+    return 0;
 }
 
 int
@@ -109,4 +163,106 @@ ws_hotkey_dag_remove(
     return -1;
 }
 
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static struct ws_hotkey_dag_node*
+hotkey_dag_get(
+    struct ws_hotkey_dag_node* node,
+    uint16_t code
+) {
+    // make sure the root is sane for the code we want to insert
+    if (add_roots_for(&node->table, code) < 0) {
+        return NULL;
+    }
+
+    struct ws_hotkey_dag_tab cur = node->table;
+
+    // step on which the node is based.
+    int step = DAG_TAB_CHILD_NUM_EXP * cur.depth;
+
+    // move towards the bottom
+    while (cur.depth) {
+        // determine where to go next...
+        void** tab = cur.nodes.tab + ((code - cur.start) >> step);
+
+        // initializing the node if neccessary
+        if (!*tab) {
+            *tab = create_tab_node();
+            if (!*tab) {
+                return NULL;
+            }
+        }
+
+        // regenerage all the variables
+        cur.nodes.tab = *tab;
+        cur.start = code & ~((1 << step) - 1);
+        step -= DAG_TAB_CHILD_NUM_EXP;
+        --cur.depth;
+    }
+
+    struct ws_hotkey_dag_node** retp = cur.nodes.dag + (code - cur.start);
+    if (!*retp) {
+        *retp = malloc(sizeof(*retp));
+        if (ws_hotkey_dag_init(*retp) < 0) {
+            free(*retp);
+            *retp = NULL;
+        }
+    }
+
+    return *retp;
+}
+
+static int
+add_roots_for(
+    struct ws_hotkey_dag_tab* tab,
+    uint16_t code
+) {
+
+    // the table _might_ be completely empty
+    if (!tab->nodes.tab) {
+        tab->nodes.tab = create_tab_node();
+        if (!tab->nodes.tab) {
+            return -ENOMEM;
+        }
+        if (tab->depth == 0) {
+            tab->start = code & ~(DAG_TAB_CHILD_NUM - 1);
+        }
+    }
+
+    // step on which the node is based.
+    int step = DAG_TAB_CHILD_NUM_EXP * tab->depth;
+
+    // position within the node
+    size_t pos = (code - tab->start) >> step;
+
+    // extend the table "upwards", if necessary
+    while ((code < tab->start) || (pos > DAG_TAB_CHILD_NUM)) {
+        // we have to create a new node
+        void** tab_node = create_tab_node();
+
+        size_t old_root_pos = (tab->start >> step);
+
+        // put in the new root
+        tab_node[old_root_pos  & (DAG_TAB_CHILD_NUM - 1)] = tab->nodes.tab;
+        tab->nodes.tab = tab_node;
+        ++tab->depth;
+
+        // regen step, pos and start
+        step += DAG_TAB_CHILD_NUM_EXP;
+        tab->start = old_root_pos << step;
+        pos >>= DAG_TAB_CHILD_NUM_EXP;
+    }
+
+    return 0;
+}
+
+static void**
+create_tab_node(void) {
+    return calloc(DAG_TAB_CHILD_NUM, sizeof(void*));
+}
 
