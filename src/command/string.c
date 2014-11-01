@@ -108,6 +108,21 @@ int
 ws_builtin_cmd_strcmp(
     union ws_value_union* args
 ) {
+    struct ws_string* str1;
+    struct ws_string* str2;
+
+    int res;
+    res = get_strings_from_union(args, &str1, &str2);
+
+    if (res != 0) {
+        return res;
+    }
+
+    res = ws_string_cmp(str1, str2);
+
+    ws_value_union_reinit(args, WS_VALUE_TYPE_INT);
+    ws_value_int_set(&args->int_, res);
+
     return 0;
 }
 
