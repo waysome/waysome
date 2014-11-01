@@ -25,6 +25,7 @@ set(WS_COMMAND_FILES
     binary.commands
     control.commands
     logical.commands
+    string.commands
 )
 
 
