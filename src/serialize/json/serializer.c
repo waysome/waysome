@@ -96,6 +96,20 @@ serialize_event(
     struct ws_serializer* self
 );
 
+/**
+ * Generate a key in the buffer
+ *
+ * Generates a new key in the buffer, increments the value behind `nbytes`
+ * afterwards and sets the next state in the context.
+ *
+ * @return zero on success, else negative errno.h number
+ */
+static int
+gen_key(
+    struct serializer_context* ctx,
+    char const* str
+);
+
 /*
  *
  * Interface implementation
@@ -243,3 +257,21 @@ serialize_event(
     //!< @todo implement
     return -1;
 }
+
+static int
+gen_key(
+    struct serializer_context* ctx,
+    char const* str
+) {
+    yajl_gen_status stat = yajl_gen_string(ctx->yajlgen,
+                                           (const unsigned char*) str,
+                                           strlen(str));
+
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -EAGAIN;
+    }
+
+    return 0;
+}
+
