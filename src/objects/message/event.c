@@ -118,6 +118,7 @@ ws_event_new(
     int res = ws_event_init(ev, name, ctx);
 
     if (res != 0) {
+        free(ev);
         return NULL;
     }
 
