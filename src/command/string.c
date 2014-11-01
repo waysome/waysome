@@ -41,6 +41,25 @@ int
 ws_builtin_cmd_strcat(
     union ws_value_union* args
 ) {
+    union ws_value_union* it;
+    struct ws_string* val;
+    struct ws_string* res = args->string.str;
+
+    //iterate over all arguments, checking whether they are ws_value_strings
+    ITERATE_ARGS_TYPE(it, args, val, string) {
+        res = ws_string_cat(res, val);
+        if (!res) {
+            return -ENOMEM;
+        }
+    }
+    
+    if (!AT_END(it)) {
+        return -EINVAL;
+    }
+
+    ws_value_union_reinit(args, WS_VALUE_TYPE_STRING);
+    ws_value_string_set_str(&args->string, res);
+
     return 0;
 }
 
