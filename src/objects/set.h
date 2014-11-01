@@ -245,4 +245,15 @@ struct ws_object*
 ws_set_select_lowest(
     struct ws_set const* self
 );
+
+/**
+ * Select greatest element from set
+ *
+ * @return greatest element from set or NULL on failure
+ */
+struct ws_object*
+ws_set_select_greatest(
+    struct ws_set const* self
+);
+
 #endif // __WS_OBJECTS_SET_H__
