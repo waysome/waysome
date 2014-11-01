@@ -37,6 +37,25 @@
 #include "values/value.h"
 #include "values/value_type.h"
 
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+static int
+get_strings_from_union(
+    union ws_value_union* args,
+    struct ws_string** str1,
+    struct ws_string** str2
+);
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
 int
 ws_builtin_cmd_strcat(
     union ws_value_union* args
