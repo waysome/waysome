@@ -67,6 +67,21 @@ int
 ws_builtin_cmd_substr(
     union ws_value_union* args
 ) {
+    struct ws_string* str1;
+    struct ws_string* str2;
+
+    int res;
+    res = get_strings_from_union(args, &str1, &str2);
+
+    if (res != 0) {
+        return res;
+    }
+
+    bool is_substr = ws_string_substr(str1, str2);
+
+    ws_value_union_reinit(args, WS_VALUE_TYPE_BOOL);
+    ws_value_bool_set(&args->bool_, is_substr);
+
     return 0;
 }
 
