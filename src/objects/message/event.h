@@ -65,6 +65,21 @@ __ws_nonnull__(1)
 ;
 
 /**
+ * Allocate a new, initialized ws_event
+ *
+ * @memberof ws_event
+ *
+ * return allocated, initalized ws_event object, NULL on failure
+ */
+struct ws_event*
+ws_event_new(
+    struct ws_string* name, //!< Name for the event
+    struct ws_value* ctx //!< Context to attach, can be NULL
+)
+__ws_nonnull__(1)
+;
+
+/**
  * Get the name of an event
  *
  * @memberof ws_event

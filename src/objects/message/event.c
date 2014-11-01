@@ -104,6 +104,28 @@ out:
     return ret;
 }
 
+struct ws_event*
+ws_event_new(
+    struct ws_string* name,
+    struct ws_value* ctx
+) {
+    struct ws_event* ev = calloc(1, sizeof(*ev));
+
+    if (!ev) {
+        return NULL;
+    }
+
+    int res = ws_event_init(ev, name, ctx);
+
+    if (res != 0) {
+        return NULL;
+    }
+
+    ev->m.obj.settings |= WS_OBJECT_HEAPALLOCED;
+
+    return ev;
+}
+
 struct ws_string*
 ws_event_get_name(
     struct ws_event* self
