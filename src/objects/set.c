@@ -60,6 +60,24 @@ deinit_set(
     struct ws_object* const self
 );
 
+/**
+ * Callback for ws_set_select_lowest()
+ */
+ static int
+ get_lowest(
+    void* dest, //!< destination
+    void const* src //!< source
+);
+
+/**
+ * Callback for ws_set_select_greatest()
+ */
+static int
+get_greatest(
+    void* dest, //!< destination
+    void const* src //!< source
+);
+
 /*
  *
  * Internal structs
@@ -288,6 +306,24 @@ ws_set_select_any(
     return tmp;
 }
 
+struct ws_object*
+ws_set_select_lowest(
+    struct ws_set const* self
+) {
+    void* tmp = NULL;
+    ws_set_select(self, NULL, NULL, get_lowest, &tmp);
+    return tmp;
+}
+
+struct ws_object*
+ws_set_select_greatest(
+    struct ws_set const* self
+) {
+    void* tmp = NULL;
+    ws_set_select(self, NULL, NULL, get_greatest, &tmp);
+    return tmp;
+}
+
 /*
  *
  * Internal implementation
@@ -314,5 +350,39 @@ deinit_set(
     }
 
     return false;
+}
+
+static int
+get_lowest(
+    void* dest,
+    void const* src
+) {
+    if ((*(void**) dest) == NULL) {
+        (*(void**) dest) = (void*) src;
+    } else {
+        int cmp;
+        cmp = ws_object_cmp((struct ws_object*) dest, (struct ws_object*) src);
+        if (cmp == -1) {
+            (*(void**) dest) = (void*) src;
+        }
+    }
+    return 0;
+}
+
+static int
+get_greatest(
+    void* dest,
+    void const* src
+) {
+    if ((*(void**) dest) == NULL) {
+        (*(void**) dest) = (void*) src;
+    } else {
+        int cmp;
+        cmp = ws_object_cmp((struct ws_object*) dest, (struct ws_object*) src);
+        if (cmp == 1) {
+            (*(void**) dest) = (void*) src;
+        }
+    }
+    return 0;
 }
 
