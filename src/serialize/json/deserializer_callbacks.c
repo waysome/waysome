@@ -132,6 +132,15 @@ yajl_boolean_cb(
         }
         break;
 
+    case STATE_FLAGS_EXEC:
+        if (b) {
+            state->flags |= WS_TRANSACTION_FLAGS_EXEC; // set
+        } else {
+            state->flags &= ~WS_TRANSACTION_FLAGS_EXEC; // unset
+        }
+        state->current_state = STATE_FLAGS_MAP;
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
