@@ -190,7 +190,11 @@ create_region(
     struct wl_resource* resource,
     uint32_t serial
 ) {
-    (void) ws_region_new(client, serial);
+    struct ws_region* region = ws_region_new(client, serial);
+
+    if (!region) {
+        wl_client_post_no_memory(client);
+    }
 }
 
 static void
