@@ -283,6 +283,25 @@ yajl_string_cb(
         }
         break;
 
+    case STATE_FLAGS_REGISTER:
+        {
+            state->register_name = ws_string_new();
+            if (!state->register_name) {
+                //!< @todo error, what now?
+                return 0;
+            }
+
+            char buff[len + 1];
+            memset(buff, 0, len + 1);
+            strncpy(buff, (char*)str, len);
+
+            ws_string_set_from_raw(state->register_name, buff);
+
+            state->flags |= WS_TRANSACTION_FLAGS_REGISTER;
+            state->current_state = STATE_FLAGS_MAP;
+        }
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -567,6 +586,9 @@ finalize_message(
         struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
 
         ws_transaction_set_flags(t, state->flags);
+
+        ws_transaction_set_name(t, state->register_name); // gets a ref on name
+        ws_object_unref((struct ws_object*) state->register_name);
     }
 }
 
