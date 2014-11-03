@@ -94,6 +94,44 @@ destruct_tab_node(
     uint8_t depth //!< depth of the node to destruct
 );
 
+/**
+ * Remove an event from the tree given by it's root
+ *
+ * @note the removal is done by simple nullification.
+ *
+ * @return 0 on success, a negative error value on error
+ */
+static struct ws_hotkey_dag_tab
+removal_point_in_tab_node(
+    struct ws_hotkey_dag_tab tab, //!< table to remove the event from
+    uint_fast16_t code //!< remove a code from a node tree
+);
+
+/**
+ * Flatten TAB
+ *
+ * Flatten a TAB tree by selecting a new root
+ */
+static void
+flatten_tab(
+    struct ws_hotkey_dag_tab* tab //!< table to flatten
+)
+__ws_nonnull__(1)
+;
+
+
+/**
+ * Count number of pointers set in a tab node
+ *
+ * @return number of pointers set
+ */
+static int
+get_tab_node_numof_children(
+    void** node //!< table node
+)
+__ws_nonnull__(1)
+;
+
 
 /*
  *
@@ -187,8 +225,71 @@ ws_hotkey_dag_remove(
     struct ws_hotkey_dag_node* node,
     struct ws_hotkey_event* event
 ) {
-    //!< @todo remove an event, then all nodes linking to it, ...
-    return -1;
+    struct ws_hotkey_dag_node* last_keep = node;
+    int rem_code = -1;
+
+    // approach the node containing the event
+    {
+        size_t code_num = event->code_num;
+        uint16_t* code = event->codes;
+        while (code_num--) {
+            if (!node) {
+                return -EEXIST;
+            }
+
+            // check whether this node _may_ be removed
+            if ((node->table.depth > 0) ||
+                    (get_tab_node_numof_children(node->table.nodes.tab) > 1)) {
+                // nope
+                last_keep = node;
+                rem_code = *code;
+            }
+
+            // get the next node, asserting it is set
+            node = ws_hotkey_dag_next(node, *code);
+            ++code;
+        }
+    }
+
+    // now we have the node. Let's check for the event and unref it
+    if (!(node && node->event)) {
+        return -EEXIST;
+    }
+    ws_object_unref((struct ws_object*) node->event);
+    node->event = NULL;
+
+    // check whether to keep the node
+    if (node->table.nodes.tab &&
+            (get_tab_node_numof_children(node->table.nodes.tab) > 0)) {
+        // yep, we're done
+        return 0;
+    }
+
+    // check whether the entire tree may be purged
+    if (rem_code < 0) {
+        // yep
+        ws_hotkey_dag_deinit(last_keep);
+        return 0;
+    }
+
+    // get the point where we may start the removal and commence destruction!
+    struct ws_hotkey_dag_tab tab;
+    tab = removal_point_in_tab_node(last_keep->table, rem_code);
+    if (tab.nodes.tab) {
+        // we have a node to return
+        destruct_tab_node((void*) tab.nodes.tab, tab.depth);
+        flatten_tab(&last_keep->table);
+    } else if (last_keep->table.depth == 0) {
+        // the root node holds a ref to a DAG node which we have to remove
+        struct ws_hotkey_dag_node** to_del;
+        to_del = last_keep->table.nodes.dag +
+                 (rem_code - last_keep->table.start);
+
+        destruct_dag_node(*to_del);
+        *to_del = NULL;
+    }
+
+    return 0;
 }
 
 
@@ -328,5 +429,104 @@ destruct_tab_node(
 
     // free this bit of memory
     free(tab_node);
+}
+
+static struct ws_hotkey_dag_tab
+removal_point_in_tab_node(
+    struct ws_hotkey_dag_tab tab,
+    uint_fast16_t code
+) {
+    // prepare the return value
+    struct ws_hotkey_dag_tab retval;
+    retval.nodes.tab = NULL;
+    retval.depth = ~0;
+
+    void** rem_ptr = NULL;
+
+    // step on which the node is based.
+    int step = DAG_TAB_CHILD_NUM_EXP * tab.depth;
+
+    // move towards the bottom,
+    while (tab.depth) {
+        // determine where to go next...
+        size_t pos = (code - tab.start) >> step;
+        void** next_tab = tab.nodes.tab + pos;
+        if (!*next_tab) {
+            return retval;
+        }
+
+        // regenerage all the variables
+        tab.nodes.tab = *next_tab;
+        tab.start = code & ~((1 << step) - 1);
+        step -= DAG_TAB_CHILD_NUM_EXP;
+        --tab.depth;
+
+        // we consider clearing this node if we remove the _last_ child
+        if (get_tab_node_numof_children(tab.nodes.tab) > 1) {
+            // invalidate the retval
+            retval.nodes.tab = NULL;
+            retval.depth = ~0;
+        } else if (!retval.nodes.tab) {
+            retval = tab;
+            rem_ptr = next_tab;
+        }
+    }
+
+    // unlink the tab we'll return from it's super-tree
+    if (rem_ptr) {
+        *rem_ptr = NULL;
+    }
+
+    return retval;
+}
+
+static void
+flatten_tab(
+    struct ws_hotkey_dag_tab* tab
+) {
+    // we try to pull out as many roots as we can
+    while (tab->depth) {
+        // look for _the one_ child
+        void** child = tab->nodes.tab + DAG_TAB_CHILD_NUM;
+        while ( child-- > tab->nodes.tab) {
+            if (*child) {
+                break;
+            }
+        }
+        
+        void** ck = child;
+        while (ck-- > tab->nodes.tab) {
+            if (*ck) {
+                // I said _one_ goddammit!
+                return;
+            }
+        }
+
+        // if we have only one child, we can easily pull out the old root
+        size_t pos = (child - tab->nodes.tab) <<
+                     (DAG_TAB_CHILD_NUM_EXP * tab->depth);
+        free(tab->nodes.tab);
+        tab->nodes.tab = child;
+
+        // we have to adjust depth and start
+        --tab->depth;
+        tab->start = tab->start + pos;
+    }
+}
+
+static int
+get_tab_node_numof_children(
+    void** node
+) {
+    if (!node) {
+        return 0;
+    }
+
+    int non_null = 0;
+    void** ck = node + DAG_TAB_CHILD_NUM;
+    while (ck-- > node) {
+        non_null += (*ck != NULL);
+    }
+    return non_null;
 }
 
