@@ -58,6 +58,9 @@
 #define COMMANDS    "CMDS"
 #define UID         "UID"
 #define TYPE        "TYPE"
+#define FLAGS       "FLAGS"
+
+#define FLAG_EXEC   "EXEC"
 
 #define TYPE_TRANSACTION "transaction"
 
