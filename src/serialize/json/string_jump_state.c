@@ -49,6 +49,11 @@ static const struct {
         .next = STATE_FLAGS_EXEC,
         .str = FLAG_EXEC
     },
+    {
+        .current = STATE_FLAGS_MAP,
+        .next = STATE_FLAGS_REGISTER,
+        .str = FLAG_REGISTER
+    },
 
     { .str = NULL },
 };
