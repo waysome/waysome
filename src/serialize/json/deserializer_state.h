@@ -74,6 +74,7 @@ struct deserializer_state {
     uintmax_t id;
 
     enum ws_transaction_flags flags; //!< @public flag cache
+    struct ws_string* register_name; //!< @public name cache
 
     struct ws_statement* tmp_statement;
 
