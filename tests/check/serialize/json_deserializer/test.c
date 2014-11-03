@@ -321,6 +321,39 @@ START_TEST (test_json_deserializer_transaction_commands) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_flags) {
+    char const* buf =   "{ \"" TYPE "\": \"" TYPE_TRANSACTION "\","
+                        " \"" UID "\": 1337, "
+                        " \"" FLAGS "\": { "
+                                            "\"" FLAG_EXEC      "\": true,"
+                                            "\"" FLAG_REGISTER  "\": \"name\""
+                                        "}"
+                        "}";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    struct ws_transaction* t = (struct ws_transaction*) messagebuf; // cast
+
+    ck_assert(t->flags ==
+            (WS_TRANSACTION_FLAGS_EXEC | WS_TRANSACTION_FLAGS_REGISTER));
+
+    { // test whether the name is set correctly
+        struct ws_string* t_name = ws_string_new();
+        ws_string_set_from_raw(t_name, "name");
+
+
+        ck_assert(ws_string_cmp(t_name, t->name) == 0);
+
+        ws_object_unref((struct ws_object*) t_name);
+    }
+
+    ck_assert(t->cmds == NULL);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -351,6 +384,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_transaction_valid_nocmds);
     tcase_add_test(tcx, test_json_deserializer_transaction_one_command);
     tcase_add_test(tcx, test_json_deserializer_transaction_commands);
+    tcase_add_test(tcx, test_json_deserializer_flags);
 
     return s;
 }
