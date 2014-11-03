@@ -117,6 +117,17 @@ ws_transaction_flags(
 );
 
 /**
+ * Set the flags of the transaction
+ *
+ * @warning Hard-sets the flags, does _not_ set single bits
+ */
+void
+ws_transaction_set_flags(
+    struct ws_transaction* t, //!< The transaction
+    enum ws_transaction_flags flags
+);
+
+/**
  * Get the name of the transaction
  *
  * @note Gets a ref on the name string object if it exists

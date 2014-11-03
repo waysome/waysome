@@ -128,6 +128,14 @@ ws_transaction_flags(
     return t->flags;
 }
 
+void
+ws_transaction_set_flags(
+    struct ws_transaction* t,
+    enum ws_transaction_flags flags
+) {
+    t->flags = flags;
+}
+
 struct ws_string*
 ws_transaction_name(
     struct ws_transaction* t
