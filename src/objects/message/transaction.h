@@ -140,6 +140,17 @@ ws_transaction_name(
 );
 
 /**
+ * Set the name of the transaction
+ *
+ * @note Gets a ref on the name string object if it exists
+ */
+void
+ws_transaction_set_name(
+    struct ws_transaction* t, //!< The transaction
+    struct ws_string* name //!< The name
+);
+
+/**
  * Get the command list of the transaction
  *
  * @return list of commands of the transaction

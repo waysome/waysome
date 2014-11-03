@@ -143,6 +143,14 @@ ws_transaction_name(
     return getref(t->name);
 }
 
+void
+ws_transaction_set_name(
+    struct ws_transaction* t,
+    struct ws_string* name
+) {
+    t->name = getref(name);
+}
+
 struct ws_transaction_command_list*
 ws_transaction_commands(
     struct ws_transaction* t
