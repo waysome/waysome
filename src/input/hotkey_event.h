@@ -32,6 +32,7 @@
 
 #include "objects/object.h"
 #include "objects/string.h"
+#include "util/attributes.h"
 
 
 /**
@@ -48,6 +49,20 @@ struct ws_hotkey_event {
  * Variable which holds type information about the ws_hotkey_event type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_HOTKEY_EVENT;
+
+/**
+ * Create a hotkey event
+ *
+ * @return a fully initialized hotkey event or NULL
+ */
+struct ws_hotkey_event*
+ws_hotkey_event_new(
+    struct ws_string* name, //!< name to initialize the event with
+    uint16_t* codes, //!< codes on which an event should be triggered
+    uint16_t code_num //!< number of codes in `codes`
+)
+__ws_nonnull__(1, 2)
+;
 
 #endif // __WS_INPUT_HOTKEY_EVENT_H__
 
