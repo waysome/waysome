@@ -321,8 +321,10 @@ yajl_map_key_cb(
         return 1;
 
     case STATE_MSG:
+    case STATE_FLAGS_MAP:
         // We're running into a top-level key here, lets decide what comes next:
-        state->current_state = get_next_state_for_string(STATE_MSG, key);
+        state->current_state = get_next_state_for_string(state->current_state,
+                                                         key);
         break;
 
     case STATE_COMMAND_ARY_NEW_COMMAND:
