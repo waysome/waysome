@@ -61,6 +61,7 @@
 #define FLAGS       "FLAGS"
 
 #define FLAG_EXEC   "EXEC"
+#define FLAG_REGISTER "REGISTER"
 
 #define TYPE_TRANSACTION "transaction"
 
