@@ -299,6 +299,10 @@ yajl_start_map_cb(
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT;
         break;
 
+    case STATE_FLAGS:
+        state->current_state = STATE_FLAGS_MAP;
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -404,6 +408,10 @@ yajl_end_map_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
+        break;
+
+    case STATE_FLAGS_MAP:
+        state->current_state = STATE_MSG;
         break;
 
     case STATE_MSG:
