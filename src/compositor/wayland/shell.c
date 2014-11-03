@@ -31,6 +31,7 @@
 #include "compositor/wayland/surface.h"
 #include "compositor/wayland/shell.h"
 #include "compositor/wayland/shell_surface.h"
+#include "compositor/wayland/client.h"
 #include "util/arithmetical.h"
 #include "util/wayland.h"
 
@@ -159,7 +160,7 @@ bind_shell(
     uint32_t serial
 ) {
     struct wl_resource* resource;
-    resource = wl_resource_create(client, &wl_shell_interface,
+    resource = ws_wayland_client_create_resource(client, &wl_shell_interface,
                                   MIN(version, WAYLAND_SHELL_VERSION),
                                   serial);
     if (!resource) {
