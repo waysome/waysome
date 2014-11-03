@@ -36,6 +36,11 @@
 #include "util/config_file.h"
 #include "util/wayland.h"
 
+
+static struct ws_logger_context log_main = {
+    .prefix = "[main] ",
+};
+
 static void
 handle_sig(
     struct ev_loop* loop,
@@ -80,28 +85,43 @@ main(
         goto cleanup;
     }
 
+    ws_log(&log_main, LOG_DEBUG, "Logger initalized.");
+    
     retval = ws_config_load();
     if (retval != 0) {
+        ws_log(&log_main, LOG_EMERG, "Failed to load configuration.");
         goto cleanup;
     }
+
+    ws_log(&log_main, LOG_DEBUG, "Configuration loaded.");
 
     retval = ws_input_init();
     if (retval != 0) {
+        ws_log(&log_main, LOG_EMERG, "Input module could not be initialized");
         goto cleanup;
     }
+
+    ws_log(&log_main, LOG_DEBUG, "Input module initialized.");
 
     retval = ws_compositor_init();
     if (retval != 0) {
+        ws_log(&log_main, LOG_EMERG, "Compositor could not be initialized.");
         goto cleanup;
     }
+
+    ws_log(&log_main, LOG_DEBUG, "Compositor initialized.");
 
     retval = ws_wayland_listen();
     if (retval != 0) {
+        ws_log(&log_main, LOG_EMERG, "Failed to open wayland socket.");
         goto cleanup;
     }
 
+    ws_log(&log_main, LOG_DEBUG, "Wayland socket opened. Listening now.");
+
     // everything did go well
     retval = 0;
+    ws_log(&log_main, LOG_DEBUG, "Main loop initialized successfully.");
 
 
     /*
@@ -112,7 +132,7 @@ main(
      * LLLLL   OOO    OOO   P
      */
     ev_loop(default_loop, 0);
-
+    ws_log(&log_main, LOG_DEBUG, "Main loop exited normally.");
 
     /*
      * DDDD   EEEEE  I  N   N  I  TTTTTTT
