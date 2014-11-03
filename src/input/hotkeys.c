@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <linux/input.h>
 #include <malloc.h>
 #include <stdbool.h>
@@ -34,6 +35,7 @@
 #include "input/hotkey_dag.h"
 #include "input/hotkey_event.h"
 #include "input/hotkeys.h"
+#include "logger/module.h"
 #include "objects/message/event.h"
 #include "util/cleaner.h"
 
@@ -45,6 +47,7 @@ struct {
     struct ws_hotkey_dag_node* state; //!< node of the DAG we're on
     struct wl_array events; //!< button events consumed while traversing
     int buttons_pressed; //!< button presses - button releases
+    struct ws_logger_context log; //!< log context of to hotkeys module
 } ws_hotkeys_ctx;
 
 /*
@@ -89,6 +92,7 @@ ws_hotkeys_init(void) {
     }
     int res;
 
+
     res = ws_hotkey_dag_init(&ws_hotkeys_ctx.root);
     if (!res) {
         goto cleanup;
@@ -98,6 +102,8 @@ ws_hotkeys_init(void) {
     ws_cleaner_add(hotkeys_deinit, NULL);
     wl_array_init(&ws_hotkeys_ctx.events);
     ws_hotkeys_ctx.buttons_pressed = 0;
+
+    ws_hotkeys_ctx.log.prefix = "[Input/Hotkeys] ";
 
     is_init = true;
     return 0;
@@ -131,9 +137,13 @@ ws_hotkeys_eval(
         ws_hotkeys_ctx.state = ws_hotkey_dag_next(ws_hotkeys_ctx.state, code);
         if (!ws_hotkeys_ctx.state) {
             // this key is not part of a keycombo
+            ws_log(&ws_hotkeys_ctx.log, LOG_DEBUG,
+                   "Keycode %d not part of key-combo", code);
             return eventlist_reset();
         }
 
+        ws_log(&ws_hotkeys_ctx.log, LOG_INFO,
+               "Recognizing %d as part of key-combo", code);
         return empty_eventlist();
     }
 
@@ -144,6 +154,7 @@ ws_hotkeys_eval(
         return empty_eventlist();
     }
 
+    ws_log(&ws_hotkeys_ctx.log, LOG_INFO, "All keys released");
     // we have something which may be a key combo. Let's find out what to do
     if (!ws_hotkeys_ctx.state->event) {
         // nothing!
@@ -158,6 +169,13 @@ ws_hotkeys_eval(
     }
 
     // emit the event
+    {
+        char* buf = ws_string_raw(&ws_hotkeys_ctx.state->event->name);
+        ws_log(&ws_hotkeys_ctx.log, LOG_INFO, "Emitting event %s...",
+               buf ? buf : "unknown event");
+        free(buf);
+    }
+
     struct ws_reply* reply;
     reply = ws_action_manager_process((struct ws_message*) event);
     if (reply) {
@@ -170,6 +188,41 @@ ws_hotkeys_eval(
     ws_hotkeys_ctx.buttons_pressed = 0;
 
     return ws_hotkeys_ctx.events;
+}
+
+int
+ws_hotkey_add(
+    struct ws_string* name,
+    uint16_t* codes,
+    uint16_t code_num
+) {
+    struct ws_hotkey_event* event = ws_hotkey_event_new(name, codes, code_num);
+    if (!event) {
+        return -ENOMEM;
+    }
+    return ws_hotkey_dag_insert(&ws_hotkeys_ctx.root, event);
+}
+
+int
+ws_hotkey_remove(
+    uint16_t* codes,
+    uint16_t code_num
+) {
+    int res;
+
+    // construct an event for the removal
+    struct ws_string name;
+    ws_string_init(&name);
+    struct ws_hotkey_event event;
+    res = ws_hotkey_event_init(&event, &name, codes, code_num);
+    if (res < 0) {
+        return res;
+    }
+    ws_object_deinit((struct ws_object*) &name);
+
+    res = ws_hotkey_dag_remove(&ws_hotkeys_ctx.root, &event);
+    ws_object_deinit((struct ws_object*) &event);
+    return res;
 }
 
 /*

@@ -35,7 +35,7 @@
 
 // forward declaration
 struct input_event;
-struct ws_hotkey_event;
+struct ws_string;
 
 
 /**
@@ -57,6 +57,33 @@ ws_hotkeys_init(void);
 struct wl_array
 ws_hotkeys_eval(
     struct input_event* ev
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Add an event
+ *
+ * @return 0 on success, a negative error number if an error occured
+ */
+int
+ws_hotkey_add(
+    struct ws_string* name, //!< name of the event to insert
+    uint16_t* codes, //!< codes of the event to add
+    uint16_t code_num //!< number of codes in `codes`
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Remove an event
+ *
+ * @return 0 on success, a negative error number if an error occured
+ */
+int
+ws_hotkey_remove(
+    uint16_t* codes, //!< codes of the event to remove
+    uint16_t code_num //!< number of codes in `codes`
 )
 __ws_nonnull__(1)
 ;
