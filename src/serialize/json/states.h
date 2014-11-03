@@ -60,6 +60,11 @@ enum json_backend_state {
     STATE_UID, //!< "We parsed the "UID" key"
     STATE_COMMANDS, //!< We parsed the "commands" key
     STATE_TYPE, //!< We parsed the "type" key
+    STATE_FLAGS, //!< We parsed the "flags" key
+
+    STATE_FLAGS_MAP, //!< We are in the "flags" map
+    STATE_FLAGS_EXEC, //!< We parsed the flags key "execute"
+    STATE_FLAGS_REGISTER, //!< We parsed the flags key "register"
 
     STATE_COMMAND_ARY, //!< We are parsing the command array
     STATE_COMMAND_ARY_NEW_COMMAND, //!< We are parsing a command
