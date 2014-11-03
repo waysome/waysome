@@ -43,6 +43,7 @@ static const struct {
     { .current = STATE_MSG, .next = STATE_UID,      .str = UID          },
     { .current = STATE_MSG, .next = STATE_TYPE,     .str = TYPE         },
     { .current = STATE_MSG, .next = STATE_COMMANDS, .str = COMMANDS     },
+    { .current = STATE_MSG, .next = STATE_FLAGS,    .str = FLAGS        },
 
     { .str = NULL },
 };
