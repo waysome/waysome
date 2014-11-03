@@ -84,6 +84,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_INPUT_DEVICE = {
     .uuid_callback = NULL,
 
     .attribute_table = NULL,
+    .function_table = NULL,
 };
 
 /*

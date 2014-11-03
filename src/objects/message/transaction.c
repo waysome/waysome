@@ -72,6 +72,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
     .hash_callback = NULL,
     .cmp_callback = cmp_transactions,
     .uuid_callback = NULL,
+
+    .function_table = NULL,
 };
 
 /*

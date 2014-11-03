@@ -80,6 +80,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ = {
     .uuid_callback = uuid_callback,
 
     .attribute_table = NULL,
+    .function_table = NULL,
 };
 
 /*

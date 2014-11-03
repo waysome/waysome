@@ -84,6 +84,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .cmp_callback = NULL,
     .uuid_callback = NULL,
     .attribute_table = WS_OBJECT_ATTRS_OBJECT,
+    .function_table = NULL,
 };
 
 static const struct {
