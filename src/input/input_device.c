@@ -201,7 +201,8 @@ handle_keyboard_press_event(
 
     struct ws_keyboard* k = ws_keyboard_get();
 
-    ws_keyboard_send_key(k, &ev->time, ev->code, state);
+    // XKB map has an offset of 8 to linux/input.h concerning to keycodes
+    ws_keyboard_send_key(k, &ev->time, ev->code + 8, state);
 }
 
 static void
