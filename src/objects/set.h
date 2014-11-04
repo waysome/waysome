@@ -229,6 +229,8 @@ ws_set_select(
 /**
  * Select first possible element
  *
+ * @memberof ws_set
+ *
  * @return the first element processed
  */
 struct ws_object*
@@ -239,6 +241,8 @@ ws_set_select_any(
 /**
  * Select lowest element from set
  *
+ * @memberof ws_set
+ *
  * @return the lowest element of the set, NULL on failure
  */
 struct ws_object*
@@ -248,6 +252,8 @@ ws_set_select_lowest(
 
 /**
  * Select greatest element from set
+ *
+ * @memberof ws_set
  *
  * @return greatest element from set or NULL on failure
  */
