@@ -39,6 +39,8 @@ struct ws_surface; // definition in compositor/surface.h
  * Waysome's implementation of ws_wayland_pointer
  *
  * This struct represents a ws_wayland_pointer
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_wayland_pointer {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
