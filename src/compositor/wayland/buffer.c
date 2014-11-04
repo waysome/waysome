@@ -134,6 +134,8 @@ static ws_buffer_type_id buffer_type = {
         .dump_callback = NULL,
         .run_callback = NULL,
         .cmp_callback = NULL,
+
+        .attribute_table = NULL,
     },
     .get_data = get_data,
     .get_width = get_width,
@@ -160,6 +162,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_BUFFER = {
     .dump_callback = NULL,
     .run_callback = NULL,
     .cmp_callback = NULL,
+
+    .attribute_table = NULL,
 };
 
 int
