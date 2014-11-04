@@ -598,6 +598,16 @@ ws_object_is_instance_of(
     return type == &WS_OBJECT_TYPE_ID_OBJECT;
 }
 
+int
+ws_object_call_cmd(
+    struct ws_object* self,
+    char const* ident,
+    union ws_value_union* stack
+) {
+    //!< @todo implement
+    return -1;
+}
+
 /*
  *
  * static function implementations

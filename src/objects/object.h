@@ -563,6 +563,29 @@ ws_object_is_instance_of(
 __ws_nonnull__(1)
 ;
 
+/*
+ *
+ * Forward declaration
+ *
+ */
+union ws_value_union;
+
+/**
+ * Call a command on the object
+ *
+ * @memberof ws_object
+ *
+ * @return return value of command function or negative errno.h number:
+ *  -ENOENT if no command was found
+ *  -EINVAL if arguments where invalid
+ */
+int
+ws_object_call_cmd(
+    struct ws_object* self,
+    char const* ident, //!< Name of the command to call for the object
+    union ws_value_union* stack //!< Stack to pass to the command function
+);
+
 #endif // __WS_OBJECTS_OBJECT_H__
 
 /**
