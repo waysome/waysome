@@ -52,6 +52,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_POINTER;
 /**
  * Create a new ws_wayland_pointer
  *
+ * @memberof ws_wayland_pointer
+ *
  * create a new ws_wayland_pointer without any bufers attached to it
  */
 struct ws_wayland_pointer*
@@ -62,6 +64,8 @@ ws_wayland_pointer_new(
 
 /**
  * Check if a given resource is a pointer
+ *
+ * @memberof ws_wayland_pointer
  */
 bool
 ws_wayland_pointer_instance_of(
