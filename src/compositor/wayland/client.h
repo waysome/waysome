@@ -72,12 +72,16 @@ struct ws_deletable_resource {
 
 /**
  * Initialize the wayland_client associated data structures
+ *
+ * @memberof ws_wayland_client
  */
 int
 ws_wayland_client_init(void);
 
 /**
  * Wraps the resource creation
+ *
+ * @memberof ws_wayland_client
  */
 struct wl_resource*
 ws_wayland_client_create_resource(
