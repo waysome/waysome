@@ -67,6 +67,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_STRING = {
     .cmp_callback = (int (*) (struct ws_object const*, struct ws_object const*))
                     ws_string_cmp,
     .uuid_callback = NULL,
+
+    .attribute_table = NULL,
 };
 
 bool
