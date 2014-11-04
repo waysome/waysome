@@ -124,6 +124,8 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
         .dump_callback = NULL,
         .run_callback = NULL,
         .cmp_callback = cmp_buffer,
+
+        .attribute_table = NULL,
     },
     .get_data = get_data,
     .get_width = get_width,
