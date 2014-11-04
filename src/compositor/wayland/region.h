@@ -36,6 +36,8 @@
  * Waysome's implementation of wl_region
  *
  * This struct represents a region
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_region {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
