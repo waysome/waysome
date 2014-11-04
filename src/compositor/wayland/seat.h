@@ -47,6 +47,8 @@ struct ws_wayland_seat {
 /**
  * Initialize the seat interface and register it to wayland
  *
+ * @memberof ws_wayland_seat
+ *
  * @return 0 on success, else an error code
  */
 int
