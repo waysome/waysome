@@ -119,6 +119,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
     .run_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
+
+    .attribute_table = NULL,
 };
 
 /*
