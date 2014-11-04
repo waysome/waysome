@@ -36,6 +36,8 @@
  * Waysome's implementation of wl_surface
  *
  * This struct represents a surface
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_surface {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
