@@ -32,8 +32,10 @@
 #include "action/processor.h"
 #include "action/processor_stack.h"
 #include "objects/message/error_reply.h"
+#include "objects/message/event.h"
 #include "objects/message/transaction.h"
 #include "objects/message/value_reply.h"
+#include "objects/named.h"
 #include "objects/set.h"
 #include "util/cleaner.h"
 
@@ -146,7 +148,48 @@ ws_action_manager_process(
         return NULL;
     }
 
-    //!< @todo handle event messages
+    // check whether the message is an event
+    if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
+        struct ws_event* event = (struct ws_event*) message;
+        struct ws_transaction* transaction;
+
+        { // contain transaction retrieval in a scope to save stack
+            struct ws_string* name = ws_event_get_name(event);
+            if (!name) {
+                return NULL;
+            }
+
+            // get the named object containing the event
+            struct ws_named comparable;
+            ws_named_init(&comparable, name, NULL);
+            ws_object_unref((struct ws_object*) name);
+
+            struct ws_named* named;
+            named = set_get(&actman_ctx.registrations, &comparable);
+
+            ws_object_deinit((struct ws_object*) &comparable);
+
+            // extract the transaction to run
+            if (!named) {
+                return NULL;
+            }
+
+            transaction = (struct ws_transaction*) ws_named_get_obj(named);
+            if (!transaction) {
+                return NULL;
+            }
+        }
+
+        // now, finally, run the transaction
+        struct ws_reply* reply;
+        reply = run_transaction(transaction,
+                                &ws_event_get_context(event)->value);
+        if (reply) {
+            ws_object_unref((struct ws_object*) reply);
+        }
+
+        return NULL;
+    }
 
     return NULL;
 }
