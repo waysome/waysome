@@ -63,6 +63,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ;
 /**
  * Initialize a `ws_wayland_obj` object
  *
+ * @memberof ws_wayland_obj
+ *
  * @return zero on success, else negative errno.h constant
  */
 int
@@ -73,6 +75,8 @@ ws_wayland_obj_init(
 
 /**
  * Get a newly allocated and initialized `ws_wayland_obj` object
+ *
+ * @memberof ws_wayland_obj
  *
  * @return new `ws_wayland_obj` object or NULL on failure
  */
@@ -85,6 +89,8 @@ ws_wayland_obj_new(
  * Get the wl_object as wl_resource which is encapsulated in the ws_wayland_obj
  * object
  *
+ * @memberof ws_wayland_obj
+ *
  * @return the wl_resource instance from the object
  */
 struct wl_resource*
@@ -94,6 +100,8 @@ ws_wayland_obj_get_wl_resource(
 
 /**
  * Set the wl_resource to encapsulate in the ws_wayland_obj object
+ *
+ * @memberof ws_wayland_obj
  */
 void
 ws_wayland_obj_set_wl_resource(
