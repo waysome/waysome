@@ -54,6 +54,8 @@ extern ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER;
 /**
  * Initialize a `ws_image_buffer` object
  *
+ * @memberof ws_image_buffer
+ *
  * @return an empty image buffer
  */
 struct ws_image_buffer*
@@ -62,6 +64,8 @@ ws_image_buffer_new(void);
 /**
  * Initialize a `ws_image_buffer` object and load the image
  * specified by the path argument
+ *
+ * @memberof ws_image_buffer
  *
  * @return a filled image buffer, or NULL on failure
  */
