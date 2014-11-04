@@ -71,6 +71,8 @@ extern ws_buffer_type_id WS_OBJECT_TYPE_ID_FRAME_BUFFER;
  * This is the graphic card device that is given by the kernel. It loads it
  * and populates the given framebuffer with the information found.
  *
+ * @memberof ws_frame_buffer
+ *
  * @return the device on success, NULL on failure
  */
 struct ws_frame_buffer*
