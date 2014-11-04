@@ -51,6 +51,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_SURFACE;
 /**
  * Create a new surface
  *
+ * @memberof ws_surface
+ *
  * create a new surface without any bufers attached to it
  */
 struct ws_surface*
@@ -63,6 +65,8 @@ ws_surface_new(
  * Get a surface from a resource
  *
  * Extracts the surface from a resource.
+ *
+ * @memberof ws_surface
  *
  * @return the surface or NULL, if the resource is not a wl_surface.
  */
