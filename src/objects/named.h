@@ -89,6 +89,20 @@ ws_named_new(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Get a reference of the object
+ *
+ * @memberof ws_object
+ *
+ * @return a pointer to the ref'd object inside the named object
+ */
+struct ws_object*
+ws_named_get_obj(
+    struct ws_named* self //!< named to get the object from
+)
+__ws_nonnull__(1)
+;
+
 #endif // __WS_OBJECTS_NAMED_H__
 
 /**

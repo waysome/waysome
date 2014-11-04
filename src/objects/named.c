@@ -111,6 +111,13 @@ ws_named_new(
     return retval;
 }
 
+struct ws_object*
+ws_named_get_obj(
+    struct ws_named* self
+) {
+    return getref(self->val);
+}
+
 
 /*
  *
