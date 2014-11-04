@@ -94,7 +94,9 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR = {
     .hash_callback = monitor_hash,
     .dump_callback = NULL,
     .run_callback = NULL,
-    .cmp_callback = monitor_cmp
+    .cmp_callback = monitor_cmp,
+
+    .attribute_table = NULL,
 };
 
 /*
