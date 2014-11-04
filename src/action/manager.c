@@ -34,6 +34,8 @@
 #include "objects/message/error_reply.h"
 #include "objects/message/transaction.h"
 #include "objects/message/value_reply.h"
+#include "objects/set.h"
+#include "util/cleaner.h"
 
 
 /**
@@ -68,12 +70,48 @@ run_transaction(
     struct ws_value* context //!< context to push on the stack
 );
 
+/**
+ * Deinitialize the action manager
+ */
+static void
+action_manager_deinit(
+    void* dummy
+);
+
 
 /*
  *
  * Interface implementation
  *
  */
+
+int
+ws_action_manager_init(void) {
+    static bool is_init = false;
+    if (is_init) {
+        return 0;
+    }
+    int res;
+
+    res = ws_set_init(&actman_ctx.transactions);
+    if (res < 0) {
+        return res;
+    }
+
+    res = ws_set_init(&actman_ctx.registrations);
+    if (res < 0) {
+        goto cleanup_transactions;
+    }
+
+    ws_cleaner_add(action_manager_deinit, NULL);
+
+    is_init = true;
+    return 0;
+
+cleanup_transactions:
+    ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
+    return res;
+}
 
 struct ws_reply*
 ws_action_manager_process(
@@ -196,5 +234,13 @@ cleanup_processor:
 cleanup_stack:
     ws_processor_stack_deinit(&stack);
     return retval;
+}
+
+static void
+action_manager_deinit(
+    void* dummy
+) {
+    ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
+    ws_object_deinit((struct ws_object*) &actman_ctx.registrations);
 }
 
