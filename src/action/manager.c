@@ -194,6 +194,44 @@ ws_action_manager_process(
     return NULL;
 }
 
+int
+ws_action_manager_register(
+    struct ws_string* event_name,
+    struct ws_string* transaction_name
+) {
+    int res;
+
+    // get the transaction
+    struct ws_transaction comparable;
+    res = ws_transaction_init(&comparable, 0, transaction_name);
+    if (res < 0) {
+        return res;
+    }
+
+    struct ws_transaction* transaction;
+    transaction = set_get(&actman_ctx.transactions, &comparable);
+    ws_object_deinit((struct ws_object*) &comparable);
+    if (!transaction) {
+        return -ENOENT;
+    }
+
+    // construct a named object
+    struct ws_named* named = ws_named_new(event_name,
+                                          (struct ws_object*) transaction);
+    if (!named) {
+        return -ENOMEM;
+    }
+
+    // finally, insert the new named object
+    res = ws_set_insert(&actman_ctx.registrations, (struct ws_object*) named);
+    if (res < 0) {
+        ws_object_unref((struct ws_object*) named);
+        return res;
+    }
+
+    return 0;
+}
+
 
 /*
  *
