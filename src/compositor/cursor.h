@@ -37,6 +37,8 @@
 /**
  * Waysome's implementation of wl_cursor
  *
+ * @extends ws_object
+ *
  * This struct represents a cursor
  */
 struct ws_cursor {
