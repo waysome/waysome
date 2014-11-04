@@ -49,6 +49,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_BUFFER;
 /**
  * Initialize a `ws_wayland_buffer` object
  *
+ * @memberof ws_wayland_buffer
+ *
  * @return zero on success, else negative errno.h constant
  */
 int
@@ -60,6 +62,8 @@ ws_wayland_buffer_init(
 /**
  * Get a newly allocated and initialized `ws_wayland_obj` object
  *
+ * @memberof ws_wayland_buffer
+ *
  * @return new `ws_wayland_obj` object or NULL on failure
  */
 struct ws_wayland_buffer*
@@ -69,6 +73,8 @@ ws_wayland_buffer_new(
 
 /**
  * Set the resource of the wayland buffer
+ *
+ * @memberof ws_wayland_buffer
  */
 void
 ws_wayland_buffer_set_resource(
@@ -78,6 +84,8 @@ ws_wayland_buffer_set_resource(
 
 /**
  * Get the embedded buffer
+ *
+ * @memberof ws_wayland_buffer
  *
  * @return the embedded buffer
  */
