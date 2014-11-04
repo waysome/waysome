@@ -81,6 +81,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_INPUT_DEVICE = {
     .run_callback = NULL,
     .cmp_callback = cmp_callback,
     .uuid_callback = NULL,
+
+    .attribute_table = NULL,
 };
 
 /*

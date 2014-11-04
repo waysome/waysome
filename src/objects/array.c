@@ -60,10 +60,14 @@ ws_object_type_id WS_OBJECT_TYPE_ID_ARRAY = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_array",
 
-    .deinit_callback = deinit_callback,
-
     .cmp_callback = NULL,
+    .deinit_callback = deinit_callback,
+    .dump_callback = NULL,
+    .hash_callback = NULL,
+    .run_callback = NULL,
     .uuid_callback = NULL,
+
+    .attribute_table = NULL,
 };
 
 /*
