@@ -36,6 +36,15 @@
 #include "objects/message/value_reply.h"
 
 
+/**
+ * Internal context of the transaction manager
+ */
+struct {
+    struct ws_set transactions; //!< @public transactions registered
+    struct ws_set registrations; //!< @public registrations of transactions
+} actman_ctx;
+
+
 /*
  *
  * Forward declarations
