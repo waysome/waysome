@@ -47,6 +47,15 @@ deinit_transaction(
     struct ws_object* self
 );
 
+/**
+ * Compare two transactions
+ */
+static int
+cmp_transactions(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+);
+
 /*
  *
  * variables
@@ -61,7 +70,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
     .dump_callback = NULL,
     .run_callback = NULL,
     .hash_callback = NULL,
-    .cmp_callback = NULL,
+    .cmp_callback = cmp_transactions,
     .uuid_callback = NULL,
 };
 
@@ -227,3 +236,16 @@ out:
     t->cmds->num = 0;
     return true;
 }
+
+static int
+cmp_transactions(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+) {
+    struct ws_transaction* t1 = (struct ws_transaction*) o1;
+    struct ws_transaction* t2 = (struct ws_transaction*) o2;
+
+    return ws_object_cmp((struct ws_object*) t1->name,
+                         (struct ws_object*) t2->name);
+}
+
