@@ -82,6 +82,8 @@ extern ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER;
 /**
  * Initialize a `ws_bufer` object
  *
+ * @memberof ws_buffer
+ *
  * @return zero on success, else negative errno.h constant
  */
 int
@@ -93,6 +95,8 @@ ws_buffer_init(
  * Get a pointer to the buffer's contents
  *
  * @warning to not pass NULL to this function! It will crash!
+ *
+ * @memberof ws_buffer
  *
  * @return pointer to the buffer's contents
  */
@@ -108,6 +112,8 @@ __ws_nonnull__(1)
  *
  * @warning to not pass NULL to this function! It will crash!
  *
+ * @memberof ws_buffer
+ *
  * @return width of the buffer's contents
  */
 int32_t
@@ -121,6 +127,8 @@ __ws_nonnull__(1)
  * Get the buffer's height
  *
  * @warning to not pass NULL to this function! It will crash!
+ *
+ * @memberof ws_buffer
  *
  * @return height of the buffer's contents
  */
@@ -136,6 +144,8 @@ __ws_nonnull__(1)
  *
  * @warning to not pass NULL to this function! It will crash!
  *
+ * @memberof ws_buffer
+ *
  * @return stride of the buffer's contents
  */
 int32_t
@@ -150,6 +160,8 @@ __ws_nonnull__(1)
  *
  * @warning to not pass NULL to this function! It will crash!
  *
+ * @memberof ws_buffer
+ *
  * @return format of the buffer's contents
  */
 uint32_t
@@ -161,6 +173,8 @@ __ws_nonnull__(1)
 
 /**
  * Get the buffer's bits per pixel
+ *
+ * @memberof ws_buffer
  *
  * @return bits per pixel of this buffer
  */
@@ -174,6 +188,8 @@ __ws_nonnull__(1)
 /**
  * Begin buffer access
  *
+ * @memberof ws_buffer
+ *
  * @warning to not pass NULL to this function! It will crash!
  */
 void
@@ -185,6 +201,8 @@ __ws_nonnull__(1)
 /**
  * End buffer access
  *
+ * @memberof ws_buffer
+ *
  * @warning to not pass NULL to this function! It will crash!
  */
 void
@@ -195,6 +213,8 @@ __ws_nonnull__(1)
 ;
 /**
  * Blit two buffers together (This copies one into the other)
+ *
+ * @memberof ws_buffer
  *
  * @warning do not pass NULL to this function! It will crash!
  */
