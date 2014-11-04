@@ -35,6 +35,8 @@
  * Waysome's implementation of ws_wayland_seat
  *
  * This struct represents a ws_wayland_seat
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_wayland_seat {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
@@ -46,6 +48,8 @@ struct ws_wayland_seat {
 
 /**
  * Initialize the seat interface and register it to wayland
+ *
+ * @memberof ws_wayland_seat
  *
  * @return 0 on success, else an error code
  */

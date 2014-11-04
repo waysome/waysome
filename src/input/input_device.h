@@ -58,6 +58,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_INPUT_DEVICE;
  *
  * @note for use by the derived types
  *
+ * @memberof ws_input_device
+ *
  * @return 0 on success, or a negative error code
  */
 struct ws_input_device*

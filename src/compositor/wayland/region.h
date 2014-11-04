@@ -36,6 +36,8 @@
  * Waysome's implementation of wl_region
  *
  * This struct represents a region
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_region {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
@@ -50,6 +52,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_REGION;
 /**
  * Create a new region
  *
+ * @memberof ws_region
+ *
  * create a new region without any buffers attached to it
  */
 struct ws_region*
@@ -63,6 +67,8 @@ ws_region_new(
  *
  * Extracts the region from a resource.
  *
+ * @memberof ws_region
+ *
  * @return the region or NULL, if the resource is not a wl_region.
  */
 struct ws_region*
@@ -72,6 +78,8 @@ ws_region_from_resource(
 
 /**
  * Check if a given position is inside the input region
+ *
+ * @memberof ws_region
  */
 bool
 ws_region_inside(

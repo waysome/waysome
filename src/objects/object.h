@@ -475,6 +475,8 @@ __ws_nonnull__(1, 2, 3)
 /**
  * Get the type of an attribute identified by its name
  *
+ * @memberof ws_object
+ *
  * @return The attribute type of the attribute identified by name or
  * WS_OBJ_ATTR_NO_TYPE
  */
@@ -513,6 +515,8 @@ ws_object_cmp(
  * This method creates the UUID for the object if there is no uuid available for
  * it.
  *
+ * @memberof ws_object
+ *
  * @return The UUID of the object
  */
 uintmax_t
@@ -525,6 +529,8 @@ ws_object_uuid(
  *
  * @note an object is also an instance of a type if it's really an instance
  *       of a _subtype_.
+ *
+ * @memberof ws_object
  *
  * @return true if the object is of the type supplied, false if it is not
  */

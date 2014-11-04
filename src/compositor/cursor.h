@@ -37,6 +37,8 @@
 /**
  * Waysome's implementation of wl_cursor
  *
+ * @extends ws_object
+ *
  * This struct represents a cursor
  */
 struct ws_cursor {
@@ -61,6 +63,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_CURSOR;
 /**
  * Create a cursor using that specific device
  *
+ * @memberof ws_cursor
+ *
  * @returns the created cursor
  */
 struct ws_cursor*
@@ -71,6 +75,8 @@ ws_cursor_new(
 
 /**
  * Move the cursor to a position
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_set_position(
@@ -81,6 +87,8 @@ ws_cursor_set_position(
 
 /**
  * Move the cursor by the amounts
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_add_position(
@@ -91,6 +99,8 @@ ws_cursor_add_position(
 
 /**
  * Move the cursor to a position
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_set_hotspot(
@@ -101,6 +111,8 @@ ws_cursor_set_hotspot(
 
 /**
  * Rerender the cursor as it is
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_redraw(
@@ -109,6 +121,8 @@ ws_cursor_redraw(
 
 /**
  * Set a new buffer
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_set_image(
@@ -118,6 +132,8 @@ ws_cursor_set_image(
 
 /**
  * Set a new buffer
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_unset(
@@ -126,6 +142,8 @@ ws_cursor_unset(
 
 /**
  * Set the monitor
+ *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_set_monitor(
@@ -136,6 +154,7 @@ ws_cursor_set_monitor(
 /**
  * Set the state of the mouse buttons
  *
+ * @memberof ws_cursor
  */
 void
 ws_cursor_set_button_state(
@@ -147,6 +166,8 @@ ws_cursor_set_button_state(
 
 /**
  * Get the cursor pointer
+ *
+ * @memberof ws_cursor
  *
  * @warning, check for NULL pointers
  */

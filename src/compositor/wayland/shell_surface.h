@@ -38,6 +38,8 @@ struct ws_surface; // definition in compositor/surface.h
  * Waysome's implementation of wl_surface
  *
  * This struct represents a surface
+ *
+ * @extends ws_wayland_obj
  */
 struct ws_shell_surface {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
@@ -51,6 +53,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE;
 
 /**
  * Create a new surface
+ *
+ * @memberof ws_shell_surface
  *
  * create a new surface without any bufers attached to it
  */

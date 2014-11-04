@@ -102,6 +102,8 @@ ws_monitor_new(void);
  * @warning you must hold a reference of the monitor while working on the set
  *          returned to prevent destruction of the set by another thread.
  *
+ * @memberof ws_monitor
+ *
  * @return the set of surfaces assigned to the monitor
  */
 struct ws_set*
@@ -163,6 +165,8 @@ ws_monitor_copy_mode(
 
 /**
  * Publishes the monitor through the wayland protocol
+ *
+ * @memberof ws_monitor
  */
 void
 ws_monitor_publish(
