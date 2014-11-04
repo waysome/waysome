@@ -50,6 +50,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_REGION;
 /**
  * Create a new region
  *
+ * @memberof ws_region
+ *
  * create a new region without any buffers attached to it
  */
 struct ws_region*
@@ -63,6 +65,8 @@ ws_region_new(
  *
  * Extracts the region from a resource.
  *
+ * @memberof ws_region
+ *
  * @return the region or NULL, if the resource is not a wl_region.
  */
 struct ws_region*
@@ -72,6 +76,8 @@ ws_region_from_resource(
 
 /**
  * Check if a given position is inside the input region
+ *
+ * @memberof ws_region
  */
 bool
 ws_region_inside(
