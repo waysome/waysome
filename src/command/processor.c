@@ -96,6 +96,9 @@ command_processor_deinit(
  *
  */
 
+/**
+ * @extends ws_object
+ */
 struct ws_command_processor {
     struct ws_object obj; //!< @public parent object type
     struct ws_connector conn; //!< @public connection to process
