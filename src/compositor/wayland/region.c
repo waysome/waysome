@@ -126,6 +126,9 @@ ws_object_type_id WS_OBJECT_TYPE_ID_REGION = {
     .dump_callback      = NULL,
     .run_callback       = NULL,
     .hash_callback      = NULL,
+    .cmp_callback       = NULL,
+
+    .attribute_table    = NULL,
 };
 
 struct ws_region*
