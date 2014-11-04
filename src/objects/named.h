@@ -41,6 +41,7 @@
 #define __WS_OBJECTS_NAMED_H__
 
 #include "objects/string.h"
+#include "util/attributes.h"
 
 /**
  * ws_named type definition
@@ -56,6 +57,37 @@ struct ws_named {
 * ws_named type information
 */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_NAMED;
+
+/**
+ * Initialize a new named object
+ *
+ * @memberof ws_named
+ *
+ * @return 0 on success, a negative error code otherwise
+ */
+int
+ws_named_init(
+    struct ws_named* self, //!< named value to initialize
+    struct ws_string* name, //!< name of the object
+    struct ws_object* val //!< valu eof the object
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Create a new named object
+ *
+ * @memberof ws_named
+ *
+ * @return a newly created named object or `NULL`, if an error occured
+ */
+struct ws_named*
+ws_named_new(
+    struct ws_string* name, //!< name of the object
+    struct ws_object* val //!< valu eof the object
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_OBJECTS_NAMED_H__
 

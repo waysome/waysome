@@ -25,7 +25,21 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <malloc.h>
+
 #include "objects/named.h"
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+static bool
+named_deinit(
+    struct ws_object* obj
+);
+
 
 /*
  *
@@ -37,7 +51,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_NAMED = {
     .supertype = &WS_OBJECT_TYPE_ID_STRING,
     .typestr = "ws_named",
 
-    .deinit_callback = NULL,
+    .deinit_callback = named_deinit,
     .dump_callback = NULL,
     .run_callback = NULL,
     .hash_callback = NULL,
@@ -46,4 +60,74 @@ ws_object_type_id WS_OBJECT_TYPE_ID_NAMED = {
 
     .attribute_table = NULL,
 };
+
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
+int
+ws_named_init(
+    struct ws_named* self,
+    struct ws_string* name,
+    struct ws_object* val
+) {
+    int res = ws_string_init(&self->str);
+    if (res < 0) {
+        return res;
+        
+    }
+    self->str.obj.id = &WS_OBJECT_TYPE_ID_NAMED;
+    self->str.obj.settings |= WS_OBJECT_HEAPALLOCED;
+
+    if (!ws_string_set_from_str(&self->str, name)) {
+        return -1;
+    }
+
+    if (val) {
+        self->val = getref(val);
+    }
+
+    return 0;
+}
+
+struct ws_named*
+ws_named_new(
+    struct ws_string* name, //!< name of the object
+    struct ws_object* val //!< valu eof the object
+) {
+    struct ws_named* retval = calloc(1, sizeof(*retval));
+    if (!retval) {
+        return NULL;
+    }
+
+    if (ws_named_init(retval, name, val) < 0) {
+        free(retval);
+        return NULL;
+    }
+
+    return retval;
+}
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+static bool
+named_deinit(
+    struct ws_object* obj
+) {
+    struct ws_named* self = (struct ws_named*) obj;
+
+    if (self->val) {
+        ws_object_unref(self->val);
+    }
+
+    return true;
+}
 
