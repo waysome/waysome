@@ -52,6 +52,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE;
 /**
  * Create a new surface
  *
+ * @memberof ws_shell_surface
+ *
  * create a new surface without any bufers attached to it
  */
 struct ws_shell_surface*
