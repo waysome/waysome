@@ -125,7 +125,18 @@ ws_action_manager_process(
         // get the flags
         enum ws_transaction_flags flags = ws_transaction_flags(transaction);
 
-        //!< @todo store the transaction if requested
+        if (flags & WS_TRANSACTION_FLAGS_REGISTER) {
+            // register the transaction for later invokation
+            int res = ws_set_insert(&actman_ctx.transactions,
+                                    (struct ws_object*) transaction);
+            if (res < 0) {
+                struct ws_error_reply* rep;
+                rep = ws_error_reply_new(transaction, -res,
+                                         "Could not register transaction",
+                                         NULL);
+                return (struct ws_reply*) rep;
+            }
+        }
 
         if (flags & WS_TRANSACTION_FLAGS_EXEC) {
             // execute the transaction
