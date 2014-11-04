@@ -57,6 +57,14 @@ setup_transaction(
     struct ws_deserializer* s // The current state object
 );
 
+/**
+ * Finalize the message and clear the buffers we still have lying around
+ */
+void
+finalize_message(
+    struct ws_deserializer* d //!< The deserializer obj, containing everything
+);
+
 /*
  *
  * Interface implementation
@@ -130,6 +138,15 @@ yajl_boolean_cb(
             }
             state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
         }
+        break;
+
+    case STATE_FLAGS_EXEC:
+        if (b) {
+            state->flags |= WS_TRANSACTION_FLAGS_EXEC; // set
+        } else {
+            state->flags &= ~WS_TRANSACTION_FLAGS_EXEC; // unset
+        }
+        state->current_state = STATE_FLAGS_MAP;
         break;
 
     default:
@@ -266,6 +283,25 @@ yajl_string_cb(
         }
         break;
 
+    case STATE_FLAGS_REGISTER:
+        {
+            state->register_name = ws_string_new();
+            if (!state->register_name) {
+                //!< @todo error, what now?
+                return 0;
+            }
+
+            char buff[len + 1];
+            memset(buff, 0, len + 1);
+            strncpy(buff, (char*)str, len);
+
+            ws_string_set_from_raw(state->register_name, buff);
+
+            state->flags |= WS_TRANSACTION_FLAGS_REGISTER;
+            state->current_state = STATE_FLAGS_MAP;
+        }
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -299,6 +335,10 @@ yajl_start_map_cb(
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT;
         break;
 
+    case STATE_FLAGS:
+        state->current_state = STATE_FLAGS_MAP;
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -321,8 +361,10 @@ yajl_map_key_cb(
         return 1;
 
     case STATE_MSG:
+    case STATE_FLAGS_MAP:
         // We're running into a top-level key here, lets decide what comes next:
-        state->current_state = get_next_state_for_string(STATE_MSG, key);
+        state->current_state = get_next_state_for_string(state->current_state,
+                                                         key);
         break;
 
     case STATE_COMMAND_ARY_NEW_COMMAND:
@@ -404,6 +446,10 @@ yajl_end_map_cb(
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
         break;
 
+    case STATE_FLAGS_MAP:
+        state->current_state = STATE_MSG;
+        break;
+
     case STATE_MSG:
         state->current_state = STATE_INIT;
         break;
@@ -416,6 +462,7 @@ yajl_end_map_cb(
     if (state->nboxbrackets == 0 && state->ncurvedbrackets == 0) {
         // Hey, we are ready now!
         d->is_ready = true;
+        finalize_message(d);
         return 0;
     }
     return 1;
@@ -519,5 +566,29 @@ setup_transaction(
                                                            flags, cmds);
 
     return 0;
+}
+
+void
+finalize_message(
+    struct ws_deserializer* d
+) {
+    if (!d->buffer) {
+        // Do runtime check whether buffer object exists here, because _someone_
+        // decided against runtime checks in the utility functions
+        return;
+    }
+
+    if (ws_object_is_instance_of((struct ws_object*) d->buffer,
+                                 &WS_OBJECT_TYPE_ID_TRANSACTION)) {
+
+        struct deserializer_state* state;
+        state = (struct deserializer_state*) d->state; // cast
+        struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
+
+        ws_transaction_set_flags(t, state->flags);
+
+        ws_transaction_set_name(t, state->register_name); // gets a ref on name
+        ws_object_unref((struct ws_object*) state->register_name);
+    }
 }
 

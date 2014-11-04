@@ -57,6 +57,8 @@
 #include "serialize/json/common.h"
 #include "serialize/json/states.h"
 
+#include "objects/message/transaction.h"
+
 #include "values/string.h"
 
 /**
@@ -70,6 +72,9 @@ struct deserializer_state {
     enum json_backend_state current_state; //!< @protected State identifier
 
     uintmax_t id;
+
+    enum ws_transaction_flags flags; //!< @public flag cache
+    struct ws_string* register_name; //!< @public name cache
 
     struct ws_statement* tmp_statement;
 
