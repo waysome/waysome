@@ -67,7 +67,7 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR_MODE;
 /**
  * Allocate a new, initialized array object
  *
- * @memberof ws_monitor
+ * @memberof ws_monitor_mode
  *
  * @return New monitor object, initialized. NULL on failure
  */
