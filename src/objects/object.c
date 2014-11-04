@@ -604,8 +604,27 @@ ws_object_call_cmd(
     char const* ident,
     union ws_value_union* stack
 ) {
-    //!< @todo implement
-    return -1;
+    if (!self || !ident || !stack) {
+        return -EINVAL;
+    }
+
+    if (self->id->function_table == NULL) {
+        return -ENOTSUP;
+    }
+
+    ws_regular_command_func func = NULL;
+    struct ws_object_function const* iter;
+    for (iter = self->id->function_table; func == NULL && iter->name; iter++) {
+        if (strcmp(iter->name, ident) == 0) {
+            func = iter->func;
+        }
+    }
+
+    if (func) {
+        return func(stack);
+    }
+
+    return -ENOENT;
 }
 
 /*
