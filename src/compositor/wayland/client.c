@@ -78,6 +78,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_CLIENT = {
     .dump_callback = NULL,
     .run_callback = NULL,
     .cmp_callback = cmp_callback,
+
+    .attribute_table = NULL,
 };
 
 struct ws_wayland_client*
