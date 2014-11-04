@@ -74,7 +74,9 @@ ws_object_type_id WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE = {
     .hash_callback = device_hash,
     .dump_callback = NULL,
     .run_callback = NULL,
-    .cmp_callback = device_cmp
+    .cmp_callback = device_cmp,
+
+    .attribute_table = NULL,
 };
 
 struct ws_framebuffer_device*
