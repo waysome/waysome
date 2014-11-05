@@ -4,4 +4,5 @@ arithmetical.h
 binary.h
 control.h
 logical.h
+string.h
 
