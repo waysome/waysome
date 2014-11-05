@@ -71,5 +71,34 @@ ws_action_manager_register(
 __ws_nonnull__(1, 2)
 ;
 
+/**
+ * Stop running a transaction to be run on an event
+ *
+ * @note undos what `ws_action_manager_register()` does
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_action_manager_unregister_event(
+    struct ws_string* event_name //!< event which to remove
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Removes a transaction from the transaction storage
+ *
+ * @note after removal, the transaction cannot be registered to be run on
+ *       events any more, existing registrations are, however, not removed
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_action_manager_unregister_transaction(
+    struct ws_string* transaction_name //!< name of transaction to remove
+)
+__ws_nonnull__(1)
+;
+
 
 #endif // __WS_ACTION_MANAGER_H__

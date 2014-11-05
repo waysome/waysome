@@ -232,6 +232,50 @@ ws_action_manager_register(
     return 0;
 }
 
+int
+ws_action_manager_unregister_event(
+    struct ws_string* event_name
+) {
+    int res;
+
+    // construct a comparable for removal
+    struct ws_named comparable;
+    res = ws_named_init(&comparable, event_name, NULL);
+    if (res < 0) {
+        return res;
+    }
+
+    // perform the removal
+    res = ws_set_remove(&actman_ctx.registrations,
+                            (struct ws_object*) &comparable);
+
+    // get rid of the comparable before returning
+    ws_object_deinit((struct ws_object*) &comparable);
+    return res;
+}
+
+int
+ws_action_manager_unregister_transaction(
+    struct ws_string* transaction_name
+) {
+    int res;
+
+    // construct a comparable for removal
+    struct ws_transaction comparable;
+    res = ws_transaction_init(&comparable, 0, transaction_name);
+    if (res < 0) {
+        return res;
+    }
+
+    // perform the removal
+    res = ws_set_remove(&actman_ctx.transactions,
+                            (struct ws_object*) &comparable);
+
+    // get rid of the comparable before returning
+    ws_object_deinit((struct ws_object*) &comparable);
+    return res;
+}
+
 
 /*
  *
