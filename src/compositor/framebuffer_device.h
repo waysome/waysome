@@ -45,6 +45,9 @@
 
 #include "objects/object.h"
 
+// framebuffer
+struct gbm_device;
+
 /**
  * ws_framebuffer type definition
  *
@@ -56,6 +59,7 @@ struct ws_framebuffer_device {
     struct ws_object obj; //!< @protected Base class.
     int fd; //!< @public The filedescriptor
     char* path; //!< @public The path to the device file
+    struct gbm_device* gbm_dev; //!< @private gbm device
 };
 
 /**
@@ -78,6 +82,18 @@ struct ws_framebuffer_device*
 ws_framebuffer_device_new(
     char* path //<! The path to the possible framebuffer device
 );
+
+/**
+ * Get the DBM device from a framebuffer device
+ *
+ * @return a gbm_device or NULL, if an error occured
+ */
+struct gbm_device*
+ws_framebuffer_device_get_gbm_dev(
+    struct ws_framebuffer_device* self //!< framebuffer defive
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_OBJECTS_FRAMEBUFFER_DEVICE_H__
 
