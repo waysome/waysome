@@ -29,6 +29,7 @@ include_directories(
     ${EGL_INCLUDE_DIRS}
     ${EVDEV_INCLUDE_DIRS}
     ${EV_INCLUDE_DIRS}
+    ${GBM_INCLUDE_DIRS}
     ${ICU_OP_INCLUDE_DIRS}
     ${ICU_UC_INCLUDE_DIRS}
     ${libreset_INCLUDE_DIRS}
@@ -49,6 +50,7 @@ add_definitions(
     ${EGL_DEFINITIONS}
     ${EVDEV_DEFINITIONS}
     ${EV_DEFINITIONS}
+    ${GBM_DEFINITIONS}
     ${ICU_OP_DEFINITIONS}
     ${ICU_UC_DEFINITIONS}
     ${libreset_DEFINITIONS}
@@ -116,6 +118,7 @@ target_link_libraries(waysome
     ${EGL_LIBRARIES}
     ${EVDEV_LIBRARIES}
     ${EV_LIBRARIES}
+    ${GBM_LIBRARIES}
     ${libreset_LIBRARIES}
     ${PNG_LIBRARIES}
     ${UDEV_LIBRARIES}
