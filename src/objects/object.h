@@ -423,7 +423,9 @@ ws_object_unlock(
 bool
 ws_object_deinit(
     struct ws_object* self //!< The object
-);
+)
+__ws_nonnull__(1)
+;
 
 /**
  * Get an attribute of an object
