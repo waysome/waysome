@@ -50,7 +50,7 @@ START_TEST (test_object_init) {
     memset(&o, 0, sizeof(o));
 
     ck_assert(ws_object_init(&o));
-    ck_assert(ws_object_deinit(&o));
+    ws_object_deinit(&o);
 }
 END_TEST
 
