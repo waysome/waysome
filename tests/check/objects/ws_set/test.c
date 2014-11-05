@@ -176,7 +176,7 @@ static void
 test_set_teardown(void)
 {
     ck_assert(set != NULL);
-    ck_assert(true == ws_object_deinit(&set->obj));
+    ws_object_deinit(&set->obj);
     free(set);
     set = NULL;
     ck_assert(set == NULL);
@@ -193,7 +193,7 @@ test_set_teardown_objs(void)
 
     for (i = N_TEST_OBJS - 1; i; --i) {
         ck_assert(TEST_OBJS[i] != NULL);
-        ck_assert(true == ws_object_deinit(TEST_OBJS[i]));
+        ws_object_deinit(TEST_OBJS[i]);
 
         free(TEST_OBJS[i]);
 
@@ -204,10 +204,10 @@ test_set_teardown_objs(void)
 static void
 test_set_teardown_sets(void)
 {
-    ck_assert(true == ws_object_deinit((struct ws_object*) set_a));
+    ws_object_deinit((struct ws_object*) set_a);
     set_a = NULL;
 
-    ck_assert(true == ws_object_deinit((struct ws_object*) set_b));
+    ws_object_deinit((struct ws_object*) set_b);
     set_b = NULL;
 
     test_set_teardown_objs();
@@ -226,7 +226,7 @@ END_TEST
 
 START_TEST (test_set_init_deinit) {
     ck_assert(0 == ws_set_init(set));
-    ck_assert(true == ws_object_deinit((struct ws_object*) set));
+    ws_object_deinit((struct ws_object*) set);
     ck_assert(0 == ws_set_init(set));
     // reinitialize here, so we do not segfault in the teardown function
 }
