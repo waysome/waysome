@@ -360,28 +360,27 @@ ws_object_unlock(
     return 0 == pthread_rwlock_unlock(&self->rw_lock);
 }
 
-bool
+void
 ws_object_deinit(
     struct ws_object* self
 ) {
-    if (self) {
-        ws_object_lock_write(self);
-        if (self->id && self->id->deinit_callback) {
-            ws_log(&log_ctx, LOG_DEBUG, "Deinitializing: %p (%s)",
-                    self, self->id->typestr);
+    ws_object_lock_write(self);
 
-            if (!self->id->deinit_callback(self)) {
-                return false;
-            }
-        }
+    // traverse towards the root, deinitializing
+    ws_object_type_id* type = self->id;
+    while (type != &WS_OBJECT_TYPE_ID_OBJECT) {
+        ws_log(&log_ctx, LOG_DEBUG, "Deinitializing: %p (%s)",
+                self, type->typestr);
 
-        if ((pthread_rwlock_destroy(&self->ref_counting.rwl) != 0) ||
-           (pthread_rwlock_destroy(&self->rw_lock) != 0)) {
-            return false;
+        if (type->deinit_callback) {
+            type->deinit_callback(self);
         }
+        type = type->supertype;
     }
 
-    return true;
+    // destroy the locks
+    pthread_rwlock_destroy(&self->ref_counting.rwl);
+    pthread_rwlock_destroy(&self->rw_lock);
 }
 
 int

@@ -417,10 +417,8 @@ ws_object_unlock(
  * @warning It is not save to use the object after this method was called on it.
  *
  * @warning Should only be called for objects which are allocated on the stack.
- *
- * @return true on success, else false
  */
-bool
+void
 ws_object_deinit(
     struct ws_object* self //!< The object
 )
