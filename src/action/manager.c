@@ -55,7 +55,8 @@
  */
 static struct ws_reply*
 run_transaction(
-    struct ws_transaction* transaction // transaction to run
+    struct ws_transaction* transaction, // transaction to run
+    struct ws_value* context //!< context to push on the stack
 );
 
 
@@ -81,7 +82,7 @@ ws_action_manager_process(
 
         if (flags & WS_TRANSACTION_FLAGS_EXEC) {
             // execute the transaction
-            return run_transaction(transaction);
+            return run_transaction(transaction, NULL);
         }
 
         return NULL;
@@ -101,7 +102,8 @@ ws_action_manager_process(
 
 static struct ws_reply*
 run_transaction(
-    struct ws_transaction* transaction // transaction to run
+    struct ws_transaction* transaction,
+    struct ws_value* context
 ) {
     struct ws_reply* retval = NULL;
     int res;
@@ -116,7 +118,29 @@ run_transaction(
         goto cleanup_stack;
     }
 
-    //!< @todo push environment on the stack
+    // push environment on the stack
+    res = ws_processor_stack_push(&stack, 2);
+    if (res < 0) {
+        retval = (struct ws_reply*)
+                 ws_error_reply_new(transaction, -res, "Could not init stack",
+                                    NULL);
+        goto cleanup_stack;
+    }
+
+    {
+        union ws_value_union* bottom = ws_processor_stack_bottom(&stack);
+
+        // initialize the global context
+        ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL); //!< @todo real thing
+
+        // initialize the event context
+        ++bottom;
+        if (context) {
+            ws_value_union_init_from_val(bottom, context);
+        } else {
+            ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL);
+        }
+    }
 
     // we start a new frame, but we will never restore the default frame
     (void) ws_processor_stack_start_frame(&stack);
