@@ -7,12 +7,14 @@ set(SOURCE_FILES
     buffer/image.c
     cursor.c
     framebuffer_device.c
+    keyboard.c
     module.c
     monitor.c
     monitor_mode.c
     wayland/buffer.c
     wayland/client.c
     wayland/compositor.c
+    wayland/keyboard.c
     wayland/pointer.c
     wayland/region.c
     wayland/seat.c

@@ -34,6 +34,7 @@
 #include <wayland-server-protocol.h>
 
 #include "compositor/cursor.h"
+#include "compositor/keyboard.h"
 #include "input/input_device.h"
 #include "input/utils.h"
 #include "util/arithmetical.h"
@@ -190,6 +191,21 @@ handle_mouse_click_event(
 }
 
 static void
+handle_keyboard_press_event(
+    struct input_event* ev
+) {
+    ws_log(&log_ctx, LOG_DEBUG, "It's a keyboard press! %x", ev->code);
+
+    int state = ev->value ? WL_KEYBOARD_KEY_STATE_PRESSED :
+                            WL_KEYBOARD_KEY_STATE_RELEASED;
+
+    struct ws_keyboard* k = ws_keyboard_get();
+
+    // XKB map has an offset of 8 to linux/input.h concerning to keycodes
+    ws_keyboard_send_key(k, &ev->time, ev->code + 8, state);
+}
+
+static void
 watch_pointers(
     struct ev_loop* loop,
     ev_io* watcher,
@@ -229,6 +245,10 @@ watch_pointers(
             if (BTN_MISC <= ev.code && ev.code <= BTN_GEAR_UP) {
                 handle_mouse_click_event(&ev);
                 continue;
+            }
+            if (KEY_ESC <= ev.code && ev.code <= KEY_MICMUTE) {
+                handle_keyboard_press_event(&ev);
+                return;
             }
         }
 

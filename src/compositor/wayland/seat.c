@@ -28,6 +28,7 @@
 #include <stdbool.h>
 
 #include "compositor/wayland/client.h"
+#include "compositor/wayland/keyboard.h"
 #include "compositor/wayland/pointer.h"
 #include "compositor/wayland/seat.h"
 #include "logger/module.h"
@@ -151,7 +152,7 @@ get_keyboard(
     struct wl_resource* resource,
     uint32_t id
 ) {
-    //<! @todo: Implement
+    ws_wayland_keyboard_new(client, wl_resource_get_version(resource), id);
 }
 
 static void
@@ -180,5 +181,6 @@ bind_seat(
     wl_resource_set_implementation(resource, &interface, NULL, NULL);
 
     //<! @todo: Set this on a device basis
-    wl_seat_send_capabilities(resource, WL_SEAT_CAPABILITY_POINTER);
+    wl_seat_send_capabilities(resource,
+            WL_SEAT_CAPABILITY_POINTER | WL_SEAT_CAPABILITY_KEYBOARD);
 }

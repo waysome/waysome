@@ -25,28 +25,44 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
-#define __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
+#ifndef __WS_WL_KEYBOARD_H__
+#define __WS_WL_KEYBOARD_H__
 
-#include "compositor/cursor.h"
-#include "compositor/framebuffer_device.h"
-#include "objects/set.h"
+#include "objects/wayland_obj.h"
+
+struct wl_client;
 
 /**
- * Internal compositor context
  *
- * This context holds the internal state of the compositor.
  */
-extern struct ws_compositor_context {
-    struct ws_framebuffer_device* fb; //<! The Framebuffer device
-    struct ws_set monitors; //<! A set of monitors (connected or not)
-    struct ws_monitor* conns; //<! A linked list of ws_monitors
-    struct ws_cursor* cursor; //<! The cursor
-    struct ws_keyboard* keyboard; //!< The keyboard
-} ws_comp_ctx;
+struct ws_wayland_keyboard {
+    struct ws_wayland_obj wl_obj; //!< @protected Base class.
+};
 
-// We make the object available for others to use
-extern struct ws_logger_context log_ctx;
+/**
+ * Variable which holds type information about the ws_wayland_keyboard type
+ */
+extern ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_KEYBOARD;
 
+/**
+ * Create a new ws_wayland_keyboard
+ *
+ * create a new ws_wayland_keyboard without any buffers attached to it
+ */
+struct ws_wayland_keyboard*
+ws_wayland_keyboard_new(
+    struct wl_client* client, //!< client requesting the keyboard creation
+    uint32_t version, //!< version
+    uint32_t serial //!< id of the newly created keyboard
+);
 
-#endif // __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
+/**
+ * Check if a given resource is a keyboard
+ */
+bool
+ws_wayland_keyboard_instance_of(
+    struct wl_resource* res
+);
+
+#endif // __WS_WL_KEYBOARD_H__
+

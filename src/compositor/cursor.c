@@ -36,6 +36,7 @@
 #include "compositor/buffer/frame.h"
 #include "compositor/cursor.h"
 #include "compositor/framebuffer_device.h"
+#include "compositor/keyboard.h"
 #include "compositor/internal_context.h"
 #include "compositor/monitor.h"
 #include "compositor/wayland/client.h"
@@ -158,9 +159,22 @@ ws_cursor_set_position(
     if (self->active_surface == nxt_surface) {
         return;
     }
+
+    //!< @todo once we have keyboard focus, remove the following block of code
+    struct ws_keyboard* k = ws_keyboard_get();
+
+    if (k->active_surface) {
+        ws_keyboard_send_leave(k);
+    }
+
+    k->active_surface = nxt_surface;
+
+    if (k->active_surface) {
+        ws_keyboard_send_keymap(k);
+        ws_keyboard_send_enter(k);
+    }
     struct ws_surface* old_surface = self->active_surface;
     self->active_surface = nxt_surface;
-
 
     struct wl_display* display = ws_wayland_acquire_display();
     if (!display) {
