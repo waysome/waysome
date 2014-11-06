@@ -3,6 +3,7 @@
 #
 set(SOURCE_FILES
     buffer/buffer.c
+    buffer/egl.c
     buffer/frame.c
     buffer/image.c
     cursor.c
