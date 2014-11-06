@@ -73,6 +73,23 @@ struct ws_transaction {
 extern ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION;
 
 /**
+ * Initialize a `ws_transaction` object
+ *
+ * @note Gets a ref on the name object for you
+ *
+ * @return 0 if the initialization was successful, a negative error number
+ *         otherwise
+ */
+int
+ws_transaction_init(
+    struct ws_transaction* self, //!< transaction to initialize
+    size_t id, //!< id to initialize the message with
+    struct ws_string* name //!< Name of the transaction
+)
+__ws_nonnull__(1, 3)
+;
+
+/**
  * Get a new `ws_transaction` object
  *
  * @note Gets a ref on the name object for you

@@ -8,6 +8,7 @@ set(SOURCE_FILES
     message/reply.c
     message/transaction.c
     message/value_reply.c
+    named.c
     object.c
     set.c
     string.c

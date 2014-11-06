@@ -30,6 +30,9 @@
 
 #include "objects/object.h"
 
+#define set_get(self_, obj_) \
+    ((__typeof__(obj_)) ws_set_get(self_, (struct ws_object*) obj_))
+
 /**
  * ws_set type definition
  *

@@ -32,8 +32,21 @@
 #include "action/processor.h"
 #include "action/processor_stack.h"
 #include "objects/message/error_reply.h"
+#include "objects/message/event.h"
 #include "objects/message/transaction.h"
 #include "objects/message/value_reply.h"
+#include "objects/named.h"
+#include "objects/set.h"
+#include "util/cleaner.h"
+
+
+/**
+ * Internal context of the transaction manager
+ */
+struct {
+    struct ws_set transactions; //!< @public transactions registered
+    struct ws_set registrations; //!< @public registrations of transactions
+} actman_ctx;
 
 
 /*
@@ -55,7 +68,16 @@
  */
 static struct ws_reply*
 run_transaction(
-    struct ws_transaction* transaction // transaction to run
+    struct ws_transaction* transaction, // transaction to run
+    struct ws_value* context //!< context to push on the stack
+);
+
+/**
+ * Deinitialize the action manager
+ */
+static void
+action_manager_deinit(
+    void* dummy
 );
 
 
@@ -64,6 +86,34 @@ run_transaction(
  * Interface implementation
  *
  */
+
+int
+ws_action_manager_init(void) {
+    static bool is_init = false;
+    if (is_init) {
+        return 0;
+    }
+    int res;
+
+    res = ws_set_init(&actman_ctx.transactions);
+    if (res < 0) {
+        return res;
+    }
+
+    res = ws_set_init(&actman_ctx.registrations);
+    if (res < 0) {
+        goto cleanup_transactions;
+    }
+
+    ws_cleaner_add(action_manager_deinit, NULL);
+
+    is_init = true;
+    return 0;
+
+cleanup_transactions:
+    ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
+    return res;
+}
 
 struct ws_reply*
 ws_action_manager_process(
@@ -77,19 +127,153 @@ ws_action_manager_process(
         // get the flags
         enum ws_transaction_flags flags = ws_transaction_flags(transaction);
 
-        //!< @todo store the transaction if requested
+        if (flags & WS_TRANSACTION_FLAGS_REGISTER) {
+            // register the transaction for later invokation
+            int res = ws_set_insert(&actman_ctx.transactions,
+                                    (struct ws_object*) transaction);
+            if (res < 0) {
+                struct ws_error_reply* rep;
+                rep = ws_error_reply_new(transaction, -res,
+                                         "Could not register transaction",
+                                         NULL);
+                return (struct ws_reply*) rep;
+            }
+        }
 
         if (flags & WS_TRANSACTION_FLAGS_EXEC) {
             // execute the transaction
-            return run_transaction(transaction);
+            return run_transaction(transaction, NULL);
         }
 
         return NULL;
     }
 
-    //!< @todo handle event messages
+    // check whether the message is an event
+    if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
+        struct ws_event* event = (struct ws_event*) message;
+        struct ws_transaction* transaction;
+
+        { // contain transaction retrieval in a scope to save stack
+            struct ws_string* name = ws_event_get_name(event);
+            if (!name) {
+                return NULL;
+            }
+
+            // get the named object containing the event
+            struct ws_named comparable;
+            ws_named_init(&comparable, name, NULL);
+            ws_object_unref((struct ws_object*) name);
+
+            struct ws_named* named;
+            named = set_get(&actman_ctx.registrations, &comparable);
+
+            ws_object_deinit((struct ws_object*) &comparable);
+
+            // extract the transaction to run
+            if (!named) {
+                return NULL;
+            }
+
+            transaction = (struct ws_transaction*) ws_named_get_obj(named);
+            if (!transaction) {
+                return NULL;
+            }
+        }
+
+        // now, finally, run the transaction
+        struct ws_reply* reply;
+        reply = run_transaction(transaction,
+                                &ws_event_get_context(event)->value);
+        if (reply) {
+            ws_object_unref((struct ws_object*) reply);
+        }
+
+        return NULL;
+    }
 
     return NULL;
+}
+
+int
+ws_action_manager_register(
+    struct ws_string* event_name,
+    struct ws_string* transaction_name
+) {
+    int res;
+
+    // get the transaction
+    struct ws_transaction comparable;
+    res = ws_transaction_init(&comparable, 0, transaction_name);
+    if (res < 0) {
+        return res;
+    }
+
+    struct ws_transaction* transaction;
+    transaction = set_get(&actman_ctx.transactions, &comparable);
+    ws_object_deinit((struct ws_object*) &comparable);
+    if (!transaction) {
+        return -ENOENT;
+    }
+
+    // construct a named object
+    struct ws_named* named = ws_named_new(event_name,
+                                          (struct ws_object*) transaction);
+    if (!named) {
+        return -ENOMEM;
+    }
+
+    // finally, insert the new named object
+    res = ws_set_insert(&actman_ctx.registrations, (struct ws_object*) named);
+    if (res < 0) {
+        ws_object_unref((struct ws_object*) named);
+        return res;
+    }
+
+    return 0;
+}
+
+int
+ws_action_manager_unregister_event(
+    struct ws_string* event_name
+) {
+    int res;
+
+    // construct a comparable for removal
+    struct ws_named comparable;
+    res = ws_named_init(&comparable, event_name, NULL);
+    if (res < 0) {
+        return res;
+    }
+
+    // perform the removal
+    res = ws_set_remove(&actman_ctx.registrations,
+                            (struct ws_object*) &comparable);
+
+    // get rid of the comparable before returning
+    ws_object_deinit((struct ws_object*) &comparable);
+    return res;
+}
+
+int
+ws_action_manager_unregister_transaction(
+    struct ws_string* transaction_name
+) {
+    int res;
+
+    // construct a comparable for removal
+    struct ws_transaction comparable;
+    res = ws_transaction_init(&comparable, 0, transaction_name);
+    if (res < 0) {
+        return res;
+    }
+
+    // perform the removal
+    res = ws_set_remove(&actman_ctx.transactions,
+                            (struct ws_object*) &comparable);
+
+    // get rid of the comparable before returning
+    ws_object_deinit((struct ws_object*) &comparable);
+    return res;
 }
 
 
@@ -101,7 +285,8 @@ ws_action_manager_process(
 
 static struct ws_reply*
 run_transaction(
-    struct ws_transaction* transaction // transaction to run
+    struct ws_transaction* transaction,
+    struct ws_value* context
 ) {
     struct ws_reply* retval = NULL;
     int res;
@@ -116,7 +301,29 @@ run_transaction(
         goto cleanup_stack;
     }
 
-    //!< @todo push environment on the stack
+    // push environment on the stack
+    res = ws_processor_stack_push(&stack, 2);
+    if (res < 0) {
+        retval = (struct ws_reply*)
+                 ws_error_reply_new(transaction, -res, "Could not init stack",
+                                    NULL);
+        goto cleanup_stack;
+    }
+
+    {
+        union ws_value_union* bottom = ws_processor_stack_bottom(&stack);
+
+        // initialize the global context
+        ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL); //!< @todo real thing
+
+        // initialize the event context
+        ++bottom;
+        if (context) {
+            ws_value_union_init_from_val(bottom, context);
+        } else {
+            ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL);
+        }
+    }
 
     // we start a new frame, but we will never restore the default frame
     (void) ws_processor_stack_start_frame(&stack);
@@ -163,5 +370,13 @@ cleanup_processor:
 cleanup_stack:
     ws_processor_stack_deinit(&stack);
     return retval;
+}
+
+static void
+action_manager_deinit(
+    void* dummy
+) {
+    ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
+    ws_object_deinit((struct ws_object*) &actman_ctx.registrations);
 }
 

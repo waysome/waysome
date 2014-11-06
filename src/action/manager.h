@@ -33,6 +33,15 @@
 // forward declarations
 struct ws_message;
 struct ws_reply;
+struct ws_string;
+
+/**
+ * Initialize the action manager
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_action_manager_init(void);
 
 /**
  * Process a transaction
@@ -42,6 +51,51 @@ struct ws_reply;
 struct ws_reply*
 ws_action_manager_process(
     struct ws_message* message //!< transaction to process
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Register a transaction to be run on an event
+ *
+ * @note the transaction has to be registered first via
+ *       `ws_action_manager_process()`
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_action_manager_register(
+    struct ws_string* event_name, //!< event on which to invoke the transaction
+    struct ws_string* transaction_name //!< transaction to invoke
+)
+__ws_nonnull__(1, 2)
+;
+
+/**
+ * Stop running a transaction to be run on an event
+ *
+ * @note undos what `ws_action_manager_register()` does
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_action_manager_unregister_event(
+    struct ws_string* event_name //!< event which to remove
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Removes a transaction from the transaction storage
+ *
+ * @note after removal, the transaction cannot be registered to be run on
+ *       events any more, existing registrations are, however, not removed
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_action_manager_unregister_transaction(
+    struct ws_string* transaction_name //!< name of transaction to remove
 )
 __ws_nonnull__(1)
 ;

@@ -47,6 +47,15 @@ deinit_transaction(
     struct ws_object* self
 );
 
+/**
+ * Compare two transactions
+ */
+static int
+cmp_transactions(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+);
+
 /*
  *
  * variables
@@ -61,7 +70,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
     .dump_callback = NULL,
     .run_callback = NULL,
     .hash_callback = NULL,
-    .cmp_callback = NULL,
+    .cmp_callback = cmp_transactions,
     .uuid_callback = NULL,
 };
 
@@ -70,6 +79,22 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
  * Interface implementation
  *
  */
+
+int
+ws_transaction_init(
+    struct ws_transaction* self,
+    size_t id, //!< id to initialize the message with
+    struct ws_string* name //!< Name of the transaction
+) {
+    int res = ws_message_init(&self->m, id);
+    if (res < 0) {
+        return res;
+    }
+    self->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
+
+    self->name = getref(name);
+    return 0;
+}
 
 struct ws_transaction*
 ws_transaction_new(
@@ -84,15 +109,13 @@ ws_transaction_new(
         return NULL;
     }
 
-    if (0 != ws_message_init(&t->m, id)) {
+    if (ws_transaction_init(t, id, name) < 0) {
         free(t);
         return NULL;
     }
-    t->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
     t->m.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     t->cmds = cmds;
-    t->name = getref(name);
     t->flags = flags;
 
     return t;
@@ -227,3 +250,16 @@ out:
     t->cmds->num = 0;
     return true;
 }
+
+static int
+cmp_transactions(
+    struct ws_object const* o1,
+    struct ws_object const* o2
+) {
+    struct ws_transaction* t1 = (struct ws_transaction*) o1;
+    struct ws_transaction* t2 = (struct ws_transaction*) o2;
+
+    return ws_object_cmp((struct ws_object*) t1->name,
+                         (struct ws_object*) t2->name);
+}
+
