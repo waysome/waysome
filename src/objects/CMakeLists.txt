@@ -2,7 +2,6 @@
 # Build the objects submodule
 #
 set(SOURCE_FILES
-    array.c
     message/error_reply.c
     message/event.c
     message/message.c

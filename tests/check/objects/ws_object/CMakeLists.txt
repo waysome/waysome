@@ -2,7 +2,6 @@ find_package(Threads REQUIRED)
 
 set(TEST_SOURCES
     ${PROJECT_SOURCE_DIR}/src/logger/module.c
-    ${PROJECT_SOURCE_DIR}/src/objects/array.c
     ${PROJECT_SOURCE_DIR}/src/objects/object.c
     ${PROJECT_SOURCE_DIR}/src/objects/string.c
     ${PROJECT_SOURCE_DIR}/src/util/cleaner.c

@@ -3,7 +3,6 @@ find_package(libreset REQUIRED)
 
 set(TEST_SOURCES
     ${PROJECT_SOURCE_DIR}/src/logger/module.c
-    ${PROJECT_SOURCE_DIR}/src/objects/array.c
     ${PROJECT_SOURCE_DIR}/src/objects/object.c
     ${PROJECT_SOURCE_DIR}/src/objects/set.c
     ${PROJECT_SOURCE_DIR}/src/objects/string.c
