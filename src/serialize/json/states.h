@@ -76,6 +76,10 @@ enum json_backend_state {
     STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT, //!< We parsed a indirect value
     STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS, //!< stack position arg
 
+    STATE_EVENT_VALUE,
+    STATE_EVENT_VALUE_OBJ,
+    STATE_EVENT_NAME,
+
     STATE_STRING,
 };
 
