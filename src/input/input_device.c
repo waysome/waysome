@@ -248,7 +248,7 @@ watch_pointers(
             }
             if (KEY_ESC <= ev.code && ev.code <= KEY_MICMUTE) {
                 handle_keyboard_press_event(&ev);
-                return;
+                continue;
             }
         }
 
