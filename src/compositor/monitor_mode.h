@@ -60,7 +60,7 @@ struct ws_monitor_mode {
 };
 
 /**
- * Variable which holds the type information about the ws_array type
+ * Variable which holds the type information about the ws_monitor_mode type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR_MODE;
 

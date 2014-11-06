@@ -59,7 +59,8 @@ struct ws_framebuffer_device {
 };
 
 /**
- * Variable which holds the type information about the ws_array type
+ * Variable which holds the type information about the ws_framebuffer_device
+ * type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_FRAMEBUFFER_DEVICE;
 

@@ -38,7 +38,6 @@
 #include <unicode/ustring.h>
 
 #include "objects/object.h"
-#include "objects/array.h"
 
 /**
 * ws_string type definition
@@ -117,22 +116,6 @@ ws_string_cat(
     struct ws_string* self,
     struct ws_string* other
 );
-
-/**
- * Concatenate multiple ws_strings
- *
- * @memberof ws_string
- *
- * @return ws_string object with contents of other consecutively appended
- * to self, NULL if ws_array contains at least one non-string element or is NULL
- */
-
-struct ws_string*
-ws_string_multicat(
-    struct ws_string* self,
-    struct ws_array* others
-);
-
 
 /**
  * Duplicate a ws_string object
