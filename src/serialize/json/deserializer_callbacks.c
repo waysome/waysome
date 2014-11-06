@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <string.h>
 
+#include "objects/message/event.h"
 #include "objects/message/transaction.h"
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer_state.h"
@@ -252,7 +253,10 @@ yajl_string_cb(
         if (0 == strncmp(TYPE_TRANSACTION, (char*) str,
                     strlen(TYPE_TRANSACTION))) {
             setup_transaction(d);
+        } else if (0 == strncmp(TYPE_EVENT, (char*) str, strlen(TYPE_EVENT))) {
+            state->has_event = true;
         }
+
         state->current_state = STATE_MSG;
         break;
 
@@ -572,23 +576,38 @@ void
 finalize_message(
     struct ws_deserializer* d
 ) {
-    if (!d->buffer) {
+    if (d->buffer == NULL &&
+            !((struct deserializer_state*) d->state)->has_event) {
         // Do runtime check whether buffer object exists here, because _someone_
         // decided against runtime checks in the utility functions
         return;
     }
 
-    if (ws_object_is_instance_of((struct ws_object*) d->buffer,
-                                 &WS_OBJECT_TYPE_ID_TRANSACTION)) {
+    if (d->buffer) {
+        if (ws_object_is_instance_of((struct ws_object*) d->buffer,
+                                     &WS_OBJECT_TYPE_ID_TRANSACTION)) {
 
-        struct deserializer_state* state;
-        state = (struct deserializer_state*) d->state; // cast
-        struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
+            struct deserializer_state* state;
+            state = (struct deserializer_state*) d->state; // cast
+            struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
 
-        ws_transaction_set_flags(t, state->flags);
+            ws_transaction_set_flags(t, state->flags);
 
-        ws_transaction_set_name(t, state->register_name); // gets a ref on name
-        ws_object_unref((struct ws_object*) state->register_name);
+            ws_transaction_set_name(t, state->register_name); // gets a ref on name
+            ws_object_unref((struct ws_object*) state->register_name);
+
+            return;
+        }
+
+    }
+
+    struct deserializer_state* state;
+    state = (struct deserializer_state*) d->state; // cast
+
+    if (state->has_event) {
+        d->buffer = (struct ws_message*) ws_event_new(state->ev_name,
+                                                      state->ev_ctx);
+        return;
     }
 }
 
