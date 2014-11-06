@@ -306,6 +306,25 @@ yajl_string_cb(
         }
         break;
 
+    case STATE_EVENT_NAME:
+        // This is the name of the event we are deserializing
+        {
+            state->ev_name = ws_string_new();
+            if (!state->ev_name) {
+                //!< @todo error, what now?
+                return 0;
+            }
+
+            char buff[len + 1];
+            memset(buff, 0, len + 1);
+            strncpy(buff, (char*) str, len);
+            ws_string_set_from_raw(state->ev_name, buff);
+            // ready for now.
+
+            state->current_state = STATE_MSG;
+        }
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
