@@ -78,6 +78,14 @@ xkb_init(
 );
 
 /**
+ * Deinit callback for ws_keyboard type
+ */
+bool
+deinit_keyboard(
+    struct ws_object* self //!< The object
+);
+
+/**
  *
  */
 static int
@@ -89,7 +97,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_KEYBOARD = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_keyboard",
 
-    .deinit_callback    = NULL,
+    .deinit_callback    = deinit_keyboard,
     .dump_callback      = NULL,
     .run_callback       = NULL,
     .hash_callback      = NULL,
@@ -385,5 +393,26 @@ error1:
 
 error0:
     return -1;
+}
+
+bool
+deinit_keyboard(
+    struct ws_object* self
+) {
+    struct ws_keyboard* kb = (struct ws_keyboard*) self;
+
+    xkb_state_unref(kb->xkb->state);
+    kb->xkb->state = NULL;
+
+    xkb_keymap_unref(kb->xkb->keymap.map);
+    kb->xkb->keymap.map = NULL;
+
+    xkb_context_unref(kb->xkb->context);
+    kb->xkb->context = NULL;
+
+    free(kb->xkb);
+    kb->xkb = NULL;
+
+    return true;
 }
 
