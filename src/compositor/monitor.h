@@ -82,7 +82,7 @@ struct ws_monitor {
 };
 
 /**
- * Variable which holds the type information about the ws_array type
+ * Variable which holds the type information about the ws_monitor type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR;
 
