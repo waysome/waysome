@@ -102,6 +102,22 @@ yajl_null_cb(
         }
         break;
 
+    case STATE_EVENT_VALUE:
+        // event value is NULL
+        {
+            state->has_event = true;
+            struct ws_value_nil* nil = calloc(1, sizeof(*nil));
+            if (!nil) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_nil_init(nil);
+            state->ev_ctx = (struct ws_value*) nil;
+
+            state->current_state = STATE_MSG;
+        }
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -148,6 +164,23 @@ yajl_boolean_cb(
             state->flags &= ~WS_TRANSACTION_FLAGS_EXEC; // unset
         }
         state->current_state = STATE_FLAGS_MAP;
+        break;
+
+    case STATE_EVENT_VALUE:
+        // event value is a boolean
+        {
+            state->has_event = true;
+            struct ws_value_bool* boo = calloc(1, sizeof(*boo));
+            if (!b) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_bool_init(boo);
+            ws_value_bool_set(boo, b);
+            state->ev_ctx = (struct ws_value*) boo;
+
+            state->current_state = STATE_MSG;
+        }
         break;
 
     default:
@@ -213,6 +246,23 @@ yajl_integer_cb(
         state->tmp_statement->args.vals = NULL;
 
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
+        break;
+
+    case STATE_EVENT_VALUE:
+        // event value is an integer
+        {
+            state->has_event = true;
+            struct ws_value_int* n = calloc(1, sizeof(*n));
+            if (!n) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_int_init(n);
+            ws_value_int_set(n, i);
+            state->ev_ctx = (struct ws_value*) n;
+
+            state->current_state = STATE_MSG;
+        }
         break;
 
     default:
@@ -309,6 +359,7 @@ yajl_string_cb(
     case STATE_EVENT_NAME:
         // This is the name of the event we are deserializing
         {
+            state->has_event = true;
             state->ev_name = ws_string_new();
             if (!state->ev_name) {
                 //!< @todo error, what now?
@@ -320,6 +371,36 @@ yajl_string_cb(
             strncpy(buff, (char*) str, len);
             ws_string_set_from_raw(state->ev_name, buff);
             // ready for now.
+
+            state->current_state = STATE_MSG;
+        }
+        break;
+
+    case STATE_EVENT_VALUE:
+        // event value is a string
+        {
+            state->has_event = true;
+            struct ws_value_string* s = ws_value_string_new();
+            if (!s) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_string_init(s);
+
+            struct ws_string* sstr = ws_string_new();
+            if (!sstr) {
+                //!< @todo error, what now?
+                free(s);
+                return 0;
+            }
+
+            char buff[len + 1];
+            memset(buff, 0, len + 1);
+            strncpy(buff, (char*) str, len);
+            ws_string_set_from_raw(sstr, buff);
+
+            ws_value_string_set_str(s, sstr);
+            state->ev_ctx = (struct ws_value*) s;
 
             state->current_state = STATE_MSG;
         }
