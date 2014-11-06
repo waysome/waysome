@@ -31,6 +31,7 @@
 #include <EGL/egl.h>
 
 #include "compositor/buffer/buffer.h"
+#include "util/attributes.h"
 
 // forward declarations
 struct gbm_surface;
@@ -55,6 +56,24 @@ struct ws_egl_buffer {
  * Variable which holds the type information about the ws_egl_buffer type
  */
 extern ws_buffer_type_id WS_OBJECT_TYPE_ID_EGL_BUFFER;
+
+/**
+ * Create a new EGL buffer from a gbm device, an EGL display and config
+ *
+ * @memberof ws_egl_buffer
+ *
+ * @return a newly created EGL buffer
+ */
+struct ws_egl_buffer*
+ws_egl_buffer_new(
+    struct ws_framebuffer_device* dev,  //!< frame buffer device to bind to
+    EGLConfig egl_conf,                 //!< config to apply
+    uint32_t width,                     //!< width of the buffer
+    uint32_t height,                    //!< height of the buffer
+    uint32_t format                     //!< format of the buffer (from GBM)
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_EGL_BUFFERE_H__
 
