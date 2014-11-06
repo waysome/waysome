@@ -96,11 +96,6 @@ START_TEST (test_string_cat_empty) {
 }
 END_TEST
 
-//!< @todo implement, ws_array is untested by now
-//START_TEST (test_string_multicat_empty) {
-//}
-//END_TEST
-
 START_TEST (test_string_empty_dupl) {
     struct ws_string* s = ws_string_new();
     struct ws_string* d = NULL;
