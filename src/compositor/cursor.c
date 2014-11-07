@@ -355,7 +355,7 @@ deinit_cursor(
         struct ws_object* s
 ) {
     struct ws_cursor* self = (struct ws_cursor*) s;
-    ws_object_deinit((struct ws_object*) self->cursor_fb);
+    ws_object_unref((struct ws_object*) self->cursor_fb);
     return true;
 }
 
