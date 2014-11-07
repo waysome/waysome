@@ -51,6 +51,7 @@
 #include "serialize/json/serializer.h"
 #include "serialize/json/keys.h"
 #include "objects/message/message.h"
+#include "objects/message/event.h"
 #include "objects/message/transaction.h"
 #include "command/statement.h"
 
@@ -77,6 +78,27 @@ teardown(void)
 {
     ws_serializer_deinit(ser);
     ser = NULL;
+}
+
+static struct ws_event*
+mkevent(
+    char* ev_name
+) {
+    struct ws_event* ev = calloc(1, sizeof(*ev));
+    ck_assert(ev);
+
+    struct ws_string* name = ws_string_new();
+    ck_assert(name);
+    ws_string_set_from_raw(name, ev_name);
+
+    struct ws_value_int* ctx = calloc(1, sizeof(*ctx));
+    ck_assert(ctx);
+    ws_value_int_init(ctx);
+    ws_value_int_set(ctx, 1);
+
+    ck_assert(0 == ws_event_init(ev, name, (struct ws_value*) ctx));
+
+    return ev;
 }
 
 /*
@@ -112,6 +134,25 @@ START_TEST (test_json_serializer_message) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_event) {
+    struct ws_event* ev = mkevent("teststring");
+
+    size_t nbuf = 1000; // 1000 bytes are enough, hopefully
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    ssize_t s = ws_serialize(ser, buf, nbuf, (struct ws_message*) ev);
+    ck_assert(s > 0);
+
+    const char* expected = "{\"event\":{\"context\":1,\"name\":\"teststring\"}}";
+    ck_assert(0 == strcmp(expected, buf));
+
+    ws_object_unref((struct ws_object*) ev);
+    free(buf);
+}
+END_TEST
+
+
 /*
  *
  * main()
@@ -132,6 +173,7 @@ json_deserializer_suite(void)
     tcase_add_test(tc, test_json_serializer_setup);
 
     tcase_add_test(tcx, test_json_serializer_message);
+    tcase_add_test(tcx, test_json_serializer_event);
 
     return s;
 }
