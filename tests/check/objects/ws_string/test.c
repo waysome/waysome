@@ -151,6 +151,9 @@ START_TEST (test_string_from_raw_literal) {
     ck_assert(buf != NULL);
     ck_assert(0 == strcmp(buf, literal));
 
+    size_t len = ws_string_len(s);
+    ck_assert(strlen(literal) == len);
+
     ws_object_deinit(&s->obj);
     free(s);
 }
@@ -168,6 +171,9 @@ START_TEST (test_string_from_raw_heapbuf) {
 
     ck_assert(buf != NULL);
     ck_assert(0 == strcmp(buf, hbuf));
+
+    size_t len = ws_string_len(s);
+    ck_assert(strlen(literal) == len);
 
     ws_object_deinit(&s->obj);
     free(s);
