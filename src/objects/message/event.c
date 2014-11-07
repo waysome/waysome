@@ -79,18 +79,22 @@ ws_event_init(
     }
 
     ret = ws_string_init(&self->name);
-    if (unlikely(ret != 0)) {
+    if (unlikely(ret == 0)) {
         goto deinit_obj;
     }
 
-    if (!ws_string_set_from_str(&self->name, name)) {
+    if (name && !ws_string_set_from_str(&self->name, name)) {
         goto deinit_obj;
     }
 
-    ret = ws_value_union_init_from_val(&self->context, ctx);
-    if (unlikely(ret != 0)) {
-        goto deinit_str;
+    if (ctx) {
+        ret = ws_value_union_init_from_val(&self->context, ctx);
+        if (unlikely(ret != 0)) {
+            goto deinit_str;
+        }
     }
+
+    self->m.obj.id = &WS_OBJECT_TYPE_ID_EVENT;
 
     return 0;
 
