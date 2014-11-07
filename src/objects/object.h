@@ -47,6 +47,7 @@
 #include "util/attributes.h"
 #include "logger/module.h"
 #include "values/value.h"
+#include "command/command.h"
 
 /*
  *
@@ -148,6 +149,25 @@ struct ws_object_attribute {
 };
 
 /**
+ * Function type
+ *
+ * For Storing information about an function callback of an object
+ *
+ * @note When specifying the table for a type, this _MUST_ be NULL terminated
+ * by setting the `name` member and the `func` to NULL.
+ *
+ * @note The first two parameters of the command function to be called are the
+ * object itself, referenced by a ws_value_obj_id and the string which
+ * identifies the function itself. When implementing a object callback command,
+ * this should be considered and possibly these values on the stack should be
+ * skipped.
+ */
+struct ws_object_function {
+    char const* const       name; //!< Name of the function
+    ws_regular_command_func func; //!< Function pointer
+};
+
+/**
  * Object type identifier for identifiying an object type
  */
 struct ws_object_type {
@@ -162,6 +182,7 @@ struct ws_object_type {
     ws_object_uuid_callback uuid_callback; //!< @protected UUID callback
 
     struct ws_object_attribute const* attribute_table; //!< Attr table
+    struct ws_object_function const* function_table; //!< Func table
 };
 
 /**
@@ -541,6 +562,29 @@ ws_object_is_instance_of(
 )
 __ws_nonnull__(1)
 ;
+
+/*
+ *
+ * Forward declaration
+ *
+ */
+union ws_value_union;
+
+/**
+ * Call a command on the object
+ *
+ * @memberof ws_object
+ *
+ * @return return value of command function or negative errno.h number:
+ *  -ENOENT if no command was found
+ *  -EINVAL if arguments where invalid
+ */
+int
+ws_object_call_cmd(
+    struct ws_object* self,
+    char const* ident, //!< Name of the command to call for the object
+    union ws_value_union* stack //!< Stack to pass to the command function
+);
 
 #endif // __WS_OBJECTS_OBJECT_H__
 

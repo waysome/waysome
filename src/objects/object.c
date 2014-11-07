@@ -84,6 +84,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .cmp_callback = NULL,
     .uuid_callback = NULL,
     .attribute_table = WS_OBJECT_ATTRS_OBJECT,
+    .function_table = NULL,
 };
 
 static const struct {
@@ -595,6 +596,35 @@ ws_object_is_instance_of(
 
     // nothing found
     return type == &WS_OBJECT_TYPE_ID_OBJECT;
+}
+
+int
+ws_object_call_cmd(
+    struct ws_object* self,
+    char const* ident,
+    union ws_value_union* stack
+) {
+    if (!self || !ident || !stack) {
+        return -EINVAL;
+    }
+
+    if (self->id->function_table == NULL) {
+        return -ENOTSUP;
+    }
+
+    ws_regular_command_func func = NULL;
+    struct ws_object_function const* iter;
+    for (iter = self->id->function_table; func == NULL && iter->name; iter++) {
+        if (strcmp(iter->name, ident) == 0) {
+            func = iter->func;
+        }
+    }
+
+    if (func) {
+        return func(stack);
+    }
+
+    return -ENOENT;
 }
 
 /*

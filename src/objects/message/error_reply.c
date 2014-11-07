@@ -68,6 +68,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_ERROR_REPLY = {
     .run_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
+
+    .function_table = NULL,
 };
 
 
