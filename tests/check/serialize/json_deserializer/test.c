@@ -367,6 +367,18 @@ START_TEST (test_json_deserializer_events) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_events_with_type) {
+    char const* buf = "{ \"" TYPE "\": \"" TYPE_EVENT "\" }";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -399,6 +411,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_transaction_commands);
     tcase_add_test(tcx, test_json_deserializer_flags);
     tcase_add_test(tcx, test_json_deserializer_events);
+    tcase_add_test(tcx, test_json_deserializer_events_with_type);
 
     return s;
 }
