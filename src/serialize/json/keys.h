@@ -64,8 +64,12 @@
 #define FLAG_REGISTER "REGISTER"
 
 #define TYPE_TRANSACTION "transaction"
+#define TYPE_EVENT "event"
 
 #define POS         "pos" // key for argument: stack position
+
+#define EVENT_NAME  "name" // key for event name
+#define EVENT_VALUE "value" // key for event value
 
 #endif //__WS_SERIALIZE_JSON_KEYS_H__
 

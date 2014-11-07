@@ -54,6 +54,16 @@ static const struct {
         .next = STATE_FLAGS_REGISTER,
         .str = FLAG_REGISTER
     },
+    {
+        .current = STATE_MSG,
+        .next = STATE_EVENT_NAME,
+        .str = EVENT_NAME
+    },
+    {
+        .current = STATE_MSG,
+        .next = STATE_EVENT_VALUE,
+        .str = EVENT_VALUE,
+    },
 
     { .str = NULL },
 };

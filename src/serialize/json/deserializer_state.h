@@ -59,6 +59,7 @@
 
 #include "objects/message/transaction.h"
 
+#include "values/union.h"
 #include "values/string.h"
 
 /**
@@ -80,6 +81,11 @@ struct deserializer_state {
 
     uintmax_t nboxbrackets;
     uintmax_t ncurvedbrackets;
+
+    struct ws_string* ev_name; //!< @public name cache for event name
+    struct ws_value* ev_ctx; //!< @public event context
+
+    bool has_event;
 };
 
 /**

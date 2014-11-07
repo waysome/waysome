@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <string.h>
 
+#include "objects/message/event.h"
 #include "objects/message/transaction.h"
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer_state.h"
@@ -101,6 +102,22 @@ yajl_null_cb(
         }
         break;
 
+    case STATE_EVENT_VALUE:
+        // event value is NULL
+        {
+            state->has_event = true;
+            struct ws_value_nil* nil = calloc(1, sizeof(*nil));
+            if (!nil) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_nil_init(nil);
+            state->ev_ctx = (struct ws_value*) nil;
+
+            state->current_state = STATE_MSG;
+        }
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -147,6 +164,23 @@ yajl_boolean_cb(
             state->flags &= ~WS_TRANSACTION_FLAGS_EXEC; // unset
         }
         state->current_state = STATE_FLAGS_MAP;
+        break;
+
+    case STATE_EVENT_VALUE:
+        // event value is a boolean
+        {
+            state->has_event = true;
+            struct ws_value_bool* boo = calloc(1, sizeof(*boo));
+            if (!b) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_bool_init(boo);
+            ws_value_bool_set(boo, b);
+            state->ev_ctx = (struct ws_value*) boo;
+
+            state->current_state = STATE_MSG;
+        }
         break;
 
     default:
@@ -214,6 +248,23 @@ yajl_integer_cb(
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
         break;
 
+    case STATE_EVENT_VALUE:
+        // event value is an integer
+        {
+            state->has_event = true;
+            struct ws_value_int* n = calloc(1, sizeof(*n));
+            if (!n) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_int_init(n);
+            ws_value_int_set(n, i);
+            state->ev_ctx = (struct ws_value*) n;
+
+            state->current_state = STATE_MSG;
+        }
+        break;
+
     default:
         state->current_state = STATE_INVALID;
         break;
@@ -252,7 +303,10 @@ yajl_string_cb(
         if (0 == strncmp(TYPE_TRANSACTION, (char*) str,
                     strlen(TYPE_TRANSACTION))) {
             setup_transaction(d);
+        } else if (0 == strncmp(TYPE_EVENT, (char*) str, strlen(TYPE_EVENT))) {
+            state->has_event = true;
         }
+
         state->current_state = STATE_MSG;
         break;
 
@@ -299,6 +353,56 @@ yajl_string_cb(
 
             state->flags |= WS_TRANSACTION_FLAGS_REGISTER;
             state->current_state = STATE_FLAGS_MAP;
+        }
+        break;
+
+    case STATE_EVENT_NAME:
+        // This is the name of the event we are deserializing
+        {
+            state->has_event = true;
+            state->ev_name = ws_string_new();
+            if (!state->ev_name) {
+                //!< @todo error, what now?
+                return 0;
+            }
+
+            char buff[len + 1];
+            memset(buff, 0, len + 1);
+            strncpy(buff, (char*) str, len);
+            ws_string_set_from_raw(state->ev_name, buff);
+            // ready for now.
+
+            state->current_state = STATE_MSG;
+        }
+        break;
+
+    case STATE_EVENT_VALUE:
+        // event value is a string
+        {
+            state->has_event = true;
+            struct ws_value_string* s = ws_value_string_new();
+            if (!s) {
+                //!< @tod error, what now?
+                return 0;
+            }
+            ws_value_string_init(s);
+
+            struct ws_string* sstr = ws_string_new();
+            if (!sstr) {
+                //!< @todo error, what now?
+                free(s);
+                return 0;
+            }
+
+            char buff[len + 1];
+            memset(buff, 0, len + 1);
+            strncpy(buff, (char*) str, len);
+            ws_string_set_from_raw(sstr, buff);
+
+            ws_value_string_set_str(s, sstr);
+            state->ev_ctx = (struct ws_value*) s;
+
+            state->current_state = STATE_MSG;
         }
         break;
 
@@ -572,23 +676,38 @@ void
 finalize_message(
     struct ws_deserializer* d
 ) {
-    if (!d->buffer) {
+    if (d->buffer == NULL &&
+            !((struct deserializer_state*) d->state)->has_event) {
         // Do runtime check whether buffer object exists here, because _someone_
         // decided against runtime checks in the utility functions
         return;
     }
 
-    if (ws_object_is_instance_of((struct ws_object*) d->buffer,
-                                 &WS_OBJECT_TYPE_ID_TRANSACTION)) {
+    if (d->buffer) {
+        if (ws_object_is_instance_of((struct ws_object*) d->buffer,
+                                     &WS_OBJECT_TYPE_ID_TRANSACTION)) {
 
-        struct deserializer_state* state;
-        state = (struct deserializer_state*) d->state; // cast
-        struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
+            struct deserializer_state* state;
+            state = (struct deserializer_state*) d->state; // cast
+            struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
 
-        ws_transaction_set_flags(t, state->flags);
+            ws_transaction_set_flags(t, state->flags);
 
-        ws_transaction_set_name(t, state->register_name); // gets a ref on name
-        ws_object_unref((struct ws_object*) state->register_name);
+            ws_transaction_set_name(t, state->register_name); // gets a ref on name
+            ws_object_unref((struct ws_object*) state->register_name);
+
+            return;
+        }
+
+    }
+
+    struct deserializer_state* state;
+    state = (struct deserializer_state*) d->state; // cast
+
+    if (state->has_event) {
+        d->buffer = (struct ws_message*) ws_event_new(state->ev_name,
+                                                      state->ev_ctx);
+        return;
     }
 }
 

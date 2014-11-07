@@ -65,6 +65,10 @@ deserialize_state_new(
     // Explicit set to EXEC here.
     state->flags            = WS_TRANSACTION_FLAGS_EXEC;
 
+    state->ev_ctx           = NULL;
+    state->ev_name          = NULL;
+    state->has_event        = false;
+
     return state;
 }
 

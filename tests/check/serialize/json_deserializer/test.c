@@ -49,6 +49,7 @@
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer.h"
 #include "serialize/json/keys.h"
+#include "objects/message/event.h"
 #include "objects/message/message.h"
 #include "objects/message/transaction.h"
 #include "command/statement.h"
@@ -354,6 +355,62 @@ START_TEST (test_json_deserializer_flags) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_events) {
+    char const* buf = "{ \"" EVENT_NAME "\": \"testname\" }";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+}
+END_TEST
+
+START_TEST (test_json_deserializer_events_with_type) {
+    char const* buf = "{ \"" TYPE "\": \"" TYPE_EVENT "\" }";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+}
+END_TEST
+
+START_TEST (test_json_deserializer_events_with_everything) {
+    char const* buf =   "{"
+                        "\"" TYPE "\": \"" TYPE_EVENT "\","
+                        "\"" EVENT_NAME "\": \"testevent\","
+                        "\"" EVENT_VALUE "\": 1"
+                        "}";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    ck_assert((unsigned long) s == strlen(buf));
+    ck_assert(messagebuf != NULL);
+
+    ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+
+    struct ws_event* e = (struct ws_event*) messagebuf;
+
+    { // compare names
+        struct ws_string* cmp = ws_string_new();
+        ck_assert(cmp);
+
+        ws_string_set_from_raw(cmp, "testevent");
+
+        ck_assert(0 == ws_string_cmp(&e->name, cmp));
+
+        ws_object_unref((struct ws_object*) cmp);
+    }
+
+    ck_assert(e->context.value.type == WS_VALUE_TYPE_INT);
+    ck_assert(e->context.int_.i == 1);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -385,6 +442,9 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_transaction_one_command);
     tcase_add_test(tcx, test_json_deserializer_transaction_commands);
     tcase_add_test(tcx, test_json_deserializer_flags);
+    tcase_add_test(tcx, test_json_deserializer_events);
+    tcase_add_test(tcx, test_json_deserializer_events_with_type);
+    tcase_add_test(tcx, test_json_deserializer_events_with_everything);
 
     return s;
 }
