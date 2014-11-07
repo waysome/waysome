@@ -43,6 +43,7 @@
  * @{
  */
 
+#include <errno.h>
 #include <check.h>
 #include "tests.h"
 
@@ -55,6 +56,28 @@
 
 #include "values/int.h"
 #include "values/string.h"
+
+/*
+ *
+ * Setup and teardown functions, including variables
+ *
+ */
+
+static struct ws_serializer*    ser = NULL;
+
+static void
+setup(void)
+{
+    ser = ws_serializer_json_serializer_new();
+    ck_assert(ser);
+}
+
+static void
+teardown(void)
+{
+    ws_serializer_deinit(ser);
+    ser = NULL;
+}
 
 /*
  *
@@ -73,6 +96,22 @@ START_TEST (test_json_serializer_setup) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_message) {
+    struct ws_message* msg = calloc(1, sizeof(*msg));
+    ck_assert(msg);
+    ck_assert(0 == ws_message_init(msg, 0));
+
+    size_t nbuf = 100; // 100 bytes are enough
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    ssize_t s = ws_serialize(ser, buf, nbuf, msg);
+    ck_assert(s == -EINVAL);
+
+    free(buf);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -84,10 +123,15 @@ json_deserializer_suite(void)
 {
     Suite* s    = suite_create("Objects");
     TCase* tc   = tcase_create("main case");
+    TCase* tcx  = tcase_create("serializing case");
 
     suite_add_tcase(s, tc);
+    suite_add_tcase(s, tcx);
+    tcase_add_checked_fixture(tcx, setup, teardown);
 
     tcase_add_test(tc, test_json_serializer_setup);
+
+    tcase_add_test(tcx, test_json_serializer_message);
 
     return s;
 }
