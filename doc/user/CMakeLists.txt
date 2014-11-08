@@ -7,6 +7,7 @@
 # documentation
 #
 set(TEX_FILES
+    waysome.tex
 )
 
 set(MANPAGE_TEX ${CMAKE_CURRENT_SOURCE_DIR}/manpage.tex)
@@ -34,6 +35,14 @@ endif ()
 
 
 #
+# Build the PDF version of the documentation
+#
+add_custom_command(OUTPUT waysome.pdf
+    COMMAND ${PDFLATEX_COMPILER} -halt-on-error waysome
+    DEPENDS ${BUILD_TEX_FILES}
+)
+
+#
 # Build the man page
 #
 add_custom_command(OUTPUT waysome.1
@@ -42,7 +51,7 @@ add_custom_command(OUTPUT waysome.1
     DEPENDS ${BUILD_TEX_FILES}
 )
 
-if(${LATEX2MAN_FOUND})
-    add_custom_target(doc ALL DEPENDS waysome.1)
+if(${LATEX2MAN_FOUND} AND PDFLATEX_COMPILER)
+    add_custom_target(doc ALL DEPENDS waysome.1 waysome.pdf)
 endif()
 
