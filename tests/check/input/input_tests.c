@@ -89,6 +89,17 @@ START_TEST (test_input_dag_remove_from_empty_node) {
 }
 END_TEST
 
+START_TEST (test_hotkey_event_new_duplicate_code) {
+    uint16_t codes[] = { 1, 7, 7, 14 };
+    struct ws_string* name = mkstr("hello");
+
+    struct ws_hotkey_event* ev = ws_hotkey_event_new(name, codes, 4);
+
+    ck_assert(NULL == ev);
+    ws_object_unref((struct ws_object*) name);
+}
+END_TEST
+
 START_TEST (test_input_dag_insert_hotkey_events_into_dag) {
     struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
     ck_assert(node);
@@ -280,6 +291,7 @@ input_dag_suite(void)
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
+    tcase_add_test(tc, test_hotkey_event_new_duplicate_code);
     tcase_add_test(tc, test_input_dag_init);
     tcase_add_test(tc, test_input_dag_insert);
     tcase_add_test(tc, test_input_dag_insert_multiple);
