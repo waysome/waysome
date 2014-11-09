@@ -143,7 +143,7 @@ ws_string_len(
     if (self) {
         size_t len;
         ws_object_lock_read(&self->obj);
-        len = self->charcount;
+        len = u_strlen(self->str);
         ws_object_unlock(&self->obj);
         return len;
     }
