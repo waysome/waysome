@@ -74,6 +74,21 @@ START_TEST (test_input_dag_get_node_from_empty_node) {
 }
 END_TEST
 
+START_TEST (test_input_dag_remove_from_empty_node) {
+    struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
+    ck_assert(0 == ws_hotkey_dag_init(node));
+
+    struct ws_string* s = ws_string_new();
+    ck_assert(s);
+    uint16_t codes[] = {4, 3};
+    struct ws_hotkey_event* ev = ws_hotkey_event_new(s, codes, 2);
+
+    ck_assert(node);
+    ck_assert(0 != ws_hotkey_dag_remove(node, ev));
+    free(node);
+}
+END_TEST
+
 START_TEST (test_input_dag_insert_hotkey_events_into_dag) {
     struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
     ck_assert(node);
@@ -210,6 +225,7 @@ input_dag_suite(void)
     tcase_add_test(tc, test_input_dag_insert);
     tcase_add_test(tc, test_input_dag_insert_multiple);
     tcase_add_test(tc, test_input_dag_get_node_from_empty_node);
+    tcase_add_test(tc, test_input_dag_remove_from_empty_node);
     tcase_add_test(tc, test_input_dag_insert_hotkey_events_into_dag);
 
     return s;
