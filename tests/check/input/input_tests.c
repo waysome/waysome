@@ -48,8 +48,6 @@
 #include "objects/string.h"
 #include "util/arithmetical.h"
 
-#include <stdlib.h>
-
 static struct ws_string*
 mkstr(
     char* lit
@@ -59,6 +57,14 @@ mkstr(
     ws_string_set_from_raw(s, lit);
     return s;
 }
+
+START_TEST (test_input_dag_init) {
+    struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
+    ck_assert(node);
+    ck_assert(ws_hotkey_dag_init(node) == 0);
+    free(node);
+}
+END_TEST
 
 START_TEST (test_input_dag_get_node_from_empty_node) {
     struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
@@ -152,6 +158,7 @@ input_dag_suite(void)
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
+    tcase_add_test(tc, test_input_dag_init);
     tcase_add_test(tc, test_input_dag_get_node_from_empty_node);
     tcase_add_test(tc, test_input_dag_insert_hotkey_events_into_dag);
 
