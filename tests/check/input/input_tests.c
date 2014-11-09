@@ -42,7 +42,15 @@
 #include "tests.h"
 #include "input/hotkey_dag.h"
 
+#include <stdlib.h>
 
+START_TEST (test_input_dag_get_node_from_empty_node) {
+    struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
+    ck_assert(node);
+    ck_assert(NULL == ws_hotkey_dag_next(node, 0));
+    free(node);
+}
+END_TEST
 
 static Suite*
 input_dag_suite(void)
@@ -53,7 +61,7 @@ input_dag_suite(void)
     suite_add_tcase(s, tc);
     // tcase_add_checked_fixture(tc, setup, cleanup); // Not used yet
 
-    // tcase_add_test(tc, test_dag_init);
+    tcase_add_test(tc, test_input_dag_get_node_from_empty_node);
 
     return s;
 }
