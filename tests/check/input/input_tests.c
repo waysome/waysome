@@ -162,6 +162,65 @@ START_TEST (test_input_dag_insert_hotkey_events_into_dag) {
 }
 END_TEST
 
+START_TEST (test_input_dag_insert_traverse_remove_traverse) {
+    struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
+    ck_assert(node);
+    ck_assert(0 == ws_hotkey_dag_init(node));
+
+    struct ws_string* tmpname = mkstr("hello");
+
+    uint16_t codes1[]   = { 1, 2 }; // This is a key-combo
+    uint16_t ncodes1    = 2;
+    struct ws_hotkey_event* ev1 = ws_hotkey_event_new(tmpname, codes1, ncodes1);
+    ck_assert(ev1);
+
+    uint16_t codes2[]   = { 2, 3 }; // This is a key-combo
+    uint16_t ncodes2    = 2;
+    struct ws_hotkey_event* ev2 = ws_hotkey_event_new(tmpname, codes2, ncodes2);
+    ck_assert(ev2);
+
+    ck_assert(0 == ws_hotkey_dag_insert(node, ev1));
+    ck_assert(0 == ws_hotkey_dag_insert(node, ev2));
+
+    struct ws_hotkey_dag_node* nxt = NULL;
+
+    uint16_t trav_1[] = { 1, 2 }; // should work
+    nxt = ws_hotkey_dag_next(node, trav_1[0]);
+    ck_assert(nxt != NULL);
+    nxt = ws_hotkey_dag_next(nxt, trav_1[1]);
+    ck_assert(nxt != NULL);
+
+    uint16_t trav_2[] = { 2, 3 }; // should work
+    nxt = ws_hotkey_dag_next(node, trav_2[0]);
+    ck_assert(nxt != NULL);
+    nxt = ws_hotkey_dag_next(nxt, trav_2[1]);
+    ck_assert(nxt != NULL);
+
+    nxt = ws_hotkey_dag_next(node, 3); // should return NULL
+    ck_assert(nxt == NULL);
+
+    ck_assert(0 == ws_hotkey_dag_remove(node, ev2));
+
+    uint16_t trav_3[] = { 1, 2 }; // should work
+    nxt = ws_hotkey_dag_next(node, trav_3[0]);
+    ck_assert(nxt != NULL);
+    nxt = ws_hotkey_dag_next(nxt, trav_3[1]);
+    ck_assert(nxt != NULL);
+
+    nxt = ws_hotkey_dag_next(node, 2); // should return NULL
+    ck_assert(nxt == NULL);
+
+    ck_assert(0 == ws_hotkey_dag_remove(node, ev1));
+
+    nxt = ws_hotkey_dag_next(node, 1); // should return NULL
+    ck_assert(nxt == NULL);
+
+    ws_object_unref((struct ws_object*) tmpname);
+    ws_object_unref((struct ws_object*) ev1);
+    ws_object_unref((struct ws_object*) ev2);
+}
+END_TEST
+
 START_TEST (test_input_dag_insert_multiple) {
     struct ws_hotkey_dag_node* node = calloc(1, sizeof(*node));
     struct ws_hotkey_event* ev;
@@ -227,6 +286,7 @@ input_dag_suite(void)
     tcase_add_test(tc, test_input_dag_get_node_from_empty_node);
     tcase_add_test(tc, test_input_dag_remove_from_empty_node);
     tcase_add_test(tc, test_input_dag_insert_hotkey_events_into_dag);
+    tcase_add_test(tc, test_input_dag_insert_traverse_remove_traverse);
 
     return s;
 }
