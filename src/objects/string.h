@@ -46,7 +46,6 @@
 */
 struct ws_string {
     struct ws_object obj; //!< @protected Base class.
-    size_t charcount; //!< @protected Number of characters in the string
     UChar* str; //!< @protected UChar array containing the actual string
 };
 
