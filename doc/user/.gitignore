@@ -4,3 +4,11 @@
 *.texi
 *.info
 *.1
+*.pdf
+
+#
+# Ignore (intermediate) pdflatex output
+#
+*.aux
+*.log
+
