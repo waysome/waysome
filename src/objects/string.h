@@ -93,7 +93,7 @@ struct ws_string*
 ws_string_new(void);
 
 /**
- * Get length of a ws_string
+ * Get length of a ws_string in number of characters
  *
  * @memberof ws_string
  *
