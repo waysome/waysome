@@ -76,8 +76,7 @@ ws_string_init(
     struct ws_string* self
 ) {
     if (self) {
-        self->charcount = 0; //initialize as empty string
-        self->str = calloc(self->charcount + 1, sizeof(*self->str));
+        self->str = calloc(1, sizeof(*self->str)); //initialize as empty string
 
         if (!self->str) {
             return false;
@@ -105,7 +104,9 @@ ws_string_set_from_str(
     ws_object_lock_read(&other->obj);
 
     UChar* temp;
-    temp = realloc(self->str, (other->charcount + 1) * sizeof(*self->str));
+    size_t charcount = u_strlen(other->str);
+
+    temp = realloc(self->str, (charcount + 1) * sizeof(*self->str));
     if (!temp) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
@@ -113,7 +114,6 @@ ws_string_set_from_str(
     }
     
     self->str = temp;
-    self->charcount = other->charcount;
 
     self->str = u_strcpy(self->str, other->str);
 
@@ -160,7 +160,9 @@ ws_string_cat(
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
     UChar* temp;
-    temp = realloc(self->str, (self->charcount + other->charcount + 1)
+    size_t charcount_s = u_strlen(self->str);
+    size_t charcount_o = u_strlen(other->str);
+    temp = realloc(self->str, (charcount_s + charcount_o + 1)
                     * sizeof(*self->str));
     if (!temp) {
         ws_object_unlock(&other->obj);
@@ -262,8 +264,9 @@ ws_string_raw(
 
     int32_t dest_len;
     UErrorCode err = U_ZERO_ERROR;
+    size_t charcount = u_strlen(self->str);
 
-    (void) u_strToUTF8(NULL, 0, &dest_len, self->str, self->charcount, &err);
+    (void) u_strToUTF8(NULL, 0, &dest_len, self->str, charcount, &err);
     if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return NULL;
     }
@@ -275,8 +278,8 @@ ws_string_raw(
     }
 
     err = U_ZERO_ERROR;
-    output = u_strToUTF8(output, self->charcount, &dest_len, self->str,
-                         self->charcount, &err);
+    output = u_strToUTF8(output, charcount, &dest_len, self->str,
+                         charcount, &err);
 
     ws_object_unlock(&self->obj);
 
@@ -325,7 +328,6 @@ ws_string_set_from_raw(
     free(self->str);
 
     self->str = conv_raw;
-    self->charcount = len;
 
     ws_object_unlock(&self->obj);
 }
