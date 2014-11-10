@@ -76,6 +76,18 @@ ws_value_type_instance_from_value_name(
     char const* name
 );
 
+/**
+ * Get the name of the type of the value object
+ *
+ * @memberof ws_value
+ *
+ * @return Name of the type of the passed value
+ */
+const char*
+ws_value_type_get_name(
+    struct ws_value* self //!< Value object to get the name for
+);
+
 #endif // __WS_VALUES_VALUE_TYPE_H__
 
 /**
