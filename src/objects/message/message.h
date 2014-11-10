@@ -65,5 +65,19 @@ ws_message_init(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Get id of message object
+ *
+ * @memberof ws_message
+ *
+ * @return id of the message
+ */
+size_t
+ws_message_get_id(
+    struct ws_message* self //!< message to initialize
+)
+__ws_nonnull__(1)
+;
+
 #endif //__WS_OBJECTS_MESSAGE_H__
 
