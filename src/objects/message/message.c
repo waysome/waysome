@@ -70,3 +70,9 @@ ws_message_init(
     return 0;
 }
 
+size_t
+ws_message_get_id(
+    struct ws_message* self
+) {
+    return self->id;
+}
