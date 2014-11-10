@@ -72,6 +72,16 @@ ws_value_set_new(void) {
     return s;
 }
 
+struct ws_set*
+ws_value_set_get(
+    struct ws_value_set* self
+) {
+    if (self) {
+        return self->set;
+    }
+    return NULL;
+}
+
 int
 ws_value_set_insert(
     struct ws_value_set* self,
@@ -89,7 +99,7 @@ ws_value_set_remove(
 }
 
 struct ws_object*
-ws_value_set_get(
+ws_value_set_get_object(
     struct ws_value_set const* self,
     struct ws_object const* cmp
 ) {
