@@ -51,6 +51,7 @@
 #include "serialize/serializer.h"
 #include "serialize/json/serializer.h"
 #include "serialize/json/keys.h"
+#include "objects/message/error_reply.h"
 #include "objects/message/message.h"
 #include "objects/message/event.h"
 #include "objects/message/transaction.h"
@@ -350,6 +351,52 @@ START_TEST (test_json_serializer_value_reply_int) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_error_reply) {
+    size_t t_id = 132;
+    unsigned int code = 12345;
+#define DESC "Hello"
+#define CAUSE "world"
+
+    struct ws_string* tname = ws_string_new();
+    ck_assert(tname);
+
+    ws_string_set_from_raw(tname, "testtransaction");
+    struct ws_transaction* t = ws_transaction_new(t_id, tname, 0, NULL);
+    ck_assert(t);
+
+    struct ws_error_reply* er = ws_error_reply_new(t, code, DESC, CAUSE);
+    ck_assert(er);
+
+    ssize_t s; // Number of written bytes
+    size_t nbuf = 1000; // 1000 bytes are enough, hopefully
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    s = ws_serialize(ser, buf, nbuf, (struct ws_message*) er);
+
+    ck_assert(s != 0);
+
+    { // test the result
+        char exp[1024];
+        memset(exp, 0, 1024);
+        const char* pref = "{\""ERROR_CODE"\":";
+        const char* suff =  ",\""ERROR_DESC"\":\""DESC"\","
+                            "\""ERROR_CAUSE"\":\""CAUSE"\"}";
+        snprintf(exp, 1024, "%s%zi%s", pref, code, suff);
+        ck_assert(0 == strcmp(exp, buf));
+
+        // we can now check the returned value
+        ck_assert(s == (ssize_t) strlen(exp));
+    }
+
+#undef DESC
+#undef CAUSE
+
+    ws_object_unref((struct ws_object*) er);
+    free(buf);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -376,6 +423,7 @@ json_deserializer_suite(void)
 
     tcase_add_test(tcx, test_json_serializer_value_reply);
     tcase_add_test(tcx, test_json_serializer_value_reply_int);
+    tcase_add_test(tcx, test_json_serializer_error_reply);
 
     return s;
 }
