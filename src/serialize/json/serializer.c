@@ -237,6 +237,14 @@ serialize(
         return -EINVAL;
     } while (0);
 
+    { // lets close the main map now.
+        yajl_gen_status stat = yajl_gen_map_close(ctx->yajlgen);
+        if (stat != yajl_gen_status_ok) {
+            //!< @todo error?
+            return -1;
+        }
+    }
+
 write_buffer:
     // put the serilized stuff into the buffer
     if (ctx->yajl_buffer == NULL) {
@@ -340,14 +348,6 @@ serialize_event(
     }
 
     { // lets close the event map now.
-        stat = yajl_gen_map_close(ctx->yajlgen);
-        if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
-            return -1;
-        }
-    }
-
-    { // lets close the main map now.
         stat = yajl_gen_map_close(ctx->yajlgen);
         if (stat != yajl_gen_status_ok) {
             //!< @todo error?
