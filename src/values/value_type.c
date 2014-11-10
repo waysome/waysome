@@ -117,3 +117,10 @@ ws_value_type_instance_from_value_name(
     return v;
 }
 
+const char*
+ws_value_type_get_name(
+    struct ws_value* self
+) {
+    return WS_VALUE_TYPE_NAMES[ws_value_get_type(self)];
+}
+
