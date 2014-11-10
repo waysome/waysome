@@ -83,6 +83,20 @@ struct ws_value_set*
 ws_value_set_new(void);
 
 /**
+ * Get the ws_set object stored in the value type
+ *
+ * @memberof ws_value_set
+ *
+ * @return The set stored in ws_value_set object, NULL on failure
+ */
+struct ws_set*
+ws_value_set_get(
+    struct ws_value_set* self
+)
+__ws_nonnull__(1)
+;
+
+/**
  * Insert an object into the set
  *
  * @memberof ws_value_set
