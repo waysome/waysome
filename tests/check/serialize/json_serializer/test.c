@@ -54,6 +54,7 @@
 #include "objects/message/message.h"
 #include "objects/message/event.h"
 #include "objects/message/transaction.h"
+#include "objects/message/value_reply.h"
 #include "command/statement.h"
 
 #include "values/int.h"
@@ -108,6 +109,26 @@ mkevent(
     ws_value_int_set(ctx, 1);
 
     return mkevent_with_ctx(ev_name, (struct ws_value*) ctx);
+}
+
+static struct ws_value_reply*
+mk_value_reply(
+    char* transaction_name,
+    struct ws_value* v,
+    size_t trans_id
+) {
+    struct ws_string* tname = ws_string_new();
+    ck_assert(tname);
+
+    ws_string_set_from_raw(tname, transaction_name);
+
+    struct ws_transaction* t = ws_transaction_new(trans_id, tname, 0, NULL);
+    ck_assert(t);
+
+    struct ws_value_reply* vr = ws_value_reply_new(t, v);
+    ck_assert(vr);
+
+    return vr;
 }
 
 /*
@@ -259,6 +280,36 @@ START_TEST (test_json_serializer_event_with_objid) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_value_reply) {
+    size_t t_id = 13;
+    struct ws_value_reply* vr = mk_value_reply("testtrans", NULL, t_id);
+
+    ssize_t s; // Number of written bytes
+    size_t nbuf = 1000; // 1000 bytes are enough, hopefully
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    s = ws_serialize(ser, buf, nbuf, (struct ws_message*) vr);
+
+    ck_assert(s != 0);
+
+    { // test the result
+        char exp[1024];
+        memset(exp, 0, 1024);
+        const char* pref = "{\"value\":null,\""TRANSACTION_ID"\":";
+        const char* suff = "}";
+        snprintf(exp, 1024, "%s%zi%s", pref, t_id, suff);
+        ck_assert(0 == strcmp(exp, buf));
+
+        // we can now check the returned value
+        ck_assert(s == (ssize_t) strlen(exp));
+    }
+
+    ws_object_unref((struct ws_object*) vr);
+    free(buf);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -282,6 +333,8 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_serializer_event);
     tcase_add_test(tcx, test_json_serializer_event_smallbuf);
     tcase_add_test(tcx, test_json_serializer_event_with_objid);
+
+    tcase_add_test(tcx, test_json_serializer_value_reply);
 
     return s;
 }
