@@ -274,8 +274,51 @@ static int
 serialize_reply_error_reply(
     struct ws_serializer* self
 ) {
-    //!< @todo implement
-    return -1;
+    yajl_gen_status stat;
+    struct ws_error_reply* r = (struct ws_error_reply*) self->buffer;
+    struct serializer_context* ctx = (struct serializer_context*) self->state;
+
+    if (gen_key(ctx, (char*) &ERROR_CODE)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    unsigned int code = ws_error_reply_get_code(r);
+    stat = yajl_gen_integer(ctx->yajlgen, code);
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
+    }
+
+    if (gen_key(ctx, (char*) &ERROR_DESC)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    char const* desc = ws_error_reply_get_description(r);
+    stat = yajl_gen_string(ctx->yajlgen,
+                           (unsigned char*) desc,
+                           strlen(desc));
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
+    }
+
+    if (gen_key(ctx, (char*) &ERROR_CAUSE)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    char const* cause = ws_error_reply_get_cause(r);
+    stat = yajl_gen_string(ctx->yajlgen,
+                           (unsigned char*) cause,
+                           strlen(cause));
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
+    }
+
+    return 0;
 }
 
 static int

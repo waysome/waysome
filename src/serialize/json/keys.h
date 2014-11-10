@@ -81,6 +81,10 @@
 #define VALUE       "value" // key for value reply
 #define TRANSACTION_ID "transaction-id" // key for value reply: transaction id
 
+#define ERROR_CODE  "errorcode" // key for error reply - code
+#define ERROR_DESC  "errordesc" // key for error reply - description
+#define ERROR_CAUSE "errorcause" // key for error reply - cause
+
 #endif //__WS_SERIALIZE_JSON_KEYS_H__
 
 /**
