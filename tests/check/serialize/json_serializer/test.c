@@ -310,6 +310,46 @@ START_TEST (test_json_serializer_value_reply) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_value_reply_int) {
+    size_t t_id = 42;
+    int v_int = 1337; // Is hardcoded in expected value!!!
+
+    struct ws_value_int* v = calloc(1, sizeof(*v));
+    ck_assert(v);
+
+    ws_value_int_init(v);
+    ws_value_int_set(v, v_int);
+
+    struct ws_value_reply* vr = mk_value_reply("testtrans",
+                                               (struct ws_value*) v,
+                                               t_id);
+
+    ssize_t s; // Number of written bytes
+    size_t nbuf = 1000; // 1000 bytes are enough, hopefully
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    s = ws_serialize(ser, buf, nbuf, (struct ws_message*) vr);
+
+    ck_assert(s != 0);
+
+    { // test the result
+        char exp[1024];
+        memset(exp, 0, 1024);
+        const char* pref = "{\"value\":1337,\""TRANSACTION_ID"\":";
+        const char* suff = "}";
+        snprintf(exp, 1024, "%s%zi%s", pref, t_id, suff);
+        ck_assert(0 == strcmp(exp, buf));
+
+        // we can now check the returned value
+        ck_assert(s == (ssize_t) strlen(exp));
+    }
+
+    ws_object_unref((struct ws_object*) vr);
+    free(buf);
+}
+END_TEST
+
 /*
  *
  * main()
@@ -335,6 +375,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_serializer_event_with_objid);
 
     tcase_add_test(tcx, test_json_serializer_value_reply);
+    tcase_add_test(tcx, test_json_serializer_value_reply_int);
 
     return s;
 }
