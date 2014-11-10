@@ -44,6 +44,7 @@
  */
 
 #include <errno.h>
+#include <inttypes.h>
 #include <check.h>
 #include "tests.h"
 
@@ -81,8 +82,9 @@ teardown(void)
 }
 
 static struct ws_event*
-mkevent(
-    char* ev_name
+mkevent_with_ctx(
+    char* ev_name,
+    struct ws_value* ctx
 ) {
     struct ws_event* ev = calloc(1, sizeof(*ev));
     ck_assert(ev);
@@ -91,14 +93,21 @@ mkevent(
     ck_assert(name);
     ws_string_set_from_raw(name, ev_name);
 
+    ck_assert(0 == ws_event_init(ev, name, ctx));
+
+    return ev;
+}
+
+static struct ws_event*
+mkevent(
+    char* ev_name
+) {
     struct ws_value_int* ctx = calloc(1, sizeof(*ctx));
     ck_assert(ctx);
     ws_value_int_init(ctx);
     ws_value_int_set(ctx, 1);
 
-    ck_assert(0 == ws_event_init(ev, name, (struct ws_value*) ctx));
-
-    return ev;
+    return mkevent_with_ctx(ev_name, (struct ws_value*) ctx);
 }
 
 /*
@@ -213,6 +222,42 @@ START_TEST (test_json_serializer_event_smallbuf) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_event_with_objid) {
+    struct ws_value_object_id* ctx = calloc(1, sizeof(*ctx));
+    ck_assert(ctx);
+
+    struct ws_object* obj = ws_object_new_raw();
+    ck_assert(obj);
+
+    ws_value_object_id_init(ctx);
+    ws_value_object_id_set(ctx, obj);
+
+    struct ws_event* ev;
+    ev = mkevent_with_ctx("teststring", (struct ws_value*) ctx);
+    ssize_t s; // Number of written bytes
+    size_t nbuf = 1000; // 1000 bytes are enough, hopefully
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    s = ws_serialize(ser, buf, nbuf, (struct ws_message*) ev);
+
+    { // test the result
+        char exp[1024];
+        memset(exp, 0, 1024);
+        const char* pref = "{\"event\":{\"context\":{\"object\":\"";
+        const char* suff = "\"},\"name\":\"teststring\"}}";
+        uintmax_t id = ws_object_uuid(obj);
+        snprintf(exp, 1024, "%s%"PRIxMAX"%s", pref, id, suff);
+        ck_assert(0 == strcmp(exp, buf));
+
+        // we can now check the returned value
+        ck_assert(s == (ssize_t) strlen(exp));
+    }
+
+    ws_object_unref((struct ws_object*) ev);
+    free(buf);
+}
+END_TEST
 
 /*
  *
@@ -236,6 +281,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_serializer_message);
     tcase_add_test(tcx, test_json_serializer_event);
     tcase_add_test(tcx, test_json_serializer_event_smallbuf);
+    tcase_add_test(tcx, test_json_serializer_event_with_objid);
 
     return s;
 }
