@@ -152,6 +152,67 @@ START_TEST (test_json_serializer_event) {
 }
 END_TEST
 
+START_TEST (test_json_serializer_event_smallbuf) {
+    struct ws_event* ev = mkevent("teststring");
+    ssize_t s; // Number of written bytes
+    size_t nbuf = 15; // 1000 bytes are enough, hopefully
+    size_t inc = 10;
+    char* buf   = calloc(1, sizeof(*buf) * nbuf);
+    ck_assert(buf);
+
+    {
+        s = ws_serialize(ser, buf, nbuf, (struct ws_message*) ev);
+        ck_assert(s == (ssize_t) nbuf);
+
+        const char* exp= "{\"event\":{\"cont";
+        ck_assert(0 == strcmp(exp, buf));
+    }
+
+    char* tmp = realloc(buf, sizeof(*buf) * (nbuf + inc));
+    ck_assert(tmp);
+    buf = tmp;
+
+    {
+        s = ws_serialize(ser, buf + nbuf, inc, (struct ws_message*) ev);
+        ck_assert(s == -EAGAIN);
+
+        const char* exp = "{\"event\":{\"context\":1,\"na";
+        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+    }
+
+    nbuf += inc;
+
+    tmp = realloc(buf, sizeof(*buf) * (nbuf + inc));
+    ck_assert(tmp);
+    buf = tmp;
+
+    {
+        s = ws_serialize(ser, buf + nbuf, inc, (struct ws_message*) ev);
+        ck_assert(s == -EAGAIN);
+
+        const char* exp = "{\"event\":{\"context\":1,\"name\":\"tests";
+        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+    }
+
+    nbuf += inc;
+
+    tmp = realloc(buf, sizeof(*buf) * (nbuf + inc));
+    ck_assert(tmp);
+    buf = tmp;
+
+    {
+        s = ws_serialize(ser, buf + nbuf, inc, (struct ws_message*) ev);
+        ck_assert(s == (ssize_t) inc);
+
+        const char* exp = "{\"event\":{\"context\":1,\"name\":\"teststring\"}}";
+        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+    }
+
+    ws_object_unref((struct ws_object*) ev);
+    free(buf);
+}
+END_TEST
+
 
 /*
  *
@@ -174,6 +235,7 @@ json_deserializer_suite(void)
 
     tcase_add_test(tcx, test_json_serializer_message);
     tcase_add_test(tcx, test_json_serializer_event);
+    tcase_add_test(tcx, test_json_serializer_event_smallbuf);
 
     return s;
 }
