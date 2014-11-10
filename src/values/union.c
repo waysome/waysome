@@ -64,7 +64,7 @@ ws_value_union_init_from_val(
     case WS_VALUE_TYPE_STRING:
         ws_value_string_init(&dest->string);
         {
-            ws_string_set_from_str(dest->string.str, 
+            ws_string_set_from_str(dest->string.str,
                                     ((struct ws_value_string*)src)->str);
             return 0;
         }
@@ -83,6 +83,9 @@ ws_value_union_init_from_val(
         }
 
     case WS_VALUE_TYPE_SET:
+        dest->set.set = getref(ws_value_set_get((struct ws_value_set*) src));
+        return 0;
+
     case WS_VALUE_TYPE_NAMED:
         //!< @todo implement
         return -ENOTSUP;
