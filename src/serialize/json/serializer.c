@@ -282,8 +282,34 @@ static int
 serialize_reply_value_reply(
     struct ws_serializer* self
 ) {
-    //!< @todo implement
-    return -1;
+    struct serializer_context* ctx = (struct serializer_context*) self->state;
+
+    // We haven't serialized anything
+    // generate the key for the value reply
+    if (gen_key(ctx, (char*) &VALUE)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    struct ws_value* v = &((struct ws_value_reply*) self->buffer)->value.value;
+    if (serialize_value(ctx, v)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    if (gen_key(ctx, (char*) &TRANSACTION_ID)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    size_t id = ws_message_get_id(self->buffer);
+    yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen, id);
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
+    }
+
+    return 0;
 }
 
 static int

@@ -78,6 +78,9 @@
 
 #define EVENT_NAME  "name" // "name" member of the event
 
+#define VALUE       "value" // key for value reply
+#define TRANSACTION_ID "transaction-id" // key for value reply: transaction id
+
 #endif //__WS_SERIALIZE_JSON_KEYS_H__
 
 /**
