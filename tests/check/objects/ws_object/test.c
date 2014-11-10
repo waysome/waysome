@@ -181,6 +181,21 @@ START_TEST (test_object_cmp) {
 }
 END_TEST
 
+START_TEST (test_object_uuid) {
+    struct ws_object* o = ws_object_new(sizeof(*o));
+    ck_assert(o);
+
+    size_t id = ws_object_uuid(o);
+
+    ck_assert(id == ws_object_uuid(o));
+    ck_assert(id == ws_object_uuid(o));
+    ck_assert(id == ws_object_uuid(o));
+    ck_assert(id == ws_object_uuid(o));
+
+    ws_object_unref(o);
+}
+END_TEST
+
 static Suite*
 objects_suite(void)
 {
@@ -207,6 +222,7 @@ objects_suite(void)
     tcase_add_test(tc, test_object_lock_try_read);
     tcase_add_test(tc, test_object_lock_try_write);
     tcase_add_test(tc, test_object_cmp);
+    tcase_add_test(tc, test_object_uuid);
 
     tcase_add_test(tca, test_object_attribute_type);
     tcase_add_test(tca, test_object_attribute_read);
