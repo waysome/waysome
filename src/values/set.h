@@ -121,7 +121,7 @@ __ws_nonnull__(1, 2)
  * @return the ws_object object or NULL on failure
  */
 struct ws_object*
-ws_value_set_get(
+ws_value_set_get_object(
     struct ws_value_set const* self, //!< The value_set object
     struct ws_object const* cmp //!< The object to compare to
 )
