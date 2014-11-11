@@ -2,8 +2,10 @@
 # Build the input submodule
 #
 set(SOURCE_FILES
-    module.c
+    hotkey_dag.c
+    hotkey_event.c
     input_device.c
+    module.c
     utils.c
 )
 
