@@ -150,17 +150,16 @@ ws_region_new(
         goto cleanup_region;
     }
 
-    // set the implementation
-    wl_resource_set_implementation(resource, &interface,
-                                   ws_object_getref(&self->wl_obj.obj),
-                                   resource_destroy);
-
     // finish the initialisation
     ws_wayland_obj_init(&self->wl_obj, resource);
     self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_REGION;
 
+    // set the implementation
+    wl_resource_set_implementation(resource, &interface,
+                                   ws_object_getref(&self->wl_obj.obj),
+                                   resource_destroy);
     // initialize the members
-    ws_wayland_buffer_init((struct ws_wayland_buffer*) &self->img_buf, NULL);
+    ws_buffer_init((struct ws_buffer*) &self->img_buf);
 
     return self;
 

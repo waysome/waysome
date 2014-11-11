@@ -13,6 +13,7 @@ set(WS_MODULES
     input
     logger
     objects
+    protocol
     serialize
     util
     values
@@ -102,6 +103,8 @@ foreach(MODULE IN LISTS WS_MODULES)
     add_subdirectory(${MODULE})
     set(SOURCE_FILES ${SOURCE_FILES} $<TARGET_OBJECTS:${MODULE}>)
 endforeach()
+
+add_dependencies(compositor protocol)
 
 #
 # Add waysome executable

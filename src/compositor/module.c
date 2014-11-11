@@ -49,6 +49,7 @@
 #include "compositor/wayland/client.h"
 #include "compositor/wayland/compositor.h"
 #include "compositor/wayland/shell.h"
+#include "compositor/wayland/xdg_shell.h"
 #include "logger/module.h"
 #include "util/cleaner.h"
 #include "util/wayland.h"
@@ -218,6 +219,11 @@ ws_compositor_init(void) {
     }
 
     retval = ws_wayland_client_init();
+    if (retval < 0) {
+        return retval;
+    }
+
+    retval = ws_wayland_xdg_shell_init();
     if (retval < 0) {
         return retval;
     }
