@@ -25,6 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ev.h>
+
 #include "action/context.h"
 #include "objects/object.h"
 #include "objects/string.h"
@@ -70,7 +72,8 @@ static int
 func_exit(
     union ws_value_union* stack
 ) {
-    //!< @todo: Make it exit
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    ev_unloop(loop, EVUNLOOP_ALL);
     return 0;
 }
 
