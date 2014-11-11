@@ -2,6 +2,7 @@
 # Build the action submodule
 #
 set(SOURCE_FILES
+    context.c
     manager.c
     processor.c
     processor_stack.c
