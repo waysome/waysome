@@ -51,6 +51,21 @@ struct ws_hotkey_event {
 extern ws_object_type_id WS_OBJECT_TYPE_ID_HOTKEY_EVENT;
 
 /**
+ * Initialize a hotkey event
+ *
+ * @return 0 on success, a negative error code otherwise
+ */
+int
+ws_hotkey_event_init(
+    struct ws_hotkey_event* self, //!< event to initialize
+    struct ws_string* name, //!< name to initialize the event with
+    uint16_t* codes, //!< codes on which an event should be triggered
+    uint16_t code_num //!< number of codes in `codes`
+)
+__ws_nonnull__(1, 2, 3)
+;
+
+/**
  * Create a hotkey event
  *
  * @return a fully initialized hotkey event or NULL
