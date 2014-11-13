@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <malloc.h>
 
 #include "input/hotkey_event.h"
@@ -78,8 +79,9 @@ ws_object_type_id WS_OBJECT_TYPE_ID_HOTKEY_EVENT = {
  *
  */
 
-struct ws_hotkey_event*
-ws_hotkey_event_new(
+int
+ws_hotkey_event_init(
+    struct ws_hotkey_event* self,
     struct ws_string* name,
     uint16_t* codes,
     uint16_t code_num
@@ -94,38 +96,56 @@ ws_hotkey_event_new(
             while (cur-- > codes) {
                 if (*code == *cur) {
                     // found one
-                    return NULL;
+                    return -EINVAL;
                 }
             }
         }
     }
 
+    if (!ws_object_init(&self->obj)) {
+        return -1;
+    }
+    self->obj.id = &WS_OBJECT_TYPE_ID_HOTKEY_EVENT;
+
+    if (!ws_string_init(&self->name)) {
+        goto cleanup_object;
+    }
+
+    if (!ws_string_set_from_str(&self->name, name)) {
+        goto cleanup_string;
+    }
+
+    self->codes = codes;
+    self->code_num = code_num;
+
+    return 0;
+
+cleanup_string:
+    ws_object_deinit(&self->name.obj);
+cleanup_object:
+    ws_object_deinit(&self->obj);
+    return -1;
+}
+
+struct ws_hotkey_event*
+ws_hotkey_event_new(
+    struct ws_string* name,
+    uint16_t* codes,
+    uint16_t code_num
+) {
     struct ws_hotkey_event* retval;
-    retval = (struct ws_hotkey_event*) ws_object_new(sizeof(*retval));
+    retval = (struct ws_hotkey_event*) calloc(1, sizeof(*retval));
     if (!retval) {
         return NULL;
     }
 
-    if (!ws_string_init(&retval->name)) {
-        goto cleanup_object;
+    if (ws_hotkey_event_init(retval, name, codes, code_num) < 0) {
+        free(retval);
+        return NULL;
     }
-
-    if (!ws_string_set_from_str(&retval->name, name)) {
-        goto cleanup_string;
-    }
-
-    retval->codes = codes;
-    retval->code_num = code_num;
+    retval->obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     return retval;
-
-cleanup_string:
-    ws_object_deinit(&retval->name.obj);
-
-cleanup_object:
-    ws_object_deinit(&retval->obj);
-    free(retval);
-    return NULL;
 }
 
 
@@ -142,7 +162,6 @@ deinit_hotkey(
     struct ws_hotkey_event* ev = (struct ws_hotkey_event*) self;
 
     ws_object_deinit(&ev->name.obj);
-    ws_object_deinit(&ev->obj);
     return true;
 }
 

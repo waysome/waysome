@@ -35,6 +35,7 @@
 
 #include "compositor/cursor.h"
 #include "compositor/keyboard.h"
+#include "input/hotkeys.h"
 #include "input/input_device.h"
 #include "input/utils.h"
 #include "util/arithmetical.h"
@@ -243,14 +244,20 @@ watch_pointers(
         }
 
         if (ev.type == EV_KEY) {
-            if (BTN_MISC <= ev.code && ev.code <= BTN_GEAR_UP) {
-                handle_mouse_click_event(&ev);
-                continue;
+            // process all events after checking whether it's a key-combo
+            struct wl_array events = ws_hotkeys_eval(&ev);
+            struct input_event* buf;
+            wl_array_for_each(buf, &events) {
+                handle_keyboard_press_event(buf);
+
+                if (BTN_MISC <= buf->code && buf->code <= BTN_GEAR_UP) {
+                    handle_mouse_click_event(buf);
+                }
+                if (KEY_ESC <= buf->code && buf->code <= KEY_MICMUTE) {
+                    handle_keyboard_press_event(buf);
+                }
             }
-            if (KEY_ESC <= ev.code && ev.code <= KEY_MICMUTE) {
-                handle_keyboard_press_event(&ev);
-                continue;
-            }
+            continue;
         }
 
         ws_log(&log_ctx, LOG_DEBUG, "Unhandled event: %x %x", ev.type, ev.code);

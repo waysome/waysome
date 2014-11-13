@@ -25,59 +25,68 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_INPUT_HOTKEY_EVENT_H__
-#define __WS_INPUT_HOTKEY_EVENT_H__
+#ifndef __WS_INPUT_HOTKEYS_H__
+#define __WS_INPUT_HOTKEYS_H__
 
-#include <stdint.h>
+#include <stdbool.h>
+#include <wayland-util.h>
 
-#include "objects/object.h"
-#include "objects/string.h"
 #include "util/attributes.h"
 
+// forward declaration
+struct input_event;
+struct ws_string;
+
 
 /**
- * A hotkey event
- */
-struct ws_hotkey_event {
-    struct ws_object obj; //!< @public supertype
-    struct ws_string name; //!< @public name of event to emit
-    uint16_t* codes; //!< @public codes
-    uint16_t code_num; //!< @public number of codes
-};
-
-/**
- * Variable which holds type information about the ws_hotkey_event type
- */
-extern ws_object_type_id WS_OBJECT_TYPE_ID_HOTKEY_EVENT;
-
-/**
- * Initialize a hotkey event
+ * Initialize hotkeys subsystem
  *
- * @return 0 on success, a negative error code otherwise
+ * @return 0 on success, a negative error if an error occurred
  */
 int
-ws_hotkey_event_init(
-    struct ws_hotkey_event* self, //!< event to initialize
-    struct ws_string* name, //!< name to initialize the event with
-    uint16_t* codes, //!< codes on which an event should be triggered
-    uint16_t code_num //!< number of codes in `codes`
+ws_hotkeys_init(void);
+
+/**
+ * Evaluate event
+ *
+ * Check whether the event is relevant to us.
+ * This may trigger an event.
+ *
+ * @return a number of arrays to be processed by the caller
+ */
+struct wl_array
+ws_hotkeys_eval(
+    struct input_event* ev
 )
-__ws_nonnull__(1, 2, 3)
+__ws_nonnull__(1)
 ;
 
 /**
- * Create a hotkey event
+ * Add an event
  *
- * @return a fully initialized hotkey event or NULL
+ * @return 0 on success, a negative error number if an error occured
  */
-struct ws_hotkey_event*
-ws_hotkey_event_new(
-    struct ws_string* name, //!< name to initialize the event with
-    uint16_t* codes, //!< codes on which an event should be triggered
+int
+ws_hotkey_add(
+    struct ws_string* name, //!< name of the event to insert
+    uint16_t* codes, //!< codes of the event to add
     uint16_t code_num //!< number of codes in `codes`
 )
-__ws_nonnull__(1, 2)
+__ws_nonnull__(1)
 ;
 
-#endif // __WS_INPUT_HOTKEY_EVENT_H__
+/**
+ * Remove an event
+ *
+ * @return 0 on success, a negative error number if an error occured
+ */
+int
+ws_hotkey_remove(
+    uint16_t* codes, //!< codes of the event to remove
+    uint16_t code_num //!< number of codes in `codes`
+)
+__ws_nonnull__(1)
+;
+
+#endif // __WS_INPUT_HOTKEYS_H__
 
