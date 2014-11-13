@@ -34,7 +34,11 @@
 #ifndef __WS_UTIL_DEBUG_H__
 #define __WS_UTIL_DEBUG_H__
 
-
+#ifdef DEBUG
+#define ws_dbg(ctx,lvl,fmt,...) do { ws_log(ctx,lvl,fmt,__VA_ARGS__); } while(0)
+#else
+#define ws_dbg(...)
+#endif
 
 #endif // __WS_UTIL_DEBUG_H__
 
