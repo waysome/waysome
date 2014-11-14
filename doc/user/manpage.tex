@@ -1,0 +1,46 @@
+\documentclass{book}
+
+%
+% Packages
+%
+\usepackage[english]{babel}
+\usepackage{bookmark}
+\usepackage{color}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{url}
+
+
+%
+% Document
+%
+\begin{document}
+
+% Import the "Synopsis" section of the manpage
+\section{Synopsis}
+\input{src/synopsis}
+
+% Import the "Description" section of the manpage
+\section{Description}
+\input{src/description}
+
+% Import the "Options" section of the manpage
+\section{Options}
+\input{src/options}
+
+% Import the "Files" section of the manpage
+\section{Files}
+\input{src/files}
+
+% Import the "See also" section of the manpage
+\section{See also}
+\input{src/seealso}
+
+% Import the "Authors" section of the manpage
+\section{Authors}
+\input{src/authors}
+
+\end{document}
+
