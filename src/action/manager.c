@@ -153,16 +153,16 @@ ws_action_manager_process(
         struct ws_event* event = (struct ws_event*) message;
         struct ws_transaction* transaction;
 
-        { // contain transaction retrieval in a scope to save stack
-            struct ws_string* name = ws_event_get_name(event);
-            if (!name) {
-                return NULL;
-            }
+        // extract the name of the event
+        struct ws_string* name = ws_event_get_name(event);
+        if (!name) {
+            return NULL;
+        }
 
+        { // contain transaction retrieval in a scope to save stack
             // get the named object containing the event
             struct ws_named comparable;
             ws_named_init(&comparable, name, NULL);
-            ws_object_unref((struct ws_object*) name);
 
             struct ws_named* named;
             named = set_get(&actman_ctx.registrations, &comparable);
@@ -171,13 +171,26 @@ ws_action_manager_process(
 
             // extract the transaction to run
             if (!named) {
-                return NULL;
+                goto cleanup_name;
             }
 
             transaction = (struct ws_transaction*) ws_named_get_obj(named);
-            if (!transaction) {
-                return NULL;
+        }
+
+        if (!transaction) {
+            // get the transaction directly
+            struct ws_transaction comparable;
+            if (ws_transaction_init(&comparable, 0, name) < 0) {
+                goto cleanup_name;
             }
+
+            transaction = set_get(&actman_ctx.transactions, &comparable);
+            ws_object_deinit((struct ws_object*) &comparable);
+        }
+
+        // check whether we _have_ a transaction
+        if (!transaction) {
+            goto cleanup_name;
         }
 
         // now, finally, run the transaction
@@ -188,6 +201,8 @@ ws_action_manager_process(
             ws_object_unref((struct ws_object*) reply);
         }
 
+cleanup_name:
+        ws_object_unref((struct ws_object*) name);
         return NULL;
     }
 
