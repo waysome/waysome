@@ -177,6 +177,17 @@ ws_action_manager_process(
             transaction = (struct ws_transaction*) ws_named_get_obj(named);
         }
 
+        if (!transaction) {
+            // get the transaction directly
+            struct ws_transaction comparable;
+            if (ws_transaction_init(&comparable, 0, name) < 0) {
+                goto cleanup_name;
+            }
+
+            transaction = set_get(&actman_ctx.transactions, &comparable);
+            ws_object_deinit((struct ws_object*) &comparable);
+        }
+
         // check whether we _have_ a transaction
         if (!transaction) {
             goto cleanup_name;
