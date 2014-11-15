@@ -40,6 +40,7 @@
 #ifndef __WS_OBJECTS_FRAMEBUFFER_DEVICE_H__
 #define __WS_OBJECTS_FRAMEBUFFER_DEVICE_H__
 
+#include <EGL/egl.h>
 #include <pthread.h>
 #include <stdbool.h>
 
@@ -60,6 +61,7 @@ struct ws_framebuffer_device {
     int fd; //!< @public The filedescriptor
     char* path; //!< @public The path to the device file
     struct gbm_device* gbm_dev; //!< @private gbm device
+    EGLDisplay egl_disp; //!< @private EGL display
 };
 
 /**
@@ -90,6 +92,18 @@ ws_framebuffer_device_new(
  */
 struct gbm_device*
 ws_framebuffer_device_get_gbm_dev(
+    struct ws_framebuffer_device* self //!< framebuffer defive
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Get the EGL display from a framebuffer device
+ *
+ * @return an EGLDisplay
+ */
+EGLDisplay
+ws_framebuffer_device_get_egl_display(
     struct ws_framebuffer_device* self //!< framebuffer defive
 )
 __ws_nonnull__(1)

@@ -106,6 +106,7 @@ ws_framebuffer_device_new(
     tmp->path = strdup(path);
 
     tmp->gbm_dev = NULL;
+    tmp->egl_disp = NULL;
 
     return tmp;
 }
@@ -120,6 +121,30 @@ ws_framebuffer_device_get_gbm_dev(
 
     self->gbm_dev = gbm_create_device(self->fd);
     return self->gbm_dev;
+}
+
+EGLDisplay
+ws_framebuffer_device_get_egl_display(
+    struct ws_framebuffer_device* self
+) {
+    if (self->egl_disp) {
+        return self->egl_disp;
+    }
+
+    // get the GBM device to base the EGL stuff on
+    struct gbm_device* gbm_dev = ws_framebuffer_device_get_gbm_dev(self);
+    if (!gbm_dev) {
+        return NULL;
+    }
+
+    // get and initialize the display
+    EGLDisplay disp = eglGetDisplay(gbm_dev);
+
+    if (!eglInitialize(disp, NULL, NULL)) {
+        return NULL;
+    }
+
+    return self->egl_disp = disp;
 }
 
 /*
