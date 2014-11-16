@@ -110,6 +110,14 @@ ws_connbuf_append(
 }
 
 int
+ws_connbuf_unblock(
+    struct ws_connbuf* self //!< The object
+) {
+    self->blocked = false;
+    return 0;
+}
+
+int
 ws_connbuf_discard(
     struct ws_connbuf* self,
     size_t amount
