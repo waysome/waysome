@@ -102,12 +102,12 @@ ws_connector_read(
     res = read(self->fd, start, remaining_mem);
     if (res == 0) {
         // we hit the end of file
-        ws_connbuf_append(&self->inbuf, 0); //unblock the buffer
+        ws_connbuf_unblock(&self->inbuf);
         return EOF;
     }
 
     if (res < 0) {
-        ws_connbuf_append(&self->inbuf, 0); //unblocks the buffer
+        ws_connbuf_unblock(&self->inbuf);
         return -errno;
     }
 
