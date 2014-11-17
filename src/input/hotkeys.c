@@ -97,7 +97,6 @@ ws_hotkeys_init(void) {
     if (!res) {
         goto cleanup;
     }
-    ws_hotkeys_ctx.state = &ws_hotkeys_ctx.root;
 
     ws_cleaner_add(hotkeys_deinit, NULL);
     wl_array_init(&ws_hotkeys_ctx.events);
@@ -127,6 +126,11 @@ ws_hotkeys_eval(
             return eventlist_reset();
         }
         *buf = *ev;
+    }
+
+    // make sure the state is initialized
+    if (!ws_hotkeys_ctx.state) {
+        ws_hotkeys_ctx.state = &ws_hotkeys_ctx.root;
     }
 
     // check whether the key was pressed or released
