@@ -45,7 +45,6 @@
 #include "serialize/deserializer.h"
 #include "serialize/json/deserializer.h"
 #include "serialize/json/deserializer_callbacks.h"
-#include "serialize/json/deserializer_state.h"
 
 #include "logger/module.h"
 
@@ -58,6 +57,14 @@ static struct ws_logger_context log_ctx = {
  * static function declarations
  *
  */
+
+/**
+ * Allocate a new desertializer state object
+ *
+ * @return new object of `struct serializer_yajl_state_deserializer` or NULL
+ */
+struct deserializer_state*
+deserialize_state_new(yajl_callbacks* cbs, void* ctx);
 
 /**
  * deserialize callback
@@ -124,6 +131,44 @@ ws_serializer_json_deserializer_new(void)
  * static function implementations
  *
  */
+
+struct deserializer_state*
+deserialize_state_new(
+    yajl_callbacks* cbs,
+    void* ctx
+) {
+    struct deserializer_state* state = calloc(1, sizeof(*state));
+    if (!state) {
+        return NULL;
+    }
+
+    state->handle = yajl_alloc(cbs, NULL, ctx);
+
+    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
+        !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
+        !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
+
+            yajl_free(state->handle);
+            return NULL;
+    }
+
+    state->current_state    = STATE_INIT;
+    state->tmp_statement    = NULL;
+
+    state->nboxbrackets     = 0;
+    state->ncurvedbrackets  = 0;
+
+    state->id               = 0;
+
+    // Explicit set to EXEC here.
+    state->flags            = WS_TRANSACTION_FLAGS_EXEC;
+
+    state->ev_ctx           = NULL;
+    state->ev_name          = NULL;
+    state->has_event        = false;
+
+    return state;
+}
 
 static ssize_t
 deserialize(

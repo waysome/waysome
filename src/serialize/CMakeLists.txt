@@ -5,7 +5,6 @@ set(SOURCE_FILES
     deserializer.c
     json/deserializer.c
     json/deserializer_callbacks.c
-    json/deserializer_state.c
     json/serializer.c
     json/serializer_state.c
     json/string_jump_state.c

@@ -48,6 +48,44 @@
 #ifndef __WS_SERIALIZE_JSON_DESERIALIZER_CALLBACKS_H__
 #define __WS_SERIALIZE_JSON_DESERIALIZER_CALLBACKS_H__
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <yajl/yajl_parse.h>
+
+#include "command/command.h"
+#include "command/statement.h"
+
+#include "serialize/json/states.h"
+
+#include "objects/message/transaction.h"
+
+#include "values/union.h"
+#include "values/string.h"
+
+/**
+ * Deserializer state object
+ */
+struct deserializer_state {
+    yajl_handle handle;
+
+    enum json_backend_state current_state; //!< @protected State identifier
+
+    uintmax_t id;
+
+    enum ws_transaction_flags flags; //!< @public flag cache
+    struct ws_string* register_name; //!< @public name cache
+
+    struct ws_statement* tmp_statement;
+
+    uintmax_t nboxbrackets;
+    uintmax_t ncurvedbrackets;
+
+    struct ws_string* ev_name; //!< @public name cache for event name
+    struct ws_value* ev_ctx; //!< @public event context
+
+    bool has_event;
+};
+
 /**
  * YAJL callback: null
  *

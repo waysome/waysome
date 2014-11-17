@@ -27,18 +27,22 @@
 
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
+#include <yajl/yajl_parse.h>
+#include <wayland-util.h>
 
+#include "command/command.h"
 #include "objects/message/event.h"
 #include "objects/message/transaction.h"
+#include "objects/string.h"
 #include "serialize/deserializer.h"
-#include "serialize/json/deserializer_state.h"
 #include "serialize/json/deserializer_callbacks.h"
 #include "serialize/json/keys.h"
 #include "serialize/json/states.h"
 #include "serialize/json/string_jump_state.h"
-#include "values/nil.h"
 #include "values/bool.h"
 #include "values/int.h"
+#include "values/nil.h"
 #include "values/string.h"
 #include "wayland-util.h"
 
