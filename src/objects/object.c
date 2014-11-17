@@ -79,7 +79,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
 
     .deinit_callback = NULL,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
@@ -271,32 +270,6 @@ ws_object_dump_state(
     }
 
     return res;
-}
-
-bool
-ws_object_run(
-    struct ws_object* self
-) {
-    if (!self) {
-        return false;
-    }
-
-    ws_log(&log_ctx, LOG_DEBUG, "Running: %p (%s)", self, self->id->typestr);
-
-    ws_object_type_id* type = self->id;
-    while (!type->run_callback) {
-        if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
-            return false;
-        }
-
-        type = type->supertype;
-    }
-
-    ws_object_lock_read(self);
-    bool b = type->run_callback(self);
-    ws_object_unlock(self);
-
-    return b;
 }
 
 size_t

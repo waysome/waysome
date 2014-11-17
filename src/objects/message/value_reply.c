@@ -55,7 +55,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_VALUE_REPLY = {
     .hash_callback = NULL,
     .deinit_callback = value_reply_deinit,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
 

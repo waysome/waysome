@@ -64,7 +64,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_KEYBOARD = {
 
     .deinit_callback    = NULL,
     .dump_callback      = NULL,
-    .run_callback       = NULL,
     .hash_callback      = NULL,
 };
 

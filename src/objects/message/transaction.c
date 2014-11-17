@@ -68,7 +68,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TRANSACTION = {
 
     .deinit_callback = deinit_transaction,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = cmp_transactions,
     .uuid_callback = NULL,
