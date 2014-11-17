@@ -33,6 +33,7 @@
 #include "command/control.h"
 #include "command/statement.h"
 #include "values/int.h"
+#include "values/union.h"
 
 
 int
@@ -82,5 +83,50 @@ ws_builtin_cmd_jump(
     }
 
     return ws_processor_jump(proc, value);
+}
+
+
+int
+ws_builtin_cmd_store(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+) {
+    // We want 2 arguments: The object to store, the position on the stack
+    if (args->num != 2) {
+        return -EINVAL; // Wrong number of args
+    }
+
+    struct ws_argument* arg = args->vals;
+    if (!arg) {
+        return -EINVAL;
+    }
+
+    struct ws_value* overrider;
+    switch (arg[0].type) {
+    case indirect: // The value must be extracted from the stack
+        overrider = ws_processor_stack_value_at(proc->stack,
+                                                arg[0].arg.pos,
+                                                NULL);
+        break;
+
+    case direct: // The value is passed directly
+        overrider = arg[0].arg.val;
+        break;
+
+    default:
+        return -EINVAL;
+    }
+
+    if (arg[1].type == direct) {
+        return -EINVAL;
+    }
+
+    union ws_value_union* old;
+    old = (union ws_value_union*) ws_processor_stack_value_at(proc->stack,
+                                                              arg[1].arg.pos,
+                                                              NULL);
+
+    ws_value_deinit(&old->value);
+    return ws_value_union_init_from_val(old, overrider);
 }
 
