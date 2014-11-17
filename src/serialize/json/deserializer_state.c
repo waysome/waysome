@@ -32,7 +32,6 @@
 #include <wayland-util.h>
 
 #include "command/command.h"
-#include "serialize/json/common.h"
 #include "serialize/json/deserializer_state.h"
 #include "serialize/json/states.h"
 #include "values/nil.h"
@@ -46,12 +45,19 @@ deserialize_state_new(
     yajl_callbacks* cbs,
     void* ctx
 ) {
-    size_t s = sizeof(struct deserializer_state);
-    struct deserializer_state* state;
-
-    state = (struct deserializer_state*) serializer_yajl_state_new(s, cbs, ctx);
+    struct deserializer_state* state = calloc(1, sizeof(*state));
     if (!state) {
         return NULL;
+    }
+
+    state->handle = yajl_alloc(cbs, NULL, ctx);
+
+    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
+        !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
+        !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
+
+            yajl_free(state->handle);
+            return NULL;
     }
 
     state->current_state    = STATE_INIT;

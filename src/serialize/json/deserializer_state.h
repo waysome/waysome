@@ -50,11 +50,11 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <yajl/yajl_parse.h>
 
 #include "command/command.h"
 #include "command/statement.h"
 
-#include "serialize/json/common.h"
 #include "serialize/json/states.h"
 
 #include "objects/message/transaction.h"
@@ -64,11 +64,9 @@
 
 /**
  * Deserializer state object
- *
- * @extends serializer_yajl_state
  */
 struct deserializer_state {
-    struct serializer_yajl_state yajlstate; //!< @protected Base type.
+    yajl_handle handle;
 
     enum json_backend_state current_state; //!< @protected State identifier
 

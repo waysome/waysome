@@ -43,7 +43,6 @@
 
 #include "objects/message/message.h"
 #include "serialize/deserializer.h"
-#include "serialize/json/common.h"
 #include "serialize/json/deserializer.h"
 #include "serialize/json/deserializer_callbacks.h"
 #include "serialize/json/deserializer_state.h"
@@ -146,7 +145,7 @@ deserialize(
         }
     }
 
-    yajl_status stat = yajl_parse(d->yajlstate.handle, buffer, nbuf);
+    yajl_status stat = yajl_parse(d->handle, buffer, nbuf);
 
     if ((d->current_state == STATE_INVALID) && self->buffer) {
         ws_object_deinit(&self->buffer->obj);
@@ -156,10 +155,10 @@ deserialize(
     if (yajl_status_error == stat) {
         ws_log(&log_ctx, LOG_ERR, "We have an error in the JSON deserializing");
         unsigned char* errstr;
-        errstr = yajl_get_error(d->yajlstate.handle, 1, buffer, nbuf);
-        yajl_free_error(d->yajlstate.handle, errstr);
+        errstr = yajl_get_error(d->handle, 1, buffer, nbuf);
+        yajl_free_error(d->handle, errstr);
     }
 
-    return yajl_get_bytes_consumed(d->yajlstate.handle) + consumed;
+    return yajl_get_bytes_consumed(d->handle) + consumed;
 }
 
