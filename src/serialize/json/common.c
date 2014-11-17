@@ -61,11 +61,3 @@ serializer_yajl_state_new(
     return state;
 }
 
-void
-serializer_yajl_state_free(
-    struct serializer_yajl_state* state
-) {
-    yajl_free(state->handle);
-    free(state);
-}
-

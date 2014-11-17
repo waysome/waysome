@@ -67,14 +67,6 @@ serializer_yajl_state_new(
     void* ctx
 );
 
-/**
- * Free a serializer yajl state object
- */
-void
-serializer_yajl_state_free(
-    struct serializer_yajl_state* state
-);
-
 #endif //__WS_SERIALIZE_JSON_DESERIALIZER_COMMON_H__
 
 /**
