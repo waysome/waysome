@@ -78,7 +78,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_OBJECT = {
     .typestr    = "ws_object",
 
     .deinit_callback = NULL,
-    .dump_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
@@ -248,28 +247,6 @@ ws_object_unref(
 
     pthread_rwlock_destroy(&self->ref_counting.rwl);
     free(self);
-}
-
-bool
-ws_object_dump_state(
-    struct ws_object* self,
-    struct ws_logger_context* const ctx
-) {
-    bool res = false;
-
-    if (self) {
-        ws_object_lock_read(self);
-        if (self->id && self->id->dump_callback) {
-            ws_log(&log_ctx, LOG_DEBUG, "Dumping object state: %p (%s)",
-                    self, self->id->typestr);
-
-            self->id->dump_callback(ctx, self);
-            res = true;
-        }
-        ws_object_unlock(self);
-    }
-
-    return res;
 }
 
 size_t

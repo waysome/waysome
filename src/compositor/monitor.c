@@ -92,7 +92,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR = {
     .typestr = "ws_monitor",
     .deinit_callback = monitor_deinit,
     .hash_callback = monitor_hash,
-    .dump_callback = NULL,
     .cmp_callback = monitor_cmp,
 
     .attribute_table = NULL,

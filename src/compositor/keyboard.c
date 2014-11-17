@@ -98,7 +98,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_KEYBOARD = {
     .typestr    = "ws_keyboard",
 
     .deinit_callback    = deinit_keyboard,
-    .dump_callback      = NULL,
     .hash_callback      = NULL,
 };
 

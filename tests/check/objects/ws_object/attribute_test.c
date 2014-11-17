@@ -80,7 +80,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TESTOBJ = {
     .typestr    = "ws_test_object",
 
     .deinit_callback    = NULL,
-    .dump_callback      = NULL,
     .hash_callback      = NULL,
     .cmp_callback       = NULL,
     .attribute_table = WS_OBJECT_ATTRS_TEST_OBJ,

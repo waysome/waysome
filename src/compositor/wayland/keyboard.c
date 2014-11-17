@@ -63,7 +63,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_KEYBOARD = {
     .typestr    = "ws_wayland_keyboard",
 
     .deinit_callback    = NULL,
-    .dump_callback      = NULL,
     .hash_callback      = NULL,
 };
 

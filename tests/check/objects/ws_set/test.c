@@ -69,7 +69,6 @@ ws_object_type_id TEST_ID = {
     .typestr    = "ws_set_test_obj",
 
     .deinit_callback = NULL,
-    .dump_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = compare_set_test_objs,
 };

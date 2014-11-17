@@ -55,7 +55,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_EVENT = {
 
     .hash_callback = NULL,
     .deinit_callback = deinit_event,
-    .dump_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
 

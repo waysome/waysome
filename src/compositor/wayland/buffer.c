@@ -131,7 +131,6 @@ static ws_buffer_type_id buffer_type = {
         .hash_callback = NULL,
 
         .deinit_callback = NULL,
-        .dump_callback = NULL,
         .cmp_callback = NULL,
 
         .attribute_table = NULL,
@@ -159,7 +158,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_BUFFER = {
 
     .hash_callback = NULL,
     .deinit_callback = NULL,
-    .dump_callback = NULL,
     .cmp_callback = NULL,
 
     .attribute_table = NULL,

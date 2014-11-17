@@ -120,7 +120,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_POINTER = {
     .typestr    = "ws_wayland_pointer",
 
     .deinit_callback    = NULL,
-    .dump_callback      = NULL,
     .hash_callback      = NULL,
     .cmp_callback       = NULL,
 
