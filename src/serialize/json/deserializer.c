@@ -43,10 +43,8 @@
 
 #include "objects/message/message.h"
 #include "serialize/deserializer.h"
-#include "serialize/json/common.h"
 #include "serialize/json/deserializer.h"
 #include "serialize/json/deserializer_callbacks.h"
-#include "serialize/json/deserializer_state.h"
 
 #include "logger/module.h"
 
@@ -59,6 +57,14 @@ static struct ws_logger_context log_ctx = {
  * static function declarations
  *
  */
+
+/**
+ * Allocate a new desertializer state object
+ *
+ * @return new object of `struct serializer_yajl_state_deserializer` or NULL
+ */
+struct deserializer_state*
+deserialize_state_new(yajl_callbacks* cbs, void* ctx);
 
 /**
  * deserialize callback
@@ -126,6 +132,44 @@ ws_serializer_json_deserializer_new(void)
  *
  */
 
+struct deserializer_state*
+deserialize_state_new(
+    yajl_callbacks* cbs,
+    void* ctx
+) {
+    struct deserializer_state* state = calloc(1, sizeof(*state));
+    if (!state) {
+        return NULL;
+    }
+
+    state->handle = yajl_alloc(cbs, NULL, ctx);
+
+    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
+        !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
+        !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
+
+            yajl_free(state->handle);
+            return NULL;
+    }
+
+    state->current_state    = STATE_INIT;
+    state->tmp_statement    = NULL;
+
+    state->nboxbrackets     = 0;
+    state->ncurvedbrackets  = 0;
+
+    state->id               = 0;
+
+    // Explicit set to EXEC here.
+    state->flags            = WS_TRANSACTION_FLAGS_EXEC;
+
+    state->ev_ctx           = NULL;
+    state->ev_name          = NULL;
+    state->has_event        = false;
+
+    return state;
+}
+
 static ssize_t
 deserialize(
     struct ws_deserializer* self,
@@ -146,7 +190,7 @@ deserialize(
         }
     }
 
-    yajl_status stat = yajl_parse(d->yajlstate.handle, buffer, nbuf);
+    yajl_status stat = yajl_parse(d->handle, buffer, nbuf);
 
     if ((d->current_state == STATE_INVALID) && self->buffer) {
         ws_object_deinit(&self->buffer->obj);
@@ -156,10 +200,10 @@ deserialize(
     if (yajl_status_error == stat) {
         ws_log(&log_ctx, LOG_ERR, "We have an error in the JSON deserializing");
         unsigned char* errstr;
-        errstr = yajl_get_error(d->yajlstate.handle, 1, buffer, nbuf);
-        yajl_free_error(d->yajlstate.handle, errstr);
+        errstr = yajl_get_error(d->handle, 1, buffer, nbuf);
+        yajl_free_error(d->handle, errstr);
     }
 
-    return yajl_get_bytes_consumed(d->yajlstate.handle) + consumed;
+    return yajl_get_bytes_consumed(d->handle) + consumed;
 }
 
