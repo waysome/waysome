@@ -26,10 +26,11 @@
  */
 
 #include <errno.h>
-#include <string.h>
+#include <stddef.h>
 #include <stdlib.h>
-#include <yajl/yajl_parse.h>
+#include <string.h>
 #include <wayland-util.h>
+#include <yajl/yajl_parse.h>
 
 #include "command/command.h"
 #include "objects/message/event.h"
@@ -39,12 +40,47 @@
 #include "serialize/json/deserializer_callbacks.h"
 #include "serialize/json/keys.h"
 #include "serialize/json/states.h"
-#include "serialize/json/string_jump_state.h"
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
 #include "values/string.h"
 #include "wayland-util.h"
+
+/**
+ * Map for mapping the current state with a string on the next state
+ */
+static const struct {
+    enum json_backend_state current;
+    enum json_backend_state next;
+    const char* str;
+} MAP[] = {
+    { .current = STATE_MSG, .next = STATE_UID,      .str = UID          },
+    { .current = STATE_MSG, .next = STATE_TYPE,     .str = TYPE         },
+    { .current = STATE_MSG, .next = STATE_COMMANDS, .str = COMMANDS     },
+    { .current = STATE_MSG, .next = STATE_FLAGS,    .str = FLAGS        },
+    {
+        .current = STATE_FLAGS_MAP,
+        .next = STATE_FLAGS_EXEC,
+        .str = FLAG_EXEC
+    },
+    {
+        .current = STATE_FLAGS_MAP,
+        .next = STATE_FLAGS_REGISTER,
+        .str = FLAG_REGISTER
+    },
+    {
+        .current = STATE_MSG,
+        .next = STATE_EVENT_NAME,
+        .str = EVENT_NAME
+    },
+    {
+        .current = STATE_MSG,
+        .next = STATE_EVENT_VALUE,
+        .str = EVENT_VALUE,
+    },
+
+    { .str = NULL },
+};
 
 /*
  *
@@ -68,6 +104,15 @@ setup_transaction(
 void
 finalize_message(
     struct ws_deserializer* d //!< The deserializer obj, containing everything
+);
+
+/**
+ * Get the next state for the current state and a string
+ */
+static enum json_backend_state
+get_next_state_for_string(
+    enum json_backend_state current,
+    const unsigned char * str
 );
 
 /*
@@ -715,3 +760,18 @@ finalize_message(
     }
 }
 
+static enum json_backend_state
+get_next_state_for_string(
+    enum json_backend_state current,
+    const unsigned char * str
+) {
+    for (size_t i = 0; MAP[i].str; i++) {
+        if (MAP[i].current == current) {
+            if (0 == strncmp(MAP[i].str, (char*) str, strlen(MAP[i].str))) {
+                return MAP[i].next;
+            }
+        }
+    }
+
+    return STATE_INVALID;
+}
