@@ -34,6 +34,7 @@ set(WS_COMMAND_FILES
 #
 set(SOURCE_FILES
     command.c
+    control.c
     list.c
     processor.c
     statement.c
