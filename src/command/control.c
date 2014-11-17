@@ -130,3 +130,42 @@ ws_builtin_cmd_store(
     return ws_value_union_init_from_val(old, overrider);
 }
 
+int
+ws_builtin_cmd_pop(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+) {
+    size_t n = args->num;
+
+    if (!n) {
+        n = 1; // If we have no arguments, we pop 1 value from the stack.
+    }
+
+    struct ws_argument* arg = args->vals;
+    if (!arg) {
+        goto out;
+    }
+
+    struct ws_value* val;
+
+    if (arg->type == direct) { // passed as ws_value_int
+        val = arg->arg.val;
+    } else { // passed as stack position
+        val = ws_processor_stack_value_at(proc->stack, arg->arg.pos, NULL);
+    }
+
+    if (!val) {
+        // could not find how many values should be popped.
+        return -EINVAL;
+    }
+
+    if (ws_value_get_type(val) != WS_VALUE_TYPE_INT) {
+        return -EINVAL; // Wrong type
+    }
+
+    n = ws_value_int_get((struct ws_value_int*) val);
+
+out:
+    return ws_processor_stack_pop(proc->stack, n);
+}
+
