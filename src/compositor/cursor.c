@@ -61,7 +61,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_CURSOR = {
     .typestr    = "ws_cursor",
 
     .deinit_callback    = deinit_cursor,
-    .dump_callback      = NULL,
     .hash_callback      = NULL,
     .cmp_callback       = NULL,
 

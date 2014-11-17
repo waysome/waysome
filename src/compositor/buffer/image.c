@@ -121,7 +121,6 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
         .hash_callback = NULL,
 
         .deinit_callback = deinit_buffer,
-        .dump_callback = NULL,
         .cmp_callback = cmp_buffer,
 
         .attribute_table = NULL,

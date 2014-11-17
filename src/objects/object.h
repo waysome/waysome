@@ -83,14 +83,6 @@ typedef struct ws_object_type const ws_object_type_id;
 typedef bool (*ws_object_deinit_callback)(struct ws_object* const);
 
 /**
- * log callback
- */
-typedef bool (*ws_object_dump_callback)(
-        struct ws_logger_context* const log_ctx,
-        struct ws_object* self
-);
-
-/**
  * hash callback
  */
 typedef size_t (*ws_object_hash_callback)(struct ws_object* const);
@@ -170,7 +162,6 @@ struct ws_object_type {
     const char* const typestr; //!< string which represents the type
 
     ws_object_deinit_callback deinit_callback; //!< Free callback for the type
-    ws_object_dump_callback dump_callback; //!< Log callback for the type
     ws_object_hash_callback hash_callback; //!< Hash callback for the type
     ws_object_cmp_callback cmp_callback; //!< Compare callback for the type
     ws_object_uuid_callback uuid_callback; //!< @protected UUID callback
@@ -325,19 +316,6 @@ ws_object_getref(
 void
 ws_object_unref(
     struct ws_object* self //!< The object
-);
-
-/**
- * Log the object with the passed context
- *
- * @memberof ws_object
- *
- * @return true if the logging was successful, else false
- */
-bool
-ws_object_dump_state(
-    struct ws_object* self, //!< The object
-    struct ws_logger_context* const ctx //!< Logging context
 );
 
 /**
