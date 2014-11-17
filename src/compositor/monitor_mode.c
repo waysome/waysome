@@ -58,7 +58,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_MONITOR_MODE = {
     .deinit_callback = NULL,
     .hash_callback = monitor_mode_hash,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .cmp_callback = monitor_mode_cmp,
 
     .attribute_table = NULL,

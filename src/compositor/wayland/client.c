@@ -76,7 +76,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_CLIENT = {
     .hash_callback = hash_callback,
     .deinit_callback = NULL,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .cmp_callback = cmp_callback,
 
     .attribute_table = NULL,

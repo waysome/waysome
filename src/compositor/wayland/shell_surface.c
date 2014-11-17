@@ -204,7 +204,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE = {
 
     .deinit_callback    = NULL,
     .dump_callback      = NULL,
-    .run_callback       = NULL,
     .hash_callback      = NULL,
     .cmp_callback       = NULL,
 

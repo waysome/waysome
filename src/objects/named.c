@@ -53,7 +53,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_NAMED = {
 
     .deinit_callback = named_deinit,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,

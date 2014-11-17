@@ -113,7 +113,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_XDG_SHELL = {
     .hash_callback = NULL,
     .deinit_callback = NULL,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .cmp_callback = NULL,
     .attribute_table = NULL,
     .function_table = NULL,

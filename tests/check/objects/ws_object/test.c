@@ -119,13 +119,6 @@ START_TEST (test_object_cb_dump_state) {
 }
 END_TEST
 
-START_TEST (test_object_cb_run) {
-    struct ws_object* o = ws_object_new(sizeof(*o));
-    ck_assert(false == ws_object_run(o));
-    ws_object_deinit(o);
-}
-END_TEST
-
 START_TEST (test_object_cb_hash) {
     struct ws_object* o = ws_object_new(sizeof(*o));
     ck_assert(0 == ws_object_hash(o));
@@ -215,7 +208,6 @@ objects_suite(void)
     tcase_add_test(tc, test_object_getref);
     tcase_add_test(tc, test_object_unref);
     tcase_add_test(tc, test_object_cb_dump_state);
-    tcase_add_test(tc, test_object_cb_run);
     tcase_add_test(tc, test_object_cb_hash);
     tcase_add_test(tc, test_object_lock_read);
     tcase_add_test(tc, test_object_lock_write);

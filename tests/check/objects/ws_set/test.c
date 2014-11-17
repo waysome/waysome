@@ -70,7 +70,6 @@ ws_object_type_id TEST_ID = {
 
     .deinit_callback = NULL,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = compare_set_test_objs,
 };

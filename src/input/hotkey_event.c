@@ -63,7 +63,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_HOTKEY_EVENT = {
     .deinit_callback = deinit_hotkey,
 
     .dump_callback = NULL,
-    .run_callback = NULL,
     .hash_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,

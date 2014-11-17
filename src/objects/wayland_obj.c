@@ -75,7 +75,6 @@ ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_OBJ = {
 
     .deinit_callback = NULL,
     .dump_callback = NULL,
-    .run_callback = NULL,
     .cmp_callback = cmp_callback,
     .uuid_callback = uuid_callback,
 
