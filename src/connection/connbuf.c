@@ -104,9 +104,7 @@ ws_connbuf_append(
     }
 
     self->data += amount;
-    self->blocked = false;
-
-    return 0;
+    return ws_connbuf_unblock(self);
 }
 
 int
