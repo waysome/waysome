@@ -27,11 +27,13 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <unistd.h>
 #include <xf86drm.h>
+
+#include <gbm.h>
 
 #include "compositor/framebuffer_device.h"
 #include "compositor/internal_context.h"
@@ -102,7 +104,47 @@ ws_framebuffer_device_new(
         return NULL;
     }
     tmp->path = strdup(path);
+
+    tmp->gbm_dev = NULL;
+    tmp->egl_disp = NULL;
+
     return tmp;
+}
+
+struct gbm_device*
+ws_framebuffer_device_get_gbm_dev(
+    struct ws_framebuffer_device* self
+) {
+    if (self->gbm_dev) {
+        return self->gbm_dev;
+    }
+
+    self->gbm_dev = gbm_create_device(self->fd);
+    return self->gbm_dev;
+}
+
+EGLDisplay
+ws_framebuffer_device_get_egl_display(
+    struct ws_framebuffer_device* self
+) {
+    if (self->egl_disp) {
+        return self->egl_disp;
+    }
+
+    // get the GBM device to base the EGL stuff on
+    struct gbm_device* gbm_dev = ws_framebuffer_device_get_gbm_dev(self);
+    if (!gbm_dev) {
+        return NULL;
+    }
+
+    // get and initialize the display
+    EGLDisplay disp = eglGetDisplay(gbm_dev);
+
+    if (!eglInitialize(disp, NULL, NULL)) {
+        return NULL;
+    }
+
+    return self->egl_disp = disp;
 }
 
 /*
@@ -116,6 +158,12 @@ device_deinit(
     struct ws_object* obj
 ) {
     struct ws_framebuffer_device* self = (struct ws_framebuffer_device*) obj;
+
+    // destruct gbm device
+    if (self->gbm_dev) {
+        gbm_device_destroy(self->gbm_dev);
+    }
+
     if (self->fd > 0) {
         close(self->fd);
     }
