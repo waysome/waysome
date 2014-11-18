@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <string.h>
 
 #include "action/processor.h"
 #include "action/processor_stack.h"
@@ -128,5 +129,90 @@ ws_builtin_cmd_store(
 
     ws_value_deinit(&old->value);
     return ws_value_union_init_from_val(old, overrider);
+}
+
+int
+ws_builtin_cmd_pop(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+) {
+    size_t n = args->num;
+
+    if (!n) {
+        n = 1; // If we have no arguments, we pop 1 value from the stack.
+    }
+
+    struct ws_argument* arg = args->vals;
+    if (!arg) {
+        goto out;
+    }
+
+    struct ws_value* val;
+
+    if (arg->type == direct) { // passed as ws_value_int
+        val = arg->arg.val;
+    } else { // passed as stack position
+        val = ws_processor_stack_value_at(proc->stack, arg->arg.pos, NULL);
+    }
+
+    if (!val) {
+        // could not find how many values should be popped.
+        return -EINVAL;
+    }
+
+    if (ws_value_get_type(val) != WS_VALUE_TYPE_INT) {
+        return -EINVAL; // Wrong type
+    }
+
+    n = ws_value_int_get((struct ws_value_int*) val);
+
+out:
+    return ws_processor_stack_pop(proc->stack, n);
+}
+
+int
+ws_builtin_cmd_push(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+) {
+    size_t n = args->num;
+
+    if (!n) {
+        // If we have nothing to push, we push NIL
+        return ws_processor_stack_push(proc->stack, 1);
+    }
+
+    int res = ws_processor_stack_push(proc->stack, n);
+    if (res != 0) {
+        return res;
+    }
+
+    // Get the (old) top
+    union ws_value_union* top   = ws_processor_stack_top(proc->stack) - n;
+    struct ws_value* v          = NULL;
+
+    if (args->vals) { // There are values to push
+        // Each value from the `args` array can either be a real value passed to
+        // the command or a position on the stack.
+
+        for (size_t i = 0 ; i < n; i++) {
+            if (args->vals[i].type == indirect) { // it is a position
+                v = ws_processor_stack_value_at(proc->stack,
+                                                args->vals[i].arg.pos,
+                                                NULL);
+            } else { // It is real!
+                v = args->vals[i].arg.val;
+            }
+
+            if (!v) {
+                return -EINVAL;
+            }
+            ws_value_union_init_from_val(&top[i], v);
+        }
+    }
+    // else: There are no values to push, NIL got pushed by the
+    // ws_processor_stack_push() function, that's all we want
+
+    return 0;
 }
 

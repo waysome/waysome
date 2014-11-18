@@ -1,2 +1,4 @@
 jump;special
 store;special
+pop;special
+push;special
