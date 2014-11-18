@@ -337,7 +337,9 @@ run_transaction(
         union ws_value_union* bottom = ws_processor_stack_bottom(&stack);
 
         // initialize the global context
-        ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL); //!< @todo real thing
+        ws_value_union_reinit(bottom, WS_VALUE_TYPE_OBJECT_ID);
+        ws_value_object_id_set((struct ws_value_object_id*) bottom,
+                               &actman_ctx.obj);
 
         // initialize the event context
         ++bottom;
