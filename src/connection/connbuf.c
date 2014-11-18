@@ -104,8 +104,14 @@ ws_connbuf_append(
     }
 
     self->data += amount;
-    self->blocked = false;
+    return ws_connbuf_unblock(self);
+}
 
+int
+ws_connbuf_unblock(
+    struct ws_connbuf* self //!< The object
+) {
+    self->blocked = false;
     return 0;
 }
 

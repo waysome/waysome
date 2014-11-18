@@ -162,6 +162,20 @@ ws_connbuf_append(
 );
 
 /**
+ * Unblock the buffer
+ *
+ * This function unblocks the buffer.
+ *
+ * @memberof ws_connbuf
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_connbuf_unblock(
+    struct ws_connbuf* self //!< The object
+);
+
+/**
  * Releases a given amount of the buffer and move its content to the beginning
  *
  * @memberof ws_connbuf
