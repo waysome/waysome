@@ -30,10 +30,10 @@
 #include <ev.h>
 
 #include "compositor/module.h"
+#include "connection/config_file.h"
 #include "input/module.h"
 #include "logger/module.h"
 #include "util/cleaner.h"
-#include "util/config_file.h"
 #include "util/wayland.h"
 
 
@@ -89,7 +89,7 @@ main(
 
     ws_log(&log_main, LOG_DEBUG, "Logger initalized.");
 
-    retval = ws_config_load();
+    retval = ws_connection_loadconf();
     if (retval != 0) {
         ws_log(&log_main, LOG_EMERG, "Failed to load configuration.");
         goto cleanup;

@@ -34,10 +34,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "connection/config_file.h"
 #include "connection/processor.h"
 #include "serialize/json/deserializer.h"
 #include "util/arithmetical.h"
-#include "util/config_file.h"
 
 #define HOME            "HOME"
 #define XDG_CONFIG_DIRS "XDG_CONFIG_DIRS"
@@ -75,7 +75,7 @@ open_config(void);
  */
 
 int
-ws_config_load(void) {
+ws_connection_loadconf(void) {
     int fd = open_config();
     if (fd < 0) {
         return fd;

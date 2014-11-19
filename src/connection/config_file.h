@@ -37,8 +37,8 @@
  * @{
  */
 
-#ifndef __WS_UTIL_CONFIG_H__
-#define __WS_UTIL_CONFIG_H__
+#ifndef __WS_CONNECTION_CONFIG_H__
+#define __WS_CONNECTION_CONFIG_H__
 
 /**
  * Load the config file
@@ -46,9 +46,9 @@
  * @return 0 on success, a negative error code otherwise
  */
 int
-ws_config_load(void);
+ws_connection_loadconf(void);
 
-#endif // __WS_UTIL_CONFIG_H__
+#endif // __WS_CONNECTION_CONFIG_H__
 
 /**
  * @}
