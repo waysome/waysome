@@ -1,19 +1,13 @@
-find_package(DRM REQUIRED)
-find_package(EGL REQUIRED)
 find_package(EV REQUIRED)
 find_package(IcuIO REQUIRED)
 find_package(IcuUC REQUIRED)
-find_package(libreset REQUIRED)
-find_package(Libevdev REQUIRED)
-find_package(Libudev)
-find_package(PNG REQUIRED 1.6)
-find_package(WaylandEgl REQUIRED)
-find_package(WaylandServer REQUIRED)
-find_package(WaylandCursor REQUIRED)
-find_package(WaylandScanner REQUIRED)
-find_package(XKBCommon REQUIRED)
-find_package(Yajl REQUIRED)
 find_package(UUID REQUIRED)
+find_package(WaylandCursor REQUIRED)
+find_package(WaylandEgl REQUIRED)
+find_package(WaylandScanner REQUIRED)
+find_package(WaylandServer REQUIRED)
+find_package(Yajl REQUIRED)
+find_package(libreset REQUIRED)
 
 set(TEST_SOURCES
     $<TARGET_OBJECTS:action>
@@ -27,53 +21,35 @@ set(TEST_SOURCES
     PARENT_SCOPE)
 
 set(TEST_LIBRARIES
-    ${DRM_LIBRARIES}
-    ${EGL_LIBRARIES}
-    ${EVDEV_LIBRARIES}
     ${EV_LIBRARIES}
     ${ICU_OP_LIBRARIES}
     ${ICU_UC_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${UDEV_LIBRARIES}
     ${UUID_LIBRARIES}
     ${WAYLAND_CURSOR_LIBRARIES}
     ${WAYLAND_SERVER_LIBRARIES}
-    ${XKB_COMMON_LIBRARIES}
     ${YAJL_LIBRARIES}
     ${libreset_LIBRARIES}
     PARENT_SCOPE)
 
 set(TEST_INCLUDE_DIRS
-    ${DRM_INCLUDE_DIRS}
-    ${EGL_INCLUDE_DIRS}
-    ${EVDEV_INCLUDE_DIRS}
     ${EV_INCLUDE_DIRS}
     ${ICU_OP_INCLUDE_DIRS}
     ${ICU_UC_INCLUDE_DIRS}
-    ${libreset_INCLUDE_DIRS}
-    ${PNG_INCLUDE_DIRS}
-    ${UDEV_INCLUDE_DIRS}
+    ${UUID_INCLUDE_DIRS}
     ${WAYLAND_CURSOR_INCLUDE_DIRS}
     ${WAYLAND_SERVER_INCLUDE_DIRS}
-    ${XKB_COMMON_INCLUDE_DIRS}
     ${YAJL_INCLUDE_DIRS}
-    ${UUID_INCLUDE_DIRS}
+    ${libreset_INCLUDE_DIRS}
     PARENT_SCOPE)
 
 set(TEST_DEFINITIONS
-    ${DRM_DEFINITIONS}
-    ${EGL_DEFINITIONS}
-    ${EVDEV_DEFINITIONS}
     ${EV_DEFINITIONS}
     ${ICU_OP_DEFINITIONS}
     ${ICU_UC_DEFINITIONS}
-    ${libreset_DEFINITIONS}
-    ${PNG_DEFINITIONS}
-    ${UDEV_DEFINITIONS}
+    ${UUID_DEFINITIONS}
     ${WAYLAND_CURSOR_DEFINITIONS}
     ${WAYLAND_SERVER_DEFINITIONS}
-    ${XKB_COMMON_DEFINITIONS}
     ${YAJL_DEFINITIONS}
-    ${UUID_DEFINITIONS}
+    ${libreset_DEFINITIONS}
     PARENT_SCOPE)
 
