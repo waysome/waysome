@@ -38,7 +38,6 @@ set(SOURCE_FILES
     control.c
     list.c
     object.c
-    processor.c
     statement.c
 )
 

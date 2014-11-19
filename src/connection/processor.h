@@ -25,8 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_COMMAND_PROCESSOR_H__
-#define __WS_COMMAND_PROCESSOR_H__
+#ifndef __WS_CONNECTION_PROCESSOR_H__
+#define __WS_CONNECTION_PROCESSOR_H__
 
 #include "objects/object.h"
 #include "util/attributes.h"
@@ -38,10 +38,10 @@ struct ws_serializer;
 /**
  * The command processor, which is an object
  */
-struct ws_command_processor;
+struct ws_connection_manager;
 
 /**
- * Variable which holds type information about the ws_command_processor type
+ * Variable which holds type information about the ws_connection_manager type
  */
 extern ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR;
 
@@ -55,8 +55,8 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR;
  *
  * @return a new command processor or `NULL`, if an error occured
  */
-struct ws_command_processor*
-ws_command_processor_new(
+struct ws_connection_manager*
+ws_connection_manager_new(
     int fd, //!< file descriptor to use run the command processor on
     struct ws_deserializer* deserializer, //!< deserializer to use
     struct ws_serializer* serializer //!< serializer to use
@@ -64,5 +64,5 @@ ws_command_processor_new(
 __ws_nonnull__(2)
 ;
 
-#endif // __WS_COMMAND_PROCESSOR_H__
+#endif // __WS_CONNECTION_PROCESSOR_H__
 
