@@ -182,6 +182,8 @@ ws_string_substr(
  *
  * @warning returns NULL if ws_string is no UTF8 string
  *
+ * @warning Returned string is _newly allocated_
+ *
  * @return Returns the ws_string as an UTF-8 string, NULL on failure
  */
 char*
