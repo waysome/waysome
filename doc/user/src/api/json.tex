@@ -1,4 +1,4 @@
-\section{JSON API documentation}
+\subsection{JSON API documentation}
 
     Waysome is able to get and process messages via a JSON API. The following
     chapter documents the API.
@@ -7,7 +7,7 @@
     which is sent to waysome, containing a JSON object. "transaction" is used to
     name such a message which contains "commands" to the software.
 
-    \subsection{Possible top-level keys}
+    \subsubsection{Possible top-level keys}
 
         The top level keys of the JSON object are
 
@@ -24,7 +24,7 @@
             \item ``CMDS'', which contains a JSON-Array of Commands.
         \end{itemize}
 
-    \subsection{Commands}
+    \subsubsection{Commands}
 
         A command in the command array is a JSON object on its own. The key of
         the command is always the name of the command, whereas the value of the
@@ -79,7 +79,7 @@
 
         does not make sense, as the argument to "pop" is a constant.
 
-    \subsection{Summary}
+    \subsubsection{Summary}
 
         All in all, we can now describe a simple request to waysome. The
         following request pushes the numbers 1 and 2 onto the stack and then
