@@ -257,6 +257,15 @@ cleanup_surface:
     return NULL;
 }
 
+int
+ws_shell_surface_set_pos(
+    struct wl_resource* resource,
+    int32_t x,
+    int32_t y
+) {
+    //!< @todo implement
+    return 0;
+}
 
 /*
  *
