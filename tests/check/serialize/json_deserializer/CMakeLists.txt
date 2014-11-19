@@ -10,9 +10,7 @@ find_package(Yajl REQUIRED)
 find_package(libreset REQUIRED)
 
 set(TEST_SOURCES
-    $<TARGET_OBJECTS:action>
     $<TARGET_OBJECTS:command>
-    $<TARGET_OBJECTS:connection>
     $<TARGET_OBJECTS:logger>
     $<TARGET_OBJECTS:objects>
     $<TARGET_OBJECTS:serialize>
