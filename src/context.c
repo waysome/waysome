@@ -49,9 +49,18 @@ func_log(
     union ws_value_union* stack
 );
 
+/**
+ * A way to start a programm
+ */
+static int
+func_exec(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
+    { .name = "exec", .func = func_exec },
     { .name = NULL, .func = NULL }
 };
 
@@ -116,3 +125,12 @@ func_log(
 
     return 1;
 }
+
+static int
+func_exec(
+    union ws_value_union* stack
+) {
+    //!< @todo implement
+    return 1;
+}
+

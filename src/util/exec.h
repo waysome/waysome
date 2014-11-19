@@ -42,7 +42,6 @@ ws_exec(
     char* const argv[]
 )
 __ws_nonnull__(1)
-__ws_noreturn__
 ;
 
 #endif // __WS_UTIL_EXEC_H__

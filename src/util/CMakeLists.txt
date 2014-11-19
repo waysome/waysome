@@ -5,6 +5,7 @@ set(SOURCE_FILES
     cleaner.c
     socket.c
     wayland.c
+    exec.c
 )
 
 add_library(util OBJECT
