@@ -70,7 +70,9 @@ main(
 
     // initialize main loop
     struct ev_loop* default_loop = ev_default_loop(EVFLAG_AUTO);
-    if (!default_loop) goto cleanup;
+    if (!default_loop) {
+        goto cleanup;
+    }
 
     struct ev_signal sigint_watcher;
     ev_signal_init(&sigint_watcher, handle_sig, SIGINT);
@@ -86,7 +88,7 @@ main(
     }
 
     ws_log(&log_main, LOG_DEBUG, "Logger initalized.");
-    
+
     retval = ws_config_load();
     if (retval != 0) {
         ws_log(&log_main, LOG_EMERG, "Failed to load configuration.");
