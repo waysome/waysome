@@ -86,7 +86,7 @@ main(
     }
 
     ws_log(&log_main, LOG_DEBUG, "Logger initalized.");
-    
+
     retval = ws_config_load();
     if (retval != 0) {
         ws_log(&log_main, LOG_EMERG, "Failed to load configuration.");
