@@ -31,13 +31,14 @@
 
 #include "command/util.h"
 #include "compositor/cursor.h"
+#include "compositor/keyboard.h"
 #include "context.h"
 #include "input/hotkeys.h"
 #include "objects/object.h"
 #include "objects/string.h"
+#include "util/exec.h"
 #include "values/string.h"
 #include "values/union.h"
-#include "util/exec.h"
 
 
 /**
@@ -96,6 +97,14 @@ func_get_ms_focus(
     union ws_value_union* stack
 );
 
+/**
+ * Give the plugin a way to get the currently focused surface by the keyboard
+ */
+static int
+func_get_kb_focus(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
@@ -104,6 +113,7 @@ static const struct ws_object_function functions[] = {
     { .name = "remove_hotkey_event", .func = remove_hotkey_event },
     { .name = "surface_under_cursor", .func = func_get_surface_under_cursor },
     { .name = "get_mouse_focus", .func = func_get_ms_focus },
+    { .name = "get_keyboard_focus", .func = func_get_kb_focus },
     { .name = NULL, .func = NULL }
 };
 
@@ -312,6 +322,17 @@ func_get_ms_focus(
     union ws_value_union* stack
 ) {
     struct ws_surface* surface = ws_cursor_get()->active_surface;
+
+    ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
+
+    return 0;
+}
+
+static int
+func_get_kb_focus(
+    union ws_value_union* stack
+) {
+    struct ws_surface* surface = ws_keyboard_get()->active_surface;
 
     ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
 
