@@ -29,7 +29,7 @@
 
 ${HEADER_INCLUSION}
 
-struct ws_command const ws_command_list[] = {
+struct ws_command ws_command_list[] = {
 ${LIST_BODY}
 };
 

@@ -76,6 +76,11 @@ ws_command_init(void) {
     cmd_ctx.commands = NULL;
     cmd_ctx.num = 0;
 
+    int res = ws_command_add(ws_command_list, ws_command_cnt);
+    if (res < 0) {
+        return res;
+    }
+
     return ws_cleaner_add(deinit_command, NULL);
 }
 
