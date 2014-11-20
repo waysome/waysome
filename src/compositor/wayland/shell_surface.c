@@ -25,11 +25,17 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <malloc.h>
 #include <wayland-server.h>
 
 #include "compositor/wayland/client.h"
 #include "compositor/wayland/shell_surface.h"
+#include "values/int.h"
+#include "values/object_id.h"
+#include "values/union.h"
+#include "values/value.h"
+#include "values/value_type.h"
 
 /**
  * Version of the wayland surface interface we're implementing
@@ -169,6 +175,21 @@ resource_destroy(
     struct wl_resource* resource //!< resource to destroy
 );
 
+/**
+ * Callback command function for setting surface position
+ *
+ * @memberof ws_surface
+ *
+ * Takes three parameters:
+ *  1) The object id of the surface
+ *  2) The X position
+ *  3) The Y position
+ */
+static int
+cmd_func_set_pos(
+    union ws_value_union* stack // The stack to use
+);
+
 /*
  *
  * Internal constants
@@ -191,6 +212,13 @@ static struct wl_shell_surface_interface interface = {
     .set_class      = surface_set_class_cb,
 };
 
+/**
+ * Callback function table for commands
+ */
+static const struct ws_object_function FUNCTIONS[] = {
+    { .name = "setpos",         .func = cmd_func_set_pos },
+    { .name = NULL,             .func = NULL } // iteration stopper
+};
 
 /*
  *
@@ -257,6 +285,15 @@ cleanup_surface:
     return NULL;
 }
 
+int
+ws_shell_surface_set_pos(
+    struct wl_resource* resource,
+    int32_t x,
+    int32_t y
+) {
+    //!< @todo implement
+    return 0;
+}
 
 /*
  *
@@ -379,5 +416,33 @@ resource_destroy(
     surface->wl_obj.resource = NULL;
     ws_object_unlock(&surface->wl_obj.obj);
     ws_object_unref(&surface->wl_obj.obj);
+}
+
+static int
+cmd_func_set_pos(
+    union ws_value_union* stack
+) {
+    stack += 2; // Ignore the object and the command name
+
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_OBJECT_ID ||
+            ws_value_get_type(&stack[1].value) != WS_VALUE_TYPE_INT ||
+            ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT ||
+            ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_NIL) {
+        return -EINVAL;
+    }
+
+    struct wl_resource* r = (struct wl_resource*)
+                            ws_value_object_id_get(&stack[0].object_id);
+    intmax_t tmp_x = ws_value_int_get(&stack[1].int_);
+    intmax_t tmp_y = ws_value_int_get(&stack[2].int_);
+
+    if (tmp_x > INT32_MAX || tmp_y > INT32_MAX) {
+        return -EINVAL;
+    }
+
+    int32_t x = tmp_x;
+    int32_t y = tmp_y;
+
+    return ws_shell_surface_set_pos(r, x, y);
 }
 

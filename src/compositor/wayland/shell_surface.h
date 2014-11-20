@@ -65,5 +65,19 @@ ws_shell_surface_new(
     uint32_t serial //!< id of the newly created surface
 );
 
+/**
+ * Set the position of a ws_shell_surface
+ *
+ * @memberof ws_shell_surface
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_shell_surface_set_pos(
+    struct wl_resource* resource,
+    int32_t x,
+    int32_t y
+);
+
 #endif // __WS_WL_SHELL_SURFACE_H__
 
