@@ -3,7 +3,6 @@
 #
 set(SOURCE_FILES
     commands.c
-    context.c
     manager.c
     processor.c
     processor_stack.c
