@@ -25,6 +25,8 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <malloc.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -123,6 +125,42 @@ ws_command_get(
 
     // nothing found
     return NULL;
+}
+
+int
+ws_command_add(
+    struct ws_command* commands,
+    size_t num
+) {
+    // make sure we have enoug memory
+    size_t dest = cmd_ctx.num + num;
+    struct ws_command* buf = realloc(cmd_ctx.commands, sizeof(*buf) * dest);
+    if (!buf) {
+        return -ENOMEM;
+    }
+
+    // save away everything for now
+    size_t src = cmd_ctx.num;
+    cmd_ctx.commands = buf;
+    cmd_ctx.num = dest;
+
+    // merge the new commands into the list
+    while (num && src) {
+        --dest;
+        // check what to insert here
+        if (strcmp(commands[num-1].name, cmd_ctx.commands[src-1].name) > 0) {
+            cmd_ctx.commands[dest] = commands[--num];
+        } else {
+            cmd_ctx.commands[dest] = cmd_ctx.commands[--src];
+        }
+    }
+
+    // merge the last bit
+    while (num--) {
+        cmd_ctx.commands[num] = commands[num];
+    }
+
+    return 0;
 }
 
 
