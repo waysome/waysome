@@ -2,7 +2,6 @@
 list.c
 arithmetical.h
 binary.h
-control.h
 logical.h
 object.h
 string.h

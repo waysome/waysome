@@ -28,17 +28,72 @@
 #include <errno.h>
 #include <string.h>
 
+#include "action/commands.h"
 #include "action/processor.h"
 #include "action/processor_stack.h"
 #include "command/command.h"
-#include "command/control.h"
 #include "command/statement.h"
+#include "util/arithmetical.h"
 #include "values/int.h"
 #include "values/union.h"
 
+/*
+ *
+ * Forward declarations
+ *
+ */
 
 int
-ws_builtin_cmd_jump(
+cmd_jump(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+);
+
+int
+cmd_store(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+);
+
+int
+cmd_push(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+);
+
+int
+cmd_pop(
+    struct ws_processor* proc,
+    struct ws_command_args const* const args
+);
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+int
+ws_action_commands_init(void) {
+    // list of commands to add. These _must_ be sorted!
+    struct ws_command cmds[] = {
+        {.name = "jump",  .command_type = special, .func.special = cmd_jump  },
+        {.name = "store", .command_type = special, .func.special = cmd_store },
+        {.name = "push",  .command_type = special, .func.special = cmd_push  },
+        {.name = "pop",   .command_type = special, .func.special = cmd_pop   },
+    };
+
+    return ws_command_add(cmds, ARYLEN(cmds));
+}
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+int
+cmd_jump(
     struct ws_processor* proc,
     struct ws_command_args const* const args
 ) {
@@ -88,7 +143,7 @@ ws_builtin_cmd_jump(
 
 
 int
-ws_builtin_cmd_store(
+cmd_store(
     struct ws_processor* proc,
     struct ws_command_args const* const args
 ) {
@@ -132,7 +187,7 @@ ws_builtin_cmd_store(
 }
 
 int
-ws_builtin_cmd_pop(
+cmd_pop(
     struct ws_processor* proc,
     struct ws_command_args const* const args
 ) {
@@ -171,7 +226,7 @@ out:
 }
 
 int
-ws_builtin_cmd_push(
+cmd_push(
     struct ws_processor* proc,
     struct ws_command_args const* const args
 ) {

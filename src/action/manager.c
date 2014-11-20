@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <stddef.h>
 
+#include "action/commands.h"
 #include "action/context.h"
 #include "action/manager.h"
 #include "action/processor.h"
@@ -113,11 +114,18 @@ ws_action_manager_init(void) {
         goto cleanup_transactions;
     }
 
+    res = ws_action_commands_init();
+    if (res < 0) {
+        goto cleanup_registrations;
+    }
+
     ws_cleaner_add(action_manager_deinit, NULL);
 
     is_init = true;
     return 0;
 
+cleanup_registrations:
+    ws_object_deinit((struct ws_object*) &actman_ctx.registrations);
 cleanup_transactions:
     ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
     return res;
