@@ -25,13 +25,36 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "list.h"
+/**
+ * @addtogroup utils "(internal) utilities"
+ *
+ * @{
+ */
 
-${HEADER_INCLUSION}
+/**
+ * @addtogroup utils_config "config file loading utility"
+ *
+ * @{
+ */
 
-struct ws_command ws_command_list[] = {
-${LIST_BODY}
-};
+#ifndef __WS_CONNECTION_CONFIG_H__
+#define __WS_CONNECTION_CONFIG_H__
 
-size_t const ws_command_cnt = ${WS_COMMAND_CNT};
+/**
+ * Load the config file
+ *
+ * @return 0 on success, a negative error code otherwise
+ */
+int
+ws_connection_loadconf(void);
 
+#endif // __WS_CONNECTION_CONFIG_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+ 

@@ -27,7 +27,7 @@
 
 #include <ev.h>
 
-#include "action/context.h"
+#include "context.h"
 #include "objects/object.h"
 #include "objects/string.h"
 #include "values/union.h"

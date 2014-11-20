@@ -25,36 +25,17 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @addtogroup utils "(internal) utilities"
- *
- * @{
- */
+#ifndef __WS_ACTION_COMMANDS_H__
+#define __WS_ACTION_COMMANDS_H__
+
+#include "command/command.h"
 
 /**
- * @addtogroup utils_config "config file loading utility"
+ * Add commands which have impact on the processor
  *
- * @{
- */
-
-#ifndef __WS_UTIL_CONFIG_H__
-#define __WS_UTIL_CONFIG_H__
-
-/**
- * Load the config file
- *
- * @return 0 on success, a negative error code otherwise
+ * @return 0 on success, a negative error number otherwise
  */
 int
-ws_config_load(void);
+ws_action_commands_init(void);
 
-#endif // __WS_UTIL_CONFIG_H__
-
-/**
- * @}
- */
-
-/**
- * @}
- */
- 
+#endif // __WS_ACTION_COMMANDS_H__

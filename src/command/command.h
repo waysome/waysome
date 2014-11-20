@@ -31,6 +31,8 @@
 #include <malloc.h>
 #include <stdbool.h>
 
+#include "util/attributes.h"
+
 // forward declarations
 struct ws_command_args;
 struct ws_processor;
@@ -95,7 +97,7 @@ typedef int (*ws_special_command_func)(struct ws_processor*,
  *
  */
 struct ws_command {
-    char const* const name; //!< @public name of the command
+    char const* name; //!< @public name of the command
 
     enum {
         regular, //!< it's a regular command
@@ -109,6 +111,14 @@ struct ws_command {
 };
 
 /**
+ * Initialize the command subsystem
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_command_init(void);
+
+/**
  * Find a command by name
  *
  * @returns command with the name given or NULL
@@ -117,6 +127,24 @@ struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
 );
+
+/**
+ * Add commands to the command list
+ *
+ * Merges in an _ordered_ list of commands.
+ *
+ * @warning will break the command list if the list of commands passed is not
+ *          ordered alphabetically!
+ *
+ * @return 0 on success, a negative error code on failure
+ */
+int
+ws_command_add(
+    struct ws_command* commands, //!< commands to integrate into the list
+    size_t num //!< number of commands to integrate
+)
+__ws_nonnull__(1)
+;
 
 #endif // __WS_COMMAND_COMMAND_H__
 

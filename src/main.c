@@ -29,11 +29,15 @@
 #include <stdlib.h>
 #include <ev.h>
 
+#include "action/manager.h"
+#include "command/command.h"
 #include "compositor/module.h"
+#include "connection/config_file.h"
+#include "context.h"
 #include "input/module.h"
 #include "logger/module.h"
+#include "objects/object.h"
 #include "util/cleaner.h"
-#include "util/config_file.h"
 #include "util/wayland.h"
 
 
@@ -87,9 +91,14 @@ main(
         goto cleanup;
     }
 
+    retval = ws_command_init();
+    if (retval != 0) {
+        goto cleanup;
+    }
+
     ws_log(&log_main, LOG_DEBUG, "Logger initalized.");
 
-    retval = ws_config_load();
+    retval = ws_connection_loadconf();
     if (retval != 0) {
         ws_log(&log_main, LOG_EMERG, "Failed to load configuration.");
         goto cleanup;
@@ -120,6 +129,19 @@ main(
     }
 
     ws_log(&log_main, LOG_DEBUG, "Wayland socket opened. Listening now.");
+
+    // now create a context and initialize the aciton manager
+    struct ws_object context;
+    ws_object_init(&context);
+    context.id = &WS_OBJECT_TYPE_ID_CONTEXT;
+    
+    retval = ws_action_manager_init(&context);
+    if (retval != 0) {
+        ws_log(&log_main, LOG_EMERG, "Failed to start up action manager.");
+        goto cleanup;
+    }
+
+    ws_log(&log_main, LOG_DEBUG, "Acton manager started up.");
 
     // everything did go well
     retval = 0;

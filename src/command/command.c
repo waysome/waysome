@@ -25,16 +25,39 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <malloc.h>
 #include <stdbool.h>
 #include <string.h>
 
 #include "command/command.h"
 #include "command/list.h"
 
+#include "util/cleaner.h"
 #include "values/value.h"
 
 #define LINEAR_THRESHOLD (4)
 
+/**
+ * Command list
+ */
+struct {
+    struct ws_command* commands; //!< @public commands
+    size_t num; //!< @public number of commands
+} cmd_ctx;
+
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Deinitialization
+ */
+void
+deinit_command(void* dummy);
 
 /*
  *
@@ -42,13 +65,36 @@
  *
  */
 
+int
+ws_command_init(void) {
+    static bool is_init = false;
+    if (is_init) {
+        return 0;
+    }
+    is_init = true;
+
+    cmd_ctx.commands = NULL;
+    cmd_ctx.num = 0;
+
+    int res = ws_command_add(ws_command_list, ws_command_cnt);
+    if (res < 0) {
+        return res;
+    }
+
+    return ws_cleaner_add(deinit_command, NULL);
+}
+
 struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
 ) {
+    if (ws_command_init() < 0) {
+        return NULL;
+    }
+
     // initialize bounds
     size_t first = 0;
-    size_t alast = ws_command_cnt;
+    size_t alast = cmd_ctx.num;
     size_t cur;
 
     // perform a binary search
@@ -56,7 +102,7 @@ ws_command_get(
         cur = (first + alast) / 2;
 
         // compare the current name with what we want
-        int cmp = strcmp(name, ws_command_list[cur].name);
+        int cmp = strcmp(name, cmd_ctx.commands[cur].name);
 
         // the name we want is smaller
         if (cmp < 0) {
@@ -71,18 +117,68 @@ ws_command_get(
         }
 
         // bullseye
-        return ws_command_list + cur;
+        return cmd_ctx.commands + cur;
     }
 
     // we are now in a realm where linear search is expected to be faster
     cur = alast;
     while (cur-- > first) {
-        if (strcmp(name, ws_command_list[cur].name) == 0) {
-            return ws_command_list + cur;
+        if (strcmp(name, cmd_ctx.commands[cur].name) == 0) {
+            return cmd_ctx.commands + cur;
         }
     }
 
     // nothing found
     return NULL;
+}
+
+int
+ws_command_add(
+    struct ws_command* commands,
+    size_t num
+) {
+    // make sure we have enoug memory
+    size_t dest = cmd_ctx.num + num;
+    struct ws_command* buf = realloc(cmd_ctx.commands, sizeof(*buf) * dest);
+    if (!buf) {
+        return -ENOMEM;
+    }
+
+    // save away everything for now
+    size_t src = cmd_ctx.num;
+    cmd_ctx.commands = buf;
+    cmd_ctx.num = dest;
+
+    // merge the new commands into the list
+    while (num && src) {
+        --dest;
+        // check what to insert here
+        if (strcmp(commands[num-1].name, cmd_ctx.commands[src-1].name) > 0) {
+            cmd_ctx.commands[dest] = commands[--num];
+        } else {
+            cmd_ctx.commands[dest] = cmd_ctx.commands[--src];
+        }
+    }
+
+    // merge the last bit
+    while (num--) {
+        cmd_ctx.commands[num] = commands[num];
+    }
+
+    return 0;
+}
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+void
+deinit_command(
+    void* dummy
+) {
+    free(cmd_ctx.commands);
 }
 

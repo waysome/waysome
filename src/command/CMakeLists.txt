@@ -23,7 +23,6 @@
 set(WS_COMMAND_FILES
     arithmetical.commands
     binary.commands
-    control.commands
     logical.commands
     object.commands
     string.commands
@@ -35,10 +34,8 @@ set(WS_COMMAND_FILES
 #
 set(SOURCE_FILES
     command.c
-    control.c
     list.c
     object.c
-    processor.c
     statement.c
 )
 

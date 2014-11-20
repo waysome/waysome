@@ -69,6 +69,7 @@ add_definitions(
 # into waysome.
 #
 set(SOURCE_FILES
+    context.c
     main.c
 )
 
