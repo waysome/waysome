@@ -89,7 +89,7 @@ ws_command_get(
 
     // initialize bounds
     size_t first = 0;
-    size_t alast = ws_command_cnt;
+    size_t alast = cmd_ctx.num;
     size_t cur;
 
     // perform a binary search
@@ -97,7 +97,7 @@ ws_command_get(
         cur = (first + alast) / 2;
 
         // compare the current name with what we want
-        int cmp = strcmp(name, ws_command_list[cur].name);
+        int cmp = strcmp(name, cmd_ctx.commands[cur].name);
 
         // the name we want is smaller
         if (cmp < 0) {
@@ -112,14 +112,14 @@ ws_command_get(
         }
 
         // bullseye
-        return ws_command_list + cur;
+        return cmd_ctx.commands + cur;
     }
 
     // we are now in a realm where linear search is expected to be faster
     cur = alast;
     while (cur-- > first) {
-        if (strcmp(name, ws_command_list[cur].name) == 0) {
-            return ws_command_list + cur;
+        if (strcmp(name, cmd_ctx.commands[cur].name) == 0) {
+            return cmd_ctx.commands + cur;
         }
     }
 
