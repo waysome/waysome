@@ -32,6 +32,7 @@
 
 // forward declarations
 struct ws_message;
+struct ws_object;
 struct ws_reply;
 struct ws_string;
 
@@ -41,7 +42,9 @@ struct ws_string;
  * @return 0 on success, a negative error number otherwise
  */
 int
-ws_action_manager_init(void);
+ws_action_manager_init(
+    struct ws_object* context //!< context object to use
+);
 
 /**
  * Process a transaction

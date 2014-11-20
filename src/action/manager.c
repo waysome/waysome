@@ -29,7 +29,6 @@
 #include <stddef.h>
 
 #include "action/commands.h"
-#include "action/context.h"
 #include "action/manager.h"
 #include "action/processor.h"
 #include "action/processor_stack.h"
@@ -46,7 +45,7 @@
  * Internal context of the transaction manager
  */
 struct {
-    struct ws_object obj; //!< @public object to feed to transactions
+    struct ws_object* obj; //!< @public object to feed to transactions
     struct ws_set transactions; //!< @public transactions registered
     struct ws_set registrations; //!< @public registrations of transactions
 } actman_ctx;
@@ -91,18 +90,16 @@ action_manager_deinit(
  */
 
 int
-ws_action_manager_init(void) {
+ws_action_manager_init(
+    struct ws_object* context
+) {
     static bool is_init = false;
     if (is_init) {
         return 0;
     }
     int res;
 
-    res = ws_object_init(&actman_ctx.obj);
-    if (res < 0) {
-        return res;
-    }
-    actman_ctx.obj.id = &WS_OBJECT_TYPE_ID_CONTEXT;
+    actman_ctx.obj = context;
 
     res = ws_set_init(&actman_ctx.transactions);
     if (res < 0) {
@@ -347,7 +344,7 @@ run_transaction(
         // initialize the global context
         ws_value_union_reinit(bottom, WS_VALUE_TYPE_OBJECT_ID);
         ws_value_object_id_set((struct ws_value_object_id*) bottom,
-                               &actman_ctx.obj);
+                               actman_ctx.obj);
 
         // initialize the event context
         ++bottom;
