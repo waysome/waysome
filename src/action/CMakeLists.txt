@@ -8,7 +8,12 @@ set(SOURCE_FILES
     processor_stack.c
 )
 
-add_library(action OBJECT
+add_library(action STATIC
     ${SOURCE_FILES}
+)
+
+target_link_libraries(action
+    command
+    values
 )
 
