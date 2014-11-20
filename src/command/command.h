@@ -95,7 +95,7 @@ typedef int (*ws_special_command_func)(struct ws_processor*,
  *
  */
 struct ws_command {
-    char const* const name; //!< @public name of the command
+    char const* name; //!< @public name of the command
 
     enum {
         regular, //!< it's a regular command
