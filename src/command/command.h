@@ -109,6 +109,14 @@ struct ws_command {
 };
 
 /**
+ * Initialize the command subsystem
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_command_init(void);
+
+/**
  * Find a command by name
  *
  * @returns command with the name given or NULL

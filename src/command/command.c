@@ -31,10 +31,31 @@
 #include "command/command.h"
 #include "command/list.h"
 
+#include "util/cleaner.h"
 #include "values/value.h"
 
 #define LINEAR_THRESHOLD (4)
 
+/**
+ * Command list
+ */
+struct {
+    struct ws_command* commands; //!< @public commands
+    size_t num; //!< @public number of commands
+} cmd_ctx;
+
+
+/*
+ *
+ * Forward declarations
+ *
+ */
+
+/**
+ * Deinitialization
+ */
+void
+deinit_command(void* dummy);
 
 /*
  *
@@ -42,10 +63,28 @@
  *
  */
 
+int
+ws_command_init(void) {
+    static bool is_init = false;
+    if (is_init) {
+        return 0;
+    }
+    is_init = true;
+
+    cmd_ctx.commands = NULL;
+    cmd_ctx.num = 0;
+
+    return ws_cleaner_add(deinit_command, NULL);
+}
+
 struct ws_command const*
 ws_command_get(
     char const* name //!< name of the command
 ) {
+    if (ws_command_init() < 0) {
+        return NULL;
+    }
+
     // initialize bounds
     size_t first = 0;
     size_t alast = ws_command_cnt;
@@ -84,5 +123,19 @@ ws_command_get(
 
     // nothing found
     return NULL;
+}
+
+
+/*
+ *
+ * Internal implementation
+ *
+ */
+
+void
+deinit_command(
+    void* dummy
+) {
+    free(cmd_ctx.commands);
 }
 
