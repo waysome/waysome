@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <ev.h>
 
+#include "command/command.h"
 #include "compositor/module.h"
 #include "connection/config_file.h"
 #include "input/module.h"
@@ -83,6 +84,11 @@ main(
     ev_signal_start(default_loop, &sigterm_watcher);
 
     retval = ws_logger_init();
+    if (retval != 0) {
+        goto cleanup;
+    }
+
+    retval = ws_command_init();
     if (retval != 0) {
         goto cleanup;
     }
