@@ -25,12 +25,14 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <ev.h>
 
 #include "context.h"
 #include "objects/object.h"
 #include "objects/string.h"
 #include "values/union.h"
+#include "util/exec.h"
 
 
 /**
@@ -49,9 +51,18 @@ func_log(
     union ws_value_union* stack
 );
 
+/**
+ * A way to start a programm
+ */
+static int
+func_exec(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
+    { .name = "exec", .func = func_exec },
     { .name = NULL, .func = NULL }
 };
 
@@ -116,3 +127,52 @@ func_log(
 
     return 1;
 }
+
+static int
+func_exec(
+    union ws_value_union* stack
+) {
+    stack += 2; // We don't care about object itself and command name
+
+    if (ws_value_get_type(&stack->value) != WS_VALUE_TYPE_STRING) {
+        return -EINVAL;
+    }
+
+    struct ws_string* strcmd    = ws_value_string_get(&stack->string);
+    const char* cmd             = ws_string_raw(strcmd);
+
+    stack++; // because `cmd` is extracted now
+
+    size_t n;
+    bool iter = true;
+    enum ws_value_type iter_type;
+
+    // count number of arguments and do type checking meanwhile
+    for (n = 0; iter; n++) {
+        iter_type = ws_value_get_type(&stack[n].value);
+        if (iter_type != WS_VALUE_TYPE_STRING) {
+            return -EINVAL;
+        }
+
+        iter = iter_type != WS_VALUE_TYPE_NONE;
+    }
+
+    const char* args[n];
+
+    size_t i = n;
+    while (i) {
+        --i;
+        struct ws_string* arg = ws_value_string_get(&stack[i].string);
+        args[i] = ws_string_raw(arg);
+    }
+
+    int res = ws_exec(cmd, (char**)args);
+
+    while (n) {
+        --n;
+        free((char*) args[n]);
+    }
+
+    return res;
+}
+
