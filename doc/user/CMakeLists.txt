@@ -38,7 +38,7 @@ endif ()
 # Build the PDF version of the documentation
 #
 add_custom_command(OUTPUT waysome.pdf
-    COMMAND ${PDFLATEX_COMPILER} -halt-on-error waysome
+    COMMAND ${PDFLATEX_COMPILER} -halt-on-error waysome > /dev/null
     DEPENDS ${BUILD_TEX_FILES}
 )
 
