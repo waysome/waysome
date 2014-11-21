@@ -78,8 +78,6 @@ foreach(MODULE IN LISTS WS_MODULES)
     add_subdirectory(${MODULE})
 endforeach()
 
-add_dependencies(compositor protocol)
-
 #
 # Add waysome executable
 #
