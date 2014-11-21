@@ -235,7 +235,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_SHELL_SURFACE = {
     .cmp_callback       = NULL,
 
     .attribute_table    = NULL,
-    .function_table = NULL,
+    .function_table     = FUNCTIONS,
 };
 
 struct ws_shell_surface*
