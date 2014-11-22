@@ -130,7 +130,7 @@ main(
 
     ws_log(&log_main, LOG_DEBUG, "Wayland socket opened. Listening now.");
 
-    // now create a context and initialize the aciton manager
+    // now create a context and initialize the action manager
     struct ws_object context;
     ws_object_init(&context);
     context.id = &WS_OBJECT_TYPE_ID_CONTEXT;
