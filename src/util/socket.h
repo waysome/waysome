@@ -58,6 +58,20 @@ struct ws_socket {
 };
 
 /**
+ * Initialize a given ws_socket object
+ *
+ * @return 0 in case of success, else a negative value
+ */
+int
+ws_socket_init(
+    struct ws_socket* sock,         //!< the uninitialized ws_socket object
+    int (*createconn_cb)(int fd),   //!< connection creating callback,
+                                    //!< gets fd, returns zero on success, else
+                                    //!< negative errno.h number
+    char const* name                //!< Name to pass to ws_socket_create()
+);
+
+/**
  *  Create a socket with a given name this socket will be placed in the
  *  XDG_RUNTIME_DIR path
  */
