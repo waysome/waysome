@@ -73,20 +73,19 @@ bool
 ws_string_init(
     struct ws_string* self
 ) {
-    if (self) {
-        self->str = calloc(1, sizeof(*self->str)); //initialize as empty string
-
-        if (!self->str) {
-            return false;
-        }
-
-        ws_object_init(&self->obj);
-        self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
-
-        return true;
+    if (!self) {
+        return false;
     }
 
-    return false;
+    self->str = calloc(1, sizeof(*self->str)); //initialize as empty string
+    if (!self->str) {
+        return false;
+    }
+
+    ws_object_init(&self->obj);
+    self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
+
+    return true;
 }
 
 bool
