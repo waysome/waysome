@@ -233,12 +233,13 @@ static bool
 deinit_transaction(
     struct ws_object* self
 ) {
+    ws_object_lock_write(self);
     struct ws_transaction* t = (struct ws_transaction*) self;
 
     ws_object_unref((struct ws_object*) t->name);
 
     if (!t->cmds) {
-        return true;
+        goto out;
     }
 
     if (!t->cmds->statements) {
@@ -252,6 +253,7 @@ deinit_transaction(
 
 out:
     t->cmds->num = 0;
+    ws_object_unlock(self);
     return true;
 }
 
