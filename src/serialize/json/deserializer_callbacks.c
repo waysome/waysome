@@ -275,15 +275,18 @@ yajl_integer_cb(
         {
             struct ws_value_int* _i = calloc(1, sizeof(_i));
             if (!_i) {
-                //!< @todo error
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
             ws_value_int_init(_i);
             ws_value_int_set(_i, i);
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) _i)) {
-                //!< @todo error
+            int res = ws_statement_append_direct(state->tmp_statement,
+                                                 (struct ws_value*) _i);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
@@ -311,7 +314,8 @@ yajl_integer_cb(
             state->has_event = true;
             struct ws_value_int* n = calloc(1, sizeof(*n));
             if (!n) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_int_init(n);
