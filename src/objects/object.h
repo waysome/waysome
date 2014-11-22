@@ -186,8 +186,6 @@ enum ws_object_settings {
 /**
  * Object type
  *
- * @todo implement locking and refcounting
- *
  * The object type is the root class for all classes
  */
 struct ws_object {
