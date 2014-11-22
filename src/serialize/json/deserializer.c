@@ -84,8 +84,6 @@ deserialize(
  *
  */
 
-//!< @todo implement yajl callbacks
-
 static yajl_callbacks YAJL_CALLBACKS = {
     .yajl_null          = yajl_null_cb,
     .yajl_boolean       = yajl_boolean_cb,
