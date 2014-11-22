@@ -206,12 +206,10 @@ ws_string_ncmp(
     size_t offset,
     size_t n
 ){
-    int res;
-
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strncmp(self->str + offset, other->str, n);
+    int res = u_strncmp(self->str + offset, other->str, n);
 
     ws_object_unlock(&self->obj);
     ws_object_unlock(&other->obj);
