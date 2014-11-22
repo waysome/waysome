@@ -84,6 +84,8 @@ __ws_nonnull__(1)
  *
  * @memberof ws_event
  *
+ * Gets a reference on the name object.
+ *
  * @return The name of the event or NULL on failure
  */
 struct ws_string*

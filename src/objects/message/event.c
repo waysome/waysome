@@ -135,7 +135,7 @@ struct ws_string*
 ws_event_get_name(
     struct ws_event* self
 ) {
-    return &self->name;
+    return getref(&self->name);
 }
 
 union ws_value_union*
