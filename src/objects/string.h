@@ -195,8 +195,10 @@ ws_string_raw(
  * Set the string contained in a ws_string object to the passed UTF8 string
  *
  * @memberof ws_string
+ *
+ * @return 0 on success, else negative errno number
  */
-void
+int
 ws_string_set_from_raw(
     struct ws_string* self,
     char* raw

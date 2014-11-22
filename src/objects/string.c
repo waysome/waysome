@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -267,13 +268,13 @@ ws_string_raw(
     return output;
 }
 
-void
+int
 ws_string_set_from_raw(
     struct ws_string* self,
     char* raw
 ){
     if (!self) {
-        return;
+        return -EINVAL;
     }
 
     UErrorCode err = U_ZERO_ERROR;
@@ -282,21 +283,21 @@ ws_string_set_from_raw(
     int32_t len;
     (void) u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
     if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
-        return;
+        return -ENOMEM; //!< @todo is it actually -ENOMEM?
     }
 
     // allocate buffer
     ++len;
     UChar* conv_raw = calloc(1, sizeof(*conv_raw) * len);
     if (!conv_raw) {
-        return;
-     }
+        return -ENOMEM;
+    }
 
     // convert string (write into buffer)
     err = U_ZERO_ERROR;
     conv_raw = u_strFromUTF8(conv_raw, len, NULL, raw, -1, &err);
     if (U_FAILURE(err)) {
-        return;
+        return -ENOMEM; //!< @todo is it actually -ENOMEM?
     }
 
     ws_object_lock_write(&self->obj);
@@ -305,6 +306,8 @@ ws_string_set_from_raw(
     self->str = conv_raw;
 
     ws_object_unlock(&self->obj);
+
+    return 0;
 }
 
 /*
