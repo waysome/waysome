@@ -76,6 +76,33 @@ socket_build_connection_cb(
 }
 
 int
+ws_socket_init(
+    struct ws_socket* s,
+    int (*createconn_cb)(int fd),
+    char const* name
+) {
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    if (!loop) {
+        ws_log(&log_ctx, LOG_WARNING, "Could not initialize ev loop!");
+        free(s);
+        return -1;
+    }
+
+    s->fd = ws_socket_create(name);
+    if (s->fd < 0) {
+        return -1;
+    }
+
+    s->createconn_cb    = createconn_cb;
+    s->io.data          = s; // self-ref here, to be forward compatible
+
+    ev_io_init(&s->io, socket_build_connection_cb, s->fd, EV_READ);
+    ev_io_start(loop, &s->io);
+
+    return 0;
+}
+
+int
 ws_socket_create(
     char const* name
 ) {
