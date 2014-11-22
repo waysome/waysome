@@ -553,6 +553,24 @@ ws_object_has_typename(
     struct ws_object* self,
     const char* type_name
 ) {
+    if (unlikely(!self || !type_name)) {
+        return false;
+    }
+
+    ws_object_lock_read(self);
+    ws_object_type_id* curtype = self->id;
+    ws_object_unlock(self);
+
+    // iterate over all the base types
+    while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
+        if (strcmp(curtype->typestr, type_name)) {
+            // yay! found it!
+            return true;
+        }
+
+        curtype = curtype->supertype;
+    }
+
     return false;
 }
 
