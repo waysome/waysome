@@ -63,6 +63,8 @@ union ws_value_union {
  *
  * Only valid values are copied, e.g. "none" and "value" are not.
  *
+ * @memberof ws_value_union
+ *
  * @return 0 on success, a negative error code otherwise
  */
 int
