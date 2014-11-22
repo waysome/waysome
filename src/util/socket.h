@@ -25,6 +25,21 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup utils "(internal) utilities"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup utils_socket "(internal) socket utility"
+ *
+ * This utility provides a UNIX-socket to which a external plugin can connect.
+ * The plugin can send any commands and get the responses after executing.
+ *
+ * @{
+ */
+
 #ifndef __WS_UTIL_SOCKET_H__
 #define __WS_UTIL_SOCKET_H__
 
@@ -38,3 +53,12 @@ ws_socket_create(
 );
 
 #endif // __WS_UTIL_SOCKET_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+
