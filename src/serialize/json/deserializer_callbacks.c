@@ -136,14 +136,17 @@ yajl_null_cb(
         {
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
-                //!< @todo error
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_nil_init(nil);
 
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) nil)) {
-                //!< @todo error
+            int res = ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) nil);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
@@ -157,7 +160,8 @@ yajl_null_cb(
             state->has_event = true;
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_nil_init(nil);
