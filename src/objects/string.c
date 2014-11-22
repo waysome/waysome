@@ -244,7 +244,7 @@ ws_string_raw(
     UErrorCode err = U_ZERO_ERROR;
     size_t charcount = u_strlen(self->str);
 
-    (void) u_strToUTF8(NULL, 0, &dest_len, self->str, charcount, &err);
+    u_strToUTF8(NULL, 0, &dest_len, self->str, charcount, &err);
     if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return NULL;
     }
@@ -281,7 +281,7 @@ ws_string_set_from_raw(
 
     // get the length of the buffer to allocate
     int32_t len;
-    (void) u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
+    u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
     if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return -ENOMEM; //!< @todo is it actually -ENOMEM?
     }
