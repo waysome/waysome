@@ -186,6 +186,8 @@ ws_transaction_push_statement(
     struct ws_transaction* t,
     struct ws_statement* statement
 ) {
+    ws_object_lock_write(&t->m.obj);
+
     if (!t->cmds) {
         t->cmds = calloc(1, sizeof(*t->cmds));
         if (!t->cmds) {
@@ -204,6 +206,7 @@ ws_transaction_push_statement(
         tmp = realloc(t->cmds->statements, newsize);
 
         if (!tmp) {
+            ws_object_unlock(&t->m.obj);
             return -ENOMEM;
         }
 
@@ -216,6 +219,7 @@ ws_transaction_push_statement(
     t->cmds->statements[t->cmds->num].args.vals = statement->args.vals;
     t->cmds->num++;
 
+    ws_object_unlock(&t->m.obj);
     return 0;
 }
 
