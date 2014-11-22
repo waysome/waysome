@@ -111,7 +111,7 @@ ws_string_set_from_str(
     }
     self->str = temp;
 
-    self->str = u_strcpy(self->str, other->str);
+    u_strcpy(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
