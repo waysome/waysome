@@ -222,11 +222,10 @@ ws_string_substr(
     struct ws_string* self,
     struct ws_string* other
 ){
-    UChar* res;
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strstr(self->str, other->str);
+    UChar* res = u_strstr(self->str, other->str);
 
     ws_object_unlock(&self->obj);
     ws_object_unlock(&other->obj);
