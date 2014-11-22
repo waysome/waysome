@@ -116,6 +116,8 @@ unsigned int
 ws_error_reply_get_code(
     struct ws_error_reply* self //!< error reply from which to extract the code
 ) {
+    // No locking here, as the code is constant (not `const` as
+    // `ws_error_reply_new()` sets it
     return self->code;
 }
 
