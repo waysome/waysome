@@ -176,17 +176,11 @@ ws_string_dupl(
     struct ws_string* self
 ){
     struct ws_string* nstr = ws_string_new();
-
-    if (nstr) {
-        bool res;
-        res = ws_string_set_from_str(nstr, self);
-
-        if (res) {
-            return nstr;
-        }
+    if (!nstr || !ws_string_set_from_str(nstr, self)) {
+        return NULL;
     }
 
-    return NULL;
+    return nstr;
 }
 
 int
