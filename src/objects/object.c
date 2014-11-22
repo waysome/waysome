@@ -548,6 +548,14 @@ ws_object_is_instance_of(
     return type == &WS_OBJECT_TYPE_ID_OBJECT;
 }
 
+bool
+ws_object_has_typename(
+    struct ws_object* self,
+    const char* type_name
+) {
+    return false;
+}
+
 int
 ws_object_call_cmd(
     struct ws_object* self,
