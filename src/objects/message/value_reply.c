@@ -106,6 +106,7 @@ struct ws_value*
 ws_value_reply_get_value(
     struct ws_value_reply* self
 ) {
+    // No locking here as the value of the value reply shouldn't change
     return &self->value.value;
 }
 
