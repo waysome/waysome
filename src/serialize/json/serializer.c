@@ -148,21 +148,19 @@ struct ws_serializer*
 ws_serializer_json_serializer_new(void)
 {
     struct ws_serializer* ser = calloc(1, sizeof(*ser));
-
     if (!ser) {
         return NULL;
     }
 
     ser->state = serializer_context_new();
-
     if (!ser->state) {
         free(ser);
         return NULL;
     }
 
-    ser->buffer = NULL;
-    ser->serialize = serialize;
-    ser->deinit = NULL;
+    ser->buffer     = NULL;
+    ser->serialize  = serialize;
+    ser->deinit     = NULL;
 
     return ser;
 }
