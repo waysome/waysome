@@ -154,28 +154,21 @@ ws_string_cat(
     ws_object_lock_write(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    UChar* temp;
-    size_t charcount_s = u_strlen(self->str);
-    size_t charcount_o = u_strlen(other->str);
-    temp = realloc(self->str, (charcount_s + charcount_o + 1)
-                    * sizeof(*self->str));
+    size_t new_len = u_strlen(self->str) + u_strlen(other->str) + 1;
+    UChar* temp = realloc(self->str, new_len * sizeof(*self->str));
     if (!temp) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
         return NULL;
     }
-
     self->str = temp;
-    self->str = u_strcat(self->str, other->str);
+
+    u_strcat(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
 
-    if (self->str) {
-        return self;
-    }
-
-    return NULL;
+    return self;
 }
 
 struct ws_string*
