@@ -134,7 +134,7 @@ main(
     struct ws_object context;
     ws_object_init(&context);
     context.id = &WS_OBJECT_TYPE_ID_CONTEXT;
-    
+
     retval = ws_action_manager_init(&context);
     if (retval != 0) {
         ws_log(&log_main, LOG_EMERG, "Failed to start up action manager.");
