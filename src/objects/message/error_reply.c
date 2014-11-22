@@ -137,6 +137,8 @@ char const*
 ws_error_reply_get_cause(
     struct ws_error_reply* self //!< error reply from which to extract the code
 ) {
+    // No locking here, as the cause is constant (not `const` as
+    // `ws_error_reply_new()` sets it
     if (self->cause) {
         return self->cause;
     }
