@@ -372,7 +372,11 @@ yajl_string_cb(
                 return 0;
             }
             struct ws_string* str = ws_value_string_get(s);
-            ws_string_set_from_raw(str, buff);
+            int res = ws_string_set_from_raw(str, buff);
+            if (res != 0) {
+                //!< @todo indicate error
+                return 0;
+            }
 
             free(buff); // ws_string_set_from_raw() copies.
 
@@ -398,7 +402,11 @@ yajl_string_cb(
             memset(buff, 0, len + 1);
             strncpy(buff, (char*)str, len);
 
-            ws_string_set_from_raw(state->register_name, buff);
+            int res = ws_string_set_from_raw(state->register_name, buff);
+            if (res != 0) {
+                //!< @todo indicate error
+                return 0;
+            }
 
             state->flags |= WS_TRANSACTION_FLAGS_REGISTER;
             state->current_state = STATE_FLAGS_MAP;
@@ -418,7 +426,11 @@ yajl_string_cb(
             char buff[len + 1];
             memset(buff, 0, len + 1);
             strncpy(buff, (char*) str, len);
-            ws_string_set_from_raw(state->ev_name, buff);
+            int res = ws_string_set_from_raw(state->ev_name, buff);
+            if (res != 0) {
+                //!< @todo indicate error
+                return 0;
+            }
             // ready for now.
 
             state->current_state = STATE_MSG;
@@ -446,7 +458,11 @@ yajl_string_cb(
             char buff[len + 1];
             memset(buff, 0, len + 1);
             strncpy(buff, (char*) str, len);
-            ws_string_set_from_raw(sstr, buff);
+            int res = ws_string_set_from_raw(sstr, buff);
+            if (res != 0) {
+                //!< @todo indicate error
+                return 0;
+            }
 
             ws_value_string_set_str(s, sstr);
             state->ev_ctx = (struct ws_value*) s;
