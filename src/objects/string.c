@@ -31,9 +31,9 @@
 #include <string.h>
 #include <unicode/ustring.h>
 
-#include "objects/string.h"
-
 #include "objects/object.h"
+#include "objects/string.h"
+#include "util/condition.h"
 
 /*
  *
@@ -79,7 +79,7 @@ ws_string_init(
     }
 
     self->str = calloc(1, sizeof(*self->str)); //initialize as empty string
-    if (!self->str) {
+    if (unlikely(!self->str)) {
         return false;
     }
 
@@ -94,7 +94,7 @@ ws_string_set_from_str(
     struct ws_string* self,
     struct ws_string* other
 ) {
-    if (!self || !other) {
+    if (unlikely(!self || !other)) {
         return false;
     }
 
@@ -104,7 +104,7 @@ ws_string_set_from_str(
     size_t charcount = u_strlen(other->str);
 
     UChar* temp = realloc(self->str, (charcount + 1) * sizeof(*self->str));
-    if (!temp) {
+    if (unlikely(!temp)) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
         return false;
@@ -124,7 +124,7 @@ ws_string_new(void)
 {
     struct ws_string* wss = calloc(1, sizeof(*wss));
 
-    if (wss) {
+    if (likely(wss)) {
         ws_string_init(wss);
         wss->obj.settings |= WS_OBJECT_HEAPALLOCED;
     }
@@ -136,7 +136,7 @@ size_t
 ws_string_len(
     struct ws_string* self
 ){
-    if (self) {
+    if (likely(self)) {
         size_t len;
         ws_object_lock_read(&self->obj);
         len = u_strlen(self->str);
@@ -157,7 +157,7 @@ ws_string_cat(
 
     size_t new_len = u_strlen(self->str) + u_strlen(other->str) + 1;
     UChar* temp = realloc(self->str, new_len * sizeof(*self->str));
-    if (!temp) {
+    if (unlikely(!temp)) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
         return NULL;
@@ -177,7 +177,7 @@ ws_string_dupl(
     struct ws_string* self
 ){
     struct ws_string* nstr = ws_string_new();
-    if (!nstr || !ws_string_set_from_str(nstr, self)) {
+    if (unlikely(!nstr || !ws_string_set_from_str(nstr, self))) {
         return NULL;
     }
 
@@ -250,7 +250,7 @@ ws_string_raw(
     }
 
     char* output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
-    if (!output) {
+    if (unlikely(!output)) {
         return NULL;
     }
 
@@ -273,7 +273,7 @@ ws_string_set_from_raw(
     struct ws_string* self,
     char* raw
 ){
-    if (!self) {
+    if (unlikely(!self)) {
         return -EINVAL;
     }
 
@@ -289,7 +289,7 @@ ws_string_set_from_raw(
     // allocate buffer
     ++len;
     UChar* conv_raw = calloc(1, sizeof(*conv_raw) * len);
-    if (!conv_raw) {
+    if (unlikely(!conv_raw)) {
         return -ENOMEM;
     }
 
@@ -319,7 +319,7 @@ static bool
 deinit_callback(
     struct ws_object* const self
 ) {
-    if (self) {
+    if (likely(self)) {
         free(((struct ws_string*) self)->str);
         return true;
     }
