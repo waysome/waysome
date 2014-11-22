@@ -388,9 +388,11 @@ yajl_string_cb(
                 return 0;
             }
 
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) s)) {
-                //!< @todo error
+            res = ws_statement_append_direct(state->tmp_statement,
+                                             (struct ws_value*) s);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
@@ -402,7 +404,8 @@ yajl_string_cb(
         {
             state->register_name = ws_string_new();
             if (!state->register_name) {
-                //!< @todo error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
@@ -427,7 +430,8 @@ yajl_string_cb(
             state->has_event = true;
             state->ev_name = ws_string_new();
             if (!state->ev_name) {
-                //!< @todo error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
@@ -453,7 +457,8 @@ yajl_string_cb(
             state->has_event = true;
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
