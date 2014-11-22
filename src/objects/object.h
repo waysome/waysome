@@ -571,6 +571,19 @@ ws_object_call_cmd(
     union ws_value_union* stack //!< Stack to pass to the command function
 );
 
+/**
+ * Check whether the object has a command callback with a certain name
+ *
+ * @memberof ws_object
+ *
+ * @return true if the command is available, else false.
+ */
+bool
+ws_object_has_cmd(
+    struct ws_object* self,
+    char const* ident //!< Name of command to check the object for
+);
+
 #endif // __WS_OBJECTS_OBJECT_H__
 
 /**

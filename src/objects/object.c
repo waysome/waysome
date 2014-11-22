@@ -603,6 +603,34 @@ ws_object_call_cmd(
     return -ENOENT;
 }
 
+bool
+ws_object_has_cmd(
+    struct ws_object* self,
+    char const* ident
+) {
+    if (!self || !ident) {
+        return false;
+    }
+
+    ws_object_lock_read(self);
+    ws_object_type_id* curtype = self->id;
+
+    while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
+        struct ws_object_function const* iter;
+        for (iter = self->id->function_table; iter->name; iter++) {
+            if (strcmp(iter->name, ident) == 0) {
+                ws_object_unlock(self);
+                return true;
+            }
+        }
+
+        curtype = curtype->supertype;
+    }
+
+    ws_object_unlock(self);
+    return false;
+}
+
 /*
  *
  * static function implementations
