@@ -417,6 +417,19 @@ __ws_nonnull__(1)
 ;
 
 /**
+ * Check whether an attribute is available
+ *
+ * @memberof ws_object
+ *
+ * @return true when there is such an attribute within the object, else false
+ */
+bool
+ws_object_has_attr(
+    struct ws_object* self, //!< The object
+    char const* ident //!< The identifier for the attribute
+);
+
+/**
  * Get an attribute of an object
  *
  * @memberof ws_object

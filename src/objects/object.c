@@ -334,6 +334,35 @@ ws_object_deinit(
     pthread_rwlock_destroy(&self->rw_lock);
 }
 
+bool
+ws_object_has_attr(
+    struct ws_object* self,
+    char const* ident
+) {
+    ws_object_lock_read(self);
+    if (unlikely(!self->id || !self->id->attribute_table)) {
+        ws_object_unlock(self);
+        return false;
+    }
+
+    ws_object_type_id* curtype = self->id;
+
+    while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
+        struct ws_object_attribute const* iter;
+        for (iter = &self->id->attribute_table[0]; iter->name; iter++) {
+            if (strcmp(iter->name, ident) == 0) {
+                ws_object_unlock(self);
+                return true;
+            }
+        }
+
+        curtype = curtype->supertype;
+    }
+
+    ws_object_unlock(self);
+    return false;
+}
+
 int
 ws_object_attr_read(
     struct ws_object* self,
