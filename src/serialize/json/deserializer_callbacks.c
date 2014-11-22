@@ -555,12 +555,15 @@ yajl_map_key_cb(
 
             state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
             if (!state->tmp_statement) {
-                //!< @todo error?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
-            if (0 != ws_statement_init(state->tmp_statement, buf)) {
-                //!< @todo error?
+            int res = ws_statement_init(state->tmp_statement, buf);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
