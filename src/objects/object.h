@@ -335,9 +335,9 @@ ws_object_run(
  *
  * @memberof ws_object
  *
- * @return the object hash as a `size_t`
+ * @return the object hash as a `size_t` or negative errno.h number
  */
-size_t
+ssize_t
 ws_object_hash(
     struct ws_object* self //!< The object
 );

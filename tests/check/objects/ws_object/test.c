@@ -37,6 +37,7 @@
  * @{
  */
 
+#include <errno.h>
 #include <check.h>
 #include <stdbool.h>
 
@@ -114,7 +115,7 @@ END_TEST
 
 START_TEST (test_object_cb_hash) {
     struct ws_object* o = ws_object_new(sizeof(*o));
-    ck_assert(0 == ws_object_hash(o));
+    ck_assert(-ENOTSUP == ws_object_hash(o));
     ws_object_deinit(o);
 }
 END_TEST

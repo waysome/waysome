@@ -251,12 +251,12 @@ ws_object_unref(
     free(self);
 }
 
-size_t
+ssize_t
 ws_object_hash(
     struct ws_object* self
 ) {
     if (!self) {
-        return false;
+        return -EINVAL;
     }
 
     ws_log(&log_ctx, LOG_DEBUG, "Hashing: %p (%s)", self, self->id->typestr);
@@ -265,7 +265,7 @@ ws_object_hash(
     while (!type->hash_callback) {
         // we hit the basic object type, which is totally abstract
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
-            return false;
+            return -ENOTSUP;
         }
 
         type = type->supertype;
