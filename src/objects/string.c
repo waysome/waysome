@@ -116,7 +116,7 @@ ws_string_set_from_str(
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
 
-    return !!self->str;
+    return true;
 }
 
 struct ws_string*
