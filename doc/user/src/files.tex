@@ -3,3 +3,53 @@
 This section describes and lists all the files, waysome expencts to be present,
 waysome interacts with etc.
 
+\subsection{Configuration file}
+
+    Waysome gets configured via a configuration file, which is written in JSON
+    format. It looks for the following files in this order:
+
+    \begin{itemize}
+        \item ~/waysome.conf
+        \item ~/waysome.json
+        \item ~/.waysome.conf
+        \item ~/.waysome.json
+        \item ~/waysome/waysome.conf
+        \item ~/waysome/waysome.json
+        \item \$HOME/.config/waysome.conf
+        \item \$HOME/.config/waysome.json
+        \item \$HOME/.config/.waysome.conf
+        \item \$HOME/.config/.waysome.json
+        \item \$HOME/.config/waysome/waysome.conf
+        \item \$HOME/.config/waysome/waysome.json
+        \item \$XDG_CONFIG_HOME/.config/waysome.conf
+        \item \$XDG_CONFIG_HOME/.config/waysome.json
+        \item \$XDG_CONFIG_HOME/.config/.waysome.conf
+        \item \$XDG_CONFIG_HOME/.config/.waysome.json
+        \item \$XDG_CONFIG_HOME/.config/waysome/waysome.conf
+        \item \$XDG_CONFIG_HOME/.config/waysome/waysome.json
+        \item \$XDG_CONFIG_DIRS/.config/waysome.conf
+        \item \$XDG_CONFIG_DIRS/.config/waysome.json
+        \item \$XDG_CONFIG_DIRS/.config/.waysome.conf
+        \item \$XDG_CONFIG_DIRS/.config/.waysome.json
+        \item \$XDG_CONFIG_DIRS/.config/waysome/waysome.conf
+        \item \$XDG_CONFIG_DIRS/.config/waysome/waysome.json
+        \item /etc/xdg/waysome.conf
+        \item /etc/xdg/waysome.json
+        \item /etc/xdg/.waysome.conf
+        \item /etc/xdg/.waysome.json
+        \item /etc/xdg/waysome/waysome.conf
+        \item /etc/xdg/waysome/waysome.json
+        \item /etc/waysome.conf
+        \item /etc/waysome.json
+        \item /etc/.waysome.conf
+        \item /etc/.waysome.json
+        \item /etc/waysome/waysome.conf
+        \item /etc/waysome/waysome.json
+        \item ./waysome.conf
+        \item ./waysome.json
+        \item ./.waysome.conf
+        \item ./.waysome.json
+        \item ./waysome/waysome.conf
+        \item ./waysome/waysome.json
+    \end{itemize}
+
