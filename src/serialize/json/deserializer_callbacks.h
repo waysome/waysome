@@ -84,6 +84,11 @@ struct deserializer_state {
     struct ws_value* ev_ctx; //!< @public event context
 
     bool has_event;
+
+    struct {
+        bool parser_error;
+        int error_num;
+    } error;
 };
 
 /**
