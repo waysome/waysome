@@ -248,8 +248,7 @@ ws_string_raw(
         return NULL;
     }
 
-    char* output;
-    output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
+    char* output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
     if (!output) {
         return NULL;
     }
@@ -303,7 +302,6 @@ ws_string_set_from_raw(
     ws_object_lock_write(&self->obj);
 
     free(self->str);
-
     self->str = conv_raw;
 
     ws_object_unlock(&self->obj);
