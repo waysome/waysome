@@ -74,7 +74,14 @@ __ws_nonnull__(1, 2)
 ;
 
 /**
- * Reinit
+ * Reinit a value union
+ *
+ * This method deinitializes a value union and reinitializes it with the type
+ * supplied.
+ *
+ * @memberof ws_value_union
+ *
+ * @return 0 on success, a negative error code otherwise
  */
 int
 ws_value_union_reinit(
