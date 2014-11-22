@@ -195,15 +195,18 @@ yajl_boolean_cb(
         {
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!boo) {
-                //!< @todo error
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
             ws_value_bool_init(boo);
             ws_value_bool_set(boo, b);
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) boo)) {
-                //!< @todo error
+            int res = ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) boo);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
             state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
@@ -225,7 +228,8 @@ yajl_boolean_cb(
             state->has_event = true;
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!b) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_bool_init(boo);
