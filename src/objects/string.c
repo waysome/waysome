@@ -100,16 +100,14 @@ ws_string_set_from_str(
     ws_object_lock_write(&self->obj);
     ws_object_lock_read(&other->obj);
 
-    UChar* temp;
     size_t charcount = u_strlen(other->str);
 
-    temp = realloc(self->str, (charcount + 1) * sizeof(*self->str));
+    UChar* temp = realloc(self->str, (charcount + 1) * sizeof(*self->str));
     if (!temp) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
         return false;
     }
-    
     self->str = temp;
 
     self->str = u_strcpy(self->str, other->str);
