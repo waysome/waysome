@@ -188,12 +188,10 @@ ws_string_cmp(
     struct ws_string* self,
     struct ws_string* other
 ){
-    int res;
-
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strcmp(self->str, other->str);
+    int res = u_strcmp(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
