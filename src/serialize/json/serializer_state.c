@@ -35,17 +35,15 @@ struct serializer_context*
 serializer_context_new(void)
 {
     struct serializer_context* ctx = calloc(1, sizeof(*ctx));
-
     if (!ctx) {
         return NULL;
     }
 
-    ctx->current_state  = STATE_NO_STATE;
-    ctx->yajl_buffer    = NULL;
-    ctx->yajl_buffer_size = 0;
+    ctx->current_state      = STATE_NO_STATE;
+    ctx->yajl_buffer        = NULL;
+    ctx->yajl_buffer_size   = 0;
 
     ctx->yajlgen = yajl_gen_alloc(NULL);
-
     if (!ctx->yajlgen) {
         free(ctx);
         return NULL;
