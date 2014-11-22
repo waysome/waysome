@@ -43,6 +43,20 @@
 #ifndef __WS_UTIL_SOCKET_H__
 #define __WS_UTIL_SOCKET_H__
 
+#include <ev.h>
+
+/**
+ * Impementation of the socket types.
+ */
+
+struct ws_socket {
+    struct ev_io io;                //!< @protected ev_io object for libev
+    int (*createconn_cb)(int fd);   //!< @protected connection creating callback,
+                                    //!< gets fd, returns zero on success, else
+                                    //!< negative errno.h number
+    int fd;                         //!< @protected fd of the created socket
+};
+
 /**
  *  Create a socket with a given name this socket will be placed in the
  *  XDG_RUNTIME_DIR path
