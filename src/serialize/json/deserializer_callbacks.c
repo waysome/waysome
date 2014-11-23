@@ -123,7 +123,7 @@ get_next_state_for_string(
 
 int
 yajl_null_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -177,7 +177,7 @@ yajl_null_cb(
 
 int
 yajl_boolean_cb(
-    void * ctx,
+    void* ctx,
     int b
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -242,7 +242,7 @@ yajl_boolean_cb(
 
 int
 yajl_integer_cb(
-    void * ctx,
+    void* ctx,
     long long i
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -324,7 +324,7 @@ yajl_integer_cb(
 
 int
 yajl_double_cb(
-    void * ctx,
+    void* ctx,
     double d
 ) {
     //!< @todo implement
@@ -333,8 +333,8 @@ yajl_double_cb(
 
 int
 yajl_string_cb(
-    void * ctx,
-    const unsigned char * str,
+    void* ctx,
+    const unsigned char* str,
     size_t len
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -361,8 +361,7 @@ yajl_string_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
-            char *buff = strndup((char*) str, len);
-
+            char* buff = strndup((char*) str, len);
             if (!buff) {
                 return 0;
             }
@@ -480,7 +479,7 @@ yajl_string_cb(
 
 int
 yajl_start_map_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -518,8 +517,8 @@ yajl_start_map_cb(
 
 int
 yajl_map_key_cb(
-    void * ctx,
-    const unsigned char * key,
+    void* ctx,
+    const unsigned char* key,
     size_t len
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -578,7 +577,7 @@ yajl_map_key_cb(
 
 int
 yajl_end_map_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -639,7 +638,7 @@ yajl_end_map_cb(
 
 int
 yajl_start_array_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -671,7 +670,7 @@ yajl_start_array_cb(
 
 int
 yajl_end_array_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -779,7 +778,7 @@ finalize_message(
 static enum json_backend_state
 get_next_state_for_string(
     enum json_backend_state current,
-    const unsigned char * str
+    const unsigned char* str
 ) {
     for (size_t i = 0; MAP[i].str; i++) {
         if (MAP[i].current == current) {
