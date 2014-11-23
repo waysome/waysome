@@ -51,8 +51,7 @@ handle_sig(
     struct ev_signal* w,
     int revent
 ) {
-    // TODO Do proper logging here
-    fprintf(stderr, "Caught signal %d\n", w->signum);
+    ws_log(&log_main, LOG_INFO, "Caught signal %d", w->signum);
     ev_unloop(loop, EVUNLOOP_ALL);
 }
 
