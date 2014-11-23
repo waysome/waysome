@@ -395,8 +395,8 @@ yajl_string_cb(
             }
 
             char buff[len + 1];
-            memset(buff, 0, len + 1);
             strncpy(buff, (char*)str, len);
+            buff[len] = 0;
 
             int res = ws_string_set_from_raw(state->register_name, buff);
             if (res != 0) {
@@ -420,13 +420,15 @@ yajl_string_cb(
             }
 
             char buff[len + 1];
-            memset(buff, 0, len + 1);
             strncpy(buff, (char*) str, len);
+            buff[len] = 0;
+
             int res = ws_string_set_from_raw(state->ev_name, buff);
             if (res != 0) {
                 //!< @todo indicate error
                 return 0;
             }
+
             // ready for now.
 
             state->current_state = STATE_MSG;
@@ -452,8 +454,9 @@ yajl_string_cb(
             }
 
             char buff[len + 1];
-            memset(buff, 0, len + 1);
             strncpy(buff, (char*) str, len);
+            buff[len] = 0;
+
             int res = ws_string_set_from_raw(sstr, buff);
             if (res != 0) {
                 //!< @todo indicate error
