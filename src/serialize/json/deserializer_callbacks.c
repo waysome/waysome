@@ -255,10 +255,10 @@ yajl_integer_cb(
     case STATE_UID:
         if (d->buffer) {
             // Hey, we have a message object, set the ID directly
-            d->buffer->id = i;
+            d->buffer->id = i; //!< @todo visibility violation here
         } else {
             // cache the ID
-            state->id = i; //!< @todo visibility violation here
+            state->id = i;
         }
         state->current_state = STATE_MSG;
         break;
