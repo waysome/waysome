@@ -281,7 +281,6 @@ static int
 serialize_reply_error_reply(
     struct ws_serializer* self
 ) {
-    yajl_gen_status stat;
     struct ws_error_reply* r = (struct ws_error_reply*) self->buffer;
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
@@ -290,8 +289,8 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    unsigned int code = ws_error_reply_get_code(r);
-    stat = yajl_gen_integer(ctx->yajlgen, code);
+    unsigned int code       = ws_error_reply_get_code(r);
+    yajl_gen_status stat    = yajl_gen_integer(ctx->yajlgen, code);
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
