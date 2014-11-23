@@ -227,3 +227,41 @@ func_exec(
     return res;
 }
 
+/*
+ * Remove hotkey event from context
+ */
+static int
+remove_hotkey_event(
+    union ws_value_union* stack
+) {
+    union ws_value_union* it;
+    union ws_value_union* retval = stack;
+    
+    stack += 2; //ignoring object and command name
+
+    int len = 0;
+    intmax_t v;
+    ITERATE_ARGS_TYPE(it, stack, v, int) {
+        if (v > UINT16_MAX) {
+            return -EINVAL;
+        }
+        ++len;
+    }
+
+    if (!AT_END(it)) {
+        return -EINVAL;
+    }
+
+    size_t i = 0;
+    uint16_t arr[len];
+    ITERATE_ARGS_TYPE(it, stack, v, int) {
+        arr[i] = (uint16_t) v;
+        ++i;
+    }
+
+    int res =  ws_hotkey_remove(arr, len);
+    ws_value_union_reinit(retval, WS_VALUE_TYPE_BOOL);
+    ws_value_bool_set(&retval->bool_, res == 0);
+ 
+    return res;
+}
