@@ -288,7 +288,6 @@ connection_manager_dispatch(
     }
 
 error_handling:
-    //!< error handling
     switch(-res) {
     case -EAGAIN:
     case -EINTR:
