@@ -83,6 +83,8 @@ static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
     { .name = "exec", .func = func_exec },
+    { .name = "add_hotkey_event", .func = add_hotkey_event },
+    { .name = "remove_hotkey_event", .func = remove_hotkey_event },
     { .name = NULL, .func = NULL }
 };
 
