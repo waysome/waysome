@@ -368,7 +368,7 @@ connection_manager_flush_msg(
 
         // flush
         res = ws_connector_flush(&proc->conn);
-    } while (res > 0);
+    } while (res == 0);
     return res;
 }
 
