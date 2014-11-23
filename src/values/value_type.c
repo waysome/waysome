@@ -91,11 +91,10 @@ ws_value_type_instance_from_value_name(
         ws_value_string_init((struct ws_value_string*) v);
         break;
 
-//    case WS_VALUE_TYPE_OBJECT_ID:
-//        v = calloc(1, sizeof(struct ws_value_obj_id));
-//        ws_value_obj_id_init((struct ws_value_obj_id*) v);
-//        break;
-//!< @todo implement object id value type and enable this (adapt names)
+    case WS_VALUE_TYPE_OBJECT_ID:
+        v = calloc(1, sizeof(struct ws_value_object_id));
+        ws_value_object_id_init((struct ws_value_object_id*) v);
+        break;
 
     case WS_VALUE_TYPE_SET:
         v = calloc(1, sizeof(struct ws_value_set));
