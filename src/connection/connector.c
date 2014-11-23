@@ -50,7 +50,7 @@ ws_connector_init(
     if (res != 0) {
         return res;
     }
-    
+
     self->readonly = false;
     self->fd = fd;
 
@@ -139,6 +139,6 @@ ws_connector_flush(
     if (res != 0) {
         return res;
     }
-    
+
     return 0;
 }

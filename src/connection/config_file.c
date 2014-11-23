@@ -186,7 +186,7 @@ open_config(void) {
             xdg_dirs = "/etc/xdg";
         }
 
-        char buf[strlen(xdg_dirs)+1];
+        char buf[strlen(xdg_dirs) + 1];
         (void) strcpy(buf, xdg_dirs);
 
         // do the actual work
