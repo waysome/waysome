@@ -361,7 +361,6 @@ static int
 serialize_event(
     struct ws_serializer* self
 ) {
-    yajl_gen_status stat;
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
     // We haven't serialized anything
@@ -373,12 +372,10 @@ serialize_event(
     // We also know already what we have to serialize, so... let's try it
 
     // We have a JSON Object "event"
-    {
-        stat = yajl_gen_map_open(ctx->yajlgen);
-        if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
-            return -1;
-        }
+    yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
     }
 
     // We have a '{ "event" : {' in the buffer by now
@@ -387,14 +384,12 @@ serialize_event(
         return -1;
     }
 
+    struct ws_event* ev = (struct ws_event*) self->buffer;
+
     // We have a '{ "event" : { "context" : ' in the buffer by now
-    {
-        struct ws_event* ev = (struct ws_event*) self->buffer;
-        int res = serialize_value(ctx, &ev->context.value);
-        if (res != 0) {
-            //!< @todo error?
-            return -1;
-        }
+    if (serialize_value(ctx, &ev->context.value) != 0) {
+        //!< @todo error?
+        return -1;
     }
 
     // We have a '{ "event" : { <context:map> ' in the buffer by now
@@ -407,7 +402,6 @@ serialize_event(
     //  '{ "event" : { <context:map>, "name": '
     // in the buffer by now
     {
-        struct ws_event* ev = (struct ws_event*) self->buffer;
         char* plain = ws_string_raw(&ev->name);
         size_t len = ws_string_len(&ev->name);
 
@@ -418,12 +412,11 @@ serialize_event(
         }
     }
 
-    { // lets close the event map now.
-        stat = yajl_gen_map_close(ctx->yajlgen);
-        if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
-            return -1;
-        }
+    // lets close the event map now.
+    stat = yajl_gen_map_close(ctx->yajlgen);
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
     }
 
     ctx->current_state = STATE_READY;
