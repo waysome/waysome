@@ -301,8 +301,8 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    char const* desc = ws_error_reply_get_description(r);
-    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) desc, strlen(desc));
+    char const* tmp = ws_error_reply_get_description(r);
+    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
@@ -313,8 +313,8 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    char const* cause = ws_error_reply_get_cause(r);
-    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) cause, strlen(cause));
+    tmp = ws_error_reply_get_cause(r);
+    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
