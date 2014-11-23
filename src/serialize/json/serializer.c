@@ -434,13 +434,7 @@ serialize_value(
     case WS_VALUE_TYPE_NONE:
     case WS_VALUE_TYPE_VALUE:
     case WS_VALUE_TYPE_NIL:
-        {
-            stat = yajl_gen_null(ctx->yajlgen);
-            if (stat != yajl_gen_status_ok) {
-                //!< @todo error?
-                return -1;
-            }
-        }
+        stat = yajl_gen_null(ctx->yajlgen);
         break;
     case WS_VALUE_TYPE_BOOL:
         {
@@ -462,7 +456,6 @@ serialize_value(
             str = ws_value_string_get((struct ws_value_string*) val);
 
             char* buf = ws_string_raw(str);
-
             stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) buf,
                                    strlen(buf));
         }
@@ -481,36 +474,33 @@ serialize_value(
                 return -1;
             }
 
-            struct ws_object* object = NULL;
-
             switch (ws_value_get_type(val)) {
             case WS_VALUE_TYPE_OBJECT_ID:
                 { // value for object-id JSON object
                     struct ws_value_object_id* obj_id;
                     obj_id = (struct ws_value_object_id*) val;
-                    object = ws_value_object_id_get(obj_id);
+                    struct ws_object* object = ws_value_object_id_get(obj_id);
+                    if (serialize_object_to_id_string(ctx, object)) {
+                        //!< @todo error?
+                        return -1;
+                    }
                 }
                 break;
 
             case WS_VALUE_TYPE_SET:
-                {
-                    stat = yajl_gen_array_open(ctx->yajlgen);
-                    if (stat != yajl_gen_status_ok) {
-                        //!< @todo error?
-                        return -1;
-                    }
-
-                    ws_value_set_select((struct ws_value_set*) val, NULL, NULL,
-                            (int (*)(void*, void const*))
-                                serialize_object_to_id_string,
-                            ctx);
-
-                    stat = yajl_gen_array_close(ctx->yajlgen);
-                    if (stat != yajl_gen_status_ok) {
-                        //!< @todo error?
-                        return -1;
-                    }
+                stat = yajl_gen_array_open(ctx->yajlgen);
+                if (stat != yajl_gen_status_ok) {
+                    //!< @todo error?
+                    return -1;
                 }
+
+                //!< @todo check return value ... might return before ready
+                ws_value_set_select((struct ws_value_set*) val, NULL, NULL,
+                        (int (*)(void*, void const*))
+                            serialize_object_to_id_string,
+                        ctx);
+
+                stat = yajl_gen_array_close(ctx->yajlgen);
                 break;
 
             case WS_VALUE_TYPE_NAMED:
@@ -522,22 +512,18 @@ serialize_value(
                 return -1;
             }
 
-            if (serialize_object_to_id_string(ctx, object)) {
-                //!< @todo error?
-                return -1;
-            }
-
             if (stat != yajl_gen_status_ok) {
                 //!< @todo error?
                 return -1;
             }
 
             stat = yajl_gen_map_close(ctx->yajlgen);
-            if (stat != yajl_gen_status_ok) {
-                //!< @todo error?
-                return -1;
-            }
         }
+    }
+
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
     }
 
     return 0;
