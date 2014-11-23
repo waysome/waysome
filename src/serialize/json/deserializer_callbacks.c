@@ -361,10 +361,9 @@ yajl_string_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
-            char* buff = strndup((char*) str, len);
-            if (!buff) {
-                return 0;
-            }
+            char buff[len + 1];
+            strncpy(buff, (char*) str, len);
+            buff[len] = 0;
 
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
@@ -376,8 +375,6 @@ yajl_string_cb(
                 //!< @todo indicate error
                 return 0;
             }
-
-            free(buff); // ws_string_set_from_raw() copies.
 
             if (0 != ws_statement_append_direct(state->tmp_statement,
                                                 (struct ws_value*) s)) {
