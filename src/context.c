@@ -63,6 +63,22 @@ func_exec(
     union ws_value_union* stack
 );
 
+/*
+ * Add hotkey event to context
+ */
+static int
+add_hotkey_event(
+    union ws_value_union* stack
+);
+
+/*
+ * Remove hotkey event from context
+ */
+static int
+remove_hotkey_event(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
@@ -180,11 +196,8 @@ func_exec(
     return res;
 }
 
-/*
- * Add hotkey event to context
- */
- static int
- add_hotkey_event(
+static int
+add_hotkey_event(
     union ws_value_union* stack
 ) {
     union ws_value_union* it;
@@ -227,9 +240,6 @@ func_exec(
     return res;
 }
 
-/*
- * Remove hotkey event from context
- */
 static int
 remove_hotkey_event(
     union ws_value_union* stack
