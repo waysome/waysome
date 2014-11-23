@@ -302,9 +302,7 @@ serialize_reply_error_reply(
     }
 
     char const* desc = ws_error_reply_get_description(r);
-    stat = yajl_gen_string(ctx->yajlgen,
-                           (unsigned char*) desc,
-                           strlen(desc));
+    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) desc, strlen(desc));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
@@ -316,9 +314,7 @@ serialize_reply_error_reply(
     }
 
     char const* cause = ws_error_reply_get_cause(r);
-    stat = yajl_gen_string(ctx->yajlgen,
-                           (unsigned char*) cause,
-                           strlen(cause));
+    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) cause, strlen(cause));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
