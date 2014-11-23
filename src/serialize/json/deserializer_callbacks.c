@@ -724,8 +724,9 @@ void
 finalize_message(
     struct ws_deserializer* d
 ) {
-    if (d->buffer == NULL &&
-            !((struct deserializer_state*) d->state)->has_event) {
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    if (d->buffer == NULL && !state->has_event) {
         // Do runtime check whether buffer object exists here, because _someone_
         // decided against runtime checks in the utility functions
         return;
@@ -735,22 +736,17 @@ finalize_message(
         if (ws_object_is_instance_of((struct ws_object*) d->buffer,
                                      &WS_OBJECT_TYPE_ID_TRANSACTION)) {
 
-            struct deserializer_state* state;
-            state = (struct deserializer_state*) d->state; // cast
-            struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
+            struct ws_transaction* t = (struct ws_transaction*) d->buffer;
 
             ws_transaction_set_flags(t, state->flags);
 
-            ws_transaction_set_name(t, state->register_name); // gets a ref on name
+            // gets a ref on name
+            ws_transaction_set_name(t, state->register_name);
             ws_object_unref((struct ws_object*) state->register_name);
 
             return;
         }
-
     }
-
-    struct deserializer_state* state;
-    state = (struct deserializer_state*) d->state; // cast
 
     if (state->has_event) {
         d->buffer = (struct ws_message*) ws_event_new(state->ev_name,
