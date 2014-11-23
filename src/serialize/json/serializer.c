@@ -266,6 +266,8 @@ write_buffer:
     if (ctx->yajl_buffer_size <= nbuf) {
         // We are ready now, as the yajl buffer is smaller or of equal size
         // as the buffer we just wrote to
+
+        //!< @todo do I need to free the self->buffer object here?
         self->buffer = NULL; // "I am ready here!"
     } else {
         // We must wait until we get a buffer where we can write the rest
