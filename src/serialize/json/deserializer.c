@@ -196,8 +196,9 @@ deserialize(
     }
 
     if (yajl_status_error == stat) {
-        ws_log(&log_ctx, LOG_ERR, "We have an error in the JSON deserializing");
         unsigned char* errstr = yajl_get_error(d->handle, 1, buffer, nbuf);
+        ws_log(&log_ctx, LOG_ERR,
+               "We have an error in the JSON deserializing: %s", errstr);
         yajl_free_error(d->handle, errstr);
     }
 
