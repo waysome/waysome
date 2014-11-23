@@ -284,7 +284,7 @@ serialize_reply_error_reply(
     struct ws_error_reply* r = (struct ws_error_reply*) self->buffer;
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
-    if (gen_key(ctx, (char*) &ERROR_CODE)) {
+    if (gen_key(ctx, ERROR_CODE)) {
         //!< @todo error?
         return -1;
     }
@@ -296,7 +296,7 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    if (gen_key(ctx, (char*) &ERROR_DESC)) {
+    if (gen_key(ctx, ERROR_DESC)) {
         //!< @todo error?
         return -1;
     }
@@ -310,7 +310,7 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    if (gen_key(ctx, (char*) &ERROR_CAUSE)) {
+    if (gen_key(ctx, ERROR_CAUSE)) {
         //!< @todo error?
         return -1;
     }
@@ -335,7 +335,7 @@ serialize_reply_value_reply(
 
     // We haven't serialized anything
     // generate the key for the value reply
-    if (gen_key(ctx, (char*) &VALUE)) {
+    if (gen_key(ctx, VALUE)) {
         //!< @todo error?
         return -1;
     }
@@ -346,7 +346,7 @@ serialize_reply_value_reply(
         return -1;
     }
 
-    if (gen_key(ctx, (char*) &TRANSACTION_ID)) {
+    if (gen_key(ctx, TRANSACTION_ID)) {
         //!< @todo error?
         return -1;
     }
@@ -370,7 +370,7 @@ serialize_event(
 
     // We haven't serialized anything
     // generate the key for the event message
-    if (gen_key(ctx, (char*) &EVENT)) {
+    if (gen_key(ctx, EVENT)) {
         //!< @todo error?
         return -1;
     }
@@ -386,7 +386,7 @@ serialize_event(
     }
 
     // We have a '{ "event" : {' in the buffer by now
-    if (gen_key(ctx, (char*) &EVENT_CTX)) {
+    if (gen_key(ctx, EVENT_CTX)) {
         //!< @todo error?
         return -1;
     }
@@ -402,7 +402,7 @@ serialize_event(
     }
 
     // We have a '{ "event" : { <context:map> ' in the buffer by now
-    if (gen_key(ctx, (char*) &EVENT_NAME)) {
+    if (gen_key(ctx, EVENT_NAME)) {
         //!< @todo error?
         return -1;
     }
