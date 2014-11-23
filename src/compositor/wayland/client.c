@@ -89,7 +89,6 @@ ws_wayland_client_get(
     struct ws_wayland_client dum;
     memset(&dum, 0, sizeof(dum));
     ws_object_init((struct ws_object*) &dum);
-    //<! @todo deinit it
     dum.obj.id = &WS_OBJECT_TYPE_ID_WAYLAND_CLIENT;
     dum.client = c;
 
@@ -97,6 +96,7 @@ ws_wayland_client_get(
             &clients,
             (struct ws_object*) &dum
     );
+    ws_object_deinit((struct ws_object*) &dum);
 
     if (found) {
         return found;
