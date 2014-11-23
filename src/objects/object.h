@@ -535,6 +535,21 @@ ws_object_is_instance_of(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Check whether an object is a type by comparing type names
+ *
+ * @memberof ws_object
+ *
+ * @return true if object is of type, else false
+ */
+bool
+ws_object_has_typename(
+    struct ws_object* self, //!< The object
+    const char* type_name //!< The typename
+)
+__ws_nonnull__(1, 2)
+;
+
 /*
  *
  * Forward declaration

@@ -43,6 +43,32 @@
  */
 
 int
+ws_builtin_cmd_hastypename(
+    union ws_value_union* args
+) {
+    if ((args[0].value.type != WS_VALUE_TYPE_OBJECT_ID) ||
+            (args[1].value.type != WS_VALUE_TYPE_STRING)) {
+        return -EINVAL;
+    }
+
+    struct ws_object* o = ws_value_object_id_get(&args[0].object_id);
+
+    struct ws_string* type_name_str     = ws_value_string_get(&args[1].string);
+    const char* type_name               = ws_string_raw(type_name_str);
+
+    bool b = ws_object_has_typename(o, type_name);
+
+    int res = ws_value_union_reinit(args, WS_VALUE_TYPE_BOOL);
+    if (res != 0) {
+        return res;
+    }
+
+    ws_value_bool_set(&args[0].bool_, b);
+
+    return 0;
+}
+
+int
 ws_builtin_cmd_call(
     union ws_value_union* args
 ) {
