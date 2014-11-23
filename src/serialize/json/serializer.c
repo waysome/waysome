@@ -181,8 +181,6 @@ serialize(
         return -ENOENT;
     }
 
-    ws_object_type_id* type = self->buffer->obj.id;
-
     struct serializer_context* ctx = (struct serializer_context*) self->state;
     if (ctx->current_state == STATE_NO_STATE ||
             ctx->current_state == STATE_INIT_STATE) {
@@ -226,7 +224,7 @@ serialize(
         };
 
         for (size_t i = 0; i < ARYLEN(FUNC_TAB); ++i) {
-            if (FUNC_TAB[i].type != type) {
+            if (FUNC_TAB[i].type != self->buffer->obj.id) {
                 continue;
             }
 
