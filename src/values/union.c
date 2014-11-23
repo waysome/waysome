@@ -132,9 +132,6 @@ ws_value_union_reinit(
     case WS_VALUE_TYPE_NAMED:
         ws_value_named_value_init(&self->named_value);
         break;
-
-        //!< @todo implement
-        return -ENOTSUP;
     }
     return 0;
 }
