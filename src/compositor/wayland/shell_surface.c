@@ -422,19 +422,23 @@ static int
 cmd_func_set_pos(
     union ws_value_union* stack
 ) {
-    stack += 2; // Ignore the object and the command name
-
-    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_OBJECT_ID ||
-            ws_value_get_type(&stack[1].value) != WS_VALUE_TYPE_INT ||
-            ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT ||
-            ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_NIL) {
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_OBJECT_ID) {
         return -EINVAL;
     }
 
     struct wl_resource* r = (struct wl_resource*)
                             ws_value_object_id_get(&stack[0].object_id);
-    intmax_t tmp_x = ws_value_int_get(&stack[1].int_);
-    intmax_t tmp_y = ws_value_int_get(&stack[2].int_);
+
+    stack += 2; // Ignore the object and the command name
+
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_INT ||
+            ws_value_get_type(&stack[1].value) != WS_VALUE_TYPE_INT ||
+            ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_NIL) {
+        return -EINVAL;
+    }
+
+    intmax_t tmp_x = ws_value_int_get(&stack[0].int_);
+    intmax_t tmp_y = ws_value_int_get(&stack[1].int_);
 
     if (tmp_x > INT32_MAX || tmp_y > INT32_MAX) {
         return -EINVAL;
