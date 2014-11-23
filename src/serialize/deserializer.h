@@ -61,6 +61,8 @@ typedef ssize_t (*ws_deserialize_f)(struct ws_deserializer* self,
 /**
  * Deserializer type
  *
+ * @attention This type is abstract
+ *
  * A deserializer is initialized by a preparing function, which sets the
  * callbacks and initializes the internal state to be used for parsing.
  */
