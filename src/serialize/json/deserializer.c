@@ -64,7 +64,10 @@ static struct ws_logger_context log_ctx = {
  * @return new object of `struct serializer_yajl_state_deserializer` or NULL
  */
 struct deserializer_state*
-deserialize_state_new(yajl_callbacks* cbs, void* ctx);
+deserialize_state_new(
+    yajl_callbacks* cbs,
+    void* ctx
+);
 
 /**
  * deserialize callback
