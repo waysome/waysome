@@ -583,7 +583,6 @@ yajl_end_map_cb(
     case STATE_COMMAND_ARY_NEW_COMMAND:
         // We are ready with the command parsing for one command now. Lets
         // finalize the temporary stuff and go back to the command array state.
-
         if (state->tmp_statement == NULL) {
             // We are here because there was a command array but no commands.
             // This is absolutely valid.
@@ -714,15 +713,10 @@ setup_transaction(
     }
 
     //!< @todo assign real name, flags
-    uintmax_t id = 0;
-    if (self->buffer) {
-        id = ((struct deserializer_state*) self->buffer)->id;
-    }
-
     struct ws_string* name = NULL;
     enum ws_transaction_flags flags = WS_TRANSACTION_FLAGS_EXEC;
     struct ws_transaction_command_list* cmds = NULL;
-    self->buffer = (struct ws_message*) ws_transaction_new(id, name,
+    self->buffer = (struct ws_message*) ws_transaction_new(0, name,
                                                            flags, cmds);
 
     return 0;
