@@ -77,7 +77,7 @@ ws_value_set_get(
     struct ws_value_set* self
 ) {
     if (self) {
-        return self->set;
+        return getref(self->set);
     }
     return NULL;
 }

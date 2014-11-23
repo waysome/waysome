@@ -83,8 +83,9 @@ ws_value_union_init_from_val(
         }
 
     case WS_VALUE_TYPE_SET:
-        dest->set.set = getref(ws_value_set_get((struct ws_value_set*) src));
+        dest->set.set = ws_value_set_get((struct ws_value_set*) src);
         return 0;
+
     }
     return -EINVAL;
 }
