@@ -541,8 +541,8 @@ serialize_object_to_id_string(
     snprintf(buff, bufflen, "%"PRIxMAX, uuid);
 
     yajl_gen_status stat = yajl_gen_string(ctx->yajlgen,
-                           (unsigned char*) buff,
-                           bufflen - 1);
+                                           (unsigned char*) buff,
+                                           bufflen - 1);
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
