@@ -15,7 +15,11 @@ set(SOURCE_FILES
     value_type.c
 )
 
-add_library(values OBJECT
+add_library(values STATIC
     ${SOURCE_FILES}
+)
+
+target_link_libraries(values
+    objects
 )
 

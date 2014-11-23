@@ -101,7 +101,11 @@ configure_file("list.c.in" "list.c")
 #
 # Finally link everything in this module
 #
-add_library(command OBJECT
+add_library(command STATIC
     ${SOURCE_FILES}
+)
+
+target_link_libraries(command
+    values
 )
 

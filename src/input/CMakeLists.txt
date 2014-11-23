@@ -1,6 +1,15 @@
 #
 # Build the input submodule
 #
+
+include_directories(
+    ${EVDEV_INCLUDE_DIRS}
+)
+
+add_definitions(
+    ${EVDEV_DEFINITIONS}
+)
+
 set(SOURCE_FILES
     hotkey_dag.c
     hotkey_event.c
@@ -10,7 +19,13 @@ set(SOURCE_FILES
     utils.c
 )
 
-add_library(input OBJECT
+add_library(input STATIC
     ${SOURCE_FILES}
+)
+
+target_link_libraries(input
+    objects
+
+    ${EVDEV_LIBRARIES}
 )
 

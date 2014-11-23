@@ -18,8 +18,6 @@ set (TEST_SUITES
     connection
     input
     logger
-    session
-    storage
     util
     values
 )
@@ -29,30 +27,18 @@ set (TEST_SUITES
 #
 if (${CHECK_FOUND})
     foreach(TEST_SUITE IN LISTS TEST_SUITES)
-        unset(TEST_SOURCES)
-        unset(TEST_LIBRARIES)
-        unset(TEST_INCLUDE_DIRS)
-        unset(TEST_DEFINITIONS)
-        add_subdirectory("${TEST_SUITE}")
-
         include_directories(
             ${TEST_SUITE}
-            ${TEST_INCLUDE_DIRS}
         )
-
-        if (DEFINED TEST_DEFINITIONS)
-            add_definitions(${TEST_DEFINITIONS})
-        endif()
 
         set(TEST_EXE "check_${TEST_SUITE}.test")
         add_executable(${TEST_EXE} EXCLUDE_FROM_ALL
             "${TEST_SUITE}/${TEST_SUITE}_tests.c"
-            ${TEST_SOURCES}
         )
 
         target_link_libraries(${TEST_EXE}
+            ${TEST_SUITE}
             ${CHECK_LIBRARY}
-            ${TEST_LIBRARIES}
         )
 
         add_test("build_${TEST_EXE}" "${CMAKE_COMMAND}"

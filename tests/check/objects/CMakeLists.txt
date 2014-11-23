@@ -5,24 +5,14 @@ set(TEST_SUITES_OBJECTS
 )
 
 foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
-    add_subdirectory("${TEST}")
-
-    if (DEFINED TEST_INCLUDE_DIRS)
-        include_directories(${TEST_INCLUDE_DIRS})
-    endif()
-    if (DEFINED TEST_DEFINITIONS)
-        add_definitions(${TEST_DEFINITIONS})
-    endif()
-
     set(TEST_EXE "check_${TEST}.test")
     add_executable(${TEST_EXE} EXCLUDE_FROM_ALL
         "${TEST}/test.c"
-        ${TEST_SOURCES}
     )
 
     target_link_libraries(${TEST_EXE}
+        objects
         ${CHECK_LIBRARY}
-        ${TEST_LIBRARIES}
     )
 
     add_test("build_${TEST_EXE}" "${CMAKE_COMMAND}"
