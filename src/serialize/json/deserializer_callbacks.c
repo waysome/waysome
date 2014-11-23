@@ -534,7 +534,7 @@ yajl_map_key_cb(
         {
             char buf[len + 1];
             strncpy(buf, (char*) key, len);
-            buf[len] = '\0';
+            buf[len] = 0;
 
             state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
             if (!state->tmp_statement) {
@@ -553,7 +553,6 @@ yajl_map_key_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT:
         // If the key is a "pos" key, for a stack position, we continue here
-
         if (0 != strncmp((char*) key, POS, len)) {
             return 0;
         }
