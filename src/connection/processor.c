@@ -290,16 +290,16 @@ connection_manager_dispatch(
 error_handling:
     //!< error handling
     switch(-res) {
-        case -EAGAIN:
-        case -EINTR:
+    case -EAGAIN:
+    case -EINTR:
         // we have to come back later
         ws_object_unlock(&proc->obj);
         return;
 
-        default:
+    default:
         //!< @todo report an error
 
-        case EOF:
+    case EOF:
         // we reached the end of file
         ;
     }
