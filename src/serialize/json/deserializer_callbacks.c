@@ -444,14 +444,8 @@ yajl_string_cb(
                 //!< @tod error, what now?
                 return 0;
             }
-            ws_value_string_init(s);
 
-            struct ws_string* sstr = ws_string_new();
-            if (!sstr) {
-                //!< @todo error, what now?
-                free(s);
-                return 0;
-            }
+            struct ws_string* sstr = ws_value_string_get(s);
 
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
@@ -463,7 +457,6 @@ yajl_string_cb(
                 return 0;
             }
 
-            ws_value_string_set_str(s, sstr);
             state->ev_ctx = (struct ws_value*) s;
 
             state->current_state = STATE_MSG;
