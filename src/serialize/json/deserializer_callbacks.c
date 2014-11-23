@@ -713,11 +713,9 @@ setup_transaction(
     }
 
     //!< @todo assign real name, flags
-    struct ws_string* name = NULL;
     enum ws_transaction_flags flags = WS_TRANSACTION_FLAGS_EXEC;
-    struct ws_transaction_command_list* cmds = NULL;
-    self->buffer = (struct ws_message*) ws_transaction_new(0, name,
-                                                           flags, cmds);
+    self->buffer = (struct ws_message*) ws_transaction_new(0, NULL,
+                                                           flags, NULL);
 
     return 0;
 }
