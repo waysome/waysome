@@ -25,14 +25,15 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unicode/ustring.h>
 
-#include "objects/string.h"
-
 #include "objects/object.h"
+#include "objects/string.h"
+#include "util/condition.h"
 
 /*
  *
@@ -73,20 +74,19 @@ bool
 ws_string_init(
     struct ws_string* self
 ) {
-    if (self) {
-        self->str = calloc(1, sizeof(*self->str)); //initialize as empty string
-
-        if (!self->str) {
-            return false;
-        }
-
-        ws_object_init(&self->obj);
-        self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
-
-        return true;
+    if (!self) {
+        return false;
     }
 
-    return false;
+    self->str = calloc(1, sizeof(*self->str)); //initialize as empty string
+    if (unlikely(!self->str)) {
+        return false;
+    }
+
+    ws_object_init(&self->obj);
+    self->obj.id = &WS_OBJECT_TYPE_ID_STRING;
+
+    return true;
 }
 
 bool
@@ -94,31 +94,29 @@ ws_string_set_from_str(
     struct ws_string* self,
     struct ws_string* other
 ) {
-    if (!self || !other) {
+    if (unlikely(!self || !other)) {
         return false;
     }
 
     ws_object_lock_write(&self->obj);
     ws_object_lock_read(&other->obj);
 
-    UChar* temp;
     size_t charcount = u_strlen(other->str);
 
-    temp = realloc(self->str, (charcount + 1) * sizeof(*self->str));
-    if (!temp) {
+    UChar* temp = realloc(self->str, (charcount + 1) * sizeof(*self->str));
+    if (unlikely(!temp)) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
         return false;
     }
-    
     self->str = temp;
 
-    self->str = u_strcpy(self->str, other->str);
+    u_strcpy(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
 
-    return !!self->str;
+    return true;
 }
 
 struct ws_string*
@@ -126,7 +124,7 @@ ws_string_new(void)
 {
     struct ws_string* wss = calloc(1, sizeof(*wss));
 
-    if (wss) {
+    if (likely(wss)) {
         ws_string_init(wss);
         wss->obj.settings |= WS_OBJECT_HEAPALLOCED;
     }
@@ -138,7 +136,7 @@ size_t
 ws_string_len(
     struct ws_string* self
 ){
-    if (self) {
+    if (likely(self)) {
         size_t len;
         ws_object_lock_read(&self->obj);
         len = u_strlen(self->str);
@@ -157,28 +155,21 @@ ws_string_cat(
     ws_object_lock_write(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    UChar* temp;
-    size_t charcount_s = u_strlen(self->str);
-    size_t charcount_o = u_strlen(other->str);
-    temp = realloc(self->str, (charcount_s + charcount_o + 1)
-                    * sizeof(*self->str));
-    if (!temp) {
+    size_t new_len = u_strlen(self->str) + u_strlen(other->str) + 1;
+    UChar* temp = realloc(self->str, new_len * sizeof(*self->str));
+    if (unlikely(!temp)) {
         ws_object_unlock(&other->obj);
         ws_object_unlock(&self->obj);
         return NULL;
     }
-
     self->str = temp;
-    self->str = u_strcat(self->str, other->str);
+
+    u_strcat(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
 
-    if (self->str) {
-        return self;
-    }
-
-    return NULL;
+    return self;
 }
 
 struct ws_string*
@@ -186,17 +177,11 @@ ws_string_dupl(
     struct ws_string* self
 ){
     struct ws_string* nstr = ws_string_new();
-
-    if (nstr) {
-        bool res;
-        res = ws_string_set_from_str(nstr, self);
-
-        if (res) {
-            return nstr;
-        }
+    if (unlikely(!nstr || !ws_string_set_from_str(nstr, self))) {
+        return NULL;
     }
 
-    return NULL;
+    return nstr;
 }
 
 int
@@ -204,12 +189,10 @@ ws_string_cmp(
     struct ws_string* self,
     struct ws_string* other
 ){
-    int res;
-
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strcmp(self->str, other->str);
+    int res = u_strcmp(self->str, other->str);
 
     ws_object_unlock(&other->obj);
     ws_object_unlock(&self->obj);
@@ -224,12 +207,10 @@ ws_string_ncmp(
     size_t offset,
     size_t n
 ){
-    int res;
-
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strncmp(self->str + offset, other->str, n);
+    int res = u_strncmp(self->str + offset, other->str, n);
 
     ws_object_unlock(&self->obj);
     ws_object_unlock(&other->obj);
@@ -242,11 +223,10 @@ ws_string_substr(
     struct ws_string* self,
     struct ws_string* other
 ){
-    UChar* res;
     ws_object_lock_read(&self->obj);
     ws_object_lock_read(&other->obj); //!< @todo Thread-safeness!
 
-    res = u_strstr(self->str, other->str);
+    UChar* res = u_strstr(self->str, other->str);
 
     ws_object_unlock(&self->obj);
     ws_object_unlock(&other->obj);
@@ -264,14 +244,13 @@ ws_string_raw(
     UErrorCode err = U_ZERO_ERROR;
     size_t charcount = u_strlen(self->str);
 
-    (void) u_strToUTF8(NULL, 0, &dest_len, self->str, charcount, &err);
+    u_strToUTF8(NULL, 0, &dest_len, self->str, charcount, &err);
     if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
         return NULL;
     }
 
-    char* output;
-    output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
-    if (!output) {
+    char* output = calloc(dest_len + 1, sizeof(*output)); // +1 => Nullbyte
+    if (unlikely(!output)) {
         return NULL;
     }
 
@@ -289,45 +268,46 @@ ws_string_raw(
     return output;
 }
 
-void
+int
 ws_string_set_from_raw(
     struct ws_string* self,
     char* raw
 ){
-    if (!self) {
-        return;
+    if (unlikely(!self)) {
+        return -EINVAL;
     }
 
     UErrorCode err = U_ZERO_ERROR;
 
     // get the length of the buffer to allocate
     int32_t len;
-    (void) u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
+    u_strFromUTF8(NULL, 0, &len, raw, -1, &err);
     if ((err != U_BUFFER_OVERFLOW_ERROR) && U_FAILURE(err)) {
-        return;
+        return -ENOMEM; //!< @todo is it actually -ENOMEM?
     }
 
     // allocate buffer
     ++len;
     UChar* conv_raw = calloc(1, sizeof(*conv_raw) * len);
-    if (!conv_raw) {
-        return;
-     }
+    if (unlikely(!conv_raw)) {
+        return -ENOMEM;
+    }
 
     // convert string (write into buffer)
     err = U_ZERO_ERROR;
     conv_raw = u_strFromUTF8(conv_raw, len, NULL, raw, -1, &err);
     if (U_FAILURE(err)) {
-        return;
+        return -ENOMEM; //!< @todo is it actually -ENOMEM?
     }
 
     ws_object_lock_write(&self->obj);
 
     free(self->str);
-
     self->str = conv_raw;
 
     ws_object_unlock(&self->obj);
+
+    return 0;
 }
 
 /*
@@ -339,7 +319,7 @@ static bool
 deinit_callback(
     struct ws_object* const self
 ) {
-    if (self) {
+    if (likely(self)) {
         free(((struct ws_string*) self)->str);
         return true;
     }
