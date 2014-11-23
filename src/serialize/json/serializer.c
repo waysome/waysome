@@ -289,8 +289,8 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    unsigned int code       = ws_error_reply_get_code(r);
-    yajl_gen_status stat    = yajl_gen_integer(ctx->yajlgen, code);
+    yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen,
+                                            ws_error_reply_get_code(r));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
