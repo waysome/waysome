@@ -190,7 +190,6 @@ serialize(
         ctx->current_state = STATE_INIT_STATE; // if in NO_STATE
 
         yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
-
         if (stat != yajl_gen_status_ok) {
             //!< @todo error opening map, what to do now?
             return -1;
@@ -203,37 +202,47 @@ serialize(
         goto write_buffer;
     }
 
-    do {
-        int retval = 0;
-        if (type == &WS_OBJECT_TYPE_ID_EVENT) {
-            retval = serialize_event(self);
+    {
+        bool serialized = false;
+        /*
+         * Map from type -> serializing function
+         */
+        static const struct {
+            ws_object_type_id* type;
+            int (*serf)(struct ws_serializer*);
+        } FUNC_TAB[] = {
+            {
+                .type = &WS_OBJECT_TYPE_ID_EVENT,
+                .serf = serialize_event
+            },
+            {
+                .type = &WS_OBJECT_TYPE_ID_ERROR_REPLY,
+                .serf = serialize_reply_error_reply,
+            },
+            {
+                .type = &WS_OBJECT_TYPE_ID_VALUE_REPLY,
+                .serf = serialize_reply_value_reply,
+            }
+        };
+
+        for (size_t i = 0; i < ARYLEN(FUNC_TAB); ++i) {
+            if (FUNC_TAB[i].type != type) {
+                continue;
+            }
+
+            int retval = FUNC_TAB[i].serf(self);
             if (retval < 0) {
                 //!< @todo something went wrong serializing the event. Error?
                 return retval;
             }
+            serialized = true;
             break;
         }
 
-        if (type == &WS_OBJECT_TYPE_ID_ERROR_REPLY) {
-            retval = serialize_reply_error_reply(self);
-            if (retval < 0) {
-                //!< @todo something went wrong serializing the error. Error?
-                return retval;
-            }
-            break;
+        if (!serialized) {
+            return -EINVAL;
         }
-
-        if (type == &WS_OBJECT_TYPE_ID_VALUE_REPLY) {
-            retval = serialize_reply_value_reply(self);
-            if (retval < 0) {
-                //!< @todo something went wrong serializing the reply. Error?
-                return retval;
-            }
-            break;
-        }
-
-        return -EINVAL;
-    } while (0);
+    }
 
     { // lets close the main map now.
         yajl_gen_status stat = yajl_gen_map_close(ctx->yajlgen);
