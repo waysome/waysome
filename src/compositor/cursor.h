@@ -174,5 +174,13 @@ ws_cursor_set_button_state(
 struct ws_cursor*
 ws_cursor_get();
 
+/**
+ * Get surface under the cursor
+ */
+struct ws_surface*
+ws_cursor_get_surface_under_cursor(
+    struct ws_cursor* self //!< The cursor
+);
+
 #endif // __WS_CURSOR_H__
 
