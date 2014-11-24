@@ -77,6 +77,10 @@ struct ws_serializer {
  * return either the number of bytes written to that buffer or a negative error
  * code.
  *
+ * @warning This _fails_ when it is called from two threads on the same
+ * serializer. This should be called only once for one serializer. It will
+ * write-lock the message object, though.
+ *
  * @note in the case that the message could not be serialized because another
  *       message is still pending, `-EAGAIN` will be returned, indicating that
  *       the message may be serialized successfully later.
