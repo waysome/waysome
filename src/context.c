@@ -29,8 +29,9 @@
 #include <ev.h>
 #include <stdint.h>
 
-#include "context.h"
 #include "command/util.h"
+#include "compositor/cursor.h"
+#include "context.h"
 #include "input/hotkeys.h"
 #include "objects/object.h"
 #include "objects/string.h"
@@ -79,12 +80,21 @@ remove_hotkey_event(
     union ws_value_union* stack
 );
 
+/**
+ *  Get cursor under surface, regardless if it is in focus
+ */
+static int
+func_get_surface_under_cursor(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
     { .name = "exec", .func = func_exec },
     { .name = "add_hotkey_event", .func = add_hotkey_event },
     { .name = "remove_hotkey_event", .func = remove_hotkey_event },
+    { .name = "surface_under_cursor", .func = func_get_surface_under_cursor },
     { .name = NULL, .func = NULL }
 };
 
@@ -204,7 +214,7 @@ add_hotkey_event(
 ) {
     union ws_value_union* it;
     struct ws_string* str;
-    
+
     union ws_value_union* retval = stack;
     stack += 2; //Ignoring object and command name
 
@@ -248,7 +258,7 @@ remove_hotkey_event(
 ) {
     union ws_value_union* it;
     union ws_value_union* retval = stack;
-    
+
     stack += 2; //ignoring object and command name
 
     int len = 0;
@@ -274,6 +284,17 @@ remove_hotkey_event(
     int res =  ws_hotkey_remove(arr, len);
     ws_value_union_reinit(retval, WS_VALUE_TYPE_BOOL);
     ws_value_bool_set(&retval->bool_, res == 0);
- 
+
     return res;
 }
+
+static int
+func_get_surface_under_cursor(
+    union ws_value_union* stack
+) {
+    struct ws_surface* surface;
+    surface = ws_cursor_get_surface_under_cursor(ws_cursor_get());
+    ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
+    return 0;
+}
+

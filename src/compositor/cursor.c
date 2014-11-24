@@ -358,3 +358,13 @@ deinit_cursor(
     return true;
 }
 
+struct ws_surface*
+ws_cursor_get_surface_under_cursor(
+    struct ws_cursor* self
+) {
+    struct ws_set* surfaces = ws_monitor_surfaces(self->cur_mon);
+    struct ws_surface* surface = NULL;
+    ws_set_select(surfaces, NULL, NULL, get_surface_under_cursor, &surface);
+    return surface;
+}
+
