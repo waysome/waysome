@@ -64,7 +64,10 @@ static struct ws_logger_context log_ctx = {
  * @return new object of `struct serializer_yajl_state_deserializer` or NULL
  */
 struct deserializer_state*
-deserialize_state_new(yajl_callbacks* cbs, void* ctx);
+deserialize_state_new(
+    yajl_callbacks* cbs,
+    void* ctx
+);
 
 /**
  * deserialize callback
@@ -113,7 +116,6 @@ ws_serializer_json_deserializer_new(void)
     }
 
     d->state = (void*) deserialize_state_new(&YAJL_CALLBACKS, d);
-
     if (!d->state) {
         free(d);
         return NULL;
@@ -145,7 +147,6 @@ deserialize_state_new(
     if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
         !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
         !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
-
             yajl_free(state->handle);
             return NULL;
     }
@@ -174,15 +175,14 @@ deserialize(
     char const* buf,
     size_t nbuf
 ) {
-    unsigned char* buffer = (unsigned char*) buf; // cast
-    struct deserializer_state* d = self->state;
-    size_t consumed = 0;
+    unsigned char* buffer           = (unsigned char*) buf;
+    struct deserializer_state* d    = self->state;
+    size_t consumed                 = 0;
 
     while (isspace(*buffer)) {
         buffer++;
         consumed++;
-        --nbuf;
-        if (nbuf == 0) {
+        if (--nbuf == 0) {
             self->is_ready = true;
             return consumed;
         }
@@ -196,9 +196,9 @@ deserialize(
     }
 
     if (yajl_status_error == stat) {
-        ws_log(&log_ctx, LOG_ERR, "We have an error in the JSON deserializing");
-        unsigned char* errstr;
-        errstr = yajl_get_error(d->handle, 1, buffer, nbuf);
+        unsigned char* errstr = yajl_get_error(d->handle, 1, buffer, nbuf);
+        ws_log(&log_ctx, LOG_ERR,
+               "We have an error in the JSON deserializing: %s", errstr);
         yajl_free_error(d->handle, errstr);
     }
 

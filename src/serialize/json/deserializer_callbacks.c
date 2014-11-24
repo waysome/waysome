@@ -123,7 +123,7 @@ get_next_state_for_string(
 
 int
 yajl_null_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -177,7 +177,7 @@ yajl_null_cb(
 
 int
 yajl_boolean_cb(
-    void * ctx,
+    void* ctx,
     int b
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -242,7 +242,7 @@ yajl_boolean_cb(
 
 int
 yajl_integer_cb(
-    void * ctx,
+    void* ctx,
     long long i
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -255,10 +255,10 @@ yajl_integer_cb(
     case STATE_UID:
         if (d->buffer) {
             // Hey, we have a message object, set the ID directly
-            d->buffer->id = i;
+            d->buffer->id = i; //!< @todo visibility violation here
         } else {
             // cache the ID
-            state->id = i; //!< @todo visibility violation here
+            state->id = i;
         }
         state->current_state = STATE_MSG;
         break;
@@ -324,7 +324,7 @@ yajl_integer_cb(
 
 int
 yajl_double_cb(
-    void * ctx,
+    void* ctx,
     double d
 ) {
     //!< @todo implement
@@ -333,8 +333,8 @@ yajl_double_cb(
 
 int
 yajl_string_cb(
-    void * ctx,
-    const unsigned char * str,
+    void* ctx,
+    const unsigned char* str,
     size_t len
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -361,11 +361,9 @@ yajl_string_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
-            char *buff = strndup((char*) str, len);
-
-            if (!buff) {
-                return 0;
-            }
+            char buff[len + 1];
+            strncpy(buff, (char*) str, len);
+            buff[len] = 0;
 
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
@@ -377,8 +375,6 @@ yajl_string_cb(
                 //!< @todo indicate error
                 return 0;
             }
-
-            free(buff); // ws_string_set_from_raw() copies.
 
             if (0 != ws_statement_append_direct(state->tmp_statement,
                                                 (struct ws_value*) s)) {
@@ -399,8 +395,8 @@ yajl_string_cb(
             }
 
             char buff[len + 1];
-            memset(buff, 0, len + 1);
             strncpy(buff, (char*)str, len);
+            buff[len] = 0;
 
             int res = ws_string_set_from_raw(state->register_name, buff);
             if (res != 0) {
@@ -424,13 +420,15 @@ yajl_string_cb(
             }
 
             char buff[len + 1];
-            memset(buff, 0, len + 1);
             strncpy(buff, (char*) str, len);
+            buff[len] = 0;
+
             int res = ws_string_set_from_raw(state->ev_name, buff);
             if (res != 0) {
                 //!< @todo indicate error
                 return 0;
             }
+
             // ready for now.
 
             state->current_state = STATE_MSG;
@@ -446,25 +444,19 @@ yajl_string_cb(
                 //!< @tod error, what now?
                 return 0;
             }
-            ws_value_string_init(s);
 
-            struct ws_string* sstr = ws_string_new();
-            if (!sstr) {
-                //!< @todo error, what now?
-                free(s);
-                return 0;
-            }
+            struct ws_string* sstr = ws_value_string_get(s);
 
             char buff[len + 1];
-            memset(buff, 0, len + 1);
             strncpy(buff, (char*) str, len);
+            buff[len] = 0;
+
             int res = ws_string_set_from_raw(sstr, buff);
             if (res != 0) {
                 //!< @todo indicate error
                 return 0;
             }
 
-            ws_value_string_set_str(s, sstr);
             state->ev_ctx = (struct ws_value*) s;
 
             state->current_state = STATE_MSG;
@@ -480,7 +472,7 @@ yajl_string_cb(
 
 int
 yajl_start_map_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -518,8 +510,8 @@ yajl_start_map_cb(
 
 int
 yajl_map_key_cb(
-    void * ctx,
-    const unsigned char * key,
+    void* ctx,
+    const unsigned char* key,
     size_t len
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
@@ -542,7 +534,7 @@ yajl_map_key_cb(
         {
             char buf[len + 1];
             strncpy(buf, (char*) key, len);
-            buf[len] = '\0';
+            buf[len] = 0;
 
             state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
             if (!state->tmp_statement) {
@@ -561,7 +553,6 @@ yajl_map_key_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT:
         // If the key is a "pos" key, for a stack position, we continue here
-
         if (0 != strncmp((char*) key, POS, len)) {
             return 0;
         }
@@ -578,7 +569,7 @@ yajl_map_key_cb(
 
 int
 yajl_end_map_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -592,7 +583,6 @@ yajl_end_map_cb(
     case STATE_COMMAND_ARY_NEW_COMMAND:
         // We are ready with the command parsing for one command now. Lets
         // finalize the temporary stuff and go back to the command array state.
-
         if (state->tmp_statement == NULL) {
             // We are here because there was a command array but no commands.
             // This is absolutely valid.
@@ -639,7 +629,7 @@ yajl_end_map_cb(
 
 int
 yajl_start_array_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -671,7 +661,7 @@ yajl_start_array_cb(
 
 int
 yajl_end_array_cb(
-    void * ctx
+    void* ctx
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
@@ -723,16 +713,9 @@ setup_transaction(
     }
 
     //!< @todo assign real name, flags
-    uintmax_t id = 0;
-    if (self->buffer) {
-        id = ((struct deserializer_state*) self->buffer)->id;
-    }
-
-    struct ws_string* name = NULL;
     enum ws_transaction_flags flags = WS_TRANSACTION_FLAGS_EXEC;
-    struct ws_transaction_command_list* cmds = NULL;
-    self->buffer = (struct ws_message*) ws_transaction_new(id, name,
-                                                           flags, cmds);
+    self->buffer = (struct ws_message*) ws_transaction_new(0, NULL,
+                                                           flags, NULL);
 
     return 0;
 }
@@ -741,8 +724,9 @@ void
 finalize_message(
     struct ws_deserializer* d
 ) {
-    if (d->buffer == NULL &&
-            !((struct deserializer_state*) d->state)->has_event) {
+    struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    if (d->buffer == NULL && !state->has_event) {
         // Do runtime check whether buffer object exists here, because _someone_
         // decided against runtime checks in the utility functions
         return;
@@ -752,22 +736,17 @@ finalize_message(
         if (ws_object_is_instance_of((struct ws_object*) d->buffer,
                                      &WS_OBJECT_TYPE_ID_TRANSACTION)) {
 
-            struct deserializer_state* state;
-            state = (struct deserializer_state*) d->state; // cast
-            struct ws_transaction* t = (struct ws_transaction*) d->buffer; // cast
+            struct ws_transaction* t = (struct ws_transaction*) d->buffer;
 
             ws_transaction_set_flags(t, state->flags);
 
-            ws_transaction_set_name(t, state->register_name); // gets a ref on name
+            // gets a ref on name
+            ws_transaction_set_name(t, state->register_name);
             ws_object_unref((struct ws_object*) state->register_name);
 
             return;
         }
-
     }
-
-    struct deserializer_state* state;
-    state = (struct deserializer_state*) d->state; // cast
 
     if (state->has_event) {
         d->buffer = (struct ws_message*) ws_event_new(state->ev_name,
@@ -779,7 +758,7 @@ finalize_message(
 static enum json_backend_state
 get_next_state_for_string(
     enum json_backend_state current,
-    const unsigned char * str
+    const unsigned char* str
 ) {
     for (size_t i = 0; MAP[i].str; i++) {
         if (MAP[i].current == current) {
