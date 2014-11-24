@@ -99,3 +99,55 @@ ws_builtin_cmd_call(
     return ws_object_call_cmd(obj, name, args);
 }
 
+int
+ws_builtin_cmd_has_meth(
+    union ws_value_union* args
+) {
+    if ((args[0].value.type != WS_VALUE_TYPE_OBJECT_ID) ||
+            (args[1].value.type != WS_VALUE_TYPE_STRING)) {
+        return -EINVAL;
+    }
+
+    struct ws_object* o = ws_value_object_id_get(&args[0].object_id);
+
+    struct ws_string* cmdstr = ws_value_string_get(&args[1].string);
+    const char* cmd = ws_string_raw(cmdstr);
+
+    bool b = ws_object_has_cmd(o, cmd);
+
+    int res = ws_value_union_reinit(args, WS_VALUE_TYPE_BOOL);
+    if (res != 0) {
+        return res;
+    }
+
+    ws_value_bool_set(&args[0].bool_, b);
+
+    return 0;
+}
+
+int
+ws_builtin_cmd_has_attr(
+    union ws_value_union* args
+) {
+    if ((args[0].value.type != WS_VALUE_TYPE_OBJECT_ID) ||
+            (args[1].value.type != WS_VALUE_TYPE_STRING)) {
+        return -EINVAL;
+    }
+
+    struct ws_object* o = ws_value_object_id_get(&args[0].object_id);
+
+    struct ws_string* attrstr = ws_value_string_get(&args[1].string);
+    const char* attr = ws_string_raw(attrstr);
+
+    bool b = ws_object_has_attr(o, attr);
+
+    int res = ws_value_union_reinit(args, WS_VALUE_TYPE_BOOL);
+    if (res != 0) {
+        return res;
+    }
+
+    ws_value_bool_set(&args[0].bool_, b);
+
+    return 0;
+}
+

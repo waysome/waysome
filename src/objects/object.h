@@ -417,6 +417,19 @@ __ws_nonnull__(1)
 ;
 
 /**
+ * Check whether an attribute is available
+ *
+ * @memberof ws_object
+ *
+ * @return true when there is such an attribute within the object, else false
+ */
+bool
+ws_object_has_attr(
+    struct ws_object* self, //!< The object
+    char const* ident //!< The identifier for the attribute
+);
+
+/**
  * Get an attribute of an object
  *
  * @memberof ws_object
@@ -569,6 +582,19 @@ ws_object_call_cmd(
     struct ws_object* self,
     char const* ident, //!< Name of the command to call for the object
     union ws_value_union* stack //!< Stack to pass to the command function
+);
+
+/**
+ * Check whether the object has a command callback with a certain name
+ *
+ * @memberof ws_object
+ *
+ * @return true if the command is available, else false.
+ */
+bool
+ws_object_has_cmd(
+    struct ws_object* self,
+    char const* ident //!< Name of command to check the object for
 );
 
 #endif // __WS_OBJECTS_OBJECT_H__
