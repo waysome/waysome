@@ -62,8 +62,8 @@ ws_serialize(
     }
 
     // now try to serialize the message we have now
-    ws_object_lock_write(&msg->obj);
     self->buffer = getref(msg);
+    ws_object_lock_write(&msg->obj);
     ssize_t retval = self->serialize(self, buf, nbuf);
     ws_object_unlock(&msg->obj);
     if (retval < 0) {
