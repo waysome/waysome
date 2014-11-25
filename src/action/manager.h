@@ -39,6 +39,9 @@ struct ws_string;
 /**
  * Initialize the action manager
  *
+ * @note Tries to get reference on the context object, returns -EBUSY if
+ * reference could not be aquired.
+ *
  * @return 0 on success, a negative error number otherwise
  */
 int
