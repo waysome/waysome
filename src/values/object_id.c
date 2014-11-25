@@ -78,13 +78,13 @@ ws_value_object_id_set(
         return;
     }
 
-    if (self->obj) {
-        ws_object_unref(self->obj);
-    }
-
     struct ws_object* tmp = getref(obj);
     if (!tmp) {
         return;
+    }
+
+    if (self->obj) {
+        ws_object_unref(self->obj);
     }
 
     self->obj = tmp;
