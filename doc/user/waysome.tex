@@ -50,6 +50,25 @@
         {]}{{{\color{delim}{]}}}}{1},
 }
 
+\newenvironment{commands}[0]
+    {\begin{itemize}}
+    {\end{itemize}}
+
+%
+% Create a new command. Arguments for this command are:
+%  1 - Name of the command
+%  2 - Argument list (including type), Notation should be <num>:<type>
+%  3 - Return value (if any), including type
+%  4 - Description of the command
+%
+\newcommand{\command}[4]{
+    \item Command: \textbf{#1} \\\\
+    \begin{tabular}{r|l}
+        Arguments   & #2 \\
+        Return      & #3 \\
+        Description & #4 \\
+    \end{tabular}
+}
 
 %
 % Document

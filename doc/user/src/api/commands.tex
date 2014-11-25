@@ -1,3 +1,156 @@
 \subsection{Commands}
 
-% What are commands
+A command is a single operation inside a transaction. We call it ``command''
+because it can only be a single command, combinations are not possible.
+
+A list of all available commands follows.
+
+\subsubsection{Arithmetical commands}
+
+    \begin{commands}
+
+        \command{add}
+                {N : Numerical}
+                {Numerical}
+                {
+                    Adds values passed via a stack position or directly and
+                    pushes the result to the stack.
+                }
+
+        \command{sub}
+                {N : Numerical}
+                {Numerical}
+                {
+                    Subtracts values passed via a stack position or directly
+                    and pushes the result to the stack.
+                }
+
+        \command{mul}
+                {N : Numerical}
+                {Numerical}
+                {
+                    Multiplicates values passed via a stack position or directly
+                    and pushes the result to the stack.
+                }
+
+        \command{div}
+                {Numerical, Numerical}
+                {Numerical}
+                {
+                    Divides first argument by second argument.
+
+                    Fails when the second argument (divisor) is zero.
+                }
+
+    \end{commands}
+
+\subsubsection{Logical commands}
+
+    \begin{commands}
+
+        \command{lnot}
+                {Value}
+                {Boolean}
+                {
+                    Performs a logical NOT on the argument, whereas only a NIL
+                    and a Boolean which is false are actually false and produce
+                    a return value which is true.
+                }
+
+        \command{land}
+                {N : Value}
+                {Boolean}
+                {
+                    Logical AND between all arguments, whereas only NIL and a
+                    Boolean which is false evaluate to false.
+                }
+
+        \command{lnand}
+                {N : Value}
+                {Boolean}
+                {
+                    Logical NAND between all arguments, whereas only NIL and a
+                    Boolean which is false evaluate to false.
+                }
+
+        \command{lor}
+                {N : Value}
+                {Boolean}
+                {
+                    Logical OR between all arguments, whereas only NIL and a
+                    Boolean which is false evaluate to false.
+                }
+
+        \command{lnor}
+                {N : Value}
+                {Boolean}
+                {
+                    Logical NOR between all arguments, whereas only NIL and a
+                    Boolean which is false evaluate to false.
+                }
+
+        \command{lxor}
+                {N : Value}
+                {Boolean}
+                {
+                    Logical XOR between all arguments, whereas only NIL and a
+                    Boolean which is false evaluate to false.
+                }
+
+    \end{commands}
+
+\subsubsection{Bitwise commands}
+
+    \begin{commands}
+
+        \command{bnot}
+                {Integer}
+                {Boolean}
+                {
+                    Does a logical NOT on the integer.
+                }
+
+        \command{band}
+                {N : Integer}
+                {Boolean}
+                {
+                    Does a logical AND between all arguments.
+                }
+
+        \command{bnand}
+                {N : Integer}
+                {Boolean}
+                {
+                    Does a bitwise AND between all arguments and does a binary
+                    NOT on that value.
+                }
+
+        \command{bor}
+                {N : Integer}
+                {Boolean}
+                {
+                    Does a binary OR between all arguments.
+                }
+
+        \command{bnor}
+                {N : Integer}
+                {Boolean}
+                {
+                    Does a binary OR between all arguments and does a binary
+                    NOT on that value.
+                }
+
+        \command{bxor}
+                {N : Integer}
+                {Boolean}
+                {
+                    Does a binary XOR between all arguments.
+                }
+
+    \end{commands}
+
+% Special commands
+
+    % \begin{commands}
+    %
+    % \end{commands}
