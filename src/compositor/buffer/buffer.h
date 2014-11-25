@@ -84,6 +84,8 @@ extern ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER;
  *
  * @memberof ws_buffer
  *
+ * @note Gets ref on the object via ws_object_init()
+ *
  * @return zero on success, else negative errno.h constant
  */
 int
