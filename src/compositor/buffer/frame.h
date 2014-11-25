@@ -74,6 +74,8 @@ extern ws_buffer_type_id WS_OBJECT_TYPE_ID_FRAME_BUFFER;
  *
  * @memberof ws_frame_buffer
  *
+ * @note Gets ref on the object via ws_buffer_init()
+ *
  * @return the device on success, NULL on failure
  */
 struct ws_frame_buffer*
