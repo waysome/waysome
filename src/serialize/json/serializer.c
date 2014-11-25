@@ -148,21 +148,19 @@ struct ws_serializer*
 ws_serializer_json_serializer_new(void)
 {
     struct ws_serializer* ser = calloc(1, sizeof(*ser));
-
     if (!ser) {
         return NULL;
     }
 
     ser->state = serializer_context_new();
-
     if (!ser->state) {
         free(ser);
         return NULL;
     }
 
-    ser->buffer = NULL;
-    ser->serialize = serialize;
-    ser->deinit = NULL;
+    ser->buffer     = NULL;
+    ser->serialize  = serialize;
+    ser->deinit     = NULL;
 
     return ser;
 }
@@ -183,8 +181,6 @@ serialize(
         return -ENOENT;
     }
 
-    ws_object_type_id* type = self->buffer->obj.id;
-
     struct serializer_context* ctx = (struct serializer_context*) self->state;
     if (ctx->current_state == STATE_NO_STATE ||
             ctx->current_state == STATE_INIT_STATE) {
@@ -192,7 +188,6 @@ serialize(
         ctx->current_state = STATE_INIT_STATE; // if in NO_STATE
 
         yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
-
         if (stat != yajl_gen_status_ok) {
             //!< @todo error opening map, what to do now?
             return -1;
@@ -205,37 +200,47 @@ serialize(
         goto write_buffer;
     }
 
-    do {
-        int retval = 0;
-        if (type == &WS_OBJECT_TYPE_ID_EVENT) {
-            retval = serialize_event(self);
+    {
+        bool serialized = false;
+        /*
+         * Map from type -> serializing function
+         */
+        static const struct {
+            ws_object_type_id* type;
+            int (*serf)(struct ws_serializer*);
+        } FUNC_TAB[] = {
+            {
+                .type = &WS_OBJECT_TYPE_ID_EVENT,
+                .serf = serialize_event
+            },
+            {
+                .type = &WS_OBJECT_TYPE_ID_ERROR_REPLY,
+                .serf = serialize_reply_error_reply,
+            },
+            {
+                .type = &WS_OBJECT_TYPE_ID_VALUE_REPLY,
+                .serf = serialize_reply_value_reply,
+            }
+        };
+
+        for (size_t i = 0; i < ARYLEN(FUNC_TAB); ++i) {
+            if (FUNC_TAB[i].type != self->buffer->obj.id) {
+                continue;
+            }
+
+            int retval = FUNC_TAB[i].serf(self);
             if (retval < 0) {
                 //!< @todo something went wrong serializing the event. Error?
                 return retval;
             }
+            serialized = true;
             break;
         }
 
-        if (type == &WS_OBJECT_TYPE_ID_ERROR_REPLY) {
-            retval = serialize_reply_error_reply(self);
-            if (retval < 0) {
-                //!< @todo something went wrong serializing the error. Error?
-                return retval;
-            }
-            break;
+        if (!serialized) {
+            return -EINVAL;
         }
-
-        if (type == &WS_OBJECT_TYPE_ID_VALUE_REPLY) {
-            retval = serialize_reply_value_reply(self);
-            if (retval < 0) {
-                //!< @todo something went wrong serializing the reply. Error?
-                return retval;
-            }
-            break;
-        }
-
-        return -EINVAL;
-    } while (0);
+    }
 
     { // lets close the main map now.
         yajl_gen_status stat = yajl_gen_map_close(ctx->yajlgen);
@@ -259,6 +264,8 @@ write_buffer:
     if (ctx->yajl_buffer_size <= nbuf) {
         // We are ready now, as the yajl buffer is smaller or of equal size
         // as the buffer we just wrote to
+
+        //!< @todo do I need to free the self->buffer object here?
         self->buffer = NULL; // "I am ready here!"
     } else {
         // We must wait until we get a buffer where we can write the rest
@@ -274,45 +281,40 @@ static int
 serialize_reply_error_reply(
     struct ws_serializer* self
 ) {
-    yajl_gen_status stat;
     struct ws_error_reply* r = (struct ws_error_reply*) self->buffer;
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
-    if (gen_key(ctx, (char*) &ERROR_CODE)) {
+    if (gen_key(ctx, ERROR_CODE)) {
         //!< @todo error?
         return -1;
     }
 
-    unsigned int code = ws_error_reply_get_code(r);
-    stat = yajl_gen_integer(ctx->yajlgen, code);
+    yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen,
+                                            ws_error_reply_get_code(r));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
     }
 
-    if (gen_key(ctx, (char*) &ERROR_DESC)) {
+    if (gen_key(ctx, ERROR_DESC)) {
         //!< @todo error?
         return -1;
     }
 
-    char const* desc = ws_error_reply_get_description(r);
-    stat = yajl_gen_string(ctx->yajlgen,
-                           (unsigned char*) desc,
-                           strlen(desc));
+    char const* tmp = ws_error_reply_get_description(r);
+    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
     }
 
-    if (gen_key(ctx, (char*) &ERROR_CAUSE)) {
+    if (gen_key(ctx, ERROR_CAUSE)) {
         //!< @todo error?
         return -1;
     }
 
-    char const* cause = ws_error_reply_get_cause(r);
-    stat = yajl_gen_string(ctx->yajlgen,
-                           (unsigned char*) cause,
-                           strlen(cause));
+    tmp = ws_error_reply_get_cause(r);
+    stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
@@ -329,7 +331,7 @@ serialize_reply_value_reply(
 
     // We haven't serialized anything
     // generate the key for the value reply
-    if (gen_key(ctx, (char*) &VALUE)) {
+    if (gen_key(ctx, VALUE)) {
         //!< @todo error?
         return -1;
     }
@@ -340,7 +342,7 @@ serialize_reply_value_reply(
         return -1;
     }
 
-    if (gen_key(ctx, (char*) &TRANSACTION_ID)) {
+    if (gen_key(ctx, TRANSACTION_ID)) {
         //!< @todo error?
         return -1;
     }
@@ -359,44 +361,39 @@ static int
 serialize_event(
     struct ws_serializer* self
 ) {
-    yajl_gen_status stat;
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
     // We haven't serialized anything
     // generate the key for the event message
-    if (gen_key(ctx, (char*) &EVENT)) {
+    if (gen_key(ctx, EVENT)) {
         //!< @todo error?
         return -1;
     }
     // We also know already what we have to serialize, so... let's try it
 
     // We have a JSON Object "event"
-    {
-        stat = yajl_gen_map_open(ctx->yajlgen);
-        if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
-            return -1;
-        }
-    }
-
-    // We have a '{ "event" : {' in the buffer by now
-    if (gen_key(ctx, (char*) &EVENT_CTX)) {
+    yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
+    if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
     }
 
+    // We have a '{ "event" : {' in the buffer by now
+    if (gen_key(ctx, EVENT_CTX)) {
+        //!< @todo error?
+        return -1;
+    }
+
+    struct ws_event* ev = (struct ws_event*) self->buffer;
+
     // We have a '{ "event" : { "context" : ' in the buffer by now
-    {
-        struct ws_event* ev = (struct ws_event*) self->buffer;
-        int res = serialize_value(ctx, &ev->context.value);
-        if (res != 0) {
-            //!< @todo error?
-            return -1;
-        }
+    if (serialize_value(ctx, &ev->context.value) != 0) {
+        //!< @todo error?
+        return -1;
     }
 
     // We have a '{ "event" : { <context:map> ' in the buffer by now
-    if (gen_key(ctx, (char*) &EVENT_NAME)) {
+    if (gen_key(ctx, EVENT_NAME)) {
         //!< @todo error?
         return -1;
     }
@@ -405,7 +402,6 @@ serialize_event(
     //  '{ "event" : { <context:map>, "name": '
     // in the buffer by now
     {
-        struct ws_event* ev = (struct ws_event*) self->buffer;
         char* plain = ws_string_raw(&ev->name);
         size_t len = ws_string_len(&ev->name);
 
@@ -416,12 +412,11 @@ serialize_event(
         }
     }
 
-    { // lets close the event map now.
-        stat = yajl_gen_map_close(ctx->yajlgen);
-        if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
-            return -1;
-        }
+    // lets close the event map now.
+    stat = yajl_gen_map_close(ctx->yajlgen);
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
     }
 
     ctx->current_state = STATE_READY;
@@ -439,13 +434,7 @@ serialize_value(
     case WS_VALUE_TYPE_NONE:
     case WS_VALUE_TYPE_VALUE:
     case WS_VALUE_TYPE_NIL:
-        {
-            stat = yajl_gen_null(ctx->yajlgen);
-            if (stat != yajl_gen_status_ok) {
-                //!< @todo error?
-                return -1;
-            }
-        }
+        stat = yajl_gen_null(ctx->yajlgen);
         break;
     case WS_VALUE_TYPE_BOOL:
         {
@@ -467,7 +456,6 @@ serialize_value(
             str = ws_value_string_get((struct ws_value_string*) val);
 
             char* buf = ws_string_raw(str);
-
             stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) buf,
                                    strlen(buf));
         }
@@ -486,36 +474,33 @@ serialize_value(
                 return -1;
             }
 
-            struct ws_object* object = NULL;
-
             switch (ws_value_get_type(val)) {
             case WS_VALUE_TYPE_OBJECT_ID:
                 { // value for object-id JSON object
                     struct ws_value_object_id* obj_id;
                     obj_id = (struct ws_value_object_id*) val;
-                    object = ws_value_object_id_get(obj_id);
+                    struct ws_object* object = ws_value_object_id_get(obj_id);
+                    if (serialize_object_to_id_string(ctx, object)) {
+                        //!< @todo error?
+                        return -1;
+                    }
                 }
                 break;
 
             case WS_VALUE_TYPE_SET:
-                {
-                    stat = yajl_gen_array_open(ctx->yajlgen);
-                    if (stat != yajl_gen_status_ok) {
-                        //!< @todo error?
-                        return -1;
-                    }
-
-                    ws_value_set_select((struct ws_value_set*) val, NULL, NULL,
-                            (int (*)(void*, void const*))
-                                serialize_object_to_id_string,
-                            ctx);
-
-                    stat = yajl_gen_array_close(ctx->yajlgen);
-                    if (stat != yajl_gen_status_ok) {
-                        //!< @todo error?
-                        return -1;
-                    }
+                stat = yajl_gen_array_open(ctx->yajlgen);
+                if (stat != yajl_gen_status_ok) {
+                    //!< @todo error?
+                    return -1;
                 }
+
+                //!< @todo check return value ... might return before ready
+                ws_value_set_select((struct ws_value_set*) val, NULL, NULL,
+                        (int (*)(void*, void const*))
+                            serialize_object_to_id_string,
+                        ctx);
+
+                stat = yajl_gen_array_close(ctx->yajlgen);
                 break;
 
             case WS_VALUE_TYPE_NAMED:
@@ -527,22 +512,18 @@ serialize_value(
                 return -1;
             }
 
-            if (serialize_object_to_id_string(ctx, object)) {
-                //!< @todo error?
-                return -1;
-            }
-
             if (stat != yajl_gen_status_ok) {
                 //!< @todo error?
                 return -1;
             }
 
             stat = yajl_gen_map_close(ctx->yajlgen);
-            if (stat != yajl_gen_status_ok) {
-                //!< @todo error?
-                return -1;
-            }
         }
+    }
+
+    if (stat != yajl_gen_status_ok) {
+        //!< @todo error?
+        return -1;
     }
 
     return 0;
@@ -560,8 +541,8 @@ serialize_object_to_id_string(
     snprintf(buff, bufflen, "%"PRIxMAX, uuid);
 
     yajl_gen_status stat = yajl_gen_string(ctx->yajlgen,
-                           (unsigned char*) buff,
-                           bufflen - 1);
+                                           (unsigned char*) buff,
+                                           bufflen - 1);
     if (stat != yajl_gen_status_ok) {
         //!< @todo error?
         return -1;
