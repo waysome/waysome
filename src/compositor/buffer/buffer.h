@@ -98,6 +98,8 @@ ws_buffer_init(
  *
  * @warning to not pass NULL to this function! It will crash!
  *
+ * @note Should be called with ref on argument already aquired!
+ *
  * @memberof ws_buffer
  *
  * @return pointer to the buffer's contents
@@ -113,6 +115,8 @@ __ws_nonnull__(1)
  * Get the buffer's width
  *
  * @warning to not pass NULL to this function! It will crash!
+ *
+ * @note Should be called with ref on argument already aquired!
  *
  * @memberof ws_buffer
  *
@@ -130,6 +134,8 @@ __ws_nonnull__(1)
  *
  * @warning to not pass NULL to this function! It will crash!
  *
+ * @note Should be called with ref on argument already aquired!
+ *
  * @memberof ws_buffer
  *
  * @return height of the buffer's contents
@@ -145,6 +151,8 @@ __ws_nonnull__(1)
  * Get the buffer's stride
  *
  * @warning to not pass NULL to this function! It will crash!
+ *
+ * @note Should be called with ref on argument already aquired!
  *
  * @memberof ws_buffer
  *
@@ -162,6 +170,8 @@ __ws_nonnull__(1)
  *
  * @warning to not pass NULL to this function! It will crash!
  *
+ * @note Should be called with ref on argument already aquired!
+ *
  * @memberof ws_buffer
  *
  * @return format of the buffer's contents
@@ -175,6 +185,8 @@ __ws_nonnull__(1)
 
 /**
  * Get the buffer's bits per pixel
+ *
+ * @note Should be called with ref on argument already aquired!
  *
  * @memberof ws_buffer
  *
@@ -190,6 +202,8 @@ __ws_nonnull__(1)
 /**
  * Begin buffer access
  *
+ * @note Should be called with ref on argument already aquired!
+ *
  * @memberof ws_buffer
  *
  * @warning to not pass NULL to this function! It will crash!
@@ -203,6 +217,8 @@ __ws_nonnull__(1)
 /**
  * End buffer access
  *
+ * @note Should be called with ref on argument already aquired!
+ *
  * @memberof ws_buffer
  *
  * @warning to not pass NULL to this function! It will crash!
@@ -215,6 +231,8 @@ __ws_nonnull__(1)
 ;
 /**
  * Blit two buffers together (This copies one into the other)
+ *
+ * @note Should be called with ref on argument already aquired!
  *
  * @memberof ws_buffer
  *
