@@ -52,6 +52,9 @@ ws_action_manager_init(
 /**
  * Process a transaction
  *
+ * @note Should be called with reference on the transaction message already
+ * aquired.
+ *
  * @return the reply caused by the transaction being processed
  */
 struct ws_reply*
@@ -82,6 +85,8 @@ __ws_nonnull__(1, 2)
  *
  * @note undos what `ws_action_manager_register()` does
  *
+ * @note Should be called with already aquired ref on argument.
+ *
  * @return 0 on success, a negative error number otherwise
  */
 int
@@ -96,6 +101,8 @@ __ws_nonnull__(1)
  *
  * @note after removal, the transaction cannot be registered to be run on
  *       events any more, existing registrations are, however, not removed
+ *
+ * @note Should be called with already aquired ref on argument.
  *
  * @return 0 on success, a negative error number otherwise
  */
