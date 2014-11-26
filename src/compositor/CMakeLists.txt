@@ -27,6 +27,7 @@ set(SOURCE_FILES
     buffer/egl.c
     buffer/frame.c
     buffer/image.c
+    buffer/raw_buffer.c
     cursor.c
     framebuffer_device.c
     keyboard.c
