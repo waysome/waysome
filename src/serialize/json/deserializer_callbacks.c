@@ -570,6 +570,7 @@ yajl_map_key_cb(
     case STATE_MSG:
     case STATE_FLAGS_MAP:
         // We're running into a top-level key here, lets decide what comes next:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as top-level key");
         state->current_state = get_next_state_for_string(state->current_state,
                                                          key);
         break;
@@ -581,6 +582,7 @@ yajl_map_key_cb(
             char buf[len + 1];
             strncpy(buf, (char*) key, len);
             buf[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as command name (%s)", buf);
 
             state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
             if (!state->tmp_statement) {
@@ -602,10 +604,12 @@ yajl_map_key_cb(
         if (0 != strncmp((char*) key, POS, len)) {
             return 0;
         }
+        ws_log(&log_ctx, LOG_DEBUG, "Using as key for stack position argument");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
