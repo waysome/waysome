@@ -167,6 +167,8 @@ deserialize_state_new(
     state->ev_name          = NULL;
     state->has_event        = false;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Allocated deserializer internal state");
+
     return state;
 }
 
