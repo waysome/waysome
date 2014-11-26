@@ -275,6 +275,7 @@ yajl_integer_cb(
         return 1;
 
     case STATE_UID:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as UID");
         if (d->buffer) {
             // Hey, we have a message object, set the ID directly
             d->buffer->id = i; //!< @todo visibility violation here
@@ -287,6 +288,7 @@ yajl_integer_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as direct argument");
             struct ws_value_int* _i = calloc(1, sizeof(_i));
             if (!_i) {
                 //!< @todo error
@@ -306,6 +308,7 @@ yajl_integer_cb(
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as indirect stack position");
         ws_statement_append_indirect(state->tmp_statement, i);
 
         // Keep the state for now.
@@ -313,6 +316,8 @@ yajl_integer_cb(
         break;
 
     case STATE_COMMAND_ARY_COMMAND_NAME:
+        ws_log(&log_ctx, LOG_DEBUG,
+               "Using as counter for number of implicit arguments");
         state->tmp_statement->args.num = i;
         state->tmp_statement->args.vals = NULL;
 
@@ -322,6 +327,7 @@ yajl_integer_cb(
     case STATE_EVENT_VALUE:
         // event value is an integer
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value");
             state->has_event = true;
             struct ws_value_int* n = calloc(1, sizeof(*n));
             if (!n) {
@@ -337,6 +343,7 @@ yajl_integer_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
