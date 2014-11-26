@@ -795,6 +795,7 @@ void
 finalize_message(
     struct ws_deserializer* d
 ) {
+    ws_log(&log_ctx, LOG_DEBUG, "Finalizing message");
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
     if (d->buffer == NULL && !state->has_event) {
