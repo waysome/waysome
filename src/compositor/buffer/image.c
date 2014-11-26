@@ -51,59 +51,10 @@ deinit_buffer(
 );
 
 /**
- * Compare callback for buffer type
- */
-static int
-cmp_buffer(
-    struct ws_object const* obj1,
-    struct ws_object const* obj2
-);
-
-/**
  * Data getter callback for buffer type
  */
 static void*
 get_data(
-    struct ws_buffer const* self
-);
-
-/**
- * Height getter callback for buffer type
- */
-static int32_t
-get_height(
-    struct ws_buffer const* self
-);
-
-/**
- * Width getter callback for buffer type
- */
-static int32_t
-get_width(
-    struct ws_buffer const* self
-);
-
-/**
- * Stride getter callback for buffer type
- */
-static int32_t
-get_stride(
-    struct ws_buffer const* self
-);
-
-/**
- * Format getter callback for buffer type
- */
-static uint32_t
-get_format(
-    struct ws_buffer const* self
-);
-
-/**
- * BPP getter callback for buffer type
- */
-static uint32_t
-get_bpp(
     struct ws_buffer const* self
 );
 
@@ -115,23 +66,23 @@ get_bpp(
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .type = {
-        .supertype  = (ws_object_type_id*)&WS_OBJECT_TYPE_ID_BUFFER,
+        .supertype  = (ws_object_type_id*)&WS_OBJECT_TYPE_ID_RAW_BUFFER,
         .typestr    = "ws_image_buffer",
 
         .hash_callback = NULL,
 
         .deinit_callback = deinit_buffer,
-        .cmp_callback = cmp_buffer,
+        .cmp_callback = NULL,
 
         .attribute_table = NULL,
         .function_table = NULL,
     },
     .get_data = get_data,
-    .get_width = get_width,
-    .get_height = get_height,
-    .get_stride = get_stride,
-    .get_format = get_format,
-    .get_bpp = get_bpp,
+    .get_width = NULL,
+    .get_height = NULL,
+    .get_stride = NULL,
+    .get_format = NULL,
+    .get_bpp = NULL,
     .begin_access = NULL,
     .end_access = NULL,
 };
@@ -159,9 +110,9 @@ ws_image_buffer_from_png(
 
     img.format = PNG_FORMAT_BGRA;
     buff->buffer = calloc(1, PNG_IMAGE_SIZE(img));
-    buff->height = img.height;
-    buff->width = img.width;
-    buff->stride = PNG_IMAGE_ROW_STRIDE(img);
+    buff->raw.height = img.height;
+    buff->raw.width = img.width;
+    buff->raw.stride = PNG_IMAGE_ROW_STRIDE(img);
 
     if (!buff->buffer) {
         ws_log(NULL, LOG_ERR, "Could not allocate memory for image: '%s'",
@@ -181,9 +132,9 @@ struct ws_image_buffer*
 ws_image_buffer_new(void)
 {
     struct ws_image_buffer* tmp = calloc(1, sizeof(*tmp));
-    ws_buffer_init(&tmp->obj);
-    tmp->obj.obj.settings |= WS_OBJECT_HEAPALLOCED;
-    tmp->obj.obj.id = (ws_object_type_id *)&WS_OBJECT_TYPE_ID_IMAGE_BUFFER;
+    ws_buffer_init(&tmp->raw.obj);
+    tmp->raw.obj.obj.settings |= WS_OBJECT_HEAPALLOCED;
+    tmp->raw.obj.obj.id = (ws_object_type_id *)&WS_OBJECT_TYPE_ID_IMAGE_BUFFER;
     return tmp;
 }
 
@@ -202,62 +153,11 @@ deinit_buffer(
     return true;
 }
 
-static int
-cmp_buffer(
-    struct ws_object const* obj1,
-    struct ws_object const* obj2
-) {
-    struct ws_image_buffer* buff1 = (struct ws_image_buffer*) obj1;
-    struct ws_image_buffer* buff2 = (struct ws_image_buffer*) obj2;
-    int cmp = strcmp(buff1->path, buff2->path);
-    return signum(cmp);
-}
-
 static void*
 get_data(
     struct ws_buffer const* self
 ) {
     struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
     return buff->buffer;
-}
-
-static int32_t
-get_height(
-    struct ws_buffer const* self
-) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
-    return  buff->height;
-}
-
-static int32_t
-get_width(
-    struct ws_buffer const* self
-) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
-    return buff->width;
-}
-
-static int32_t
-get_stride(
-    struct ws_buffer const* self
-) {
-    struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
-    return buff->stride;
-}
-
-static uint32_t
-get_format(
-    struct ws_buffer const* self
-) {
-    //struct ws_image_buffer* buff = (struct ws_image_buffer*) self;
-    return 0; //!< @todo: unused (But maybe of use later)
-}
-
-static uint32_t
-get_bpp(
-    struct ws_buffer const* self
-) {
-    // This is the amount of bytes per pixel (BGRA)
-    return 4;
 }
 

@@ -29,20 +29,16 @@
 #define __WS_BACKGROUND_SERVICE_H__
 
 #include "compositor/buffer/buffer.h"
+#include "compositor/buffer/raw_buffer.h"
 
 /**
+ * Image buffer type
  *
- * @extends ws_buffer
+ * @extends ws_raw_image_buffer
  */
 struct ws_image_buffer {
-    struct ws_buffer obj;   //!< @protected Base class.
-    char* path;             //!< @protected
-    int bytesize;           //!< @protected
-    int height;             //!< @protected
-    int stride;             //!< @protected
-    int width;              //!< @protected
-    int size;               //!< @protected
-    void* buffer;           //!< @protected
+    struct ws_raw_buffer raw;   //!< @protected Base class.
+    void* buffer;               //!< @private The buffer
 };
 
 /**
