@@ -380,6 +380,7 @@ yajl_string_cb(
         return 0;
 
     case STATE_TYPE:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as type identifier");
         if (0 == strncmp(TYPE_TRANSACTION, (char*) str,
                     strlen(TYPE_TRANSACTION))) {
             setup_transaction(d);
@@ -395,6 +396,7 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as argument (%s)", buff);
 
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
@@ -428,6 +430,8 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*)str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG,
+                   "Using as identifier for registration (%s)", buff);
 
             int res = ws_string_set_from_raw(state->register_name, buff);
             if (res != 0) {
@@ -453,6 +457,7 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event name (%s)", buff);
 
             int res = ws_string_set_from_raw(state->ev_name, buff);
             if (res != 0) {
@@ -481,6 +486,7 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value (%s)", buff);
 
             int res = ws_string_set_from_raw(sstr, buff);
             if (res != 0) {
