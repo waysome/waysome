@@ -204,6 +204,8 @@ yajl_boolean_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
+            ws_log(&log_ctx, LOG_DEBUG,
+                   "Appending as Command argument (directly)");
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!boo) {
                 //!< @todo error
@@ -222,6 +224,7 @@ yajl_boolean_cb(
         break;
 
     case STATE_FLAGS_EXEC:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as transaction exec-flag");
         if (b) {
             state->flags |= WS_TRANSACTION_FLAGS_EXEC; // set
         } else {
@@ -233,6 +236,7 @@ yajl_boolean_cb(
     case STATE_EVENT_VALUE:
         // event value is a boolean
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value");
             state->has_event = true;
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!b) {
@@ -248,6 +252,7 @@ yajl_boolean_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
