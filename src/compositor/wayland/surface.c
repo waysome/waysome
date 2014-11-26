@@ -380,6 +380,11 @@ surface_commit_cb(
     struct wl_resource* resource
 ) {
     struct ws_surface* s = wl_resource_get_user_data(resource);
+
+    if (s->role == &wl_pointer_interface) {
+        return;
+    }
+
     ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
                   sf_commit_blit, &s->img_buf);
 
