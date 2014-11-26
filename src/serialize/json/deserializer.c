@@ -123,6 +123,7 @@ ws_serializer_json_deserializer_new(void)
 
     d->deserialize = deserialize;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Allocated deserializer");
     return d;
 }
 
