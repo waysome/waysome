@@ -649,25 +649,31 @@ yajl_end_map_cb(
         state->tmp_statement = NULL;
 
         state->current_state = STATE_COMMAND_ARY;
+        ws_log(&log_ctx, LOG_DEBUG, "Finished command");
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished command arg: Indirect stack pos");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished command arguments");
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
         break;
 
     case STATE_FLAGS_MAP:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished flags");
         state->current_state = STATE_MSG;
         break;
 
     case STATE_MSG:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished message");
         state->current_state = STATE_INIT;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
