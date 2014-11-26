@@ -125,6 +125,7 @@ ws_value_union_reinit(
 
     case WS_VALUE_TYPE_OBJECT_ID:
         ws_value_object_id_init(&self->object_id);
+        break;
 
     case WS_VALUE_TYPE_SET:
         return ws_value_set_init(&self->set);
