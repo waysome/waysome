@@ -49,6 +49,8 @@ deinit_transaction(
 
 /**
  * Compare two transactions
+ *
+ * @note Guaranteed to be read-locked when called from ws_object_cmp().
  */
 static int
 cmp_transactions(

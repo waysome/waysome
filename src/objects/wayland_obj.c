@@ -50,6 +50,8 @@ hash_callback(
 
 /**
  * Compare callback for `ws_wayland_obj` type
+ *
+ * @note Guaranteed to be read-locked when called from ws_object_cmp().
  */
 int
 cmp_callback(

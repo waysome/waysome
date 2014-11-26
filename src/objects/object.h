@@ -505,6 +505,8 @@ __ws_nonnull__(1, 2)
  *
  * @warning If the type has no compare callback, the return value is undefined.
  *
+ * @note Aquires read-locks on both objects.
+ *
  * @return -1 if `o1` is bigger, zero if they are equal, 1 if `o2` is bigger
  */
 int
