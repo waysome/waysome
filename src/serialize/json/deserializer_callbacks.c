@@ -703,17 +703,20 @@ yajl_start_array_cb(
         return 1;
 
     case STATE_COMMANDS:
+        ws_log(&log_ctx, LOG_DEBUG, "Start command array");
         setup_transaction(d);
         state->current_state = STATE_COMMAND_ARY;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_NAME:
+        ws_log(&log_ctx, LOG_DEBUG, "Start command arguments");
         // We are in the command name state and the next thing is an array, so
         // we must allocate the command argument array here.
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
