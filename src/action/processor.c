@@ -31,8 +31,19 @@
 #include "action/processor_stack.h"
 #include "command/command.h"
 #include "command/statement.h"
+#include "logger/module.h"
 #include "objects/message/transaction.h"
 #include "values/union.h"
+
+/*
+ *
+ * Variables
+ *
+ */
+
+static struct ws_logger_context log_ctx = {
+    .prefix = "[Action processor] ",
+};
 
 /*
  *
