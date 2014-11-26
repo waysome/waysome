@@ -49,7 +49,7 @@
 /**
  * ws_framebuffer type definition
  *
- * @extends ws_object
+ * @extends ws_image_buffer
  *
  * The ws_framebuffer
  */
