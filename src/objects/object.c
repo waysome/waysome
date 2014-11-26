@@ -198,7 +198,7 @@ ws_object_init(
         self->settings = WS_OBJ_NO_SETTINGS;
 
         pthread_rwlock_init(&self->rw_lock, NULL);
-        pthread_rwlock_init(&self->ref_counting.rwl, NULL);
+        pthread_mutex_init(&self->ref_counting.lock, NULL);
         self->ref_counting.refcnt = 1;
 
         self->uuid = 0;
@@ -219,9 +219,12 @@ ws_object_getref(
         return self;
     }
 
-    ws_object_lock_write(self);
+    if (pthread_mutex_lock(&self->ref_counting.lock) != 0) {
+        return NULL;
+    };
     self->ref_counting.refcnt++;
-    ws_object_unlock(self);
+    pthread_mutex_unlock(&self->ref_counting.lock);
+
     return self;
 }
 
@@ -233,19 +236,18 @@ ws_object_unref(
         return;
     }
 
-    ws_object_lock_write(self);
+    if (pthread_mutex_lock(&self->ref_counting.lock) != 0) {
+        return;
+    };
     self->ref_counting.refcnt--;
 
     if (self->ref_counting.refcnt) {
-        ws_object_unlock(self);
+        pthread_mutex_unlock(&self->ref_counting.lock);
         return;
     }
+    pthread_mutex_unlock(&self->ref_counting.lock);
 
-    if (self->id && self->id->deinit_callback) {
-        self->id->deinit_callback(self);
-    }
-
-    pthread_rwlock_destroy(&self->ref_counting.rwl);
+    ws_object_deinit(self);
     free(self);
 }
 
@@ -330,7 +332,7 @@ ws_object_deinit(
     }
 
     // destroy the locks
-    pthread_rwlock_destroy(&self->ref_counting.rwl);
+    pthread_mutex_destroy(&self->ref_counting.lock);
     pthread_rwlock_destroy(&self->rw_lock);
 }
 

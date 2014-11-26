@@ -192,7 +192,7 @@ struct ws_object {
     ws_object_type_id* id;        //!< Object id, identifies the actual type
 
     struct {
-        pthread_rwlock_t rwl;
+        pthread_mutex_t lock;
         size_t refcnt;
     } ref_counting; //!< @private Ref counting
 
