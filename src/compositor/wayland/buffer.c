@@ -30,6 +30,7 @@
 #include <wayland-server.h>
 
 #include "compositor/wayland/buffer.h"
+#include "logger/module.h"
 
 /*
  *
@@ -119,6 +120,8 @@ end_access(
  * Internal constant
  *
  */
+
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Surface] " };
 
 /**
  * Buffer type
@@ -332,5 +335,17 @@ end_access(
     // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     wl_shm_buffer_end_access(shm_buffer);
+}
+
+void
+ws_wayland_buffer_release(
+    struct ws_wayland_buffer* self
+) {
+    if (!self) {
+        ws_log(&log_ctx, LOG_ERR, "We got a NULL surface");
+        return;
+    }
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(&self->wl_obj);
+    wl_buffer_send_release(res);
 }
 

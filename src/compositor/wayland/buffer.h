@@ -94,5 +94,15 @@ ws_wayland_buffer_get_buffer(
     struct ws_wayland_buffer* self //!< The object itself
 );
 
+/**
+ * Release the wayland buffer to be drawn to again
+ *
+ * @memberof ws_wayland_buffer
+ */
+void
+ws_wayland_buffer_release(
+    struct ws_wayland_buffer* self //!< The object itself
+);
+
 #endif // __WS_WAYLAND_BUFFER_H__
 
