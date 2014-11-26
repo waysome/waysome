@@ -31,8 +31,19 @@
 #include "action/processor_stack.h"
 #include "command/command.h"
 #include "command/statement.h"
+#include "logger/module.h"
 #include "objects/message/transaction.h"
 #include "values/union.h"
+
+/*
+ *
+ * Variables
+ *
+ */
+
+static struct ws_logger_context log_ctx = {
+    .prefix = "[Action processor] ",
+};
 
 /*
  *
@@ -103,6 +114,7 @@ ssize_t
 ws_processor_exec(
     struct ws_processor* self
 ) {
+    ws_log(&log_ctx, LOG_DEBUG, "Starting processor %p", self);
     // keep a sentinel around for faster comparisons
     struct ws_statement const* aend;
     aend = self->commands->statements + self->commands->num;
@@ -115,11 +127,13 @@ ws_processor_exec(
         int res;
         switch(cur->command->command_type) {
         case regular:
+            ws_log(&log_ctx, LOG_DEBUG, "Regular exec");
             res = exec_regular(self->stack, cur->command->func.regular,
                                &cur->args);
             break;
 
         case special:
+            ws_log(&log_ctx, LOG_DEBUG, "Special exec");
             res = cur->command->func.special(self, &cur->args);
             break;
 
@@ -128,6 +142,7 @@ ws_processor_exec(
         }
 
         if (res != 0) {
+            ws_log(&log_ctx, LOG_DEBUG, "... failed");
             return res;
         }
     }
