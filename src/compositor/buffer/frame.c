@@ -39,7 +39,7 @@
 #include "objects/object.h"
 
 #include "compositor/buffer/frame.h"
-#include "compositor/buffer/image.h"
+#include "compositor/buffer/raw_buffer.h"
 #include "compositor/internal_context.h"
 
 
@@ -54,6 +54,11 @@ frame_buffer_deinit(
     struct ws_object* self
 );
 
+static void*
+frame_buffer_get_data(
+    struct ws_buffer const* self
+);
+
 /*
  *
  * Interface Implementation
@@ -62,7 +67,7 @@ frame_buffer_deinit(
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_FRAME_BUFFER = {
     .type = {
-        .supertype  = (ws_object_type_id*) &WS_OBJECT_TYPE_ID_IMAGE_BUFFER,
+        .supertype  = (ws_object_type_id*) &WS_OBJECT_TYPE_ID_RAW_BUFFER,
         .typestr    = "ws_frame_buffer",
 
         .hash_callback = NULL,
@@ -73,7 +78,7 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_FRAME_BUFFER = {
         .attribute_table = NULL,
         .function_table = NULL,
     },
-    .get_data = NULL,
+    .get_data = frame_buffer_get_data,
     .get_width = NULL,
     .get_height = NULL,
     .get_stride = NULL,
@@ -186,3 +191,12 @@ frame_buffer_deinit(
     ws_object_unref((struct ws_object*) self->fb_dev);
     return true;
 }
+
+static void*
+frame_buffer_get_data(
+    struct ws_buffer const* self
+) {
+    struct ws_frame_buffer const* buff = (struct ws_frame_buffer const*) self;
+    return buff->buffer;
+}
+

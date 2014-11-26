@@ -43,21 +43,22 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#include "compositor/buffer/image.h"
+#include "compositor/buffer/raw_buffer.h"
 #include "objects/object.h"
 
 /**
  * ws_framebuffer type definition
  *
- * @extends ws_object
+ * @extends ws_raw_buffer
  *
  * The ws_framebuffer
  */
 struct ws_frame_buffer {
-    struct ws_image_buffer obj; //!< @protected Base class.
+    struct ws_raw_buffer obj; //!< @protected Base class.
     struct ws_framebuffer_device* fb_dev; //!< @public Framebuffer Device
     uint32_t handle; //!< @public Handle of the frame buffer
     uint32_t fb; //!< @public id of the frame buffer
+    void* buffer; //!< @private The buffer
 };
 
 /**
