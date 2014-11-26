@@ -472,3 +472,22 @@ resource_destroy(
     ws_object_unref(&surface->wl_obj.obj);
 }
 
+int
+ws_surface_set_role(
+    struct ws_surface* self,
+    struct wl_interface const* role
+) {
+    int ret = -1;
+    ws_object_lock_write(&self->wl_obj.obj);
+
+    if (!self || !role || (self->role && (self->role != role))) {
+        goto unlock;
+    }
+
+    self->role = role;
+    ret = 0;
+unlock:
+    ws_object_unlock(&self->wl_obj.obj);
+    return ret;
+}
+

@@ -44,6 +44,7 @@ struct ws_surface {
     struct ws_wayland_buffer img_buf; //!< @protected image buffer
     struct ws_region* input_region; //!< @protected input region
     struct wl_resource* frame_callback; //!< @protected frame callback
+    struct wl_interface const* role; //!< @protected role of this surface
 };
 
 /**
@@ -76,6 +77,22 @@ ws_surface_new(
 struct ws_surface*
 ws_surface_from_resource(
     struct wl_resource* resource
+);
+
+/**
+ * Set the role of a surface
+ *
+ * By the wayland specification a surface can only have one type of role at
+ * a time and that until it gets deleted.
+ *
+ * @memberof ws_surface
+ *
+ * @return 0 on success and a negative value on failure
+ */
+int
+ws_surface_set_role(
+    struct ws_surface* self, //!< the surface
+    struct wl_interface const* role //!< our role
 );
 
 #endif // __WS_WL_SURFACE_H__
