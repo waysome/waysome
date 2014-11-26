@@ -139,7 +139,9 @@ ws_wayland_obj_set_wl_resource(
     struct ws_wayland_obj* self,
     struct wl_resource* resource
 ) {
+    ws_object_lock_write(&self->obj);
     self->resource = resource;
+    ws_object_unlock(&self->obj);
 }
 
 /*

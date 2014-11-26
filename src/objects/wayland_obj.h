@@ -102,6 +102,8 @@ ws_wayland_obj_get_wl_resource(
  * Set the wl_resource to encapsulate in the ws_wayland_obj object
  *
  * @memberof ws_wayland_obj
+ *
+ * @note Write-locks the object for modifying it.
  */
 void
 ws_wayland_obj_set_wl_resource(
