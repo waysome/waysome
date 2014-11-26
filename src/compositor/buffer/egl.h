@@ -58,6 +58,25 @@ struct ws_egl_buffer {
 extern ws_buffer_type_id WS_OBJECT_TYPE_ID_EGL_BUFFER;
 
 /**
+ * Initialize a new EGL buffer for use with a device
+ *
+ * @memberof ws_egl_buffer
+ *
+ * @return 0 if the operation was successful, a negative error code otherwise
+ */
+int
+ws_egl_buffer_init(
+    struct ws_egl_buffer* buffer,       //!< buffer to initialize
+    struct ws_framebuffer_device* dev,  //!< frame buffer device to bind to
+    EGLConfig egl_conf,                 //!< config to apply
+    uint32_t width,                     //!< width of the buffer
+    uint32_t height,                    //!< height of the buffer
+    uint32_t format                     //!< format of the buffer (from GBM)
+)
+__ws_nonnull__(1)
+;
+
+/**
  * Create a new EGL buffer from a gbm device, an EGL display and config
  *
  * @memberof ws_egl_buffer
