@@ -83,6 +83,63 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_EGL_BUFFER = {
  *
  */
 
+int
+ws_egl_buffer_init(
+    struct ws_egl_buffer* self,
+    struct ws_framebuffer_device* dev,
+    EGLConfig egl_conf,
+    uint32_t width,
+    uint32_t height,
+    uint32_t format
+) {
+    int res = ws_buffer_init(&self->buf);
+    if (res < 0) {
+        return res;
+    }
+    self->buf.obj.id = (ws_object_type_id *) &WS_OBJECT_TYPE_ID_EGL_BUFFER;
+
+    self->dev = getref(dev);
+    if (!dev) {
+        goto cleanup_obj;
+    }
+
+    struct gbm_device* gbm_dev;
+    gbm_dev = ws_framebuffer_device_get_gbm_dev(dev);
+    if (!gbm_dev) {
+        goto cleanup_ref;
+    }
+
+    self->gbm_surf = gbm_surface_create(gbm_dev, width, height, format,
+                                          GBM_BO_USE_SCANOUT |
+                                          GBM_BO_USE_RENDERING);
+    if (!self->gbm_surf) {
+        goto cleanup_ref;
+    }
+
+    EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(dev);
+    if (!egl_disp) {
+        goto cleanup_gbm;
+    }
+
+    self->egl_surf = eglCreateWindowSurface(egl_disp, egl_conf,
+                                              self->gbm_surf, NULL);
+    if (!self->egl_surf) {
+        goto cleanup_gbm;
+    }
+
+    return 0;
+
+cleanup_gbm:
+    gbm_surface_destroy(self->gbm_surf);
+
+cleanup_ref:
+    ws_object_unref((struct ws_object*) self->dev);
+
+cleanup_obj:
+    ws_object_deinit((struct ws_object*) self);
+    return -1;
+}
+
 struct ws_egl_buffer*
 ws_egl_buffer_new(
     struct ws_framebuffer_device* dev,
@@ -96,54 +153,14 @@ ws_egl_buffer_new(
         return NULL;
     }
 
-    if (ws_buffer_init(&retval->buf) < 0) {
-        goto cleanup_malloc;
+    if (ws_egl_buffer_init(retval, dev, egl_conf, width, height, format) < 0) {
+        free(retval);
+        return NULL;
     }
-    retval->buf.obj.id = (ws_object_type_id *) &WS_OBJECT_TYPE_ID_EGL_BUFFER;
     retval->buf.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
-    retval->dev = getref(dev);
-    if (!dev) {
-        goto cleanup_malloc;
-    }
-
-    struct gbm_device* gbm_dev;
-    gbm_dev = ws_framebuffer_device_get_gbm_dev(dev);
-    if (!gbm_dev) {
-        goto cleanup_ref;
-    }
-
-    retval->gbm_surf = gbm_surface_create(gbm_dev, width, height, format,
-                                          GBM_BO_USE_SCANOUT |
-                                          GBM_BO_USE_RENDERING);
-    if (!retval->gbm_surf) {
-        goto cleanup_ref;
-    }
-
-    EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(dev);
-    if (!egl_disp) {
-        goto cleanup_gbm;
-    }
-
-    retval->egl_surf = eglCreateWindowSurface(egl_disp, egl_conf,
-                                              retval->gbm_surf, NULL);
-    if (!retval->egl_surf) {
-        goto cleanup_gbm;
-    }
-
     return retval;
-
-cleanup_gbm:
-    gbm_surface_destroy(retval->gbm_surf);
-
-cleanup_ref:
-    ws_object_unref((struct ws_object*) retval->dev);
-
-cleanup_malloc:
-    free(retval);
-    return NULL;
 }
-
 
 /*
  *
