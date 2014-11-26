@@ -184,6 +184,12 @@ set_cursor(
     struct ws_surface* sf = ws_surface_from_resource(surface);
     struct ws_buffer* buffer = (struct ws_buffer*) &sf->img_buf.buf;
 
+    int ret = ws_surface_set_role(sf, &wl_pointer_interface);
+
+    if (ret < 0) {
+        return;
+    }
+
     ws_cursor_set_image(ws_comp_ctx.cursor, buffer);
     ws_cursor_set_hotspot(ws_comp_ctx.cursor, hotspot_x, hotspot_y);
 }
