@@ -40,6 +40,8 @@
 
 /**
  * Hashing callback for `ws_wayland_obj` type
+ *
+ * @note Read-locked via call from ws_object_hash()
  */
 static size_t
 hash_callback(
