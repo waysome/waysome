@@ -787,6 +787,7 @@ setup_transaction(
     self->buffer = (struct ws_message*) ws_transaction_new(0, NULL,
                                                            flags, NULL);
 
+    ws_log(&log_ctx, LOG_DEBUG, "Transaction setup finished");
     return 0;
 }
 
