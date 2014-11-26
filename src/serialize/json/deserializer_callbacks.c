@@ -740,11 +740,13 @@ yajl_end_array_cb(
         return 1;
 
     case STATE_COMMAND_ARY:
+        ws_log(&log_ctx, LOG_DEBUG, "Finish command array");
         // We are ready with the command array parsing now.
         state->current_state = STATE_MSG;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Finish command arguments");
         // The command argument array closes now, we are ready with the command
         // argument array parsing here. So we go back to the "new command"
         // state. The finalization is done after the map for the new command
@@ -754,6 +756,7 @@ yajl_end_array_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
