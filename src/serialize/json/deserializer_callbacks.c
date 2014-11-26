@@ -82,6 +82,11 @@ static const struct {
     { .str = NULL },
 };
 
+static struct ws_logger_context log_ctx = {
+    .prefix = "[JSON Deserializer, YAJL interface] ",
+};
+
+
 /*
  *
  * static function definitions
@@ -128,12 +133,17 @@ yajl_null_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: NULL");
+
     switch (state->current_state) {
     case STATE_INVALID:
         return 1;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
+            ws_log(&log_ctx, LOG_DEBUG,
+                   "Appending as Command argument (directly)");
+
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
                 //!< @todo error
@@ -154,6 +164,8 @@ yajl_null_cb(
     case STATE_EVENT_VALUE:
         // event value is NULL
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value");
+
             state->has_event = true;
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
@@ -168,6 +180,7 @@ yajl_null_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
 
@@ -183,12 +196,16 @@ yajl_boolean_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Bool (%i)", b);
+
     switch (state->current_state) {
     case STATE_INVALID:
         return 1;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
+            ws_log(&log_ctx, LOG_DEBUG,
+                   "Appending as Command argument (directly)");
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!boo) {
                 //!< @todo error
@@ -207,6 +224,7 @@ yajl_boolean_cb(
         break;
 
     case STATE_FLAGS_EXEC:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as transaction exec-flag");
         if (b) {
             state->flags |= WS_TRANSACTION_FLAGS_EXEC; // set
         } else {
@@ -218,6 +236,7 @@ yajl_boolean_cb(
     case STATE_EVENT_VALUE:
         // event value is a boolean
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value");
             state->has_event = true;
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!b) {
@@ -233,6 +252,7 @@ yajl_boolean_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -248,11 +268,14 @@ yajl_integer_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Integer (%lld)", i);
+
     switch (state->current_state) {
     case STATE_INVALID:
         return 1;
 
     case STATE_UID:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as UID");
         if (d->buffer) {
             // Hey, we have a message object, set the ID directly
             d->buffer->id = i; //!< @todo visibility violation here
@@ -265,6 +288,7 @@ yajl_integer_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as direct argument");
             struct ws_value_int* _i = calloc(1, sizeof(_i));
             if (!_i) {
                 //!< @todo error
@@ -284,6 +308,7 @@ yajl_integer_cb(
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as indirect stack position");
         ws_statement_append_indirect(state->tmp_statement, i);
 
         // Keep the state for now.
@@ -291,6 +316,8 @@ yajl_integer_cb(
         break;
 
     case STATE_COMMAND_ARY_COMMAND_NAME:
+        ws_log(&log_ctx, LOG_DEBUG,
+               "Using as counter for number of implicit arguments");
         state->tmp_statement->args.num = i;
         state->tmp_statement->args.vals = NULL;
 
@@ -300,6 +327,7 @@ yajl_integer_cb(
     case STATE_EVENT_VALUE:
         // event value is an integer
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value");
             state->has_event = true;
             struct ws_value_int* n = calloc(1, sizeof(*n));
             if (!n) {
@@ -315,6 +343,7 @@ yajl_integer_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -340,6 +369,8 @@ yajl_string_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: String (<unterminated>)");
+
     switch (state->current_state) {
     case STATE_INVALID:
         return 1;
@@ -349,6 +380,7 @@ yajl_string_cb(
         return 0;
 
     case STATE_TYPE:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as type identifier");
         if (0 == strncmp(TYPE_TRANSACTION, (char*) str,
                     strlen(TYPE_TRANSACTION))) {
             setup_transaction(d);
@@ -364,6 +396,7 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as argument (%s)", buff);
 
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
@@ -397,6 +430,8 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*)str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG,
+                   "Using as identifier for registration (%s)", buff);
 
             int res = ws_string_set_from_raw(state->register_name, buff);
             if (res != 0) {
@@ -422,6 +457,7 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event name (%s)", buff);
 
             int res = ws_string_set_from_raw(state->ev_name, buff);
             if (res != 0) {
@@ -450,6 +486,7 @@ yajl_string_cb(
             char buff[len + 1];
             strncpy(buff, (char*) str, len);
             buff[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value (%s)", buff);
 
             int res = ws_string_set_from_raw(sstr, buff);
             if (res != 0) {
@@ -477,6 +514,8 @@ yajl_start_map_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Map-Open");
+
     state->ncurvedbrackets++;
 
     switch (state->current_state) {
@@ -484,23 +523,28 @@ yajl_start_map_cb(
         return 1;
 
     case STATE_INIT:
+        ws_log(&log_ctx, LOG_DEBUG, "Starting message");
         state->current_state = STATE_MSG;
         break;
 
     case STATE_COMMAND_ARY:
         // We run into a new command here
+        ws_log(&log_ctx, LOG_DEBUG, "Starting new command");
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Starting new direct command argument");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT;
         break;
 
     case STATE_FLAGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Starting flag map");
         state->current_state = STATE_FLAGS_MAP;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -517,6 +561,8 @@ yajl_map_key_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Map-Key (<unterminated>)");
+
     switch (state->current_state) {
     case STATE_INVALID:
         return 1;
@@ -524,6 +570,7 @@ yajl_map_key_cb(
     case STATE_MSG:
     case STATE_FLAGS_MAP:
         // We're running into a top-level key here, lets decide what comes next:
+        ws_log(&log_ctx, LOG_DEBUG, "Using as top-level key");
         state->current_state = get_next_state_for_string(state->current_state,
                                                          key);
         break;
@@ -535,6 +582,7 @@ yajl_map_key_cb(
             char buf[len + 1];
             strncpy(buf, (char*) key, len);
             buf[len] = 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Using as command name (%s)", buf);
 
             state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
             if (!state->tmp_statement) {
@@ -554,12 +602,16 @@ yajl_map_key_cb(
     case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT:
         // If the key is a "pos" key, for a stack position, we continue here
         if (0 != strncmp((char*) key, POS, len)) {
-            return 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Invalid, expected position key");
+            state->current_state = STATE_INVALID;
+            break;
         }
+        ws_log(&log_ctx, LOG_DEBUG, "Using as key for stack position argument");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -573,6 +625,8 @@ yajl_end_map_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Map-End");
 
     state->ncurvedbrackets--;
 
@@ -595,25 +649,31 @@ yajl_end_map_cb(
         state->tmp_statement = NULL;
 
         state->current_state = STATE_COMMAND_ARY;
+        ws_log(&log_ctx, LOG_DEBUG, "Finished command");
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished command arg: Indirect stack pos");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished command arguments");
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
         break;
 
     case STATE_FLAGS_MAP:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished flags");
         state->current_state = STATE_MSG;
         break;
 
     case STATE_MSG:
+        ws_log(&log_ctx, LOG_DEBUG, "Finished message");
         state->current_state = STATE_INIT;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -634,6 +694,8 @@ yajl_start_array_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Array-Start");
+
     state->nboxbrackets++;
 
     switch (state->current_state) {
@@ -641,17 +703,20 @@ yajl_start_array_cb(
         return 1;
 
     case STATE_COMMANDS:
+        ws_log(&log_ctx, LOG_DEBUG, "Start command array");
         setup_transaction(d);
         state->current_state = STATE_COMMAND_ARY;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_NAME:
+        ws_log(&log_ctx, LOG_DEBUG, "Start command arguments");
         // We are in the command name state and the next thing is an array, so
         // we must allocate the command argument array here.
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -666,6 +731,8 @@ yajl_end_array_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Array-End");
+
     state->nboxbrackets--;
 
     switch (state->current_state) {
@@ -673,11 +740,13 @@ yajl_end_array_cb(
         return 1;
 
     case STATE_COMMAND_ARY:
+        ws_log(&log_ctx, LOG_DEBUG, "Finish command array");
         // We are ready with the command array parsing now.
         state->current_state = STATE_MSG;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Finish command arguments");
         // The command argument array closes now, we are ready with the command
         // argument array parsing here. So we go back to the "new command"
         // state. The finalization is done after the map for the new command
@@ -687,6 +756,7 @@ yajl_end_array_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
@@ -717,6 +787,7 @@ setup_transaction(
     self->buffer = (struct ws_message*) ws_transaction_new(0, NULL,
                                                            flags, NULL);
 
+    ws_log(&log_ctx, LOG_DEBUG, "Transaction setup finished");
     return 0;
 }
 
@@ -724,6 +795,7 @@ void
 finalize_message(
     struct ws_deserializer* d
 ) {
+    ws_log(&log_ctx, LOG_DEBUG, "Finalizing message");
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
     if (d->buffer == NULL && !state->has_event) {
