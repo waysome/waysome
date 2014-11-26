@@ -91,6 +91,8 @@ ws_wayland_obj_new(
  *
  * @memberof ws_wayland_obj
  *
+ * @note Read-locks the object for reading it.
+ *
  * @return the wl_resource instance from the object
  */
 struct wl_resource*

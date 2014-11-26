@@ -127,11 +127,14 @@ struct wl_resource*
 ws_wayland_obj_get_wl_resource(
     struct ws_wayland_obj* self
 ) {
+    struct wl_resource* res = NULL;
     if (self) {
-        return self->resource;
+        ws_object_lock_read(&self->obj);
+        res = self->resource;
+        ws_object_unlock(&self->obj);
     }
 
-    return NULL;
+    return res;
 }
 
 void
