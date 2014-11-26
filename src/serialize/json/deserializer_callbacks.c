@@ -602,7 +602,9 @@ yajl_map_key_cb(
     case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT:
         // If the key is a "pos" key, for a stack position, we continue here
         if (0 != strncmp((char*) key, POS, len)) {
-            return 0;
+            ws_log(&log_ctx, LOG_DEBUG, "Invalid, expected position key");
+            state->current_state = STATE_INVALID;
+            break;
         }
         ws_log(&log_ctx, LOG_DEBUG, "Using as key for stack position argument");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_INDIRECT_STACKPOS;
