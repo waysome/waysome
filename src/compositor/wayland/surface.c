@@ -26,6 +26,7 @@
  */
 
 #include <malloc.h>
+#include <time.h>
 
 // wayland-server.h has to be included before wayland-server-protocol.h
 #include <wayland-server.h>
@@ -337,6 +338,14 @@ surface_frame_cb(
     uint32_t callback
 ) {
     //!< @todo: implement
+
+    struct ws_surface* surface = ws_surface_from_resource(resource);
+    surface->frame_callback = ws_wayland_client_create_resource(client,
+                                           &wl_callback_interface, 1, callback);
+    if (!surface->frame_callback) {
+        return;
+    }
+    wl_resource_set_implementation(surface->frame_callback, NULL, NULL, NULL);
 }
 
 static void
@@ -373,6 +382,16 @@ surface_commit_cb(
     struct ws_surface* s = wl_resource_get_user_data(resource);
     ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
                   sf_commit_blit, &s->img_buf);
+
+    if (s->frame_callback) {
+        wl_callback_send_done(s->frame_callback,
+                                clock() / (CLOCKS_PER_SEC/1000));
+        wl_resource_destroy(s->frame_callback);
+        s->frame_callback = NULL;
+    }
+
+    ws_wayland_buffer_release(&s->img_buf);
+
 }
 
 static int
