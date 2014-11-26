@@ -523,23 +523,28 @@ yajl_start_map_cb(
         return 1;
 
     case STATE_INIT:
+        ws_log(&log_ctx, LOG_DEBUG, "Starting message");
         state->current_state = STATE_MSG;
         break;
 
     case STATE_COMMAND_ARY:
         // We run into a new command here
+        ws_log(&log_ctx, LOG_DEBUG, "Starting new command");
         state->current_state = STATE_COMMAND_ARY_NEW_COMMAND;
         break;
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Starting new direct command argument");
         state->current_state = STATE_COMMAND_ARY_COMMAND_ARG_DIRECT;
         break;
 
     case STATE_FLAGS:
+        ws_log(&log_ctx, LOG_DEBUG, "Starting flag map");
         state->current_state = STATE_FLAGS_MAP;
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
     }
