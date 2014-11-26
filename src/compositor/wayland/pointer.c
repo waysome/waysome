@@ -178,6 +178,9 @@ set_cursor(
     int32_t hotspot_x,
     int32_t hotspot_y
 ) {
+    if (!surface) {
+        return;
+    }
     struct ws_surface* sf = ws_surface_from_resource(surface);
     struct ws_buffer* buffer = (struct ws_buffer*) &sf->img_buf.buf;
 
