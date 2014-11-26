@@ -141,6 +141,9 @@ yajl_null_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
+            ws_log(&log_ctx, LOG_DEBUG,
+                   "Appending as Command argument (directly)");
+
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
                 //!< @todo error
@@ -161,6 +164,8 @@ yajl_null_cb(
     case STATE_EVENT_VALUE:
         // event value is NULL
         {
+            ws_log(&log_ctx, LOG_DEBUG, "Using as event value");
+
             state->has_event = true;
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
@@ -175,6 +180,7 @@ yajl_null_cb(
         break;
 
     default:
+        ws_log(&log_ctx, LOG_DEBUG, "INVALID");
         state->current_state = STATE_INVALID;
         break;
 
