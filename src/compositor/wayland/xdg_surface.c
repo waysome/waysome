@@ -367,6 +367,12 @@ ws_wayland_xdg_surface_new(
 
     self->surface = surface;
 
+    int ret = ws_surface_set_role(self->surface, &xdg_surface_interface);
+
+    if (ret < 0) {
+        goto cleanup;
+    }
+
     return self;
 cleanup:
     free(self);
