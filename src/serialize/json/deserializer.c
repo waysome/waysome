@@ -182,16 +182,21 @@ deserialize(
     struct deserializer_state* d    = self->state;
     size_t consumed                 = 0;
 
+    ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Start", self);
+
     while (isspace(*buffer)) {
         buffer++;
         consumed++;
         if (--nbuf == 0) {
             self->is_ready = true;
+            ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Stop", self);
             return consumed;
         }
     }
 
+    ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Start parsing", self);
     yajl_status stat = yajl_parse(d->handle, buffer, nbuf);
+    ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Parsing finished", self);
 
     if ((d->current_state == STATE_INVALID) && self->buffer) {
         ws_object_deinit(&self->buffer->obj);
@@ -204,6 +209,8 @@ deserialize(
                "We have an error in the JSON deserializing: %s", errstr);
         yajl_free_error(d->handle, errstr);
     }
+
+    ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Stop", self);
 
     return yajl_get_bytes_consumed(d->handle) + consumed;
 }
