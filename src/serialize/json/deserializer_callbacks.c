@@ -82,6 +82,11 @@ static const struct {
     { .str = NULL },
 };
 
+static struct ws_logger_context log_ctx = {
+    .prefix = "[JSON Deserializer, YAJL interface] ",
+};
+
+
 /*
  *
  * static function definitions
