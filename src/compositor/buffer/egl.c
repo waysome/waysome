@@ -110,7 +110,7 @@ ws_egl_buffer_new(
     struct gbm_device* gbm_dev;
     gbm_dev = ws_framebuffer_device_get_gbm_dev(dev);
     if (!gbm_dev) {
-        goto cleanup_malloc;
+        goto cleanup_ref;
     }
 
     retval->gbm_surf = gbm_surface_create(gbm_dev, width, height, format,
@@ -122,19 +122,22 @@ ws_egl_buffer_new(
 
     EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(dev);
     if (!egl_disp) {
-        goto cleanup_ref;
+        goto cleanup_gbm;
     }
 
     retval->egl_surf = eglCreateWindowSurface(egl_disp, egl_conf,
                                               retval->gbm_surf, NULL);
     if (!retval->egl_surf) {
-        goto cleanup_ref;
+        goto cleanup_gbm;
     }
 
     return retval;
 
+cleanup_gbm:
+    gbm_surface_destroy(retval->gbm_surf);
+
 cleanup_ref:
-    ws_object_unref((struct ws_object*) retval->gbm_surf);
+    ws_object_unref((struct ws_object*) retval->dev);
 
 cleanup_malloc:
     free(retval);
@@ -154,10 +157,16 @@ egl_buffer_deinit(
 ) {
     struct ws_egl_buffer* self = (struct ws_egl_buffer*) obj;
 
-    //!< @todo destroy egl surface
-    gbm_surface_destroy(self->gbm_surf);
+    // deinitialize of the EGL surface
+    EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(self->dev);
+    if (egl_disp) {
+        eglDestroySurface(egl_disp, self->egl_surf);
+    }
 
-    ws_object_unref((struct ws_object*) self->gbm_surf);
+    // deinitialize the GBM surface and the reference to the framebuffer device
+    gbm_surface_destroy(self->gbm_surf);
+    ws_object_unref((struct ws_object*) self->dev);
+
     return true;
 }
 
