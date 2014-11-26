@@ -133,6 +133,8 @@ yajl_null_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: NULL");
+
     switch (state->current_state) {
     case STATE_INVALID:
         return 1;
@@ -187,6 +189,8 @@ yajl_boolean_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Bool (%i)", b);
 
     switch (state->current_state) {
     case STATE_INVALID:
@@ -252,6 +256,8 @@ yajl_integer_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Integer (%lld)", i);
 
     switch (state->current_state) {
     case STATE_INVALID:
@@ -344,6 +350,8 @@ yajl_string_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: String (<unterminated>)");
 
     switch (state->current_state) {
     case STATE_INVALID:
@@ -482,6 +490,8 @@ yajl_start_map_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Map-Open");
+
     state->ncurvedbrackets++;
 
     switch (state->current_state) {
@@ -521,6 +531,8 @@ yajl_map_key_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Map-Key (<unterminated>)");
 
     switch (state->current_state) {
     case STATE_INVALID:
@@ -578,6 +590,8 @@ yajl_end_map_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Map-End");
 
     state->ncurvedbrackets--;
 
@@ -639,6 +653,8 @@ yajl_start_array_cb(
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
 
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Array-Start");
+
     state->nboxbrackets++;
 
     switch (state->current_state) {
@@ -670,6 +686,8 @@ yajl_end_array_cb(
 ) {
     struct ws_deserializer* d = (struct ws_deserializer*) ctx;
     struct deserializer_state* state = (struct deserializer_state*) d->state;
+
+    ws_log(&log_ctx, LOG_DEBUG, "Detected: Array-End");
 
     state->nboxbrackets--;
 
