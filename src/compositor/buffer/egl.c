@@ -157,10 +157,16 @@ egl_buffer_deinit(
 ) {
     struct ws_egl_buffer* self = (struct ws_egl_buffer*) obj;
 
-    //!< @todo destroy egl surface
-    gbm_surface_destroy(self->gbm_surf);
+    // deinitialize of the EGL surface
+    EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(self->dev);
+    if (egl_disp) {
+        eglDestroySurface(egl_disp, self->egl_surf);
+    }
 
-    ws_object_unref((struct ws_object*) self->gbm_surf);
+    // deinitialize the GBM surface and the reference to the framebuffer device
+    gbm_surface_destroy(self->gbm_surf);
+    ws_object_unref((struct ws_object*) self->dev);
+
     return true;
 }
 
