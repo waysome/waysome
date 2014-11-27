@@ -176,7 +176,7 @@ START_TEST (test_json_deserializer_transaction_type) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf; // cast
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds == NULL);
 }
 END_TEST
@@ -198,7 +198,7 @@ START_TEST (test_json_deserializer_transaction_valid_nocmds) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf;
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds == NULL);
 }
 END_TEST
@@ -222,7 +222,7 @@ START_TEST (test_json_deserializer_transaction_one_command) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf;
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds != NULL);
     ck_assert(t->cmds->num == 1);
     ck_assert(t->cmds->statements != NULL);
@@ -275,7 +275,7 @@ START_TEST (test_json_deserializer_transaction_commands) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf;
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds != NULL);
     ck_assert(t->cmds->num == 10);
     ck_assert(t->cmds->statements != NULL);

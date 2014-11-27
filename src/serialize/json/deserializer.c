@@ -161,7 +161,7 @@ deserialize_state_new(
     state->id               = 0;
 
     // Explicit set to EXEC here.
-    state->flags            = WS_TRANSACTION_FLAGS_EXEC;
+    state->flags            = 0;
 
     state->ev_ctx           = NULL;
     state->ev_name          = NULL;

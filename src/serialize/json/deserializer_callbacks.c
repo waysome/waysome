@@ -803,7 +803,7 @@ setup_transaction(
     }
 
     //!< @todo assign real name, flags
-    enum ws_transaction_flags flags = WS_TRANSACTION_FLAGS_EXEC;
+    enum ws_transaction_flags flags = 0;
     self->buffer = (struct ws_message*) ws_transaction_new(0, NULL,
                                                            flags, NULL);
 
