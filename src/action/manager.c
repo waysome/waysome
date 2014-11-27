@@ -162,7 +162,7 @@ ws_action_manager_process(
     }
 
     // check whether the message is an event
-    if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
+    if (message->obj.id == &WS_OBJECT_TYPE_ID_EVENT) {
         struct ws_event* event = (struct ws_event*) message;
         struct ws_transaction* transaction;
 
