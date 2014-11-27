@@ -145,9 +145,15 @@ deserialize_state_new(
 
     state->handle = yajl_alloc(cbs, NULL, ctx);
 
-    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
-        !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
-        !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
+    if (!yajl_config(state->handle, yajl_allow_comments, 1)) {
+            yajl_free(state->handle);
+            return NULL;
+    }
+    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1)) {
+            yajl_free(state->handle);
+            return NULL;
+    }
+    if (!yajl_config(state->handle, yajl_allow_multiple_values, 1)) {
             yajl_free(state->handle);
             return NULL;
     }
