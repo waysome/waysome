@@ -70,6 +70,18 @@ deserialize_state_new(
 );
 
 /**
+ * Initialize yajl handle
+ *
+ * @return zero on success
+ */
+static int
+initialize_yajl(
+    struct deserializer_state* self, //!< The deserializer state object
+    yajl_callbacks* cbs, //!< The callback table to use
+    void* ctx //!< The context
+);
+
+/**
  * deserialize callback
  *
  * @return negative error value on error, else number of deserialized bytes
@@ -143,19 +155,10 @@ deserialize_state_new(
         return NULL;
     }
 
-    state->handle = yajl_alloc(cbs, NULL, ctx);
-
-    if (!yajl_config(state->handle, yajl_allow_comments, 1)) {
-            yajl_free(state->handle);
-            return NULL;
-    }
-    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1)) {
-            yajl_free(state->handle);
-            return NULL;
-    }
-    if (!yajl_config(state->handle, yajl_allow_multiple_values, 1)) {
-            yajl_free(state->handle);
-            return NULL;
+    if (initialize_yajl(state, cbs, ctx)) {
+        yajl_free(state->handle);
+        free(state);
+        return NULL;
     }
 
     state->current_state    = STATE_INIT;
@@ -176,6 +179,27 @@ deserialize_state_new(
     ws_log(&log_ctx, LOG_DEBUG, "Allocated deserializer internal state");
 
     return state;
+}
+
+static int
+initialize_yajl(
+    struct deserializer_state* self,
+    yajl_callbacks* cbs,
+    void* ctx
+) {
+    self->handle = yajl_alloc(cbs, NULL, ctx);
+
+    if (!yajl_config(self->handle, yajl_allow_comments, 1)) {
+        return 1;
+    }
+    if (!yajl_config(self->handle, yajl_allow_trailing_garbage, 1)) {
+        return 1;
+    }
+    if (!yajl_config(self->handle, yajl_allow_multiple_values, 1)) {
+        return 1;
+    }
+
+    return 0;
 }
 
 static ssize_t
