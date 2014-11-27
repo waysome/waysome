@@ -230,7 +230,7 @@ deserialize(
            self, yajl_status_to_string(stat));
     ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Parsing finished", self);
 
-    if (stat == yajl_status_client_canceled) {
+    if (stat == yajl_status_client_canceled && !self->is_ready) {
         // the parsing resulted in an error.
         static char* y_err_fmt = "YAJL parser error (code %i)";
         static char* d_err_fmt = "Deserializer error (code %i)";
