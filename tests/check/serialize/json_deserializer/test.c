@@ -176,7 +176,7 @@ START_TEST (test_json_deserializer_transaction_type) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf; // cast
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds == NULL);
 }
 END_TEST
@@ -198,7 +198,7 @@ START_TEST (test_json_deserializer_transaction_valid_nocmds) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf;
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds == NULL);
 }
 END_TEST
@@ -222,7 +222,7 @@ START_TEST (test_json_deserializer_transaction_one_command) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf;
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds != NULL);
     ck_assert(t->cmds->num == 1);
     ck_assert(t->cmds->statements != NULL);
@@ -275,7 +275,7 @@ START_TEST (test_json_deserializer_transaction_commands) {
     struct ws_transaction* t = (struct ws_transaction*) messagebuf;
 
     ck_assert(t->name == NULL);
-    ck_assert(t->flags == WS_TRANSACTION_FLAGS_EXEC);
+    ck_assert(t->flags == 0);
     ck_assert(t->cmds != NULL);
     ck_assert(t->cmds->num == 10);
     ck_assert(t->cmds->statements != NULL);
@@ -411,6 +411,169 @@ START_TEST (test_json_deserializer_events_with_everything) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_multiple_transactions) {
+    char const* buf =   "{"
+                        "\"" TYPE "\": \"" TYPE_EVENT "\","
+                        "\"" EVENT_NAME "\": \"testevent1\","
+                        "\"" EVENT_VALUE "\": 1"
+                        "}"
+                        "{"
+                        "\"" TYPE "\": \"" TYPE_EVENT "\","
+                        "\"" EVENT_NAME "\": \"testevent2\","
+                        "\"" EVENT_VALUE "\": 2"
+                        "}";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    {
+        ck_assert(messagebuf != NULL);
+
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+
+        struct ws_event* e = (struct ws_event*) messagebuf;
+
+        { // compare names
+            struct ws_string* cmp = ws_string_new();
+            ck_assert(cmp);
+
+            ws_string_set_from_raw(cmp, "testevent1");
+
+            ck_assert(0 == ws_string_cmp(&e->name, cmp));
+
+            ws_object_unref((struct ws_object*) cmp);
+        }
+
+        ck_assert(e->context.value.type == WS_VALUE_TYPE_INT);
+        ck_assert(e->context.int_.i == 1);
+
+    }
+
+    s = ws_deserialize(d, &messagebuf, buf + s, strlen(buf) - s);
+
+    {
+        ck_assert(messagebuf != NULL);
+
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+
+        struct ws_event* e = (struct ws_event*) messagebuf;
+
+        { // compare names
+            struct ws_string* cmp = ws_string_new();
+            ck_assert(cmp);
+
+            ws_string_set_from_raw(cmp, "testevent2");
+
+            ck_assert(0 == ws_string_cmp(&e->name, cmp));
+
+            ws_object_unref((struct ws_object*) cmp);
+        }
+
+        ck_assert(e->context.value.type == WS_VALUE_TYPE_INT);
+        ck_assert(e->context.int_.i == 2);
+
+    }
+
+}
+END_TEST
+
+START_TEST (test_json_deserializer_multiple_transactions_three) {
+    char const* buf =   "{"
+                        "\"" TYPE "\": \"" TYPE_EVENT "\","
+                        "\"" EVENT_NAME "\": \"testevent1\","
+                        "\"" EVENT_VALUE "\": 1"
+                        "}"
+                        "{"
+                        "\"" TYPE "\": \"" TYPE_EVENT "\","
+                        "\"" EVENT_NAME "\": \"testevent2\","
+                        "\"" EVENT_VALUE "\": 2"
+                        "}"
+                        "{"
+                        "\"" TYPE "\": \"" TYPE_EVENT "\","
+                        "\"" EVENT_NAME "\": \"testevent3\","
+                        "\"" EVENT_VALUE "\": 3"
+                        "}";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    {
+        ck_assert(messagebuf != NULL);
+
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+
+        struct ws_event* e = (struct ws_event*) messagebuf;
+
+        { // compare names
+            struct ws_string* cmp = ws_string_new();
+            ck_assert(cmp);
+
+            ws_string_set_from_raw(cmp, "testevent1");
+
+            ck_assert(0 == ws_string_cmp(&e->name, cmp));
+
+            ws_object_unref((struct ws_object*) cmp);
+        }
+
+        ck_assert(e->context.value.type == WS_VALUE_TYPE_INT);
+        ck_assert(e->context.int_.i == 1);
+
+    }
+    size_t offset = s;
+
+    s = ws_deserialize(d, &messagebuf, buf + offset, strlen(buf) - offset);
+    offset += s;
+
+    {
+        ck_assert(messagebuf != NULL);
+
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+
+        struct ws_event* e = (struct ws_event*) messagebuf;
+
+        { // compare names
+            struct ws_string* cmp = ws_string_new();
+            ck_assert(cmp);
+
+            ws_string_set_from_raw(cmp, "testevent2");
+
+            ck_assert(0 == ws_string_cmp(&e->name, cmp));
+
+            ws_object_unref((struct ws_object*) cmp);
+        }
+
+        ck_assert(e->context.value.type == WS_VALUE_TYPE_INT);
+        ck_assert(e->context.int_.i == 2);
+
+    }
+
+    s = ws_deserialize(d, &messagebuf, buf + offset, strlen(buf) - offset);
+
+    {
+        ck_assert(messagebuf != NULL);
+
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_EVENT);
+
+        struct ws_event* e = (struct ws_event*) messagebuf;
+
+        { // compare names
+            struct ws_string* cmp = ws_string_new();
+            ck_assert(cmp);
+
+            ws_string_set_from_raw(cmp, "testevent3");
+
+            ck_assert(0 == ws_string_cmp(&e->name, cmp));
+
+            ws_object_unref((struct ws_object*) cmp);
+        }
+
+        ck_assert(e->context.value.type == WS_VALUE_TYPE_INT);
+        ck_assert(e->context.int_.i == 3);
+
+    }
+
+}
+END_TEST
+
+
 /*
  *
  * main()
@@ -445,6 +608,8 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_events);
     tcase_add_test(tcx, test_json_deserializer_events_with_type);
     tcase_add_test(tcx, test_json_deserializer_events_with_everything);
+    tcase_add_test(tcx, test_json_deserializer_multiple_transactions);
+    tcase_add_test(tcx, test_json_deserializer_multiple_transactions_three);
 
     return s;
 }

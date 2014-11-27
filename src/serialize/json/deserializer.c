@@ -70,6 +70,18 @@ deserialize_state_new(
 );
 
 /**
+ * Initialize yajl handle
+ *
+ * @return zero on success
+ */
+static int
+initialize_yajl(
+    struct deserializer_state* self, //!< The deserializer state object
+    yajl_callbacks* cbs, //!< The callback table to use
+    void* ctx //!< The context
+);
+
+/**
  * deserialize callback
  *
  * @return negative error value on error, else number of deserialized bytes
@@ -143,13 +155,10 @@ deserialize_state_new(
         return NULL;
     }
 
-    state->handle = yajl_alloc(cbs, NULL, ctx);
-
-    if (!yajl_config(state->handle, yajl_allow_trailing_garbage, 1) ||
-        !yajl_config(state->handle, yajl_allow_multiple_values, 1) ||
-        !yajl_config(state->handle, yajl_allow_partial_values, 1)) {
-            yajl_free(state->handle);
-            return NULL;
+    if (initialize_yajl(state, cbs, ctx)) {
+        yajl_free(state->handle);
+        free(state);
+        return NULL;
     }
 
     state->current_state    = STATE_INIT;
@@ -161,7 +170,7 @@ deserialize_state_new(
     state->id               = 0;
 
     // Explicit set to EXEC here.
-    state->flags            = WS_TRANSACTION_FLAGS_EXEC;
+    state->flags            = 0;
 
     state->ev_ctx           = NULL;
     state->ev_name          = NULL;
@@ -170,6 +179,27 @@ deserialize_state_new(
     ws_log(&log_ctx, LOG_DEBUG, "Allocated deserializer internal state");
 
     return state;
+}
+
+static int
+initialize_yajl(
+    struct deserializer_state* self,
+    yajl_callbacks* cbs,
+    void* ctx
+) {
+    self->handle = yajl_alloc(cbs, NULL, ctx);
+
+    if (!yajl_config(self->handle, yajl_allow_comments, 1)) {
+        return 1;
+    }
+    if (!yajl_config(self->handle, yajl_allow_trailing_garbage, 1)) {
+        return 1;
+    }
+    if (!yajl_config(self->handle, yajl_allow_multiple_values, 1)) {
+        return 1;
+    }
+
+    return 0;
 }
 
 static ssize_t
@@ -196,9 +226,11 @@ deserialize(
 
     ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Start parsing", self);
     yajl_status stat = yajl_parse(d->handle, buffer, nbuf);
+    ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: YAJL-State: %s",
+           self, yajl_status_to_string(stat));
     ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Parsing finished", self);
 
-    if (stat == yajl_status_client_canceled) {
+    if (stat == yajl_status_client_canceled && !self->is_ready) {
         // the parsing resulted in an error.
         static char* y_err_fmt = "YAJL parser error (code %i)";
         static char* d_err_fmt = "Deserializer error (code %i)";
@@ -226,6 +258,23 @@ deserialize(
 
     ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Stop", self);
 
-    return yajl_get_bytes_consumed(d->handle) + consumed;
+    consumed += yajl_get_bytes_consumed(d->handle);
+
+    if (stat == yajl_status_client_canceled && d->current_state == STATE_INIT &&
+            self->is_ready) {
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Ready with a JSON object", self);
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Reinitializing", self);
+
+        yajl_free(d->handle);
+        if (initialize_yajl(d, &YAJL_CALLBACKS, self)) {
+            ws_log(&log_ctx, LOG_WARNING,
+                   "[Deserializer %p]: Reinitializing failed", self);
+        }
+
+    }
+
+    return consumed;
 }
 
