@@ -146,14 +146,17 @@ yajl_null_cb(
 
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
-                //!< @todo error
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_nil_init(nil);
 
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) nil)) {
-                //!< @todo error
+            int res = ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) nil);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
@@ -169,7 +172,8 @@ yajl_null_cb(
             state->has_event = true;
             struct ws_value_nil* nil = calloc(1, sizeof(*nil));
             if (!nil) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_nil_init(nil);
@@ -208,15 +212,18 @@ yajl_boolean_cb(
                    "Appending as Command argument (directly)");
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!boo) {
-                //!< @todo error
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
             ws_value_bool_init(boo);
             ws_value_bool_set(boo, b);
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) boo)) {
-                //!< @todo error
+            int res = ws_statement_append_direct(state->tmp_statement,
+                                                (struct ws_value*) boo);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
             state->current_state = STATE_COMMAND_ARY_COMMAND_ARGS;
@@ -240,7 +247,8 @@ yajl_boolean_cb(
             state->has_event = true;
             struct ws_value_bool* boo = calloc(1, sizeof(*boo));
             if (!b) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_bool_init(boo);
@@ -291,15 +299,18 @@ yajl_integer_cb(
             ws_log(&log_ctx, LOG_DEBUG, "Using as direct argument");
             struct ws_value_int* _i = calloc(1, sizeof(_i));
             if (!_i) {
-                //!< @todo error
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
             ws_value_int_init(_i);
             ws_value_int_set(_i, i);
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) _i)) {
-                //!< @todo error
+            int res = ws_statement_append_direct(state->tmp_statement,
+                                                 (struct ws_value*) _i);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
@@ -331,7 +342,8 @@ yajl_integer_cb(
             state->has_event = true;
             struct ws_value_int* n = calloc(1, sizeof(*n));
             if (!n) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
             ws_value_int_init(n);
@@ -409,9 +421,11 @@ yajl_string_cb(
                 return 0;
             }
 
-            if (0 != ws_statement_append_direct(state->tmp_statement,
-                                                (struct ws_value*) s)) {
-                //!< @todo error
+            res = ws_statement_append_direct(state->tmp_statement,
+                                             (struct ws_value*) s);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 
@@ -423,7 +437,8 @@ yajl_string_cb(
         {
             state->register_name = ws_string_new();
             if (!state->register_name) {
-                //!< @todo error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
@@ -450,7 +465,8 @@ yajl_string_cb(
             state->has_event = true;
             state->ev_name = ws_string_new();
             if (!state->ev_name) {
-                //!< @todo error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
@@ -477,7 +493,8 @@ yajl_string_cb(
             state->has_event = true;
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
-                //!< @tod error, what now?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
@@ -586,12 +603,15 @@ yajl_map_key_cb(
 
             state->tmp_statement = calloc(1, sizeof(*state->tmp_statement));
             if (!state->tmp_statement) {
-                //!< @todo error?
+                state->error.parser_error = false;
+                state->error.error_num = -ENOMEM;
                 return 0;
             }
 
-            if (0 != ws_statement_init(state->tmp_statement, buf)) {
-                //!< @todo error?
+            int res = ws_statement_init(state->tmp_statement, buf);
+            if (res != 0) {
+                state->error.parser_error = false;
+                state->error.error_num = res;
                 return 0;
             }
 

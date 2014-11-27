@@ -198,6 +198,20 @@ deserialize(
     yajl_status stat = yajl_parse(d->handle, buffer, nbuf);
     ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Parsing finished", self);
 
+    if (stat == yajl_status_client_canceled) {
+        // the parsing resulted in an error.
+        static char* y_err_fmt = "YAJL parser error (code %i)";
+        static char* d_err_fmt = "Deserializer error (code %i)";
+        char* fmt;
+        if (d->error.parser_error) {
+            fmt = y_err_fmt;
+        } else {
+            fmt = d_err_fmt;
+        }
+
+        ws_log(&log_ctx, LOG_ERR, fmt, d->error.error_num);
+    }
+
     if ((d->current_state == STATE_INVALID) && self->buffer) {
         ws_object_deinit(&self->buffer->obj);
         self->buffer = NULL;
