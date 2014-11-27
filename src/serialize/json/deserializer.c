@@ -258,12 +258,23 @@ deserialize(
 
     ws_log(&log_ctx, LOG_DEBUG, "[Deserializer %p]: Stop", self);
 
+    consumed += yajl_get_bytes_consumed(d->handle);
+
     if (stat == yajl_status_client_canceled && d->current_state == STATE_INIT &&
             self->is_ready) {
         ws_log(&log_ctx, LOG_DEBUG,
                "[Deserializer %p]: Ready with a JSON object", self);
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Reinitializing", self);
+
+        yajl_free(d->handle);
+        if (initialize_yajl(d, &YAJL_CALLBACKS, self)) {
+            ws_log(&log_ctx, LOG_WARNING,
+                   "[Deserializer %p]: Reinitializing failed", self);
+        }
+
     }
 
-    return yajl_get_bytes_consumed(d->handle) + consumed;
+    return consumed;
 }
 
