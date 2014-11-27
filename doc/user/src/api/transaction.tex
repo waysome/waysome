@@ -1,3 +1,48 @@
 \subsection{Transaction}
 
 % What is a transaction?
+
+\subsubsection{Example transactions}
+
+\begin{itemize}
+    \item Simple shutdown transaction
+
+        \begin{lstlisting}[language=json]
+            {
+                "TYPE": "transaction",
+                "UID": 1,
+                "CMDS": [
+                    {"call": [{"pos":0}, "exit"]}
+                ]
+            }
+        \end{lstlisting}
+
+    \item Registered shutdown transaction
+
+        The second transactions registers the first one on the key-combination
+        'Left-CTRL' + 'Left-ALT' + 'q'
+
+        \begin{lstlisting}[language=json]
+            {
+                "TYPE": "transaction",
+                "UID": 1,
+                "FLAGS": {
+                    "REGISTER": "shutdown"
+                },
+                "CMDS": [
+                    {"call": [{"pos":0}, "exit"]}
+                ]
+            }
+            {
+                "TYPE": "transaction",
+                "UID": 2,
+                "FLAGS": {
+                    "EXEC": true
+                },
+                "CMDS": [
+                    {"call": [{"pos":0}, "add_hotkey_event", "shutdown", 29, 56, 16]}
+                ]
+            }
+        \end{lstlisting}
+\end{itemize}
+
