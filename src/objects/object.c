@@ -440,16 +440,16 @@ ws_object_attr_read(
         break;
 
     case WS_OBJ_ATTR_TYPE_STRING:
-//        {
-//            struct ws_string* s = ws_string_new();
-//            if (unlikely(!s)) {
-//                return -ENOMEM;
-//            }
-//
-//            ws_string_set_from_raw(s, *(char**) member_pos);
-//
-//            ws_value_string_set_str((struct ws_value_string*) dest, s);
-//        }
+        {
+            struct ws_string* s = ws_string_new();
+            if (unlikely(!s)) {
+                return -ENOMEM;
+            }
+
+            ws_string_set_from_raw(s, *(char**) member_pos);
+
+            ws_value_string_set_str((struct ws_value_string*) dest, s);
+        }
         break;
 
     case WS_OBJ_ATTR_TYPE_OBJ:
