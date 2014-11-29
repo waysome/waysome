@@ -45,6 +45,14 @@
 #define ws_streq(str1, str2) \
     (0 == strcmp((str1), (str2)))
 
+/**
+ * Check if the first `n` bytes of `str1` and `str2` are equal
+ *
+ * @return true if the bytes are equal, else false
+ */
+#define ws_strneq(str1, str2, n) \
+    (0 == strncmp((str1), (str2), (n)))
+
 
 #endif // __WS_UTIL_STRING_H__
 
