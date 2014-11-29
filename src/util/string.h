@@ -35,6 +35,16 @@
 #define __WS_UTIL_STRING_H__
 
 
+#include <string.h>
+
+/**
+ * Check if two strings are equal
+ *
+ * @return true if the two strings are equal, else false
+ */
+#define ws_streq(str1, str2) \
+    (0 == strcmp((str1), (str2)))
+
 
 #endif // __WS_UTIL_STRING_H__
 
