@@ -46,9 +46,17 @@ ws_exec(
     }
 
     if (pid == 0) {
-        // child, now exec()
+        // we're the child. We should drop our privileges first
+        if (seteuid(getuid()) < 0) {
+            exit(errno);
+        }
+        if (setegid(getgid()) < 0) {
+            exit(errno);
+        }
+
+        // now execvp()
         if (execvp(call, argv) == -1) {
-            return -errno;
+            exit(errno);
         }
     }
 
