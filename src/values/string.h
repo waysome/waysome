@@ -59,7 +59,7 @@ __ws_nonnull__(1)
 ;
 
 /**
- * Allocate a new, initialized ws_value_string 
+ * Allocate a new, initialized ws_value_string
  *
  * @return a new, allocated and initialized ws_value_string objects,
  * NULL on failure
@@ -70,7 +70,7 @@ ws_value_string_new(void);
 
 /**
  * get the ws_value_string's ws_string object
- * 
+ *
  * @memberof ws_value_string
  *
  * @return the ws_string object contained in the ws_value_string object,
