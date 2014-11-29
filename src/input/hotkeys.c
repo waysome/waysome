@@ -169,6 +169,12 @@ ws_hotkeys_eval(
         return empty_eventlist();
     }
 
+    // check whether we are intereset in this key release event at all
+    if (ws_hotkeys_ctx.buttons_pressed == 0) {
+        // we a re currently not tracking a key-combo
+        return eventlist_reset();
+    }
+
     // check whether we just removed the last key
     --ws_hotkeys_ctx.buttons_pressed;
     if (ws_hotkeys_ctx.buttons_pressed > 0) {
