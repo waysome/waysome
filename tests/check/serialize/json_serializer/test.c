@@ -210,7 +210,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == -EAGAIN);
 
         const char* exp = "{\"event\":{\"context\":1,\"na";
-        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+        ck_assert(ws_strneq(exp, buf, strlen(exp)));
     }
 
     nbuf += inc;
@@ -224,7 +224,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == -EAGAIN);
 
         const char* exp = "{\"event\":{\"context\":1,\"name\":\"tests";
-        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+        ck_assert(ws_strneq(exp, buf, strlen(exp)));
     }
 
     nbuf += inc;
@@ -238,7 +238,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == (ssize_t) inc);
 
         const char* exp = "{\"event\":{\"context\":1,\"name\":\"teststring\"}}";
-        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+        ck_assert(ws_strneq(exp, buf, strlen(exp)));
     }
 
     ws_object_unref((struct ws_object*) ev);
