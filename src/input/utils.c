@@ -29,6 +29,7 @@
 
 #include "logger/module.h"
 #include "input/utils.h"
+#include "util/string.h"
 
 struct ws_input_context ws_input_ctx;
 
@@ -36,7 +37,7 @@ bool
 ws_input_filter_event_device_name(
     const char* name
 ) {
-    if (!(strcmp(".", name) && strcmp("..", name))) {
+    if (ws_streq(".", name) || ws_streq("..", name)) {
         return false;
     }
     // strcmp also makes note of the length between the strings, we only want
