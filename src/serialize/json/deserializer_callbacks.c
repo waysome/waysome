@@ -40,6 +40,7 @@
 #include "serialize/json/deserializer_callbacks.h"
 #include "serialize/json/keys.h"
 #include "serialize/json/states.h"
+#include "util/string.h"
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
@@ -393,10 +394,10 @@ yajl_string_cb(
 
     case STATE_TYPE:
         ws_log(&log_ctx, LOG_DEBUG, "Using as type identifier");
-        if (0 == strncmp(TYPE_TRANSACTION, (char*) str,
+        if (ws_strneq(TYPE_TRANSACTION, (char*) str,
                     strlen(TYPE_TRANSACTION))) {
             setup_transaction(d);
-        } else if (0 == strncmp(TYPE_EVENT, (char*) str, strlen(TYPE_EVENT))) {
+        } else if (ws_strneq(TYPE_EVENT, (char*) str, strlen(TYPE_EVENT))) {
             state->has_event = true;
         }
 
@@ -621,7 +622,7 @@ yajl_map_key_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARG_DIRECT:
         // If the key is a "pos" key, for a stack position, we continue here
-        if (0 != strncmp((char*) key, POS, len)) {
+        if (!ws_strneq((char*) key, POS, len)) {
             ws_log(&log_ctx, LOG_DEBUG, "Invalid, expected position key");
             state->current_state = STATE_INVALID;
             break;
@@ -854,7 +855,7 @@ get_next_state_for_string(
 ) {
     for (size_t i = 0; MAP[i].str; i++) {
         if (MAP[i].current == current) {
-            if (0 == strncmp(MAP[i].str, (char*) str, strlen(MAP[i].str))) {
+            if (ws_strneq(MAP[i].str, (char*) str, strlen(MAP[i].str))) {
                 return MAP[i].next;
             }
         }
