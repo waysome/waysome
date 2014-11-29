@@ -60,7 +60,7 @@
 struct ws_connector {
     int fd; //!< @protected file descriptor
     struct ws_connbuf inbuf; //!< @public buffer for read data
-    struct ws_connbuf outbuf; /**!< @public buffer for data 
+    struct ws_connbuf outbuf; /**!< @public buffer for data
                                 * to be written in next flush*/
     bool readonly; //!< @protected Is the connector read-only?
 };
