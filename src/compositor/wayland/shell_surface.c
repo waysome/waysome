@@ -30,6 +30,7 @@
 #include <wayland-server.h>
 
 #include "compositor/wayland/client.h"
+#include "compositor/wayland/surface.h"
 #include "compositor/wayland/shell_surface.h"
 #include "values/int.h"
 #include "values/object_id.h"
@@ -272,6 +273,12 @@ ws_shell_surface_new(
     // initialize the members
     self->surface = getref(surface);
     if (!self->surface) {
+        goto cleanup_resource;
+    }
+
+    int ret = ws_surface_set_role(self->surface, &wl_shell_surface_interface);
+
+    if (ret < 0) {
         goto cleanup_resource;
     }
 

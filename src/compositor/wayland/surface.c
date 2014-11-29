@@ -380,6 +380,11 @@ surface_commit_cb(
     struct wl_resource* resource
 ) {
     struct ws_surface* s = wl_resource_get_user_data(resource);
+
+    if (s->role == &wl_pointer_interface) {
+        return;
+    }
+
     ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
                   sf_commit_blit, &s->img_buf);
 
@@ -470,5 +475,24 @@ resource_destroy(
     surface->wl_obj.resource = NULL;
     ws_object_unlock(&surface->wl_obj.obj);
     ws_object_unref(&surface->wl_obj.obj);
+}
+
+int
+ws_surface_set_role(
+    struct ws_surface* self,
+    struct wl_interface const* role
+) {
+    int ret = -1;
+    ws_object_lock_write(&self->wl_obj.obj);
+
+    if (!self || !role || (self->role && (self->role != role))) {
+        goto unlock;
+    }
+
+    self->role = role;
+    ret = 0;
+unlock:
+    ws_object_unlock(&self->wl_obj.obj);
+    return ret;
 }
 
