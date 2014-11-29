@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include "util/arithmetical.h"
+#include "util/string.h"
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
@@ -56,7 +57,7 @@ ws_value_type_from_value_name(
     char const* name
 ) {
     for (enum ws_value_type i = 0; i < ARYLEN(WS_VALUE_TYPE_NAMES); i++) {
-        if (0 == strcmp(WS_VALUE_TYPE_NAMES[i], name)) {
+        if (ws_streq(WS_VALUE_TYPE_NAMES[i], name)) {
             return i;
         }
     }
