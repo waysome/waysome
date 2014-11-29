@@ -75,7 +75,7 @@ ws_named_init(
     int res = ws_string_init(&self->str);
     if (res < 0) {
         return res;
-        
+
     }
     self->str.obj.id = &WS_OBJECT_TYPE_ID_NAMED;
     self->str.obj.settings |= WS_OBJECT_HEAPALLOCED;

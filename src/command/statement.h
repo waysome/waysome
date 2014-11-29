@@ -72,11 +72,11 @@ struct ws_argument {
         ssize_t pos; //!< position, negative ones are from the top of the stack
         struct ws_value* val; //!< a value
     } arg; //!< @public the argument
-}; 
+};
 
 /**
  * Command arguments
- * 
+ *
  * This struct represents command arguments applied to a command as part of a
  * statement.
  *

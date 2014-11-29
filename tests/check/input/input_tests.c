@@ -263,7 +263,7 @@ START_TEST (test_input_dag_insert) {
     size_t ev_ref_count;
 
     ws_hotkey_dag_init(node);
-    
+
     struct ws_string* name = ws_string_new();
     ws_string_set_from_raw(name, "testevent");
 
@@ -273,7 +273,7 @@ START_TEST (test_input_dag_insert) {
 
     ck_assert(ev != NULL);
     ck_assert(ws_hotkey_dag_insert(node, ev) == 0);
-    
+
     ck_assert(ev_ref_count + 1 == ev->obj.ref_counting.refcnt);
     ws_object_unref((struct ws_object*) ev);
 

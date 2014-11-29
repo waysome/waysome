@@ -56,7 +56,7 @@ ws_serialize(
         nbuf -= offset;
     }
 
-    // check whether the message is 
+    // check whether the message is
     if (!msg) {
         return offset;
     }

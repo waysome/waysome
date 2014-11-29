@@ -71,7 +71,7 @@ ws_builtin_cmd_strcat(
             return -ENOMEM;
         }
     }
-    
+
     if (!AT_END(it)) {
         return -EINVAL;
     }

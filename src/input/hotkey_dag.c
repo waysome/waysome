@@ -493,7 +493,7 @@ flatten_tab(
                 break;
             }
         }
-        
+
         void** ck = child;
         while (ck-- > tab->nodes.tab) {
             if (*ck) {
