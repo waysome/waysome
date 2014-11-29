@@ -43,7 +43,7 @@ ws_input_filter_event_device_name(
     // strcmp also makes note of the length between the strings, we only want
     // it to check the beginning of the file name, in this case it has to match
     // "event*"
-    if (strncmp(INPUT_DEVICE_NAME, name, sizeof(INPUT_DEVICE_NAME) - 1)) {
+    if (!ws_strneq(INPUT_DEVICE_NAME, name, sizeof(INPUT_DEVICE_NAME) - 1)) {
         return false;
     }
     return true;
