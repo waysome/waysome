@@ -239,6 +239,28 @@ ws_keyboard_send_key(
         return;
     }
 
+    enum xkb_key_direction direction;
+    direction = (state == WL_KEYBOARD_KEY_STATE_PRESSED) ? XKB_KEY_DOWN
+                                                         : XKB_KEY_UP;
+    int ret = xkb_state_update_key(self->xkb->state, key + 8, direction);
+
+    // If the next press does /nothing/ to the state we just remove the press,
+    // this way we do not get stuck modifiers, this might be hacky
+    if (direction == XKB_KEY_DOWN && !ret) {
+        xkb_state_update_key(self->xkb->state, key + 8, XKB_KEY_UP);
+    }
+
+    uint32_t depressed;
+    uint32_t group;
+    uint32_t locked;
+    uint32_t latched;
+
+    depressed = xkb_state_serialize_mods(self->xkb->state, XKB_STATE_DEPRESSED);
+    latched   = xkb_state_serialize_mods(self->xkb->state, XKB_STATE_LATCHED);
+    locked    = xkb_state_serialize_mods(self->xkb->state, XKB_STATE_LOCKED);
+    group     = xkb_state_serialize_layout(self->xkb->state,
+                                           XKB_STATE_LAYOUT_EFFECTIVE);
+
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(
             (struct ws_wayland_obj*) self->active_surface);
 
@@ -253,6 +275,8 @@ ws_keyboard_send_key(
             }
             uint32_t serial = wl_display_next_serial(d);
             uint32_t t = (time->tv_sec * 1000) + (time->tv_usec / 1000);
+            wl_keyboard_send_modifiers(keyboard->resource, serial, depressed,
+                                        latched, locked, group);
             wl_keyboard_send_key(keyboard->resource, serial, t, key, state);
         }
     }

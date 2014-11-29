@@ -202,7 +202,7 @@ handle_keyboard_press_event(
     struct ws_keyboard* k = ws_keyboard_get();
 
     // XKB map has an offset of 8 to linux/input.h concerning to keycodes
-    ws_keyboard_send_key(k, &ev->time, ev->code + 8, state);
+    ws_keyboard_send_key(k, &ev->time, ev->code, state);
 }
 
 static void
@@ -246,8 +246,6 @@ watch_pointers(
             struct wl_array events = ws_hotkeys_eval(&ev);
             struct input_event* buf;
             wl_array_for_each(buf, &events) {
-                handle_keyboard_press_event(buf);
-
                 if (BTN_MISC <= buf->code && buf->code <= BTN_GEAR_UP) {
                     handle_mouse_click_event(buf);
                 }
