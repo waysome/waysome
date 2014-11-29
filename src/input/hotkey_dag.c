@@ -174,8 +174,13 @@ ws_hotkey_dag_next(
     }
 
     struct ws_hotkey_dag_tab cur = node->table;
-
     uint16_t step = DAG_TAB_CHILD_NUM_EXP * cur.depth;
+
+    // check whether the code is in the range covered by the tree
+    if ((code < cur.start) ||
+            (((code - cur.start) >> step) >= DAG_TAB_CHILD_NUM)) {
+        return NULL;
+    }
 
     // move towards the bottom
     while (cur.depth-- && cur.nodes.tab) {
