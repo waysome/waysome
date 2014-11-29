@@ -53,7 +53,7 @@
 #include "objects/message/message.h"
 #include "objects/message/transaction.h"
 #include "command/statement.h"
-
+#include "util/string.h"
 #include "values/int.h"
 #include "values/string.h"
 
@@ -227,7 +227,7 @@ START_TEST (test_json_deserializer_transaction_one_command) {
     ck_assert(t->cmds->num == 1);
     ck_assert(t->cmds->statements != NULL);
     ck_assert(t->cmds->statements[0].command->name != NULL);
-    ck_assert(0 == strcmp(t->cmds->statements[0].command->name, "add"));
+    ck_assert(ws_streq(t->cmds->statements[0].command->name, "add"));
     ck_assert(t->cmds->statements[0].command->command_type == regular);
     ck_assert(t->cmds->statements[0].args.num == 2);
     ck_assert(t->cmds->statements[0].args.vals[0].arg.val != NULL);
@@ -286,8 +286,7 @@ START_TEST (test_json_deserializer_transaction_commands) {
         "lxor", NULL
     };
     for (int i = 0; i < 10; i++) {
-        ck_assert(0 == strcmp(t->cmds->statements[i].command->name,
-                  commands[i]));
+        ck_assert(ws_streq(t->cmds->statements[i].command->name, commands[i]));
         ck_assert(t->cmds->statements[i].command->command_type == regular);
         ck_assert(t->cmds->statements[i].args.num >= 1);
         ck_assert(t->cmds->statements[i].args.vals[0].arg.val != NULL);
