@@ -70,7 +70,7 @@ ws_value_string_new(void)
     if (wvs) {
         ws_value_string_init(wvs);
     }
-      
+
     return wvs;
 }
 
@@ -81,7 +81,7 @@ ws_value_string_get(
     if (self) {
         return self->str;
     }
-    
+
     return NULL;
 }
 
@@ -94,7 +94,7 @@ ws_value_string_set_str(
         struct ws_string* new_str = getref(str);
 
         if (new_str) {
-            ws_object_unref(&self->str->obj);           
+            ws_object_unref(&self->str->obj);
             self->str = new_str;
         }
     }
@@ -110,7 +110,7 @@ value_string_deinit(
     struct ws_value* self
 ) {
     struct ws_value_string* wvs = (struct ws_value_string*) self;
-    
+
     if (!wvs) {
         return;
     }
