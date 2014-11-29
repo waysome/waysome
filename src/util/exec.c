@@ -48,7 +48,7 @@ ws_exec(
     if (pid == 0) {
         // child, now exec()
         if (execvp(call, argv) == -1) {
-            return -errno;
+            exit(errno);
         }
     }
 
