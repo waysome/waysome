@@ -29,6 +29,7 @@
 #include <stdlib.h>
 
 #include "objects/object.h"
+#include "util/string.h"
 #include "values/int.h"
 #include "values/string.h"
 
@@ -164,7 +165,7 @@ START_TEST (test_object_attribute_read) {
 //    ck_assert(s != NULL);
 //    char* raw = ws_string_raw(s);
 //    ck_assert(raw != NULL);
-//    ck_assert(0 == strcmp(TEST_STR, raw));
+//    ck_assert(ws_streq(TEST_STR, raw));
 //    free(v);
 
     ws_object_unref(&to->obj);

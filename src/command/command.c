@@ -34,6 +34,7 @@
 #include "command/list.h"
 
 #include "util/cleaner.h"
+#include "util/string.h"
 #include "values/value.h"
 
 #define LINEAR_THRESHOLD (4)
@@ -123,7 +124,7 @@ ws_command_get(
     // we are now in a realm where linear search is expected to be faster
     cur = alast;
     while (cur-- > first) {
-        if (strcmp(name, cmd_ctx.commands[cur].name) == 0) {
+        if (ws_streq(name, cmd_ctx.commands[cur].name)) {
             return cmd_ctx.commands + cur;
         }
     }

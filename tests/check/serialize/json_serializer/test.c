@@ -58,6 +58,8 @@
 #include "objects/message/value_reply.h"
 #include "command/statement.h"
 
+#include "util/string.h"
+
 #include "values/int.h"
 #include "values/string.h"
 
@@ -176,7 +178,7 @@ START_TEST (test_json_serializer_event) {
     ck_assert(s > 0);
 
     const char* expected = "{\"event\":{\"context\":1,\"name\":\"teststring\"}}";
-    ck_assert(0 == strcmp(expected, buf));
+    ck_assert(ws_streq(expected, buf));
 
     ws_object_unref((struct ws_object*) ev);
     free(buf);
@@ -196,7 +198,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == (ssize_t) nbuf);
 
         const char* exp= "{\"event\":{\"cont";
-        ck_assert(0 == strcmp(exp, buf));
+        ck_assert(ws_streq(exp, buf));
     }
 
     char* tmp = realloc(buf, sizeof(*buf) * (nbuf + inc));
@@ -208,7 +210,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == -EAGAIN);
 
         const char* exp = "{\"event\":{\"context\":1,\"na";
-        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+        ck_assert(ws_strneq(exp, buf, strlen(exp)));
     }
 
     nbuf += inc;
@@ -222,7 +224,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == -EAGAIN);
 
         const char* exp = "{\"event\":{\"context\":1,\"name\":\"tests";
-        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+        ck_assert(ws_strneq(exp, buf, strlen(exp)));
     }
 
     nbuf += inc;
@@ -236,7 +238,7 @@ START_TEST (test_json_serializer_event_smallbuf) {
         ck_assert(s == (ssize_t) inc);
 
         const char* exp = "{\"event\":{\"context\":1,\"name\":\"teststring\"}}";
-        ck_assert(0 == strncmp(exp, buf, strlen(exp)));
+        ck_assert(ws_strneq(exp, buf, strlen(exp)));
     }
 
     ws_object_unref((struct ws_object*) ev);
@@ -270,7 +272,7 @@ START_TEST (test_json_serializer_event_with_objid) {
         const char* suff = "\"},\"name\":\"teststring\"}}";
         uintmax_t id = ws_object_uuid(obj);
         snprintf(exp, 1024, "%s%"PRIxMAX"%s", pref, id, suff);
-        ck_assert(0 == strcmp(exp, buf));
+        ck_assert(ws_streq(exp, buf));
 
         // we can now check the returned value
         ck_assert(s == (ssize_t) strlen(exp));
@@ -300,7 +302,7 @@ START_TEST (test_json_serializer_value_reply) {
         const char* pref = "{\"value\":null,\""TRANSACTION_ID"\":";
         const char* suff = "}";
         snprintf(exp, 1024, "%s%zi%s", pref, t_id, suff);
-        ck_assert(0 == strcmp(exp, buf));
+        ck_assert(ws_streq(exp, buf));
 
         // we can now check the returned value
         ck_assert(s == (ssize_t) strlen(exp));
@@ -340,7 +342,7 @@ START_TEST (test_json_serializer_value_reply_int) {
         const char* pref = "{\"value\":1337,\""TRANSACTION_ID"\":";
         const char* suff = "}";
         snprintf(exp, 1024, "%s%zi%s", pref, t_id, suff);
-        ck_assert(0 == strcmp(exp, buf));
+        ck_assert(ws_streq(exp, buf));
 
         // we can now check the returned value
         ck_assert(s == (ssize_t) strlen(exp));
@@ -383,7 +385,7 @@ START_TEST (test_json_serializer_error_reply) {
         const char* suff =  ",\""ERROR_DESC"\":\""DESC"\","
                             "\""ERROR_CAUSE"\":\""CAUSE"\"}";
         snprintf(exp, 1024, "%s%zi%s", pref, code, suff);
-        ck_assert(0 == strcmp(exp, buf));
+        ck_assert(ws_streq(exp, buf));
 
         // we can now check the returned value
         ck_assert(s == (ssize_t) strlen(exp));

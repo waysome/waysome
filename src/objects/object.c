@@ -35,6 +35,7 @@
 #include "logger/module.h"
 #include "objects/object.h"
 #include "util/condition.h"
+#include "util/string.h"
 #include "values/bool.h"
 #include "values/int.h"
 #include "values/nil.h"
@@ -352,7 +353,7 @@ ws_object_has_attr(
     while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
         struct ws_object_attribute const* iter;
         for (iter = &self->id->attribute_table[0]; iter->name; iter++) {
-            if (strcmp(iter->name, ident) == 0) {
+            if (ws_streq(iter->name, ident)) {
                 ws_object_unlock(self);
                 return true;
             }
@@ -384,7 +385,7 @@ ws_object_attr_read(
 
     struct ws_object_attribute const* iter;
     for (iter = &self->id->attribute_table[0]; iter->name && !found; iter++) {
-        if (strcmp(iter->name, ident) == 0) {
+        if (ws_streq(iter->name, ident)) {
             offset  = iter->offset_in_struct;
             type    = iter->type;
             found   = true;
@@ -480,7 +481,7 @@ ws_object_attr_type(
 
     size_t i;
     for (i = 0; self->id->attribute_table[i].name != NULL; i++) {
-        if (strcmp(self->id->attribute_table[i].name, ident) == 0) {
+        if (ws_streq(self->id->attribute_table[i].name, ident)) {
             ws_object_unlock(self);
             return self->id->attribute_table[i].type;
         }
@@ -594,7 +595,7 @@ ws_object_has_typename(
 
     // iterate over all the base types
     while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
-        if (strcmp(curtype->typestr, type_name)) {
+        if (ws_streq(curtype->typestr, type_name)) {
             // yay! found it!
             return true;
         }
@@ -622,7 +623,7 @@ ws_object_call_cmd(
     ws_regular_command_func func = NULL;
     struct ws_object_function const* iter;
     for (iter = self->id->function_table; func == NULL && iter->name; iter++) {
-        if (strcmp(iter->name, ident) == 0) {
+        if (ws_streq(iter->name, ident)) {
             func = iter->func;
         }
     }
@@ -649,7 +650,7 @@ ws_object_has_cmd(
     while (curtype != &WS_OBJECT_TYPE_ID_OBJECT) {
         struct ws_object_function const* iter;
         for (iter = self->id->function_table; iter->name; iter++) {
-            if (strcmp(iter->name, ident) == 0) {
+            if (ws_streq(iter->name, ident)) {
                 ws_object_unlock(self);
                 return true;
             }

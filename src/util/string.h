@@ -25,26 +25,38 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup utils "(internal) utilities"
+ *
+ * @{
+ */
+
+#ifndef __WS_UTIL_STRING_H__
+#define __WS_UTIL_STRING_H__
+
+
 #include <string.h>
 
-#include "logger/module.h"
-#include "input/utils.h"
-#include "util/string.h"
+/**
+ * Check if two strings are equal
+ *
+ * @return true if the two strings are equal, else false
+ */
+#define ws_streq(str1, str2) \
+    (0 == strcmp((str1), (str2)))
 
-struct ws_input_context ws_input_ctx;
+/**
+ * Check if the first `n` bytes of `str1` and `str2` are equal
+ *
+ * @return true if the bytes are equal, else false
+ */
+#define ws_strneq(str1, str2, n) \
+    (0 == strncmp((str1), (str2), (n)))
 
-bool
-ws_input_filter_event_device_name(
-    const char* name
-) {
-    if (ws_streq(".", name) || ws_streq("..", name)) {
-        return false;
-    }
-    // strcmp also makes note of the length between the strings, we only want
-    // it to check the beginning of the file name, in this case it has to match
-    // "event*"
-    if (!ws_strneq(INPUT_DEVICE_NAME, name, sizeof(INPUT_DEVICE_NAME) - 1)) {
-        return false;
-    }
-    return true;
-}
+
+#endif // __WS_UTIL_STRING_H__
+
+/**
+ * @}
+ */
+

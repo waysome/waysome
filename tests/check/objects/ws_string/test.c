@@ -42,6 +42,7 @@
 
 #include "tests.h"
 #include "objects/string.h"
+#include "util/string.h"
 
 START_TEST (test_string_init) {
     struct ws_string ss;
@@ -149,7 +150,7 @@ START_TEST (test_string_from_raw_literal) {
     char* buf = ws_string_raw(s);
 
     ck_assert(buf != NULL);
-    ck_assert(0 == strcmp(buf, literal));
+    ck_assert(ws_streq(buf, literal));
 
     size_t len = ws_string_len(s);
     ck_assert(strlen(literal) == len);
@@ -170,7 +171,7 @@ START_TEST (test_string_from_raw_heapbuf) {
     char* buf = ws_string_raw(s);
 
     ck_assert(buf != NULL);
-    ck_assert(0 == strcmp(buf, hbuf));
+    ck_assert(ws_streq(buf, hbuf));
 
     size_t len = ws_string_len(s);
     ck_assert(strlen(literal) == len);
