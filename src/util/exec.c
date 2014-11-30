@@ -55,9 +55,10 @@ ws_exec(
         }
 
         // now execvp()
-        if (execvp(call, argv) == -1) {
-            exit(errno);
-        }
+        execvp(call, argv);
+
+        // if we reached this line, something must have gone wrong
+        exit(errno);
     }
 
     // parent, log that it worked
