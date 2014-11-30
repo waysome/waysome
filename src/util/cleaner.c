@@ -93,11 +93,11 @@ ws_cleaner_run(void)
 {
     pthread_mutex_lock(&cleaner.mtx);
     struct cleaner_entry* iter = cleaner.head;
-    struct cleaner_entry* next;
+    struct cleaner_entry* next = iter;
 
     while (iter) {
-        next = iter->next;
         iter->func(iter->etc);
+        next = iter->next;
         free(iter);
         iter = next;
     }
