@@ -46,6 +46,17 @@ egl_buffer_deinit(
     struct ws_object* obj
 );
 
+/**
+ * Get the width of this egl buffer
+ */
+int32_t
+get_width(struct ws_buffer const*);
+
+/**
+ * Get the height of this egl buffer
+ */
+int32_t
+get_height(struct ws_buffer const*);
 /*
  *
  * Internal constants
@@ -67,8 +78,8 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_EGL_BUFFER = {
         .function_table = NULL,
     },
     .get_data = NULL,
-    .get_width = NULL,
-    .get_height = NULL,
+    .get_width = get_width,
+    .get_height = get_height,
     .get_stride = NULL,
     .get_format = NULL,
     .get_bpp = NULL,
@@ -187,3 +198,22 @@ egl_buffer_deinit(
     return true;
 }
 
+int32_t
+get_width(struct ws_buffer const* _buff) {
+    struct ws_egl_buffer* buff = (struct ws_egl_buffer*) _buff;
+    EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(buff->dev);
+    EGLint ret;
+    eglQuerySurface(egl_disp, buff->egl_surf, EGL_WIDTH, &ret);
+
+    return (int32_t) ret;
+}
+
+int32_t
+get_height(struct ws_buffer const* _buff) {
+    struct ws_egl_buffer* buff = (struct ws_egl_buffer*) _buff;
+    EGLDisplay egl_disp = ws_framebuffer_device_get_egl_display(buff->dev);
+    EGLint ret;
+    eglQuerySurface(egl_disp, buff->egl_surf, EGL_HEIGHT, &ret);
+
+    return (int32_t) ret;
+}
