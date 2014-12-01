@@ -11,7 +11,6 @@ set(SOURCE_FILES
     union.c
     utils.c
     value.c
-    value_named.c
     value_type.c
 )
 
