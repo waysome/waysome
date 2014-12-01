@@ -357,7 +357,7 @@ ws_wayland_xdg_surface_new(
         return NULL;
     }
 
-    int retval = ws_wayland_obj_init(&self->wl_obj, resource);
+    int retval = ws_wayland_obj_init(&self->shell.wl_obj, resource);
     if (retval < 0) {
         goto cleanup;
         return NULL;
@@ -365,9 +365,9 @@ ws_wayland_xdg_surface_new(
 
     wl_resource_set_implementation(resource, &interface, self, NULL);
 
-    self->surface = surface;
+    self->shell.surface = surface;
 
-    int ret = ws_surface_set_role(self->surface, &xdg_surface_interface);
+    int ret = ws_surface_set_role(self->shell.surface, &xdg_surface_interface);
 
     if (ret < 0) {
         goto cleanup;

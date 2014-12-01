@@ -28,7 +28,7 @@
 #ifndef __WS_WL_XDG_SURFACE_H__
 #define __WS_WL_XDG_SURFACE_H__
 
-#include "compositor/wayland/buffer.h"
+#include "compositor/wayland/abstract_shell_surface.h"
 #include "compositor/wayland/surface.h"
 #include "objects/wayland_obj.h"
 
@@ -39,8 +39,7 @@
  * This struct represents a surface
  */
 struct ws_wayland_xdg_surface {
-    struct ws_wayland_obj wl_obj; //!< @protected Base class.
-    struct ws_surface* surface; //!< @protected Surface Class
+    struct ws_abstract_shell_surface shell; //!< @protected The shell members
 };
 
 /**
