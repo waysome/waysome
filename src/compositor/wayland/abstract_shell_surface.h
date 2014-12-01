@@ -25,39 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WS_WL_XDG_SURFACE_H__
-#define __WS_WL_XDG_SURFACE_H__
+#ifndef __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
+#define __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
 
-#include "compositor/wayland/abstract_shell_surface.h"
+#include "compositor/wayland/buffer.h"
 #include "compositor/wayland/surface.h"
-#include "objects/wayland_obj.h"
-
 
 /**
- * Waysome's implementation of wl_surface
- *
- * This struct represents a surface
+ * An abstract shell surface to have an unified way to access the surface.
  */
-struct ws_wayland_xdg_surface {
-    struct ws_abstract_shell_surface shell; //!< @protected The shell members
+struct ws_abstract_shell_surface {
+    struct ws_wayland_obj wl_obj; //!< @protected: The associated wayland object
+    struct ws_surface* surface; //!< @public: The associated surface
 };
 
-/**
- * Variable which holds type information about the wl_surface type
- */
-extern ws_object_type_id WS_OBJECT_TYPE_ID_WAYLAND_XDG_SURFACE;
-
-/**
- * Attach an xdg surface to an existing surface
- *
- */
-struct ws_wayland_xdg_surface*
-ws_wayland_xdg_surface_new(
-    struct wl_client* client,
-    uint32_t version,
-    uint32_t id,
-    struct ws_surface* surface
-);
-
-#endif // __WS_WL_XDG_SURFACE_H__
-
+#endif // __WAYSOME_ABSTRACT_SHELL_SURFACE_H__

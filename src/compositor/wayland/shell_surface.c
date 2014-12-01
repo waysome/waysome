@@ -267,16 +267,17 @@ ws_shell_surface_new(
                                    resource_destroy);
 
     // finish the initialization
-    ws_wayland_obj_init(&self->wl_obj, resource);
-    self->wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SHELL_SURFACE;
+    ws_wayland_obj_init(&self->shell.wl_obj, resource);
+    self->shell.wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SHELL_SURFACE;
 
     // initialize the members
-    self->surface = getref(surface);
-    if (!self->surface) {
+    self->shell.surface = getref(surface);
+    if (!self->shell.surface) {
         goto cleanup_resource;
     }
 
-    int ret = ws_surface_set_role(self->surface, &wl_shell_surface_interface);
+    int ret = ws_surface_set_role(self->shell.surface,
+                                  &wl_shell_surface_interface);
 
     if (ret < 0) {
         goto cleanup_resource;
@@ -419,10 +420,10 @@ resource_destroy(
     // we don't need a null-check since we rely on the resource to ref a surface
 
     // invalidate
-    ws_object_lock_write(&surface->wl_obj.obj);
-    surface->wl_obj.resource = NULL;
-    ws_object_unlock(&surface->wl_obj.obj);
-    ws_object_unref(&surface->wl_obj.obj);
+    ws_object_lock_write(&surface->shell.wl_obj.obj);
+    surface->shell.wl_obj.resource = NULL;
+    ws_object_unlock(&surface->shell.wl_obj.obj);
+    ws_object_unref(&surface->shell.wl_obj.obj);
 }
 
 static int
