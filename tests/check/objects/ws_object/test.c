@@ -138,7 +138,7 @@ END_TEST
 
 START_TEST (test_object_lock_try_read) {
     struct ws_object* o = ws_object_new(sizeof(*o));
-    ck_assert(true == ws_object_lock_try_read(o));
+    ck_assert(0 == ws_object_lock_try_read(o));
     ck_assert(true == ws_object_unlock(o));
     ws_object_deinit(o);
 }
