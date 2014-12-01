@@ -86,5 +86,13 @@ ws_keyboard_send_modifiers(
     uint32_t group
 );
 
+/**
+ * Sets the active surface for this keyboard
+ */
+bool
+ws_keyboard_set_active_surface(
+    struct ws_keyboard* self, //!< The keyboard
+    struct ws_surface* nxt_surface //!< The surface to be active
+);
 #endif // __WS_KEYBOARD_H__
 
