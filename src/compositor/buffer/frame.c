@@ -140,15 +140,15 @@ ws_frame_buffer_new(
         goto err_fb;
     }
 
-    tmp->obj.buffer = mmap(0, tmp->obj.size, PROT_READ | PROT_WRITE, MAP_SHARED,
+    tmp->buffer = mmap(0, tmp->obj.size, PROT_READ | PROT_WRITE, MAP_SHARED,
                            ws_comp_ctx.fb->fd, mreq.offset);
 
-    if (tmp->obj.buffer == MAP_FAILED) {
+    if (tmp->buffer == MAP_FAILED) {
         ws_log(&log_ctx, LOG_CRIT, "Could not MMAP FB");
         goto err_fb;
     }
 
-    memset(tmp->obj.buffer, 0, tmp->obj.size);
+    memset(tmp->buffer, 0, tmp->obj.size);
 
     ws_log(&log_ctx, LOG_DEBUG, "Succesfully created Frameobj");
 
@@ -174,8 +174,8 @@ frame_buffer_deinit(
     struct ws_object* obj
 ) {
     struct ws_frame_buffer* self = (struct ws_frame_buffer*) obj;
-    if (self->obj.buffer) {
-        munmap(self->obj.buffer, self->obj.size);
+    if (self->buffer) {
+        munmap(self->buffer, self->obj.size);
     }
 
     if (self->fb) {
