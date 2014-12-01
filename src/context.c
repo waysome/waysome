@@ -32,6 +32,7 @@
 #include "command/util.h"
 #include "compositor/cursor.h"
 #include "compositor/keyboard.h"
+#include "compositor/wayland/surface.h"
 #include "context.h"
 #include "input/hotkeys.h"
 #include "objects/object.h"
@@ -39,7 +40,6 @@
 #include "util/exec.h"
 #include "values/string.h"
 #include "values/union.h"
-
 
 /**
  * A way to exit waysome, to be used by plugins
@@ -105,6 +105,14 @@ func_get_kb_focus(
     union ws_value_union* stack
 );
 
+/**
+ *  Set cursor focus
+ */
+static int
+func_set_ms_focus(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
@@ -114,6 +122,7 @@ static const struct ws_object_function functions[] = {
     { .name = "surface_under_cursor", .func = func_get_surface_under_cursor },
     { .name = "get_mouse_focus", .func = func_get_ms_focus },
     { .name = "get_keyboard_focus", .func = func_get_kb_focus },
+    { .name = "set_ms_focus", .func = func_set_ms_focus },
     { .name = NULL, .func = NULL }
 };
 
@@ -335,6 +344,31 @@ func_get_kb_focus(
     struct ws_surface* surface = ws_keyboard_get()->active_surface;
 
     ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
+
+    return 0;
+}
+
+static int
+func_set_ms_focus(
+    union ws_value_union* stack
+) {
+    stack += 2; // We only want the object after this
+
+    struct ws_cursor* cursor = ws_cursor_get();
+
+    if (ws_value_get_type(&stack->value) != WS_VALUE_TYPE_OBJECT_ID) {
+        ws_cursor_set_active_surface(cursor, NULL);
+        return 0; // This unsets the focus
+    }
+
+    struct ws_object* maybe_surface = ws_value_object_id_get(&stack->object_id);
+
+    if (maybe_surface->id != &WS_OBJECT_TYPE_ID_SURFACE) {
+        return -EINVAL;
+    }
+
+    struct ws_surface* surface = (struct ws_surface*) maybe_surface;
+    ws_cursor_set_active_surface(cursor, surface);
 
     return 0;
 }
