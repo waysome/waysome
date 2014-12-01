@@ -162,9 +162,9 @@ ws_action_manager_process(
     }
 
     // check whether the message is an event
-    if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
+    if (message->obj.id == &WS_OBJECT_TYPE_ID_EVENT) {
         struct ws_event* event = (struct ws_event*) message;
-        struct ws_transaction* transaction;
+        struct ws_transaction* transaction = NULL;
 
         // extract the name of the event
         struct ws_string* name = ws_event_get_name(event);
@@ -183,11 +183,9 @@ ws_action_manager_process(
             ws_object_deinit((struct ws_object*) &comparable);
 
             // extract the transaction to run
-            if (!named) {
-                goto cleanup_name;
+            if (named) {
+                transaction = (struct ws_transaction*) ws_named_get_obj(named);
             }
-
-            transaction = (struct ws_transaction*) ws_named_get_obj(named);
         }
 
         if (!transaction) {
