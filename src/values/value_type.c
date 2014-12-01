@@ -36,7 +36,6 @@
 #include "values/object_id.h"
 #include "values/set.h"
 #include "values/string.h"
-#include "values/value_named.h"
 #include "values/value_type.h"
 
 const char* WS_VALUE_TYPE_NAMES[] = {
@@ -48,7 +47,6 @@ const char* WS_VALUE_TYPE_NAMES[] = {
     [WS_VALUE_TYPE_STRING]      = "string",
     [WS_VALUE_TYPE_OBJECT_ID]   = "object",
     [WS_VALUE_TYPE_SET]         = "set",
-    [WS_VALUE_TYPE_NAMED]       = "name",
 };
 
 
@@ -100,11 +98,6 @@ ws_value_type_instance_from_value_name(
     case WS_VALUE_TYPE_SET:
         v = calloc(1, sizeof(struct ws_value_set));
         ws_value_set_init((struct ws_value_set*) v);
-        break;
-
-    case WS_VALUE_TYPE_NAMED:
-        v = calloc(1, sizeof(struct ws_value_named_value));
-        ws_value_named_value_init((struct ws_value_named_value*) v);
         break;
 
     case WS_VALUE_TYPE_NONE:
