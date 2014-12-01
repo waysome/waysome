@@ -85,10 +85,6 @@ ws_value_union_init_from_val(
     case WS_VALUE_TYPE_SET:
         dest->set.set = getref(ws_value_set_get((struct ws_value_set*) src));
         return 0;
-
-    case WS_VALUE_TYPE_NAMED:
-        //!< @todo implement
-        return -ENOTSUP;
     }
     return -EINVAL;
 }
@@ -129,10 +125,6 @@ ws_value_union_reinit(
 
     case WS_VALUE_TYPE_SET:
         return ws_value_set_init(&self->set);
-
-    case WS_VALUE_TYPE_NAMED:
-        ws_value_named_value_init(&self->named_value);
-        break;
     }
     return 0;
 }
