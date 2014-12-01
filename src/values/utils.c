@@ -34,7 +34,6 @@
 #include "values/set.h"
 #include "values/string.h"
 #include "values/value.h"
-#include "values/value_named.h"
 #include "values/value_type.h"
 
 bool
