@@ -221,19 +221,8 @@ ws_cursor_set_position(
 
     ws_cursor_set_active_surface(self, nxt_surface);
 
-    //!< @todo once we have keyboard focus, remove the following block of code
     struct ws_keyboard* k = ws_keyboard_get();
-
-    if (k->active_surface) {
-        ws_keyboard_send_leave(k);
-    }
-
-    k->active_surface = nxt_surface;
-
-    if (k->active_surface) {
-        ws_keyboard_send_keymap(k);
-        ws_keyboard_send_enter(k);
-    }
+    ws_keyboard_set_active_surface(k, nxt_surface);
 }
 
 void
