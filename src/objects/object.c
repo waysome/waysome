@@ -42,7 +42,6 @@
 #include "values/object_id.h"
 #include "values/set.h"
 #include "values/string.h"
-#include "values/value_named.h"
 
 static struct ws_logger_context log_ctx = {
     .prefix = "[Object] ",
