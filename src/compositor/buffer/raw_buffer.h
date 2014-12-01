@@ -44,7 +44,6 @@ struct ws_raw_buffer {
     int stride;             //!< @protected
     int width;              //!< @protected
     int size;               //!< @protected
-    void* buffer;           //!< @protected
 };
 
 /**
