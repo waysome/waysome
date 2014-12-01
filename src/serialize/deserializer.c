@@ -51,7 +51,7 @@ ws_deserialize(
     *msg = NULL;
     if (self->is_ready) {
         // transfer object without getref
-        *msg = self->buffer;
+        *msg = getref(self->buffer);
         self->buffer = NULL;
     }
 
