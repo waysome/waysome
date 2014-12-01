@@ -317,6 +317,9 @@ surface_attach_cb(
 
     //!< @todo: handle x and y parameters
     ws_wayland_buffer_set_resource(&self->img_buf, buffer);
+
+    self->x = x;
+    self->y = y;
 }
 
 static void
