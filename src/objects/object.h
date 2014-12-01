@@ -383,9 +383,9 @@ ws_object_lock_try_read(
  *
  * @memberof ws_object
  *
- * @return true if the lock was aquired, false otherwise
+ * @return zero on success, else a negative errno.h number (from pthread call)
  */
-bool
+int
 ws_object_lock_try_write(
     struct ws_object* self //!< The object to lock
 );

@@ -226,7 +226,7 @@ connection_manager_dispatch(
     proc = (struct ws_connection_manager*) watcher->data;
     ssize_t res;
 
-    if (!ws_object_lock_try_write(&proc->obj)) {
+    if (ws_object_lock_try_write(&proc->obj) != 0) {
         return;
     }
 
@@ -319,7 +319,7 @@ connection_manager_flush(
     proc = (struct ws_connection_manager*) watcher->data;
 
     // try to lock the object
-    if (!ws_object_lock_try_write(&proc->obj)) {
+    if (ws_object_lock_try_write(&proc->obj) != 0) {
         goto unlock;
     }
 
