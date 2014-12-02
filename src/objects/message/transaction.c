@@ -254,9 +254,9 @@ deinit_transaction(
     while (statement--) {
         ws_statement_deinit(&t->cmds->statements[statement]);
     }
+    t->cmds->num = 0;
 
 out:
-    t->cmds->num = 0;
     ws_object_unlock(self);
     return true;
 }
