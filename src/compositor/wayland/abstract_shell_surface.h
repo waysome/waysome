@@ -28,8 +28,12 @@
 #ifndef __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
 #define __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
 
-#include "compositor/wayland/buffer.h"
-#include "compositor/wayland/surface.h"
+#include "objects/wayland_obj.h"
+
+// forward declarations
+struct ws_surface; // definition in compositor/surface.h
+struct wl_interface; // definition in wayland headers
+
 
 /**
  * An abstract shell surface to have an unified way to access the surface.
@@ -38,5 +42,42 @@ struct ws_abstract_shell_surface {
     struct ws_wayland_obj wl_obj; //!< @protected: The associated wayland object
     struct ws_surface* surface; //!< @public: The associated surface
 };
+
+/**
+ * Variable which holds type information about the wl_surface type
+ */
+extern ws_object_type_id WS_OBJECT_TYPE_ID_ABSTRACT_SHELL_SURFACE;
+
+/**
+ * Create a new abstract shell surface
+ *
+ * @warning only to be used in derived types
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_abstract_shell_surface_init(
+    struct ws_abstract_shell_surface* self, //!< surface to initialize
+    struct wl_resource* resource, //!< resource to set
+    struct ws_surface* surface, //!< surface to attach
+    struct wl_interface const* role //!< role to give the surface
+);
+
+/**
+ * Set the position of the surface
+ *
+ * @memberof ws_abstract_shell_surface
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_abstract_shell_surface_set_pos(
+    struct ws_abstract_shell_surface* self, //!< surface to modify
+    int32_t x,
+    int32_t y
+)
+__ws_nonnull__(1)
+;
+
 
 #endif // __WAYSOME_ABSTRACT_SHELL_SURFACE_H__

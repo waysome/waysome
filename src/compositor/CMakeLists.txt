@@ -34,6 +34,7 @@ set(SOURCE_FILES
     module.c
     monitor.c
     monitor_mode.c
+    wayland/abstract_shell_surface.c
     wayland/buffer.c
     wayland/client.c
     wayland/compositor.c

@@ -32,6 +32,10 @@
 #include "objects/wayland_obj.h"
 
 
+// forward declarations
+struct wl_client;
+
+
 /**
  * Waysome's implementation of wl_surface
  *

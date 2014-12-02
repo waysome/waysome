@@ -267,21 +267,13 @@ ws_shell_surface_new(
                                    resource_destroy);
 
     // finish the initialization
-    ws_wayland_obj_init(&self->shell.wl_obj, resource);
+    int retval = ws_abstract_shell_surface_init(&self->shell, resource,
+                                                surface,
+                                                &wl_shell_surface_interface);
+    if (retval < 0) {
+        goto cleanup_resource;
+    }
     self->shell.wl_obj.obj.id = &WS_OBJECT_TYPE_ID_SHELL_SURFACE;
-
-    // initialize the members
-    self->shell.surface = getref(surface);
-    if (!self->shell.surface) {
-        goto cleanup_resource;
-    }
-
-    int ret = ws_surface_set_role(self->shell.surface,
-                                  &wl_shell_surface_interface);
-
-    if (ret < 0) {
-        goto cleanup_resource;
-    }
 
     return self;
 
