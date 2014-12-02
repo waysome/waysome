@@ -79,5 +79,17 @@ ws_abstract_shell_surface_set_pos(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Set the width of a ws_abstract_shell_surface
+ *
+ * @memberof ws_abstract_shell_surface
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_abstract_shell_surface_set_width(
+    struct ws_abstract_shell_surface* self,
+    int32_t width //!< The new width
+);
 
 #endif // __WAYSOME_ABSTRACT_SHELL_SURFACE_H__

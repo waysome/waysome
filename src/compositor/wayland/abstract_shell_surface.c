@@ -102,6 +102,14 @@ ws_abstract_shell_surface_set_pos(
     return 0;
 }
 
+int
+ws_abstract_shell_surface_set_width(
+    struct ws_abstract_shell_surface* self,
+    int32_t width
+) {
+    //!< @todo implement
+    return 0;
+}
 
 /*
  *
