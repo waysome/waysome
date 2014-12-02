@@ -266,15 +266,21 @@ deserialize(
             self->is_ready) {
         ws_log(&log_ctx, LOG_DEBUG,
                "[Deserializer %p]: Ready with a JSON object", self);
-        ws_log(&log_ctx, LOG_DEBUG,
-               "[Deserializer %p]: Reinitializing", self);
 
         yajl_free(d->handle);
+
+        // first reinit the state object (memsets to zero)
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Reinitializing internal state", self);
+        deserialize_state_init(d);
+
+        // Now reinitialize yajl
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Reinitializing YAJL", self);
         if (initialize_yajl(d, &YAJL_CALLBACKS, self)) {
             ws_log(&log_ctx, LOG_WARNING,
-                   "[Deserializer %p]: Reinitializing failed", self);
+                   "[Deserializer %p]: Reinitializing of YAJL failed", self);
         }
-
     }
 
     return consumed;
