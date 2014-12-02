@@ -152,3 +152,31 @@ ws_builtin_cmd_has_attr(
     return 0;
 }
 
+int
+ws_builtin_cmd_is_instance_of(
+    union ws_value_union* args
+) {
+    if ((args[0].value.type != WS_VALUE_TYPE_OBJECT_ID) ||
+        (args[1].value.type != WS_VALUE_TYPE_OBJECT_ID)) {
+        return -EINVAL;
+    }
+
+    struct ws_object* obj = ws_value_object_id_get(&args[0].object_id);
+
+    if (ws_value_object_id_get(&args[1].object_id)) {
+        return -EINVAL;
+    }
+
+    ws_object_type_id* id = ws_value_object_id_get(&args[1].object_id)->id;
+
+    bool b = ws_object_is_instance_of(obj, id);
+
+    int res = ws_value_union_reinit(args, WS_VALUE_TYPE_BOOL);
+    if (res != 0) {
+        return res;
+    }
+
+    ws_value_bool_set(&args[0].bool_, b);
+
+    return 0;
+}
