@@ -70,6 +70,14 @@ deserialize_state_new(
 );
 
 /**
+ * Initialize the passed deserializer_state object
+ */
+static void
+deserialize_state_init(
+    struct deserializer_state* self
+);
+
+/**
  * Initialize yajl handle
  *
  * @return zero on success
@@ -155,30 +163,24 @@ deserialize_state_new(
         return NULL;
     }
 
+    deserialize_state_init(state);
+
     if (initialize_yajl(state, cbs, ctx)) {
         yajl_free(state->handle);
         free(state);
         return NULL;
     }
 
-    state->current_state    = STATE_INIT;
-    state->tmp_statement    = NULL;
-
-    state->nboxbrackets     = 0;
-    state->ncurvedbrackets  = 0;
-
-    state->id               = 0;
-
-    // Explicit set to EXEC here.
-    state->flags            = 0;
-
-    state->ev_ctx           = NULL;
-    state->ev_name          = NULL;
-    state->has_event        = false;
-
-    ws_log(&log_ctx, LOG_DEBUG, "Allocated deserializer internal state");
-
     return state;
+}
+
+static void
+deserialize_state_init(
+    struct deserializer_state* self
+) {
+    memset(self, 0, sizeof(*self));
+    self->current_state = STATE_INIT;
+    ws_log(&log_ctx, LOG_DEBUG, "Allocated deserializer internal state");
 }
 
 static int
@@ -264,15 +266,21 @@ deserialize(
             self->is_ready) {
         ws_log(&log_ctx, LOG_DEBUG,
                "[Deserializer %p]: Ready with a JSON object", self);
-        ws_log(&log_ctx, LOG_DEBUG,
-               "[Deserializer %p]: Reinitializing", self);
 
         yajl_free(d->handle);
+
+        // first reinit the state object (memsets to zero)
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Reinitializing internal state", self);
+        deserialize_state_init(d);
+
+        // Now reinitialize yajl
+        ws_log(&log_ctx, LOG_DEBUG,
+               "[Deserializer %p]: Reinitializing YAJL", self);
         if (initialize_yajl(d, &YAJL_CALLBACKS, self)) {
             ws_log(&log_ctx, LOG_WARNING,
-                   "[Deserializer %p]: Reinitializing failed", self);
+                   "[Deserializer %p]: Reinitializing of YAJL failed", self);
         }
-
     }
 
     return consumed;
