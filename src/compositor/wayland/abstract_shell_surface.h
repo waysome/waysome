@@ -63,5 +63,21 @@ ws_abstract_shell_surface_init(
     struct wl_interface const* role //!< role to give the surface
 );
 
+/**
+ * Set the position of the surface
+ *
+ * @memberof ws_abstract_shell_surface
+ *
+ * @return 0 on success, a negative error number otherwise
+ */
+int
+ws_abstract_shell_surface_set_pos(
+    struct ws_abstract_shell_surface* self, //!< surface to modify
+    int32_t x,
+    int32_t y
+)
+__ws_nonnull__(1)
+;
+
 
 #endif // __WAYSOME_ABSTRACT_SHELL_SURFACE_H__

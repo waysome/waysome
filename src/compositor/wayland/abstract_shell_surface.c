@@ -92,6 +92,16 @@ ws_abstract_shell_surface_init(
     return 0;
 }
 
+int
+ws_abstract_shell_surface_set_pos(
+    struct ws_abstract_shell_surface* self,
+    int32_t x,
+    int32_t y
+) {
+    //!< @todo implement
+    return 0;
+}
+
 
 /*
  *
