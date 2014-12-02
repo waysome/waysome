@@ -95,6 +95,8 @@ ws_transaction_init(
     self->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
 
     self->name = getref(name);
+    self->cmds = NULL;
+    self->flags = 0;
     return 0;
 }
 
@@ -252,9 +254,9 @@ deinit_transaction(
     while (statement--) {
         ws_statement_deinit(&t->cmds->statements[statement]);
     }
+    t->cmds->num = 0;
 
 out:
-    t->cmds->num = 0;
     ws_object_unlock(self);
     return true;
 }
