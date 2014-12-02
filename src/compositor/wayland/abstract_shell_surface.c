@@ -25,10 +25,13 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <wayland-server.h>
 #include <wayland-server-protocol.h>
 
 #include "compositor/wayland/abstract_shell_surface.h"
 #include "compositor/wayland/surface.h"
+#include "values/union.h"
 
 
 /*
@@ -45,12 +48,30 @@ shell_surface_deinit(
     struct ws_object* obj
 );
 
+/**
+ * Callback command function for setting surface width
+ *
+ * @memberof ws_abstract_shell_surface
+ *
+ * Takes two parameters:
+ *  1) The object id of the surface
+ *  2) The width to set
+ */
+static int
+cmd_func_set_width(
+    union ws_value_union* stack // The stack to use
+);
 
 /*
  *
  * Interface implementation
  *
  */
+
+static const struct ws_object_function FUNCTIONS[] = {
+    { .name = "setwidth",           .func = cmd_func_set_width },
+    { .name = NULL,                 .func = NULL } // Iteration stopper
+};
 
 ws_object_type_id WS_OBJECT_TYPE_ID_ABSTRACT_SHELL_SURFACE = {
     .supertype  = &WS_OBJECT_TYPE_ID_WAYLAND_OBJ,
@@ -161,5 +182,38 @@ shell_surface_deinit(
 
     ws_object_unref((struct ws_object*) &shell_surf->surface);
     return true;
+}
+
+static int
+cmd_func_set_width(
+    union ws_value_union* stack // The stack to use
+) {
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_OBJECT_ID) {
+        return -EINVAL;
+    }
+
+    struct ws_abstract_shell_surface* self;
+    self = (struct ws_abstract_shell_surface*)
+            ws_value_object_id_get(&stack[0].object_id);
+
+    // `1` is the command string itself
+
+    if (ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT) {
+        ws_object_unref((struct ws_object*) self);
+        return -EINVAL;
+    }
+
+    if (ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_NONE) {
+        ws_object_unref((struct ws_object*) self);
+        return -E2BIG;
+    }
+
+    intmax_t width = ws_value_int_get(&stack[2].int_);
+    if (width > INT32_MAX) {
+        ws_object_unref((struct ws_object*) self);
+        return -EINVAL;
+    }
+
+    return ws_abstract_shell_surface_set_height(self, (int32_t) width);
 }
 
