@@ -94,6 +94,7 @@ ws_hotkeys_init(void) {
 
 
     res = ws_hotkey_dag_init(&ws_hotkeys_ctx.root);
+    ws_hotkeys_ctx.state = NULL;
     if (!res) {
         goto cleanup;
     }
@@ -259,6 +260,8 @@ static struct wl_array
 eventlist_reset(void) {
     struct wl_array buf = ws_hotkeys_ctx.events;
     ws_hotkeys_ctx.buttons_pressed = 0;
+    ws_hotkeys_ctx.state = NULL;
+
     wl_array_init(&ws_hotkeys_ctx.events);
     return buf;
 }
