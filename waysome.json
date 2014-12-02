@@ -1,0 +1,20 @@
+{
+    "TYPE": "transaction",
+    "UID": 1,
+    "FLAGS": {
+        "REGISTER": "shutdown"
+    },
+    "CMDS": [
+        {"call": [{"pos":0}, "exit"]}
+    ]
+}
+{
+    "TYPE": "transaction",
+    "UID": 2,
+    "FLAGS": {
+        "EXEC": true
+    },
+    "CMDS": [
+        {"call": [{"pos":0}, "add_hotkey_event", "shutdown", 29, 56, 16]}
+    ]
+}

@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
+\usepackage{lstautogobble}
 \usepackage{url}
 \usepackage{xcolor}
 
@@ -22,6 +23,7 @@
 \colorlet{numb}{magenta!60!black}
 
 \lstdefinelanguage{json}{
+    autogobble=true,
     basicstyle=\normalfont\ttfamily,
     numbers=left,
     numberstyle=\scriptsize,
