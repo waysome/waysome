@@ -120,6 +120,16 @@ ws_abstract_shell_surface_set_height(
     return 0;
 }
 
+int
+ws_abstract_shell_surface_set_width_and_height(
+    struct ws_abstract_shell_surface* self,
+    int32_t width,
+    int32_t height
+) {
+    //!< @todo implement
+    return 0;
+}
+
 /*
  *
  * Internal implementation
