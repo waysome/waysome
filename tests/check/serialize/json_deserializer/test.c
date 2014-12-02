@@ -572,6 +572,57 @@ START_TEST (test_json_deserializer_multiple_transactions_three) {
 }
 END_TEST
 
+START_TEST (test_json_deserializer_multiple_transactions_flags) {
+    char const* buf =
+    "{" \
+        "\"TYPE\": \"transaction\"," \
+        "\"UID\": 1," \
+        "\"FLAGS\": {" \
+        "    \"REGISTER\": \"shutdown\"" \
+        "}," \
+        "\"CMDS\": [" \
+        "    {\"call\": [{\"pos\":0}, \"exit\"]}" \
+        "]" \
+    "}" \
+    "{" \
+        "\"TYPE\": \"transaction\"," \
+        "\"UID\": 2," \
+        "\"FLAGS\": {" \
+        "    \"EXEC\": true" \
+        "}," \
+        "\"CMDS\": [" \
+        "    {\"call\": [{\"pos\":0}, \"add_hotkey_event\", \"shutdown\", 29, 56, 16]}" \
+        "]" \
+    "}";
+
+    ssize_t s = ws_deserialize(d, &messagebuf, buf, strlen(buf));
+
+    {
+        ck_assert(messagebuf != NULL);
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION);
+
+        struct ws_transaction* t = (struct ws_transaction*) messagebuf;
+        enum ws_transaction_flags flags;
+        flags = ws_transaction_flags(t);
+
+        ck_assert(flags == WS_TRANSACTION_FLAGS_REGISTER);
+    }
+
+    s = ws_deserialize(d, &messagebuf, buf + s, strlen(buf) - s);
+
+    {
+        ck_assert(messagebuf != NULL);
+        ck_assert(messagebuf->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION);
+
+        struct ws_transaction* t = (struct ws_transaction*) messagebuf;
+
+        enum ws_transaction_flags flags;
+        flags = ws_transaction_flags(t);
+
+        ck_assert(flags == WS_TRANSACTION_FLAGS_EXEC);
+    }
+}
+END_TEST
 
 /*
  *
@@ -609,6 +660,7 @@ json_deserializer_suite(void)
     tcase_add_test(tcx, test_json_deserializer_events_with_everything);
     tcase_add_test(tcx, test_json_deserializer_multiple_transactions);
     tcase_add_test(tcx, test_json_deserializer_multiple_transactions_three);
+    tcase_add_test(tcx, test_json_deserializer_multiple_transactions_flags);
 
     return s;
 }
