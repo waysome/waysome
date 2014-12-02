@@ -79,7 +79,7 @@ ws_value_string_get(
     struct ws_value_string* self
 ){
     if (self) {
-        return self->str;
+        return getref(self->str);
     }
 
     return NULL;

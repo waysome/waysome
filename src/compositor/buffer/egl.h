@@ -81,6 +81,8 @@ __ws_nonnull__(1)
  *
  * @memberof ws_egl_buffer
  *
+ * @note Gets ref on object via ws_buffer_init()
+ *
  * @return a newly created EGL buffer
  */
 struct ws_egl_buffer*

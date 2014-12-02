@@ -251,12 +251,12 @@ ws_object_unref(
     free(self);
 }
 
-size_t
+ssize_t
 ws_object_hash(
     struct ws_object* self
 ) {
     if (!self) {
-        return false;
+        return -EINVAL;
     }
 
     ws_log(&log_ctx, LOG_DEBUG, "Hashing: %p (%s)", self, self->id->typestr);
@@ -265,7 +265,7 @@ ws_object_hash(
     while (!type->hash_callback) {
         // we hit the basic object type, which is totally abstract
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
-            return false;
+            return -ENOTSUP;
         }
 
         type = type->supertype;
@@ -292,18 +292,18 @@ ws_object_lock_write(
     return 0 == pthread_rwlock_wrlock(&self->rw_lock);
 }
 
-bool
+int
 ws_object_lock_try_read(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_tryrdlock(&self->rw_lock);
+    return -pthread_rwlock_tryrdlock(&self->rw_lock);
 }
 
-bool
+int
 ws_object_lock_try_write(
     struct ws_object* self
 ) {
-    return 0 == pthread_rwlock_trywrlock(&self->rw_lock);
+    return -pthread_rwlock_trywrlock(&self->rw_lock);
 }
 
 bool
@@ -506,21 +506,50 @@ ws_object_cmp(
         return 0;
     }
 
+    while (1) {
+        int try = ws_object_lock_try_read((struct ws_object*) o1);
+        if (try != 0) {
+            if (try == -EAGAIN || try == -EWOULDBLOCK) {
+                continue;
+            }
+            return try;
+        }
+
+        try = ws_object_lock_try_read((struct ws_object*) o2);
+        if (try != 0) {
+            ws_object_unlock((struct ws_object*) o1);
+            if (try == -EAGAIN || try == -EWOULDBLOCK) {
+                continue;
+            }
+            return try;
+        }
+        break;
+    }
+
+    int res;
+
     if (o1->id != o2->id) {
-        return 42; // determined by fair dice roll
+        res = 42; // determined by fair dice roll
+        goto out;
     }
 
     ws_object_type_id* type = o1->id;
     while (!type->cmp_callback) {
         // we hit the basic object type, which is totally abstract
         if (type == &WS_OBJECT_TYPE_ID_OBJECT) {
-            return 17; // because it's such a nice prime number
+            res = 17; // because it's such a nice prime number
+            goto out;
         }
 
         type = type->supertype;
     }
 
-    return type->cmp_callback(o1, o2);
+    res = type->cmp_callback(o1, o2);
+
+out:
+    ws_object_unlock((struct ws_object*) o2); // unlock, remove `const`
+    ws_object_unlock((struct ws_object*) o1); // unlock, remove `const`
+    return res;
 }
 
 uintmax_t

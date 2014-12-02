@@ -40,6 +40,8 @@
 
 /**
  * Hashing callback for `ws_wayland_obj` type
+ *
+ * @note Read-locked via call from ws_object_hash()
  */
 static size_t
 hash_callback(
@@ -48,6 +50,8 @@ hash_callback(
 
 /**
  * Compare callback for `ws_wayland_obj` type
+ *
+ * @note Guaranteed to be read-locked when called from ws_object_cmp().
  */
 int
 cmp_callback(
@@ -127,11 +131,14 @@ struct wl_resource*
 ws_wayland_obj_get_wl_resource(
     struct ws_wayland_obj* self
 ) {
+    struct wl_resource* res = NULL;
     if (self) {
-        return self->resource;
+        ws_object_lock_read(&self->obj);
+        res = self->resource;
+        ws_object_unlock(&self->obj);
     }
 
-    return NULL;
+    return res;
 }
 
 void
@@ -139,7 +146,9 @@ ws_wayland_obj_set_wl_resource(
     struct ws_wayland_obj* self,
     struct wl_resource* resource
 ) {
+    ws_object_lock_write(&self->obj);
     self->resource = resource;
+    ws_object_unlock(&self->obj);
 }
 
 /*

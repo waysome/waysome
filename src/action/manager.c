@@ -99,10 +99,14 @@ ws_action_manager_init(
     }
     int res;
 
-    actman_ctx.obj = context;
+    actman_ctx.obj = getref(context);
+    if (!actman_ctx.obj) { // Could not aquire lock on context for ref-counting
+        return -EAGAIN;
+    }
 
     res = ws_set_init(&actman_ctx.transactions);
     if (res < 0) {
+        ws_object_unref(actman_ctx.obj);
         return res;
     }
 
@@ -125,6 +129,7 @@ cleanup_registrations:
     ws_object_deinit((struct ws_object*) &actman_ctx.registrations);
 cleanup_transactions:
     ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
+    ws_object_unref(actman_ctx.obj);
     return res;
 }
 

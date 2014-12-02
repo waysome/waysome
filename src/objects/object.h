@@ -335,9 +335,9 @@ ws_object_run(
  *
  * @memberof ws_object
  *
- * @return the object hash as a `size_t`
+ * @return the object hash as a `size_t` or negative errno.h number
  */
-size_t
+ssize_t
 ws_object_hash(
     struct ws_object* self //!< The object
 );
@@ -371,9 +371,9 @@ ws_object_lock_write(
  *
  * @memberof ws_object
  *
- * @return true if the lock was aquired, false otherwise
+ * @return zero on success, else a negative errno.h number (from pthread call)
  */
-bool
+int
 ws_object_lock_try_read(
     struct ws_object* self //!< The object to lock
 );
@@ -383,9 +383,9 @@ ws_object_lock_try_read(
  *
  * @memberof ws_object
  *
- * @return true if the lock was aquired, false otherwise
+ * @return zero on success, else a negative errno.h number (from pthread call)
  */
-bool
+int
 ws_object_lock_try_write(
     struct ws_object* self //!< The object to lock
 );
@@ -504,6 +504,8 @@ __ws_nonnull__(1, 2)
  * is undefined.
  *
  * @warning If the type has no compare callback, the return value is undefined.
+ *
+ * @note Aquires read-locks on both objects.
  *
  * @return -1 if `o1` is bigger, zero if they are equal, 1 if `o2` is bigger
  */

@@ -91,6 +91,8 @@ ws_wayland_obj_new(
  *
  * @memberof ws_wayland_obj
  *
+ * @note Read-locks the object for reading it.
+ *
  * @return the wl_resource instance from the object
  */
 struct wl_resource*
@@ -102,6 +104,8 @@ ws_wayland_obj_get_wl_resource(
  * Set the wl_resource to encapsulate in the ws_wayland_obj object
  *
  * @memberof ws_wayland_obj
+ *
+ * @note Write-locks the object for modifying it.
  */
 void
 ws_wayland_obj_set_wl_resource(
