@@ -76,6 +76,21 @@ cmd_func_set_height(
     union ws_value_union* stack // The stack to use
 );
 
+/**
+ * Callback command function for setting surface width and height
+ *
+ * @memberof ws_abstract_shell_surface
+ *
+ * Takes two parameters:
+ *  1) The object id of the surface
+ *  2) The width to set
+ *  2) The height to set
+ */
+static int
+cmd_func_set_width_and_height(
+    union ws_value_union* stack // The stack to use
+);
+
 /*
  *
  * Interface implementation
@@ -85,6 +100,7 @@ cmd_func_set_height(
 static const struct ws_object_function FUNCTIONS[] = {
     { .name = "setwidth",           .func = cmd_func_set_width },
     { .name = "setheight",          .func = cmd_func_set_height },
+    { .name = "setwidthheight",     .func = cmd_func_set_width_and_height },
     { .name = NULL,                 .func = NULL } // Iteration stopper
 };
 
@@ -263,5 +279,42 @@ cmd_func_set_height(
     }
 
     return ws_abstract_shell_surface_set_height(self, (int32_t) height);
+}
+
+static int
+cmd_func_set_width_and_height(
+    union ws_value_union* stack // The stack to use
+) {
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_OBJECT_ID) {
+        return -EINVAL;
+    }
+
+    struct ws_abstract_shell_surface* shs;
+    shs = (struct ws_abstract_shell_surface*)
+            ws_value_object_id_get(&stack[0].object_id);
+
+    // `1` is the command string itself
+
+    if (ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT ||
+            ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_INT) {
+        ws_object_unref((struct ws_object*) shs);
+        return -EINVAL;
+    }
+
+    if (ws_value_get_type(&stack[4].value) != WS_VALUE_TYPE_NONE) {
+        ws_object_unref((struct ws_object*) shs);
+        return -E2BIG;
+    }
+
+    intmax_t width = ws_value_int_get(&stack[2].int_);
+    intmax_t height = ws_value_int_get(&stack[3].int_);
+    if (width > INT32_MAX || height > INT32_MAX) {
+        ws_object_unref((struct ws_object*) shs);
+        return -EINVAL;
+    }
+
+    return ws_abstract_shell_surface_set_width_and_height(shs,
+                                                          (int32_t) width,
+                                                          (int32_t) height);
 }
 
