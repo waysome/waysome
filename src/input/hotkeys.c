@@ -94,6 +94,7 @@ ws_hotkeys_init(void) {
 
 
     res = ws_hotkey_dag_init(&ws_hotkeys_ctx.root);
+    ws_hotkeys_ctx.state = NULL;
     if (!res) {
         goto cleanup;
     }
@@ -115,30 +116,18 @@ struct wl_array
 ws_hotkeys_eval(
     struct input_event* ev
 ) {
+    // ignore repeated or unknown events
+    if ((ev->value < 0) || (ev->value > 1)) {
+        return empty_eventlist();
+    }
+
     // get the key code
     uint16_t code = ev->code;
 
-    // insert the event into the track list, if it's not yet in the event list
+    // insert the event into the track list, if it's not a repeat event
     {
-        struct input_event* buf;
-
-        // check whether the event already is accounted for
-        struct input_event* const data = ws_hotkeys_ctx.events.data;
-        buf = data + ws_hotkeys_ctx.events.size;
-        while (buf-- > data) {
-            if (buf->code != code) {
-                // event not of interest
-                continue;
-            }
-            if (buf->value != ev->value) {
-                // the button was release before
-                break;
-            }
-            // we consume the event but we'll _not_ store it or iterate the DAG
-            return empty_eventlist();
-        }
-
         // now insert the event into the event list
+        struct input_event* buf;
         buf = wl_array_add(&ws_hotkeys_ctx.events, sizeof(*ev));
         if (!buf) {
             return eventlist_reset();
@@ -271,6 +260,8 @@ static struct wl_array
 eventlist_reset(void) {
     struct wl_array buf = ws_hotkeys_ctx.events;
     ws_hotkeys_ctx.buttons_pressed = 0;
+    ws_hotkeys_ctx.state = NULL;
+
     wl_array_init(&ws_hotkeys_ctx.events);
     return buf;
 }
