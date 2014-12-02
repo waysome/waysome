@@ -95,6 +95,8 @@ ws_transaction_init(
     self->m.obj.id = &WS_OBJECT_TYPE_ID_TRANSACTION;
 
     self->name = getref(name);
+    self->cmds = NULL;
+    self->flags = 0;
     return 0;
 }
 
