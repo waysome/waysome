@@ -92,4 +92,17 @@ ws_abstract_shell_surface_set_width(
     int32_t width //!< The new width
 );
 
+/**
+ * Set the height of a ws_abstract_shell_surface
+ *
+ * @memberof ws_abstract_shell_surface
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_abstract_shell_surface_set_height(
+    struct ws_abstract_shell_surface* self,
+    int32_t height //!< The new height
+);
+
 #endif // __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
