@@ -31,10 +31,6 @@
 #include "compositor/wayland/abstract_shell_surface.h"
 #include "objects/wayland_obj.h"
 
-// forward declarations
-struct ws_surface; // definition in compositor/surface.h
-
-
 /**
  * Waysome's implementation of wl_surface
  *
