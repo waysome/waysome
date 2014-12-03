@@ -47,27 +47,45 @@ struct ws_keyboard {
 
 extern ws_object_type_id WS_OBJECT_TYPE_ID_KEYBOARD;
 
+/**
+ * Creates a new keyboard object, should only be called once by the compositor
+ */
 struct ws_keyboard*
 ws_keyboard_new(void);
 
+/**
+ * Gets the global keyboard, this is available after init of the compositor
+ */
 struct ws_keyboard*
 ws_keyboard_get(void);
 
+/**
+ * Sends the keymap to the current active surface
+ */
 void
 ws_keyboard_send_keymap(
     struct ws_keyboard* self //!< The keyboard
 );
 
+/**
+ * Sends the enter event to the current active surface
+ */
 void
 ws_keyboard_send_enter(
     struct ws_keyboard* self //!< The keyboard
 );
 
+/**
+ * Sends the leave event to the current active surface
+ */
 void
 ws_keyboard_send_leave(
     struct ws_keyboard* self //!< The keyboard
 );
 
+/**
+ * Send a keypress to the keyboard
+ */
 void
 ws_keyboard_send_key(
     struct ws_keyboard* self, //!< The keyboard
@@ -76,6 +94,9 @@ ws_keyboard_send_key(
     uint32_t state
 );
 
+/**
+ * Send a modifier to the keyboard
+ */
 void
 ws_keyboard_send_modifiers(
     struct ws_keyboard* self, //!< The keyboard
