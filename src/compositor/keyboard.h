@@ -53,6 +53,9 @@ extern ws_object_type_id WS_OBJECT_TYPE_ID_KEYBOARD;
 struct ws_keyboard*
 ws_keyboard_new(void);
 
+/**
+ * Gets the global keyboard, this is available after init of the compositor
+ */
 struct ws_keyboard*
 ws_keyboard_get(void);
 
