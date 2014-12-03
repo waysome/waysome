@@ -182,5 +182,14 @@ ws_cursor_get_surface_under_cursor(
     struct ws_cursor* self //!< The cursor
 );
 
+/**
+ * Set the focus surface for the cursor
+ */
+bool
+ws_cursor_set_active_surface(
+    struct ws_cursor* self, //!< The cursor
+    struct ws_surface* nxt_surface //!< The surface to be active
+);
+
 #endif // __WS_CURSOR_H__
 

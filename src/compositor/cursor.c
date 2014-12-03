@@ -132,52 +132,21 @@ get_surface_under_cursor(
     return 0;
 }
 
-void
-ws_cursor_set_position(
+bool
+ws_cursor_set_active_surface(
     struct ws_cursor* self,
-    int x,
-    int y
+    struct ws_surface* nxt_surface
 ) {
-    int w = ws_buffer_width((struct ws_buffer*) self->cur_mon->buffer);
-    int h = ws_buffer_height((struct ws_buffer*) self->cur_mon->buffer);
-
-    // We use the negative hotspot position because we don't want it to go
-    // off screen.
-    self->x = CLAMP(-self->x_hp, x, w);
-    self->y = CLAMP(-self->y_hp, y, h);
-    int retval = drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
-                                    self->x, self->y);
-    if (retval != 0) {
-        ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
-    }
-
-    struct ws_set* surfaces = ws_monitor_surfaces(self->cur_mon);
-    struct ws_surface* nxt_surface = NULL;
-    ws_set_select(surfaces, NULL, NULL, get_surface_under_cursor, &nxt_surface);
-
     if (self->active_surface == nxt_surface) {
-        return;
+        return false;
     }
 
-    //!< @todo once we have keyboard focus, remove the following block of code
-    struct ws_keyboard* k = ws_keyboard_get();
-
-    if (k->active_surface) {
-        ws_keyboard_send_leave(k);
-    }
-
-    k->active_surface = nxt_surface;
-
-    if (k->active_surface) {
-        ws_keyboard_send_keymap(k);
-        ws_keyboard_send_enter(k);
-    }
     struct ws_surface* old_surface = self->active_surface;
     self->active_surface = nxt_surface;
 
     struct wl_display* display = ws_wayland_acquire_display();
     if (!display) {
-        return;
+        return false;
     }
 
     // Did we leave the old surface? Well, send a leave event
@@ -224,7 +193,36 @@ ws_cursor_set_position(
     }
 
     ws_wayland_release_display();
+    return true;
+}
 
+void
+ws_cursor_set_position(
+    struct ws_cursor* self,
+    int x,
+    int y
+) {
+    int w = ws_buffer_width((struct ws_buffer*) self->cur_mon->buffer);
+    int h = ws_buffer_height((struct ws_buffer*) self->cur_mon->buffer);
+
+    // We use the negative hotspot position because we don't want it to go
+    // off screen.
+    self->x = CLAMP(-self->x_hp, x, w);
+    self->y = CLAMP(-self->y_hp, y, h);
+    int retval = drmModeMoveCursor(self->cur_fb_dev->fd, self->cur_mon->crtc,
+                                    self->x, self->y);
+    if (retval != 0) {
+        ws_log(&log_ctx, LOG_CRIT, "Could not move cursor");
+    }
+
+    struct ws_set* surfaces = ws_monitor_surfaces(self->cur_mon);
+    struct ws_surface* nxt_surface = NULL;
+    ws_set_select(surfaces, NULL, NULL, get_surface_under_cursor, &nxt_surface);
+
+    ws_cursor_set_active_surface(self, nxt_surface);
+
+    struct ws_keyboard* k = ws_keyboard_get();
+    ws_keyboard_set_active_surface(k, nxt_surface);
 }
 
 void

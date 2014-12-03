@@ -438,3 +438,26 @@ deinit_keyboard(
     return true;
 }
 
+
+bool
+ws_keyboard_set_active_surface(
+    struct ws_keyboard* self,
+    struct ws_surface* nxt_surface
+) {
+    if (self->active_surface == nxt_surface) {
+        return false;
+    }
+    if (self->active_surface) {
+        ws_keyboard_send_leave(self);
+    }
+
+    self->active_surface = nxt_surface;
+
+    if (self->active_surface) {
+        ws_keyboard_send_keymap(self);
+        ws_keyboard_send_enter(self);
+    }
+
+    return true;
+}
+
