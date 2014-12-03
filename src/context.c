@@ -207,37 +207,41 @@ func_exec(
         return -EINVAL;
     }
 
-    struct ws_string* strcmd    = ws_value_string_get(&stack->string);
-    const char* cmd             = ws_string_raw(strcmd);
-
-    stack++; // because `cmd` is extracted now
-
-    size_t n;
-    bool iter = true;
+    size_t n = 0;
     enum ws_value_type iter_type;
 
     // count number of arguments and do type checking meanwhile
-    for (n = 0; iter; n++) {
-        iter_type = ws_value_get_type(&stack[n].value);
-        if (iter_type != WS_VALUE_TYPE_STRING) {
-            return -EINVAL;
-        }
-
-        iter = iter_type != WS_VALUE_TYPE_NONE;
+    while ((iter_type = ws_value_get_type(&stack[n].value)) ==
+            WS_VALUE_TYPE_STRING) {
+        ++n;
     }
 
-    const char* args[n];
+    // check whether there is a command (argument 0)
+    if ((iter_type != WS_VALUE_TYPE_NONE) || !n) {
+        return -EINVAL;
+    }
 
+    // allocate room for a NULL-terminated list of args
+    const char* args[n + 1];
+    args[n] = NULL;
+
+    // copy over all the strings
     size_t i = n;
     while (i) {
         --i;
         struct ws_string* arg = ws_value_string_get(&stack[i].string);
+        if (!arg) {
+            goto cleanup;
+        }
         args[i] = ws_string_raw(arg);
     }
 
-    int res = ws_exec(cmd, (char**)args);
+    // perform the exec
+    int res = ws_exec(args[0], (char**)args);
 
-    while (n) {
+cleanup:
+    // free all the strings we did set
+    while (n > i) {
         --n;
         free((char*) args[n]);
     }
