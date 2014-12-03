@@ -67,6 +67,9 @@ ws_keyboard_send_keymap(
     struct ws_keyboard* self //!< The keyboard
 );
 
+/**
+ * Sends the enter event to the current active surface
+ */
 void
 ws_keyboard_send_enter(
     struct ws_keyboard* self //!< The keyboard
