@@ -83,6 +83,9 @@ ws_keyboard_send_leave(
     struct ws_keyboard* self //!< The keyboard
 );
 
+/**
+ * Send a keypress to the keyboard
+ */
 void
 ws_keyboard_send_key(
     struct ws_keyboard* self, //!< The keyboard
