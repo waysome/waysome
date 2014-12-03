@@ -170,7 +170,20 @@ ws_abstract_shell_surface_set_height(
     struct ws_abstract_shell_surface* self,
     int32_t height
 ) {
-    //!< @todo implement
+    static const uint32_t edges = 0; //!< @todo hardcoded?
+    struct ws_surface* s = (struct ws_surface*) self->surface;
+    if (!s) {
+        return -EINVAL;
+    }
+
+    s->height = height;
+
+    struct wl_resource* r = ws_wayland_obj_get_wl_resource(&s->wl_obj);
+    if (!r) {
+        return -EINVAL;
+    }
+
+    wl_shell_surface_send_configure(r, edges, s->width, height);
     return 0;
 }
 
