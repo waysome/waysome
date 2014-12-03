@@ -94,6 +94,9 @@ ws_keyboard_send_key(
     uint32_t state
 );
 
+/**
+ * Send a modifier to the keyboard
+ */
 void
 ws_keyboard_send_modifiers(
     struct ws_keyboard* self, //!< The keyboard
