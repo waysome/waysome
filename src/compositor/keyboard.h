@@ -75,6 +75,9 @@ ws_keyboard_send_enter(
     struct ws_keyboard* self //!< The keyboard
 );
 
+/**
+ * Sends the leave event to the current active surface
+ */
 void
 ws_keyboard_send_leave(
     struct ws_keyboard* self //!< The keyboard
