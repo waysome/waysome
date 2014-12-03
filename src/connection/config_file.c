@@ -88,8 +88,8 @@ ws_connection_loadconf(void) {
         return -1;
     }
 
-    struct ws_connection_manager* proc;
-    proc = ws_connection_manager_new(fd, deserializer, NULL);
+    struct ws_connection_processor* proc;
+    proc = ws_connection_processor_new(fd, deserializer, NULL);
     if (!proc) {
         return -1;
     }
