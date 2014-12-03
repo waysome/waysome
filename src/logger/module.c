@@ -153,8 +153,23 @@ ws_log_ary(
     int lvl,
     char** ary
 ) {
-    //!< @todo implement
-    return;
+    if (lvl > runtime_log_lvl) {
+        return;
+    }
+
+    pthread_mutex_lock(&logger.loglock);
+
+    if (ctx) {
+        fprintf(stderr, "%s", ctx->prefix);
+    }
+
+    while (*ary) {
+        fprintf(stderr, "%s", *ary);
+        ++ary;
+    }
+    fprintf(stderr, "\n");
+
+    pthread_mutex_unlock(&logger.loglock);
 }
 
 /*
