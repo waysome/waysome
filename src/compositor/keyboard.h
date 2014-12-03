@@ -47,6 +47,9 @@ struct ws_keyboard {
 
 extern ws_object_type_id WS_OBJECT_TYPE_ID_KEYBOARD;
 
+/**
+ * Creates a new keyboard object, should only be called once by the compositor
+ */
 struct ws_keyboard*
 ws_keyboard_new(void);
 
