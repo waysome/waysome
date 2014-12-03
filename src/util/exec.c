@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -52,6 +53,17 @@ ws_exec(
         }
         if (setegid(getgid()) < 0) {
             exit(errno);
+        }
+
+        // unblock all signals
+        {
+            sigset_t sigs;
+            if (sigfillset(&sigs) < 0) {
+                exit(errno);
+            }
+            if (sigprocmask(SIG_UNBLOCK, &sigs, NULL) < 0) {
+                exit(errno);
+            }
         }
 
         // now execvp()
