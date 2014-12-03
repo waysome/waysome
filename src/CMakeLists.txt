@@ -92,6 +92,7 @@ target_link_libraries(waysome
     logger
 
     ${EV_LIBRARIES}
+    m
 )
 
 
