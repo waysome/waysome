@@ -34,7 +34,13 @@
 #ifndef __WS_CONNECTION_MANAGER_H__
 #define __WS_CONNECTION_MANAGER_H__
 
-
+/**
+ * Initialize the connection manager singleton
+ *
+ * @return zero on success, a negative errno.h number on failure
+ */
+int
+ws_connection_manager_init(void);
 
 #endif // __WS_CONNECTION_MANAGER_H__
 
