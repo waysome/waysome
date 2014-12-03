@@ -59,6 +59,9 @@ ws_keyboard_new(void);
 struct ws_keyboard*
 ws_keyboard_get(void);
 
+/**
+ * Sends the keymap to the current active surface
+ */
 void
 ws_keyboard_send_keymap(
     struct ws_keyboard* self //!< The keyboard
