@@ -97,19 +97,6 @@ connection_processor_deinit(
  */
 
 /**
- * @extends ws_object
- */
-struct ws_connection_processor {
-    struct ws_object obj; //!< @public parent object type
-    struct ws_connector conn; //!< @public connection to process
-    struct ws_deserializer* deserializer; //!< @public deserializer to use
-    struct ws_serializer* serializer; //!< @public serializer to use
-    ev_io dispatcher; //!< @public dispatching watcher
-    ev_prepare flusher; //!< @public flushing watcher
-    bool is_init; //!< @public flag indicating whether it's initialized
-};
-
-/**
  * Type information for ws_wayland_obj type
  */
 ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {

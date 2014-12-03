@@ -34,6 +34,8 @@
 #ifndef __WS_CONNECTION_PROCESSOR_H__
 #define __WS_CONNECTION_PROCESSOR_H__
 
+#include <ev.h>
+
 #include "objects/object.h"
 #include "util/attributes.h"
 
@@ -42,9 +44,17 @@ struct ws_deserializer;
 struct ws_serializer;
 
 /**
- * The connection processor, which is an object
+ * @extends ws_object
  */
-struct ws_connection_processor;
+struct ws_connection_processor {
+    struct ws_object obj; //!< @public parent object type
+    struct ws_connector conn; //!< @public connection to process
+    struct ws_deserializer* deserializer; //!< @public deserializer to use
+    struct ws_serializer* serializer; //!< @public serializer to use
+    ev_io dispatcher; //!< @public dispatching watcher
+    ev_prepare flusher; //!< @public flushing watcher
+    bool is_init; //!< @public flag indicating whether it's initialized
+};
 
 /**
  * Variable which holds type information about the ws_connection_processor type
