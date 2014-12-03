@@ -36,6 +36,7 @@
 
 #include <ev.h>
 
+#include "connection/connector.h"
 #include "objects/object.h"
 #include "util/attributes.h"
 
@@ -47,13 +48,13 @@ struct ws_serializer;
  * @extends ws_object
  */
 struct ws_connection_processor {
-    struct ws_object obj; //!< @public parent object type
-    struct ws_connector conn; //!< @public connection to process
-    struct ws_deserializer* deserializer; //!< @public deserializer to use
-    struct ws_serializer* serializer; //!< @public serializer to use
-    ev_io dispatcher; //!< @public dispatching watcher
-    ev_prepare flusher; //!< @public flushing watcher
-    bool is_init; //!< @public flag indicating whether it's initialized
+    struct ws_object obj; //!< @protected parent object type
+    struct ws_connector conn; //!< @protected connection to process
+    struct ws_deserializer* deserializer; //!< @protected deserializer to use
+    struct ws_serializer* serializer; //!< @protected serializer to use
+    ev_io dispatcher; //!< @protected dispatching watcher
+    ev_prepare flusher; //!< @protected flushing watcher
+    bool is_init; //!< @protected flag indicating whether it's initialized
 };
 
 /**
