@@ -66,6 +66,18 @@ ws_log(
     ...         //!< Additional parameters
 );
 
+/**
+ * Log an null-terminated array of strings with a logger
+ *
+ * @note `ctx` can be NULL
+ */
+void
+ws_log_ary(
+    struct ws_logger_context* const ctx, //!< The logging context
+    int lvl, //!< Logging level
+    char** ary //!< ary to log
+);
+
 /*
  * void
  * ws_log_str(

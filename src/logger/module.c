@@ -147,6 +147,16 @@ ws_log(
     va_end(list);
 }
 
+void
+ws_log_ary(
+    struct ws_logger_context* const ctx,
+    int lvl,
+    char** ary
+) {
+    //!< @todo implement
+    return;
+}
+
 /*
  * void
  * ws_log_str(
