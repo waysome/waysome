@@ -503,10 +503,6 @@ serialize_value(
                 stat = yajl_gen_array_close(ctx->yajlgen);
                 break;
 
-            case WS_VALUE_TYPE_NAMED:
-                //!< @todo support this
-                break;
-
             default:
                 //!< @todo error?
                 return -1;

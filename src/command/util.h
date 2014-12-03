@@ -61,7 +61,6 @@
 #define WS_VALUE_TYPE_string    WS_VALUE_TYPE_STRING
 #define WS_VALUE_TYPE_object_id WS_VALUE_TYPE_OBJECT_ID
 #define WS_VALUE_TYPE_set       WS_VALUE_TYPE_SET
-#define WS_VALUE_TYPE_named     WS_VALUE_TYPE_NAMED
 
 
 /**

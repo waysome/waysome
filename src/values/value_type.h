@@ -46,7 +46,6 @@ enum ws_value_type {
     WS_VALUE_TYPE_STRING,
     WS_VALUE_TYPE_OBJECT_ID,
     WS_VALUE_TYPE_SET,
-    WS_VALUE_TYPE_NAMED,
 };
 
 extern const char* WS_VALUE_TYPE_NAMES[];
