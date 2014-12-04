@@ -157,6 +157,8 @@ START_TEST (test_object_attribute_read) {
     ck_assert(TEST_INT == ws_value_int_get((struct ws_value_int*) v));
     free(v);
 
+//!<@todo fix refcounting if this is used again
+
 //    v = (struct ws_value*) ws_value_string_new();
 //    r = ws_object_attr_read(&to->obj, "string", v);
 //    ck_assert(r == 0);

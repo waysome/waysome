@@ -455,7 +455,9 @@ serialize_value(
             struct ws_string* str;
             str = ws_value_string_get((struct ws_value_string*) val);
 
-            char* buf = ws_string_raw(str);
+            char* buf = ws_string_raw(str); // buf is a copy
+            ws_object_unref((struct ws_object*) str);
+
             stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) buf,
                                    strlen(buf));
         }
