@@ -36,6 +36,7 @@
 #include "serialize/json/deserializer.h"
 #include "serialize/json/serializer.h"
 #include "serialize/serializer.h"
+#include "util/cleaner.h"
 #include "util/socket.h"
 
 #define SOCK_NAME "waysome.sock"
@@ -45,6 +46,14 @@
  * Forward declarations
  *
  */
+
+/**
+ * Deinit function
+ */
+static void
+connection_manager_deinit(
+    void* dummy
+);
 
 /**
  * Callback for creating a connection
@@ -81,8 +90,13 @@ ws_connection_manager_init(void)
         return 0;
     }
 
+    int res = ws_cleaner_add(connection_manager_deinit, NULL);
+    if (res != 0) {
+        return res;
+    }
+
     memset(&connman, 0, sizeof(connman));
-    int res = ws_set_init(&connman.connections);
+    res = ws_set_init(&connman.connections);
     if (res != 0) {
         return res;
     }
@@ -102,6 +116,14 @@ ws_connection_manager_init(void)
  * Interface implementation
  *
  */
+
+static void
+connection_manager_deinit(
+    void* dummy
+) {
+    ws_object_deinit(&connman.connections.obj);
+    //ws_socket_deinit(&connman.sock);
+}
 
 int
 create_connection_cb(
