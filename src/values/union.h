@@ -91,6 +91,17 @@ ws_value_union_reinit(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Generate string representation of value union
+ *
+ * @note Returns char* which can and should be freed after usage
+ *
+ * @return string representation of value union, NULL on failure
+ */
+char*
+ws_value_union_tostr(
+    union ws_value_union* self //!< The union to convert to char*
+);
 
 #endif //__WS_VALUES_UNION_H__
 
