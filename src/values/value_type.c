@@ -54,7 +54,7 @@ enum ws_value_type
 ws_value_type_from_value_name(
     char const* name
 ) {
-    for (enum ws_value_type i = 0; i < ARYLEN(WS_VALUE_TYPE_NAMES); i++) {
+    for (size_t i = 0; i < ARYLEN(WS_VALUE_TYPE_NAMES); i++) {
         if (ws_streq(WS_VALUE_TYPE_NAMES[i], name)) {
             return i;
         }
