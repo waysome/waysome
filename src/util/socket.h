@@ -72,6 +72,16 @@ ws_socket_init(
 );
 
 /**
+ * Deinitialize a socket
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_socket_deinit(
+    struct ws_socket* sock //!< The socket object
+);
+
+/**
  *  Create a socket with a given name this socket will be placed in the
  *  XDG_RUNTIME_DIR path
  */

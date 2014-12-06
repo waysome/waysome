@@ -103,6 +103,15 @@ ws_socket_init(
 }
 
 int
+ws_socket_deinit(
+    struct ws_socket* sock
+) {
+    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
+    ev_io_stop(loop, &sock->io);
+    return (close(sock->fd) != 0) ? -errno : 0;
+}
+
+int
 ws_socket_create(
     char const* name
 ) {
