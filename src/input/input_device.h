@@ -44,7 +44,7 @@ struct ws_input_device {
     struct ws_object obj; //!< @protected parent object
     struct libevdev* dev; //!< @protected the libevdev object
     struct ev_io watcher; //!< @protected the evio watcher
-    int fd; //!< @protocted the associated file descriptor
+    int fd; //!< @protected the associated file descriptor
     int capabilities; //!< @protected the capabilities of this device
 };
 

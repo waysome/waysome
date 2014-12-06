@@ -26,7 +26,7 @@
  */
 
 /**
- * @file deserializer.c
+ * @file json/deserializer.c
  *
  * This file contains the deserializer backend for JSON. For a full
  * documentation of the statemachine @ref json_statemachine "see here".

@@ -89,9 +89,9 @@ ws_keyboard_send_leave(
 void
 ws_keyboard_send_key(
     struct ws_keyboard* self, //!< The keyboard
-    struct timeval* time,
-    uint32_t key,
-    uint32_t state
+    struct timeval* time, //!< The timestamp
+    uint32_t key, //!< The key
+    uint32_t state //!< The state
 );
 
 /**
@@ -101,10 +101,10 @@ void
 ws_keyboard_send_modifiers(
     struct ws_keyboard* self, //!< The keyboard
     uint32_t serial, //!< serial
-    uint32_t mods_depressed,
-    uint32_t mods_latched,
-    uint32_t mods_locked,
-    uint32_t group
+    uint32_t mods_depressed, //!< Modifiers depressed
+    uint32_t mods_latched, //!< Modifiers latched
+    uint32_t mods_locked, //!< Modifiers locked
+    uint32_t group //!< group
 );
 
 /**

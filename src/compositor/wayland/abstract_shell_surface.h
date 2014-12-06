@@ -73,8 +73,8 @@ ws_abstract_shell_surface_init(
 int
 ws_abstract_shell_surface_set_pos(
     struct ws_abstract_shell_surface* self, //!< surface to modify
-    int32_t x,
-    int32_t y
+    int32_t x, //!< x position
+    int32_t y //!< y position
 )
 __ws_nonnull__(1)
 ;
@@ -88,7 +88,7 @@ __ws_nonnull__(1)
  */
 int
 ws_abstract_shell_surface_set_width(
-    struct ws_abstract_shell_surface* self,
+    struct ws_abstract_shell_surface* self, //!< surface to modify
     int32_t width //!< The new width
 );
 
@@ -101,7 +101,7 @@ ws_abstract_shell_surface_set_width(
  */
 int
 ws_abstract_shell_surface_set_height(
-    struct ws_abstract_shell_surface* self,
+    struct ws_abstract_shell_surface* self, //!< surface to modify
     int32_t height //!< The new height
 );
 
@@ -114,7 +114,7 @@ ws_abstract_shell_surface_set_height(
  */
 int
 ws_abstract_shell_surface_set_width_and_height(
-    struct ws_abstract_shell_surface* self,
+    struct ws_abstract_shell_surface* self, //!< surface to modify
     int32_t width, //!< The new width
     int32_t height //!< The new height
 );
