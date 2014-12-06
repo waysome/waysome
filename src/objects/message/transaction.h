@@ -141,7 +141,7 @@ ws_transaction_flags(
 void
 ws_transaction_set_flags(
     struct ws_transaction* t, //!< The transaction
-    enum ws_transaction_flags flags
+    enum ws_transaction_flags flags //!< Flags to set
 );
 
 /**

@@ -581,7 +581,7 @@ union ws_value_union;
  */
 int
 ws_object_call_cmd(
-    struct ws_object* self,
+    struct ws_object* self, //!< The object
     char const* ident, //!< Name of the command to call for the object
     union ws_value_union* stack //!< Stack to pass to the command function
 );
@@ -595,7 +595,7 @@ ws_object_call_cmd(
  */
 bool
 ws_object_has_cmd(
-    struct ws_object* self,
+    struct ws_object* self, //!< The object
     char const* ident //!< Name of command to check the object for
 );
 
