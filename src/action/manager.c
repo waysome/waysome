@@ -70,7 +70,7 @@ struct {
  */
 static struct ws_reply*
 run_transaction(
-    struct ws_transaction* transaction, // transaction to run
+    struct ws_transaction* transaction, //!< Transaction to run
     struct ws_value* context //!< context to push on the stack
 );
 
