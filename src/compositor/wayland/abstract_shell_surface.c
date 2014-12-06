@@ -306,7 +306,9 @@ cmd_func_set_height(
         return -EINVAL;
     }
 
-    return ws_abstract_shell_surface_set_height(self, (int32_t) height);
+    int res = ws_abstract_shell_surface_set_height(self, (int32_t) height);
+    ws_object_unref(&self->wl_obj.obj);
+    return res;
 }
 
 static int
