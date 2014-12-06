@@ -325,26 +325,31 @@ cmd_func_set_width_and_height(
 
     // `1` is the command string itself
 
+    int res;
     if (ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT ||
             ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_INT) {
-        ws_object_unref((struct ws_object*) shs);
-        return -EINVAL;
+        res = -EINVAL;
+        goto out;
     }
 
     if (ws_value_get_type(&stack[4].value) != WS_VALUE_TYPE_NONE) {
-        ws_object_unref((struct ws_object*) shs);
-        return -E2BIG;
+        res = -E2BIG;
+        goto out;
     }
 
     intmax_t width = ws_value_int_get(&stack[2].int_);
     intmax_t height = ws_value_int_get(&stack[3].int_);
     if (width > INT32_MAX || height > INT32_MAX) {
-        ws_object_unref((struct ws_object*) shs);
-        return -EINVAL;
+        res = -EINVAL;
+        goto out;
     }
 
-    return ws_abstract_shell_surface_set_width_and_height(shs,
-                                                          (int32_t) width,
-                                                          (int32_t) height);
+    res = ws_abstract_shell_surface_set_width_and_height(shs,
+                                                         (int32_t) width,
+                                                         (int32_t) height);
+
+out:
+    ws_object_unref(&shs->wl_obj.obj);
+    return res;
 }
 
