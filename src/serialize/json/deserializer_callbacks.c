@@ -121,6 +121,20 @@ get_next_state_for_string(
     const unsigned char * str
 );
 
+/**
+ * Helper for copying string from json into ws_string object
+ *
+ * @return zero on success, else negative errno.h number (from
+ * ws_string_set_from_raw()).
+ */
+static int
+buff_to_string(
+    char* logfmt, //!< Log format, must contain exactly one '%s'
+    struct ws_string* dst, //!< The destination object
+    const unsigned char* str, //!< The string
+    size_t len //!< The length of the string
+);
+
 /*
  *
  * Interface implementation
@@ -406,24 +420,19 @@ yajl_string_cb(
 
     case STATE_COMMAND_ARY_COMMAND_ARGS:
         {
-            char buff[len + 1];
-            strncpy(buff, (char*) str, len);
-            buff[len] = 0;
-            ws_log(&log_ctx, LOG_DEBUG, "Using as argument (%s)", buff);
-
             struct ws_value_string* s = ws_value_string_new();
             if (!s) {
                 return 0;
             }
-            struct ws_string* str = ws_value_string_get(s);
+            struct ws_string* sstr = ws_value_string_get(s);
 
-            int res = ws_string_set_from_raw(str, buff);
+            int res = buff_to_string("Using as argument (%s)", sstr, str, len);
             if (res != 0) {
                 //!< @todo indicate error
                 return 0;
             }
 
-            ws_object_unref((struct ws_object*) str); //str is a copy
+            ws_object_unref((struct ws_object*) sstr); //str is a copy
 
             res = ws_statement_append_direct(state->tmp_statement,
                                              (struct ws_value*) s);
@@ -446,13 +455,9 @@ yajl_string_cb(
                 return 0;
             }
 
-            char buff[len + 1];
-            strncpy(buff, (char*)str, len);
-            buff[len] = 0;
-            ws_log(&log_ctx, LOG_DEBUG,
-                   "Using as identifier for registration (%s)", buff);
-
-            int res = ws_string_set_from_raw(state->register_name, buff);
+            int res;
+            res = buff_to_string("Using as identifier for registration (%s)",
+                                 state->register_name, str, len);
             if (res != 0) {
                 //!< @todo indicate error
                 return 0;
@@ -474,12 +479,8 @@ yajl_string_cb(
                 return 0;
             }
 
-            char buff[len + 1];
-            strncpy(buff, (char*) str, len);
-            buff[len] = 0;
-            ws_log(&log_ctx, LOG_DEBUG, "Using as event name (%s)", buff);
-
-            int res = ws_string_set_from_raw(state->ev_name, buff);
+            int res = buff_to_string("Using as event name (%s)",
+                                     state->ev_name, str, len);
             if (res != 0) {
                 //!< @todo indicate error
                 return 0;
@@ -865,4 +866,18 @@ get_next_state_for_string(
     }
 
     return STATE_INVALID;
+}
+
+static int
+buff_to_string(
+    char* logfmt,
+    struct ws_string* dst,
+    const unsigned char* str,
+    size_t len
+) {
+    char buff[len + 1];
+    strncpy(buff, (char*) str, len);
+    buff[len] = 0;
+    ws_log(&log_ctx, LOG_DEBUG, logfmt, buff);
+    return ws_string_set_from_raw(dst, buff);
 }
