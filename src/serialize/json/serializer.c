@@ -26,7 +26,7 @@
  */
 
 /**
- * @file serializer.c
+ * @file json/serializer.c
  *
  * This file contains the serializer backend for JSON.
  *
