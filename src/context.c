@@ -192,6 +192,8 @@ func_log(
     if (ctx_str && str && lvl) {
         struct ws_logger_context log_ctx = { .prefix = ws_string_raw(ctx_str) };
         ws_log(&log_ctx, lvl, ws_string_raw(str));
+        ws_object_unref((struct ws_object*) ctx_str);
+        ws_object_unref((struct ws_object*) str);
     }
 
     return 1;
@@ -287,6 +289,7 @@ add_hotkey_event(
     }
 
     int res = ws_hotkey_add(str, arr, len);
+    ws_object_unref((struct ws_object*) str);
     ws_value_union_reinit(retval, WS_VALUE_TYPE_BOOL);
     ws_value_bool_set(&retval->bool_, res == 0);
 
