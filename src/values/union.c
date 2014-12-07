@@ -26,9 +26,11 @@
  */
 
 #include <errno.h>
+#include <string.h>
 
 #include "values/union.h"
 #include "values/value_type.h"
+#include "util/string.h"
 
 int
 ws_value_union_init_from_val(
@@ -130,4 +132,99 @@ ws_value_union_reinit(
     return 0;
 }
 
+char*
+ws_value_union_tostr(
+    union ws_value_union* self
+) {
+    char* res = NULL;
+
+    switch (ws_value_get_type(&self->value)) {
+    case WS_VALUE_TYPE_NONE:
+        {
+            static const char* none = "<none>";
+            res = malloc(strlen(none) + 1);
+            if (!res) {
+                return NULL;
+            }
+            res[strlen(none)] = 0;
+            memcpy(res, none, strlen(none));
+        }
+        break;
+
+    case WS_VALUE_TYPE_VALUE:
+        {
+            static const char* value = "<value>";
+            res = malloc(strlen(value) + 1);
+            if (!res) {
+                return NULL;
+            }
+            res[strlen(value)] = 0;
+            memcpy(res, value, strlen(value));
+        }
+        break;
+
+    case WS_VALUE_TYPE_NIL:
+        {
+            static const char* nil = "<nil>";
+            res = malloc(strlen(nil) + 1);
+            if (!res) {
+                return NULL;
+            }
+            res[strlen(nil)] = 0;
+            memcpy(res, nil, strlen(nil));
+        }
+        break;
+
+    case WS_VALUE_TYPE_BOOL:
+        {
+            bool b = ws_value_bool_get(&self->bool_);
+            char* bstr = (b ? "true" : "false");
+            res = malloc(strlen(bstr) + 1);
+            if (!res) {
+                return NULL;
+            }
+            res[strlen(bstr)] = 0;
+            memcpy(res, bstr, strlen(bstr));
+        }
+        break;
+
+    case WS_VALUE_TYPE_INT:
+            {
+                size_t strl = strlen(STR_OF(INTMAX_MAX));
+                intmax_t j  = ws_value_int_get(&self->int_);
+                res = calloc(1, strl + 1);
+                if (!res) {
+                    return NULL;
+                }
+                snprintf(res, strl, "%ld", j);
+            }
+            break;
+
+    case WS_VALUE_TYPE_STRING:
+            {
+                struct ws_string* sstr  = ws_value_string_get(&self->string);
+                char* s = ws_string_raw(sstr);
+                size_t len = strlen(s) + 1;
+                res = malloc(len);
+                if (res) {
+                    snprintf(res, len, "%s", s);
+                }
+                free(s);
+            }
+            break;
+
+    case WS_VALUE_TYPE_OBJECT_ID:
+            //!< @todo implement
+            break;
+
+    case WS_VALUE_TYPE_SET:
+            //!< @todo implement
+            break;
+
+    default:
+            break;
+    }
+
+    return res;
+}
 

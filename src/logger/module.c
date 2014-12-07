@@ -147,6 +147,31 @@ ws_log(
     va_end(list);
 }
 
+void
+ws_log_ary(
+    struct ws_logger_context* const ctx,
+    int lvl,
+    char** ary
+) {
+    if (lvl > runtime_log_lvl) {
+        return;
+    }
+
+    pthread_mutex_lock(&logger.loglock);
+
+    if (ctx) {
+        fprintf(stderr, "%s", ctx->prefix);
+    }
+
+    while (*ary) {
+        fprintf(stderr, "%s", *ary);
+        ++ary;
+    }
+    fprintf(stderr, "\n");
+
+    pthread_mutex_unlock(&logger.loglock);
+}
+
 /*
  * void
  * ws_log_str(

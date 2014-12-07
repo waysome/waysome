@@ -53,6 +53,10 @@
 #define ws_strneq(str1, str2, n) \
     (0 == strncmp((str1), (str2), (n)))
 
+/**
+ * Convert a hardcoded int to string
+ */
+#define STR_OF(x) (#x)
 
 #endif // __WS_UTIL_STRING_H__
 

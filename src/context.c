@@ -27,7 +27,9 @@
 
 #include <errno.h>
 #include <ev.h>
-#include <stdint.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "command/util.h"
 #include "compositor/cursor.h"
@@ -37,7 +39,9 @@
 #include "input/hotkeys.h"
 #include "objects/object.h"
 #include "objects/string.h"
+#include "util/arithmetical.h"
 #include "util/exec.h"
+#include "util/string.h"
 #include "values/string.h"
 #include "values/union.h"
 
@@ -161,42 +165,50 @@ static int
 func_log(
     union ws_value_union* stack
 ) {
-    int n = 0;
     struct ws_string* ctx_str = NULL;
-    struct ws_string* str = NULL;
     int lvl = 0;
-    union ws_value_union* cur;
-    // If the type is NIL we know it is the last value in the stack.
-    // NIL has the value 0 in this context and will thus exit the loop
-    for(cur = stack; cur->value.type; ++cur, ++n) {
-        switch (n) {
-        case 2:
-            if (cur->value.type == WS_VALUE_TYPE_STRING) {
-                ctx_str = ws_value_string_get(&cur->string);
-            }
-            break;
-        case 3:
-            if (cur->value.type == WS_VALUE_TYPE_INT) {
-                lvl = ws_value_int_get(&cur->int_);
-            }
-            break;
-        case 4:
-            if (cur->value.type == WS_VALUE_TYPE_STRING) {
-                str = ws_value_string_get(&cur->string);
-            }
-            break;
 
-        }
+    stack += 2;
+
+    // Context prefix
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_STRING) {
+        return -EINVAL;
+    }
+    ctx_str = ws_value_string_get(&stack[0].string);
+    ++stack;
+
+    // Log lvl
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_INT) {
+        return -EINVAL;
+    }
+    lvl = ws_value_int_get(&stack[0].int_);
+    ++stack;
+
+    size_t n = 0;
+    union ws_value_union* iter;
+    ITERATE_ARGS(iter, stack) {
+        ++n;
     }
 
-    if (ctx_str && str && lvl) {
+    char*   ary[n + 1];
+    ary[n] = NULL; // NULL terminator (Hasta la vista, baby!)
+
+    size_t i = 0;
+    ITERATE_ARGS(iter, stack) {
+        ary[i] = ws_value_union_tostr(iter);
+        ++i;
+    }
+
+    if (ctx_str && lvl) {
         struct ws_logger_context log_ctx = { .prefix = ws_string_raw(ctx_str) };
-        ws_log(&log_ctx, lvl, ws_string_raw(str));
-        ws_object_unref((struct ws_object*) ctx_str);
-        ws_object_unref((struct ws_object*) str);
+        ws_log_ary(&log_ctx, lvl, ary);
     }
 
-    return 1;
+    while (--i) {
+        free(ary[i]);
+    }
+
+    return 0;
 }
 
 static int
