@@ -24,7 +24,33 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+
 #include "command/values.h"
 
 #include "values/union.h"
 
+int
+ws_builtin_cmd_is_type(
+    union ws_value_union* args
+) {
+    if (args[0].value.type == WS_VALUE_TYPE_NONE ||
+        args[1].value.type != WS_VALUE_TYPE_STRING) {
+        return -EINVAL;
+    }
+
+    struct ws_string type_name_str = ws_value_string_get(&args[1].string);
+    const char* check_type = ws_string_raw(type_name_str);
+    const char* value_type = ws_value_type_get_name(&args[0].value);
+
+    bool b = ws_streq(value_type, check_type);
+
+    int res = ws_value_union_reninit(args, WS_VALUE_TYPE_BOOL);
+    if (res != 0) {
+        return res;
+    }
+
+    ws_value_bool_set(&args[0].bool_, b);
+
+    return 0;
+}
