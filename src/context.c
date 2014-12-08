@@ -241,17 +241,19 @@ func_exec(
 
     // copy over all the strings
     size_t i = n;
+    int res = 0;
     while (i) {
         --i;
         struct ws_string* arg = ws_value_string_get(&stack[i].string);
         if (!arg) {
+            res = -ENOENT;
             goto cleanup;
         }
         args[i] = ws_string_raw(arg);
     }
 
     // perform the exec
-    int res = ws_exec(args[0], (char**)args);
+    res = ws_exec(args[0], (char**)args);
 
 cleanup:
     // free all the strings we did set

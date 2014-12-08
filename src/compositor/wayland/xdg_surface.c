@@ -354,7 +354,6 @@ ws_wayland_xdg_surface_new(
     struct ws_wayland_xdg_surface* self = calloc(1, sizeof(*self));
     if (!self) {
         goto cleanup_wayland;
-        return NULL;
     }
 
     int retval;
@@ -362,7 +361,6 @@ ws_wayland_xdg_surface_new(
                                             &xdg_surface_interface);
     if (retval < 0) {
         goto cleanup;
-        return NULL;
     }
 
     wl_resource_set_implementation(resource, &interface, self, NULL);
