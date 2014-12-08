@@ -200,6 +200,7 @@ ws_hotkeys_eval(
     }
 
     // reset the eventlist
+    ws_hotkeys_ctx.state = NULL;
     wl_array_release(&ws_hotkeys_ctx.events);
     wl_array_init(&ws_hotkeys_ctx.events);
     ws_hotkeys_ctx.buttons_pressed = 0;
