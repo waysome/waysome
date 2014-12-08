@@ -161,7 +161,7 @@ START_TEST (test_object_cmp) {
 
     int t = ws_object_cmp(o, o);
     ck_assert(t != -1);
-    ck_assert(t != 0);
+    ck_assert(t == 0);
     ck_assert(t != 1);
 
     ws_object_deinit(o);

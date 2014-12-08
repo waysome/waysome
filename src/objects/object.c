@@ -502,7 +502,7 @@ ws_object_cmp(
         return (o1 != NULL) ? -1 : 1;
     }
 
-    if ((o1 == NULL) && (o2 == NULL)) {
+    if (o1 == o2) {
         return 0;
     }
 
