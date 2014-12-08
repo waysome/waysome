@@ -111,28 +111,18 @@ ws_connection_manager_init(void)
     return 0;
 }
 
-/*
- *
- * Interface implementation
- *
- */
-
-static void
-connection_manager_deinit(
-    void* dummy
-) {
-    ws_object_deinit(&connman.connections.obj);
-    //ws_socket_deinit(&connman.sock);
-}
-
 int
-create_connection_cb(
-    int fd
+ws_connection_manager_open_connection(
+    int fd,
+    bool ro
 ) {
     int res = 0;
-    struct ws_serializer* ser = ws_serializer_json_serializer_new();
-    if (!ser) {
-        goto out;
+    struct ws_serializer* ser = NULL;
+    if (!ro) {
+        ser = ws_serializer_json_serializer_new();
+        if (!ser) {
+            goto out;
+        }
     }
 
     struct ws_deserializer* deser = ws_serializer_json_deserializer_new();
@@ -161,5 +151,26 @@ clean_ser:
 
 out:
     return res;
+}
+
+/*
+ *
+ * Interface implementation
+ *
+ */
+
+static void
+connection_manager_deinit(
+    void* dummy
+) {
+    ws_object_deinit(&connman.connections.obj);
+    //ws_socket_deinit(&connman.sock);
+}
+
+int
+create_connection_cb(
+    int fd
+) {
+    return ws_connection_manager_open_connection(fd, false);
 }
 
