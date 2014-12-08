@@ -163,7 +163,7 @@ ws_builtin_cmd_is_instance_of(
 
     struct ws_object* obj = ws_value_object_id_get(&args[0].object_id);
 
-    if (ws_value_object_id_get(&args[1].object_id)) {
+    if (!ws_value_object_id_get(&args[1].object_id)) {
         return -EINVAL;
     }
 
