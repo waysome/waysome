@@ -35,7 +35,7 @@
 #include <unistd.h>
 
 #include "connection/config_file.h"
-#include "connection/processor.h"
+#include "connection/manager.h"
 #include "serialize/json/deserializer.h"
 #include "util/arithmetical.h"
 
@@ -76,25 +76,17 @@ open_config(void);
 
 int
 ws_connection_loadconf(void) {
-    int fd = open_config();
-    if (fd < 0) {
-        return fd;
+    int res = ws_connection_manager_init();
+    if (res < 0) {
+        return res;
     }
 
-    // create the deserializer
-    struct ws_deserializer* deserializer;
-    deserializer = ws_serializer_json_deserializer_new();
-    if (!deserializer) {
-        return -1;
+    res = open_config();
+    if (res < 0) {
+        return res;
     }
 
-    struct ws_connection_processor* proc;
-    proc = ws_connection_processor_new(fd, deserializer, NULL);
-    if (!proc) {
-        return -1;
-    }
-    ws_object_unref((struct ws_object*) proc);
-    return 0;
+    return ws_connection_manager_open_connection(res, true);
 }
 
 
