@@ -26,13 +26,13 @@
  */
 
 /**
- * @addtogroup objects "Classes"
+ * @addtogroup compositor "Compositor"
  *
  * @{
  */
 
 /**
- * @addtogroup objects_monitor "Class: Monitor type"
+ * @addtogroup compositor_buffer "Compositor Buffer"
  *
  * @{
  */
@@ -94,3 +94,4 @@ ws_frame_buffer_new(
 /**
  * @}
  */
+
