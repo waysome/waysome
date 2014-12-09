@@ -25,9 +25,20 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup storage "Storage"
+ *
+ * @{
+ */
+
 #ifndef __WS_STORAGE_MODULE_H__
 #define __WS_STORAGE_MODULE_H__
 
 
 
 #endif // __WS_STORAGE_MODULE_H__
+
+/**
+ * @}
+ */
+
