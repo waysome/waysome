@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup action "Action manager"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup action_commands "Action manager commands"
+ *
+ * @{
+ */
+
 #ifndef __WS_ACTION_COMMANDS_H__
 #define __WS_ACTION_COMMANDS_H__
 
@@ -39,3 +51,12 @@ int
 ws_action_commands_init(void);
 
 #endif // __WS_ACTION_COMMANDS_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+

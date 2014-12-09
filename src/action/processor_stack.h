@@ -25,6 +25,24 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup action "Action manager"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup action_processor "Action manager processor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup action_processor_stack "Action manager processor stack"
+ *
+ * @{
+ */
+
 #ifndef __WS_ACTION_STACK_H__
 #define __WS_ACTION_STACK_H__
 
@@ -183,4 +201,16 @@ __ws_nonnull__(1)
 ;
 
 #endif // __WS_ACTION_STACK_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
