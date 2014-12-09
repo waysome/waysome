@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_wayland "Compositor wayland"
+ *
+ * @{
+ */
+
 #ifndef __WS_WL_POINTER_H__
 #define __WS_WL_POINTER_H__
 
@@ -75,4 +87,12 @@ ws_wayland_pointer_instance_of(
 );
 
 #endif // __WS_WL_POINTER_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
