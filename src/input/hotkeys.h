@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup input "Input"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup input_hotkeys "Input: Hotkeys"
+ *
+ * @{
+ */
+
 #ifndef __WS_INPUT_HOTKEYS_H__
 #define __WS_INPUT_HOTKEYS_H__
 
@@ -89,4 +101,12 @@ __ws_nonnull__(1)
 ;
 
 #endif // __WS_INPUT_HOTKEYS_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

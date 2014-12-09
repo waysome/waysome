@@ -25,6 +25,13 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup input "Input"
+ *
+ * @{
+ */
+
+
 #ifndef __WS_INPUT_DEVICE_H__
 #define __WS_INPUT_DEVICE_H__
 
@@ -69,4 +76,7 @@ ws_input_device_new(
 
 #endif //__WS_INPUT_DEVICE_H__
 
+/**
+ * @}
+ */
 

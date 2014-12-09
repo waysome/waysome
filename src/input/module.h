@@ -26,7 +26,7 @@
  */
 
 /**
- * @addtogroup input "Input Module"
+ * @addtogroup input "Input"
  *
  * @{
  */

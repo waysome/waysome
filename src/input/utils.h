@@ -26,13 +26,7 @@
  */
 
 /**
- * @addtogroup input "Input Module"
- *
- * @{
- */
-
-/**
- * @addtogroup input_pointers "Input Pointer Module"
+ * @addtogroup input "Input"
  *
  * @{
  */
@@ -65,9 +59,4 @@ ws_input_filter_event_device_name(
 /**
  * @}
  */
-
-/**
- * @}
- */
-
 
