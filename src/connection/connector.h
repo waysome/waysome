@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup connection "Connection"
+ *
+ * @{
+ */
+
 #ifndef __WS_CONNECTOR_H__
 #define __WS_CONNECTOR_H__
 
@@ -129,3 +135,8 @@ ws_connector_flush(
 );
 
 #endif // __WS_CONNECTOR_H__
+
+/**
+ * @}
+ */
+

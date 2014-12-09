@@ -26,13 +26,7 @@
  */
 
 /**
- * @addtogroup utils "(internal) utilities"
- *
- * @{
- */
-
-/**
- * @addtogroup utils_config "config file loading utility"
+ * @addtogroup connection "Connection"
  *
  * @{
  */
@@ -49,10 +43,6 @@ int
 ws_connection_loadconf(void);
 
 #endif // __WS_CONNECTION_CONFIG_H__
-
-/**
- * @}
- */
 
 /**
  * @}

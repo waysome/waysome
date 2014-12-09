@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup connection "Connection"
+ *
+ * @{
+ */
+
 #ifndef __WS_CONNECTION_PROCESSOR_H__
 #define __WS_CONNECTION_PROCESSOR_H__
 
@@ -65,4 +71,8 @@ __ws_nonnull__(2)
 ;
 
 #endif // __WS_CONNECTION_PROCESSOR_H__
+
+/**
+ * @}
+ */
 

@@ -26,7 +26,7 @@
  */
 
 /**
- * @addtogroup connbuf "connection buffer"
+ * @addtogroup connection "Connection"
  *
  * @{
  */
@@ -193,3 +193,4 @@ ws_connbuf_discard(
 /**
  * @}
  */
+
