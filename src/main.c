@@ -32,6 +32,7 @@
 #include "action/manager.h"
 #include "command/command.h"
 #include "compositor/module.h"
+#include "connection/manager.h"
 #include "connection/config_file.h"
 #include "context.h"
 #include "input/module.h"
@@ -96,6 +97,13 @@ main(
     }
 
     ws_log(&log_main, LOG_DEBUG, "Logger initalized.");
+
+    retval = ws_connection_manager_init();
+    if (retval != 0) {
+        ws_log(&log_main, LOG_EMERG, "Failed to init Connection manager.");
+        goto cleanup;
+    }
+    ws_log(&log_main, LOG_DEBUG, "Connection manager initalized.");
 
     retval = ws_connection_loadconf();
     if (retval != 0) {
