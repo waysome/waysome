@@ -35,6 +35,8 @@
  * @addtogroup input_hotkeys "Input: Hotkeys"
  *
  * @{
+ *
+ * @copydoc hotkeys
  */
 
 #ifndef __WS_INPUT_HOTKEYS_H__

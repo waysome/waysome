@@ -41,6 +41,8 @@
  * @addtogroup action_processor_stack "Action manager processor stack"
  *
  * @{
+ *
+ * @copydoc stack_semantics
  */
 
 #ifndef __WS_ACTION_STACK_H__

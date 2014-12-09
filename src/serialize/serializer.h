@@ -29,6 +29,8 @@
  * @addtogroup serializer "Serializer"
  *
  * @{
+ *
+ * @copydoc doc_serializer
  */
 
 /**

@@ -29,6 +29,8 @@
  * @addtogroup logger "Logging module"
  *
  * @{
+ *
+ * @copydoc doc_logger
  */
 
 #ifndef __WS_LOGGER_MODULE_H__

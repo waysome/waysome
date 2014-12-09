@@ -29,6 +29,8 @@
  * @addtogroup compositor "Compositor"
  *
  * @{
+ *
+ * @copydoc doc_compositor
  */
 
 #ifndef __WS_COMPOSITOR_MODULE_H__

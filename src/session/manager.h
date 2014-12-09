@@ -29,6 +29,8 @@
  * @addtogroup session "Session manager"
  *
  * @{
+ *
+ * @copydoc doc_sessionmanager
  */
 
 #ifndef __WS_SESSION_MANAGER_H__

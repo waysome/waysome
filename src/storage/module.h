@@ -29,6 +29,8 @@
  * @addtogroup storage "Storage"
  *
  * @{
+ *
+ * @copydoc doc_storage
  */
 
 #ifndef __WS_STORAGE_MODULE_H__

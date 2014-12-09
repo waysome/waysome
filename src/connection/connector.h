@@ -29,6 +29,8 @@
  * @addtogroup connection "Connection"
  *
  * @{
+ *
+ * @copydoc doc_connection
  */
 
 #ifndef __WS_CONNECTOR_H__

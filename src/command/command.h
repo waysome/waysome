@@ -29,6 +29,8 @@
  * @addtogroup command "Command"
  *
  * @{
+ *
+ * @copydoc doc_commandprocessor
  */
 
 #ifndef __WS_COMMAND_COMMAND_H__

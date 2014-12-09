@@ -29,6 +29,8 @@
  * @addtogroup values "Value types"
  *
  * @{
+ *
+ * @copydoc doc_value
  */
 
 /**

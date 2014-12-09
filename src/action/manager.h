@@ -29,6 +29,8 @@
  * @addtogroup action "Action manager"
  *
  * @{
+ *
+ * @copydoc doc_actionmanager
  */
 
 #ifndef __WS_ACTION_MANAGER_H__
