@@ -26,21 +26,19 @@
  */
 
 /**
- * @addtogroup serializer_module "Serializer module"
+ * @addtogroup serializer "Serializer"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend "Serializer JSON backend"
+ * @addtogroup serializer_json "Serializer JSON backend"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend_deser "JSON backend deserializer"
- *
- * Serializer module JSON backend private utilities
+ * @addtogroup serializer_json_deserializer "JSON backend deserializer"
  *
  * @{
  */

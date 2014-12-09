@@ -26,30 +26,22 @@
  */
 
 /**
- * @addtogroup serializer_module "Serializer module"
- *
- * @{
- */
-
-/**
- * @addtogroup serializer_module_json_backend "Serializer JSON backend"
- *
- * @{
- */
-
-/**
- * @addtogroup serializer_module_json_backend_common "JSON backend utils"
- *
- * Serializer module JSON backend private utilities
- *
- * @{
- */
-
-/**
  * @file keys.h
  *
  * This file contains JSON object key definitions. Each define here is one key
  * in the JSON object the deserializer wants to parse.
+ */
+
+/**
+ * @addtogroup serializer "Serializer"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup serializer_json "Serializer JSON backend"
+ *
+ * @{
  */
 
 #ifndef __WS_SERIALIZE_JSON_KEYS_H__
@@ -95,6 +87,3 @@
  * @}
  */
 
-/**
- * @}
- */

@@ -26,19 +26,19 @@
  */
 
 /**
- * @addtogroup serializer_module "Serializer module"
+ * @addtogroup serializer "Serializer"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend "Serializer JSON backend"
+ * @addtogroup serializer_json "Serializer JSON backend"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend_ser "JSON backend serializer"
+ * @addtogroup serializer_json_serializer "JSON backend serializer"
  *
  * @{
  */
@@ -68,3 +68,4 @@ ws_serializer_json_serializer_new(void);
 /**
  * @}
  */
+
