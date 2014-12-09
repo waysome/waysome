@@ -25,6 +25,20 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ *
+ * @copydoc doc_object
+ */
+
+/**
+ * @addtogroup objects_set "Class: set type"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_SET_H__
 #define __WS_OBJECTS_SET_H__
 
@@ -266,3 +280,12 @@ ws_set_select_greatest(
 );
 
 #endif // __WS_OBJECTS_SET_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+

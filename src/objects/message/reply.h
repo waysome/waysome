@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup objects_messages "Message classes"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_REPLY_H__
 #define __WS_OBJECTS_REPLY_H__
 
@@ -49,4 +61,12 @@ struct ws_reply {
 extern ws_object_type_id WS_OBJECT_TYPE_ID_REPLY;
 
 #endif // __WS_OBJECTS_REPLY_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup objects_messages "Message classes"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_VALUE_REPLY_H__
 #define __WS_OBJECTS_VALUE_REPLY_H__
 
@@ -83,4 +95,12 @@ __ws_nonnull__(1)
 ;
 
 #endif // __WS_OBJECTS_VALUE_REPLY_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
