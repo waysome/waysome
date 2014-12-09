@@ -14,6 +14,7 @@ set(SOURCE_FILES
     config_file.c
     connbuf.c
     connector.c
+    manager.c
     processor.c
 )
 

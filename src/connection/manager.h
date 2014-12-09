@@ -34,7 +34,28 @@
 #ifndef __WS_CONNECTION_MANAGER_H__
 #define __WS_CONNECTION_MANAGER_H__
 
+#include <stdbool.h>
 
+/**
+ * Initialize the connection manager singleton
+ *
+ * @return zero on success, a negative errno.h number on failure
+ */
+int
+ws_connection_manager_init(void);
+
+/**
+ * Manually open a connection, mostly usefull for the config loading
+ *
+ * @memberof ws_connection_manager
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_connection_manager_open_connection(
+    int fd, //!< File descriptor
+    bool ro //!< Flag: true for read-only connection
+);
 
 #endif // __WS_CONNECTION_MANAGER_H__
 

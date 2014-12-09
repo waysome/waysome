@@ -50,7 +50,7 @@
  * This callback processes input
  */
 static void
-connection_manager_dispatch(
+connection_processor_dispatch(
     struct ev_loop* loop, //!< loop on which the callback was called
     ev_io* watcher, //!< watcher which triggered the update
     int revents //!< events
@@ -62,7 +62,7 @@ connection_manager_dispatch(
  * This callback flushes the connection
  */
 static void
-connection_manager_flush(
+connection_processor_flush(
     struct ev_loop* loop, //!< loop on which the callback was called
     ev_prepare* watcher, //!< watcher which triggered the update
     int revents //!< events
@@ -76,8 +76,8 @@ connection_manager_flush(
  *         flushed.
  */
 static int
-connection_manager_flush_msg(
-    struct ws_connection_manager* proc,
+connection_processor_flush_msg(
+    struct ws_connection_processor* proc,
     struct ws_message* message
 );
 
@@ -85,7 +85,7 @@ connection_manager_flush_msg(
  * Deinitialize a command processor
  */
 bool
-connection_manager_deinit(
+connection_processor_deinit(
     struct ws_object * obj
 );
 
@@ -97,27 +97,14 @@ connection_manager_deinit(
  */
 
 /**
- * @extends ws_object
- */
-struct ws_connection_manager {
-    struct ws_object obj; //!< @public parent object type
-    struct ws_connector conn; //!< @public connection to process
-    struct ws_deserializer* deserializer; //!< @public deserializer to use
-    struct ws_serializer* serializer; //!< @public serializer to use
-    ev_io dispatcher; //!< @public dispatching watcher
-    ev_prepare flusher; //!< @public flushing watcher
-    bool is_init; //!< @public flag indicating whether it's initialized
-};
-
-/**
  * Type information for ws_wayland_obj type
  */
 ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
-    .typestr    = "ws_connection_manager",
+    .typestr    = "ws_connection_processor",
 
     .hash_callback = NULL,
-    .deinit_callback = connection_manager_deinit,
+    .deinit_callback = connection_processor_deinit,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
 
@@ -131,8 +118,8 @@ ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
  *
  */
 
-struct ws_connection_manager*
-ws_connection_manager_new(
+struct ws_connection_processor*
+ws_connection_processor_new(
     int fd, //!< file descriptor to use run the command processor on
     struct ws_deserializer* deserializer, //!< deserializer to use
     struct ws_serializer* serializer //!< serializer to use
@@ -142,8 +129,8 @@ ws_connection_manager_new(
         return NULL;
     }
 
-    // allocate memory for the ws_connection_manager
-    struct ws_connection_manager* retval = calloc(1, sizeof(*retval));
+    // allocate memory for the ws_connection_processor
+    struct ws_connection_processor* retval = calloc(1, sizeof(*retval));
     if (!retval) {
         return NULL;
     }
@@ -184,12 +171,12 @@ ws_connection_manager_new(
     }
 
     // initialize watchers
-    ev_io_init(&retval->dispatcher, connection_manager_dispatch, fd, EV_READ);
+    ev_io_init(&retval->dispatcher, connection_processor_dispatch, fd, EV_READ);
     retval->dispatcher.data = retval;
     ev_io_start(loop, &retval->dispatcher);
 
     if (serializer) {
-        ev_prepare_init(&retval->flusher, connection_manager_flush);
+        ev_prepare_init(&retval->flusher, connection_processor_flush);
         retval->flusher.data    = retval;
         ev_prepare_start(loop, &retval->flusher);
     }
@@ -217,13 +204,13 @@ cleanup_mem:
  */
 
 static void
-connection_manager_dispatch(
+connection_processor_dispatch(
     struct ev_loop* loop,
     ev_io* watcher,
     int revents
 ) {
-    struct ws_connection_manager* proc;
-    proc = (struct ws_connection_manager*) watcher->data;
+    struct ws_connection_processor* proc;
+    proc = (struct ws_connection_processor*) watcher->data;
     ssize_t res;
 
     if (ws_object_lock_try_write(&proc->obj) != 0) {
@@ -232,7 +219,7 @@ connection_manager_dispatch(
 
     // if we intend to reply to the messages, we should first check this
     if (proc->serializer) {
-        res = connection_manager_flush_msg(proc, NULL);
+        res = connection_processor_flush_msg(proc, NULL);
         if ((res < 0) && (res != -EAGAIN) && (res != -EINTR)) {
             goto deinit;
         }
@@ -281,7 +268,7 @@ connection_manager_dispatch(
         }
 
         // flush the buffer
-        res = connection_manager_flush_msg(proc, (struct ws_message*) reply);
+        res = connection_processor_flush_msg(proc, (struct ws_message*) reply);
         if (res < 0) {
             break;
         }
@@ -304,19 +291,19 @@ error_handling:
     }
 
 deinit:
-    connection_manager_deinit(&proc->obj);
+    connection_processor_deinit(&proc->obj);
     ws_object_unlock(&proc->obj);
     ws_object_unref(&proc->obj);
 }
 
 static void
-connection_manager_flush(
+connection_processor_flush(
     struct ev_loop* loop,
     ev_prepare* watcher,
     int revents
 ) {
-    struct ws_connection_manager* proc;
-    proc = (struct ws_connection_manager*) watcher->data;
+    struct ws_connection_processor* proc;
+    proc = (struct ws_connection_processor*) watcher->data;
 
     // try to lock the object
     if (ws_object_lock_try_write(&proc->obj) != 0) {
@@ -324,13 +311,13 @@ connection_manager_flush(
     }
 
     // flush the buffer
-    int res = connection_manager_flush_msg(proc, NULL);
+    int res = connection_processor_flush_msg(proc, NULL);
     if ((res == 0) || (res == -EAGAIN) || (res == -EINTR)) {
         goto unlock;
     }
 
     //!< @todo: error handling
-    connection_manager_deinit(&proc->obj);
+    connection_processor_deinit(&proc->obj);
     ws_object_unlock(&proc->obj);
     ws_object_unref(&proc->obj);
     return;
@@ -340,8 +327,8 @@ unlock:
 }
 
 static int
-connection_manager_flush_msg(
-    struct ws_connection_manager* proc,
+connection_processor_flush_msg(
+    struct ws_connection_processor* proc,
     struct ws_message* message
 ) {
     int res;
@@ -373,10 +360,10 @@ connection_manager_flush_msg(
 }
 
 bool
-connection_manager_deinit(
+connection_processor_deinit(
     struct ws_object * obj
 ) {
-    struct ws_connection_manager* proc = (struct ws_connection_manager*) obj;
+    struct ws_connection_processor* proc = (struct ws_connection_processor*) obj;
 
     if (!proc->is_init) {
         return true;

@@ -34,6 +34,9 @@
 #ifndef __WS_CONNECTION_PROCESSOR_H__
 #define __WS_CONNECTION_PROCESSOR_H__
 
+#include <ev.h>
+
+#include "connection/connector.h"
 #include "objects/object.h"
 #include "util/attributes.h"
 
@@ -42,28 +45,36 @@ struct ws_deserializer;
 struct ws_serializer;
 
 /**
- * The command processor, which is an object
+ * @extends ws_object
  */
-struct ws_connection_manager;
+struct ws_connection_processor {
+    struct ws_object obj; //!< @protected parent object type
+    struct ws_connector conn; //!< @protected connection to process
+    struct ws_deserializer* deserializer; //!< @protected deserializer to use
+    struct ws_serializer* serializer; //!< @protected serializer to use
+    ev_io dispatcher; //!< @protected dispatching watcher
+    ev_prepare flusher; //!< @protected flushing watcher
+    bool is_init; //!< @protected flag indicating whether it's initialized
+};
 
 /**
- * Variable which holds type information about the ws_connection_manager type
+ * Variable which holds type information about the ws_connection_processor type
  */
-extern ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR;
+extern ws_object_type_id WS_OBJECT_TYPE_ID_CONNECTION_PROCESSOR;
 
 /**
- * Create a command processor for a connection (which it creates internally)
+ * Create a connection processor for a connection (which it creates internally)
  *
- * This function creates and starts a command processor for a given connection.
- * For deserialisation, a `deserializer` must be supplied.
+ * This function creates and starts a connection processor for a given
+ * connection. For deserialisation, a `deserializer` must be supplied.
  * However, the `serializer` is completely optional.
  * If _no_ serializer is passed, the connection will be a read-only connection.
  *
- * @return a new command processor or `NULL`, if an error occured
+ * @return a new connection processor or `NULL`, if an error occured
  */
-struct ws_connection_manager*
-ws_connection_manager_new(
-    int fd, //!< file descriptor to use run the command processor on
+struct ws_connection_processor*
+ws_connection_processor_new(
+    int fd, //!< file descriptor to use run the connection processor on
     struct ws_deserializer* deserializer, //!< deserializer to use
     struct ws_serializer* serializer //!< serializer to use
 )
