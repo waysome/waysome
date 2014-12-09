@@ -26,9 +26,11 @@
  */
 
 /**
- * @addtogroup input "Input Module"
+ * @addtogroup input "Input"
  *
  * @{
+ *
+ * @copydoc doc_input
  */
 
 #ifndef __WS_INPUT_MODULE_H__

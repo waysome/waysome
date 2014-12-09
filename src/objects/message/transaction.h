@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup objects "Classes"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup objects_messages "Message classes"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_TRANSACTION_H__
 #define __WS_OBJECTS_TRANSACTION_H__
 
@@ -191,4 +203,12 @@ ws_transaction_push_statement(
 );
 
 #endif //__WS_OBJECTS_TRANSACTION_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

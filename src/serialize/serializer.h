@@ -25,6 +25,20 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup serializer "Serializer"
+ *
+ * @{
+ *
+ * @copydoc doc_serializer
+ */
+
+/**
+ * @addtogroup serializer_deserializer "Serializer: Serializer"
+ *
+ * @{
+ */
+
 #ifndef __WS_SERIALIZE_SERIALIZER_H__
 #define __WS_SERIALIZE_SERIALIZER_H__
 
@@ -112,4 +126,12 @@ __ws_nonnull__(1)
 ;
 
 #endif //__WS_SERIALIZE_SERIALIZER_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

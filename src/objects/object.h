@@ -29,6 +29,8 @@
  * @addtogroup objects "Classes"
  *
  * @{
+ *
+ * @copydoc doc_object
  */
 
 /**

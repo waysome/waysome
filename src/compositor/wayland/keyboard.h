@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_wayland "Compositor wayland"
+ *
+ * @{
+ */
+
 #ifndef __WS_WL_KEYBOARD_H__
 #define __WS_WL_KEYBOARD_H__
 
@@ -65,4 +77,12 @@ ws_wayland_keyboard_instance_of(
 );
 
 #endif // __WS_WL_KEYBOARD_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

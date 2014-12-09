@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_wayland "Compositor wayland"
+ *
+ * @{
+ */
+
 #ifndef __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
 #define __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
 
@@ -121,3 +133,12 @@ ws_abstract_shell_surface_set_width_and_height(
 );
 
 #endif // __WAYSOME_ABSTRACT_SHELL_SURFACE_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+

@@ -31,6 +31,12 @@
  * @{
  */
 
+/**
+ * @addtogroup objects_string "Class: string type"
+ *
+ * @{
+ */
+
 #ifndef __WS_OBJECTS_STRING_H__
 #define __WS_OBJECTS_STRING_H__
 
@@ -40,7 +46,7 @@
 #include "objects/object.h"
 
 /**
-* ws_string type definition
+ * ws_string type definition
  *
  * @extends ws_object
 */
@@ -210,3 +216,8 @@ ws_string_set_from_raw(
 /**
  * @}
  */
+
+/**
+ * @}
+ */
+

@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup input "Input"
+ *
+ * @{
+ */
+
 #ifndef __WS_INPUT_HOTKEY_EVENT_H__
 #define __WS_INPUT_HOTKEY_EVENT_H__
 
@@ -80,4 +86,8 @@ __ws_nonnull__(1, 2)
 ;
 
 #endif // __WS_INPUT_HOTKEY_EVENT_H__
+
+/**
+ * @}
+ */
 

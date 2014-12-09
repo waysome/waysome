@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_wayland "Compositor wayland"
+ *
+ * @{
+ */
+
 #ifndef __WS_WAYLAND_CLIENT_H__
 #define __WS_WAYLAND_CLIENT_H__
 
@@ -92,4 +104,12 @@ ws_wayland_client_create_resource(
 );
 
 #endif // __WS_WAYLAND_CLIENT_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

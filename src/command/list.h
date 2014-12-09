@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup command "Command"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup command_list "Command list"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMMAND_LIST_H__
 #define __WS_COMMAND_LIST_H__
 
@@ -87,4 +99,12 @@ extern struct ws_command ws_command_list[];
 extern size_t const ws_command_cnt;
 
 #endif // __WS_COMMAND_LIST_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

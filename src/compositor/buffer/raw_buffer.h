@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_buffer "Compositor Buffer"
+ *
+ * @{
+ */
+
 #ifndef __WS_RAW_BUFFER_H__
 #define __WS_RAW_BUFFER_H__
 
@@ -52,4 +64,12 @@ struct ws_raw_buffer {
 extern ws_buffer_type_id WS_OBJECT_TYPE_ID_RAW_BUFFER;
 
 #endif // __WS_RAW_BUFFER_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

@@ -26,13 +26,7 @@
  */
 
 /**
- * @addtogroup objects "Classes"
- *
- * @{
- */
-
-/**
- * @addtogroup objects_monitor "Class: Monitor type"
+ * @addtogroup compositor "Compositor"
  *
  * @{
  */
@@ -115,6 +109,3 @@ __ws_nonnull__(1)
  * @}
  */
 
-/**
- * @}
- */

@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_buffer "Compositor Buffer"
+ *
+ * @{
+ */
+
 #ifndef __WS_BUFFER_H__
 #define __WS_BUFFER_H__
 
@@ -247,4 +259,12 @@ __ws_nonnull__(1,2)
 ;
 
 #endif // __WS_BUFFER_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

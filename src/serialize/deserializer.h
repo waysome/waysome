@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup serializer "Serializer"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup serializer_deserializer "Serializer: Deserializer"
+ *
+ * @{
+ */
+
 #ifndef __WS_SERIALIZE_DESERIALIZER_H__
 #define __WS_SERIALIZE_DESERIALIZER_H__
 
@@ -111,4 +123,12 @@ __ws_nonnull__(1)
 
 
 #endif //__WS_SERIALIZE_DESERIALIZER_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

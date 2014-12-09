@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
 #ifndef __WS_CURSOR_H__
 #define __WS_CURSOR_H__
 
@@ -192,4 +198,8 @@ ws_cursor_set_active_surface(
 );
 
 #endif // __WS_CURSOR_H__
+
+/**
+ * @}
+ */
 

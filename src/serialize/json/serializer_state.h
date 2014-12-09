@@ -26,23 +26,23 @@
  */
 
 /**
- * @addtogroup serializer_module "Serializer module"
+ * @addtogroup serializer "Serializer"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend "Serializer JSON backend"
+ * @addtogroup serializer_json "Serializer JSON backend"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend_ser "JSON backend serializer"
- *
- * Serializer module JSON backend private utilities
+ * @addtogroup serializer_json_serializer "JSON backend serializer"
  *
  * @{
+ *
+ * @copydoc json_statemachine
  */
 
 #ifndef __WS_SERIALIZE_JSON_SERIALIZER_STATE_H__
@@ -99,3 +99,4 @@ serializer_context_new(void);
 /**
  * @}
  */
+

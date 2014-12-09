@@ -26,21 +26,13 @@
  */
 
 /**
- * @addtogroup serializer_module "Serializer module"
+ * @addtogroup serializer "Serializer"
  *
  * @{
  */
 
 /**
- * @addtogroup serializer_module_json_backend "Serializer JSON backend"
- *
- * @{
- */
-
-/**
- * @addtogroup serializer_module_json_backend_common "JSON backend utils"
- *
- * Serializer module JSON backend private utilities
+ * @addtogroup serializer_json "Serializer JSON backend"
  *
  * @{
  */
@@ -93,6 +85,3 @@ enum json_backend_state {
  * @}
  */
 
-/**
- * @}
- */

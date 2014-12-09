@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_wayland "Compositor wayland"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMPOSITOR_WAYLAND_SHELL_H__
 #define __WS_COMPOSITOR_WAYLAND_SHELL_H__
 
@@ -38,4 +50,12 @@ int
 ws_wayland_shell_init(void);
 
 #endif // __WS_COMPOSITOR_WAYLAND_SHELL_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_wayland "Compositor wayland"
+ *
+ * @{
+ */
+
 #ifndef __WS_WL_SHELL_SURFACE_H__
 #define __WS_WL_SHELL_SURFACE_H__
 
@@ -76,4 +88,12 @@ ws_shell_surface_set_pos(
 );
 
 #endif // __WS_WL_SHELL_SURFACE_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

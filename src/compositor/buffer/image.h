@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup compositor_buffer "Compositor Buffer"
+ *
+ * @{
+ */
+
 #ifndef __WS_BACKGROUND_SERVICE_H__
 #define __WS_BACKGROUND_SERVICE_H__
 
@@ -71,3 +83,12 @@ ws_image_buffer_from_png(
 );
 
 #endif // __WS_BACKGROUND_SERVICE_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+

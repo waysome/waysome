@@ -29,6 +29,8 @@
  * @addtogroup utils "(internal) utilities"
  *
  * @{
+ *
+ * @copydoc doc_utility
  */
 
 #ifndef __WS_UTIL_ARITHMETICAL_H__
