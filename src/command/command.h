@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup command "Command"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMMAND_COMMAND_H__
 #define __WS_COMMAND_COMMAND_H__
 
@@ -147,4 +153,12 @@ __ws_nonnull__(1)
 ;
 
 #endif // __WS_COMMAND_COMMAND_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

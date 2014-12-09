@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup command "Command"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup command_util "Command util"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMMAND_UTILS_H__
 #define __WS_COMMAND_UTILS_H__
 
@@ -82,4 +94,12 @@
          ++it_)
 
 #endif // __WS_COMMAND_UTILS_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 

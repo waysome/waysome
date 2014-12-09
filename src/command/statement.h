@@ -25,6 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup command "Command"
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup command_statement "Command statement"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMMAND_STATEMENT_H__
 #define __WS_COMMAND_STATEMENT_H__
 
@@ -156,4 +168,12 @@ ws_statement_deinit(
 );
 
 #endif // __WS_COMMAND_STATEMENT_H__
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
