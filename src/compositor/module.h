@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMPOSITOR_MODULE_H__
 #define __WS_COMPOSITOR_MODULE_H__
 
@@ -49,3 +55,8 @@ int
 ws_compositor_init(void);
 
 #endif // __WS_COMPOSITOR_MODULE_H__
+
+/**
+ * @}
+ */
+

@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
 #ifndef __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 #define __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 
@@ -50,3 +56,8 @@ extern struct ws_logger_context log_ctx;
 
 
 #endif // __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
+
+/**
+ * @}
+ */
+

@@ -25,6 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup compositor "Compositor"
+ *
+ * @{
+ */
+
 #ifndef __WS_KEYBOARD_H__
 #define __WS_KEYBOARD_H__
 
@@ -116,4 +122,9 @@ ws_keyboard_set_active_surface(
     struct ws_surface* nxt_surface //!< The surface to be active
 );
 #endif // __WS_KEYBOARD_H__
+
+
+/**
+ * @}
+ */
 

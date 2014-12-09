@@ -26,13 +26,7 @@
  */
 
 /**
- * @addtogroup objects "Classes"
- *
- * @{
- */
-
-/**
- * @addtogroup objects_monitor_mode "Class: Monitor Mode type"
+ * @addtogroup compositor "Compositor"
  *
  * @{
  */
@@ -80,6 +74,3 @@ ws_monitor_mode_new(void);
  * @}
  */
 
-/**
- * @}
- */
