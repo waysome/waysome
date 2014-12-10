@@ -90,18 +90,19 @@ ws_connection_manager_init(void)
         return 0;
     }
 
-    int res = ws_cleaner_add(connection_manager_deinit, NULL);
-    if (res != 0) {
-        return res;
-    }
-
     memset(&connman, 0, sizeof(connman));
-    res = ws_set_init(&connman.connections);
+    int res = ws_set_init(&connman.connections);
     if (res != 0) {
         return res;
     }
 
     res = ws_socket_init(&connman.sock, create_connection_cb, SOCK_NAME);
+    if (res != 0) {
+        ws_object_deinit(&connman.connections.obj);
+        return res;
+    }
+
+    res = ws_cleaner_add(connection_manager_deinit, NULL);
     if (res != 0) {
         ws_object_deinit(&connman.connections.obj);
         return res;
