@@ -194,7 +194,7 @@ ws_hotkeys_eval(
     }
 
     struct ws_reply* reply;
-    reply = ws_action_manager_process((struct ws_message*) event);
+    reply = ws_action_manager_process((struct ws_message*) event, NULL);
     if (reply) {
         ws_object_unref((struct ws_object*) reply);
     }

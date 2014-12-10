@@ -253,7 +253,7 @@ connection_processor_dispatch(
         }
 
         // pass the message to the transaction manager
-        struct ws_reply* reply = ws_action_manager_process(msg);
+        struct ws_reply* reply = ws_action_manager_process(msg, &proc->obj);
         ws_object_unref((struct ws_object*) msg);
         if (!reply) {
             // reply being `NULL` can have a number of reasons
