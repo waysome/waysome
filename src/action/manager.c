@@ -136,8 +136,17 @@ cleanup_transactions:
 
 struct ws_reply*
 ws_action_manager_process(
-    struct ws_message* message
+    struct ws_message* message,
+    struct ws_object* opt_ctx
 ) {
+    struct ws_value* vctx = NULL;
+    struct ws_value_object_id ctx;
+    if (opt_ctx) {
+        ws_value_object_id_init(&ctx);
+        ws_value_object_id_set(&ctx, opt_ctx);
+        vctx = &ctx.val;
+    }
+
     // check whether the message is a transaction
     if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
         struct ws_transaction* transaction;
@@ -161,7 +170,7 @@ ws_action_manager_process(
 
         if (flags & WS_TRANSACTION_FLAGS_EXEC) {
             // execute the transaction
-            return run_transaction(transaction, NULL, NULL);
+            return run_transaction(transaction, NULL, vctx);
         }
 
         return NULL;
@@ -213,7 +222,8 @@ ws_action_manager_process(
         // now, finally, run the transaction
         struct ws_reply* reply;
         reply = run_transaction(transaction,
-                                &ws_event_get_context(event)->value, NULL);
+                                &ws_event_get_context(event)->value,
+                                vctx);
         if (reply) {
             ws_object_unref((struct ws_object*) reply);
         }

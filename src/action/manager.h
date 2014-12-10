@@ -67,7 +67,8 @@ ws_action_manager_init(
  */
 struct ws_reply*
 ws_action_manager_process(
-    struct ws_message* message //!< transaction to process
+    struct ws_message* message, //!< transaction to process
+    struct ws_object* opt_ctx //!< optional additional context object
 )
 __ws_nonnull__(1)
 ;
