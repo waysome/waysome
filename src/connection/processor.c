@@ -275,7 +275,7 @@ connection_processor_dispatch(
     }
 
 error_handling:
-    switch(-res) {
+    switch(res) {
     case -EAGAIN:
     case -EINTR:
         // we have to come back later
