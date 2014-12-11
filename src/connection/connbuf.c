@@ -139,3 +139,10 @@ ws_connbuf_discard(
     return 0;
 }
 
+char*
+ws_connbuf_buffer(
+    struct ws_connbuf* self
+) {
+    return (self ? self->buffer : NULL);
+}
+
