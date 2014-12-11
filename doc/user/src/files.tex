@@ -1,2 +1,74 @@
 % Everything with files. Sockets, configuration file positions, etc?
 
+This section describes and lists all the files, waysome expencts to be present,
+waysome interacts with etc.
+
+\subsection{Configuration file}
+
+    Waysome gets configured via a configuration file, which is written in JSON
+    format. It looks for the following files in this order:
+
+    \begin{itemize}
+        \item \path{~/waysome.conf}
+        \item \path{~/waysome.json}
+        \item \path{~/.waysome.conf}
+        \item \path{~/.waysome.json}
+        \item \path{~/waysome/waysome.conf}
+        \item \path{~/waysome/waysome.json}
+        \item \path{$HOME/.config/waysome.conf}
+        \item \path{$HOME/.config/waysome.json}
+        \item \path{$HOME/.config/.waysome.conf}
+        \item \path{$HOME/.config/.waysome.json}
+        \item \path{$HOME/.config/waysome/waysome.conf}
+        \item \path{$HOME/.config/waysome/waysome.json}
+        \item \path{$XDG_CONFIG_HOME/.config/waysome.conf}
+        \item \path{$XDG_CONFIG_HOME/.config/waysome.json}
+        \item \path{$XDG_CONFIG_HOME/.config/.waysome.conf}
+        \item \path{$XDG_CONFIG_HOME/.config/.waysome.json}
+        \item \path{$XDG_CONFIG_HOME/.config/waysome/waysome.conf}
+        \item \path{$XDG_CONFIG_HOME/.config/waysome/waysome.json}
+        \item \path{$XDG_CONFIG_DIRS/.config/waysome.conf}
+        \item \path{$XDG_CONFIG_DIRS/.config/waysome.json}
+        \item \path{$XDG_CONFIG_DIRS/.config/.waysome.conf}
+        \item \path{$XDG_CONFIG_DIRS/.config/.waysome.json}
+        \item \path{$XDG_CONFIG_DIRS/.config/waysome/waysome.conf}
+        \item \path{$XDG_CONFIG_DIRS/.config/waysome/waysome.json}
+        \item \path{/etc/xdg/waysome.conf}
+        \item \path{/etc/xdg/waysome.json}
+        \item \path{/etc/xdg/.waysome.conf}
+        \item \path{/etc/xdg/.waysome.json}
+        \item \path{/etc/xdg/waysome/waysome.conf}
+        \item \path{/etc/xdg/waysome/waysome.json}
+        \item \path{/etc/waysome.conf}
+        \item \path{/etc/waysome.json}
+        \item \path{/etc/.waysome.conf}
+        \item \path{/etc/.waysome.json}
+        \item \path{/etc/waysome/waysome.conf}
+        \item \path{/etc/waysome/waysome.json}
+        \item \path{./waysome.conf}
+        \item \path{./waysome.json}
+        \item \path{./.waysome.conf}
+        \item \path{./.waysome.json}
+        \item \path{./waysome/waysome.conf}
+        \item \path{./waysome/waysome.json}
+    \end{itemize}
+
+\subsection{Sockets}
+
+    Waysome openes sockets for the API.
+
+    The following sockets are opened by waysome:
+
+    % \begin{itemize}
+    %     % Nothing here yet
+    % \end{itemize}
+
+\subsection{Cursor image}
+
+    The cursor image is a simple PNG file, which must be located at at least one
+    of the following positions:
+
+    %\begin{itemize}
+    %    % Nothing here yet
+    %\end{itemize}
+
