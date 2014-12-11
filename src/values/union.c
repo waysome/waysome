@@ -26,6 +26,7 @@
  */
 
 #include <errno.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "values/union.h"
@@ -214,7 +215,18 @@ ws_value_union_tostr(
             break;
 
     case WS_VALUE_TYPE_OBJECT_ID:
-            //!< @todo implement
+            {
+                struct ws_object* o = ws_value_object_id_get(&self->object_id);
+                uintmax_t id        = ws_object_uuid(o);
+                size_t strl         = strlen(STR_OF(INTMAX_MAX)) + 3;
+
+                res = calloc(1, strl + 1);
+                if (!res) {
+                    return NULL;
+                }
+
+                snprintf(res, strl, "id:%ld", id);
+            }
             break;
 
     case WS_VALUE_TYPE_SET:
