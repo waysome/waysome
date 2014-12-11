@@ -60,7 +60,9 @@ socket_build_connection_cb(
     memset(&addr, 0, len);
     int fd = accept(s->fd, (struct sockaddr*) &addr, &len);
     if (fd < 0) {
-        ws_log(&log_ctx, LOG_ERR, "Could not accept client: %d", errno);
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            ws_log(&log_ctx, LOG_ERR, "Could not accept client: %d", errno);
+        }
         return;
     }
 
