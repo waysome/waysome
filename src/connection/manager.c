@@ -97,7 +97,7 @@ ws_connection_manager_init(void)
     }
 
     res = ws_socket_init(&connman.sock, create_connection_cb, SOCK_NAME);
-    if (res != 0) {
+    if (res != 0 && res != -EADDRINUSE) {
         ws_object_deinit(&connman.connections.obj);
         return res;
     }
