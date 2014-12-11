@@ -165,7 +165,7 @@ connection_manager_deinit(
     void* dummy
 ) {
     ws_object_deinit(&connman.connections.obj);
-    //ws_socket_deinit(&connman.sock);
+    ws_socket_deinit(&connman.sock);
 }
 
 int
