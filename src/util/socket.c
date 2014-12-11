@@ -81,7 +81,8 @@ int
 ws_socket_init(
     struct ws_socket* s,
     int (*createconn_cb)(int fd),
-    char const* name
+    char const* name,
+    int backlog
 ) {
     struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
     if (!loop) {
@@ -93,6 +94,12 @@ ws_socket_init(
     s->fd = ws_socket_create(name);
     if (s->fd < 0) {
         return s->fd;
+    }
+
+    int res = listen(s->fd, backlog);
+    if (res < 0) {
+        ws_log(&log_ctx, LOG_ERR, "Could not listen.");
+        return -errno;
     }
 
     s->createconn_cb    = createconn_cb;

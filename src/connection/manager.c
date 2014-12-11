@@ -96,7 +96,8 @@ ws_connection_manager_init(void)
         return res;
     }
 
-    res = ws_socket_init(&connman.sock, create_connection_cb, SOCK_NAME);
+    // `20` is the hardcoded backlog by now
+    res = ws_socket_init(&connman.sock, create_connection_cb, SOCK_NAME, 20);
     if (res != 0 && res != -EADDRINUSE) {
         ws_object_deinit(&connman.connections.obj);
         return res;
