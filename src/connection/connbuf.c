@@ -146,3 +146,9 @@ ws_connbuf_buffer(
     return (self ? self->buffer : NULL);
 }
 
+size_t
+ws_connbuf_data(
+    struct ws_connbuf* self //!< The object
+) {
+    return (self ? self->data : 0);
+}
