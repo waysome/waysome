@@ -68,7 +68,8 @@ ws_socket_init(
     int (*createconn_cb)(int fd),   //!< connection creating callback,
                                     //!< gets fd, returns zero on success, else
                                     //!< negative errno.h number
-    char const* name                //!< Name to pass to ws_socket_create()
+    char const* name,               //!< Name to pass to ws_socket_create()
+    int backlog                     //!< Backlog for the listen() call
 );
 
 /**

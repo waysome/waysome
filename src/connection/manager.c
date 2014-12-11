@@ -96,8 +96,9 @@ ws_connection_manager_init(void)
         return res;
     }
 
-    res = ws_socket_init(&connman.sock, create_connection_cb, SOCK_NAME);
-    if (res != 0) {
+    // `20` is the hardcoded backlog by now
+    res = ws_socket_init(&connman.sock, create_connection_cb, SOCK_NAME, 20);
+    if (res != 0 && res != -EADDRINUSE) {
         ws_object_deinit(&connman.connections.obj);
         return res;
     }
@@ -139,7 +140,7 @@ ws_connection_manager_open_connection(
         goto clean_deser;
     }
 
-    if (!ws_set_insert(&connman.connections, &p->obj)) {
+    if (ws_set_insert(&connman.connections, &p->obj) < 0) {
         goto clean_deser;
     }
 
@@ -165,7 +166,7 @@ connection_manager_deinit(
     void* dummy
 ) {
     ws_object_deinit(&connman.connections.obj);
-    //ws_socket_deinit(&connman.sock);
+    ws_socket_deinit(&connman.sock);
 }
 
 int
