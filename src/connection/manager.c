@@ -139,7 +139,7 @@ ws_connection_manager_open_connection(
         goto clean_deser;
     }
 
-    if (!ws_set_insert(&connman.connections, &p->obj)) {
+    if (ws_set_insert(&connman.connections, &p->obj) < 0) {
         goto clean_deser;
     }
 
