@@ -234,9 +234,9 @@ connection_processor_dispatch(
     struct ws_message* msg = NULL;
     while (1) {
         // deserialize a message
-        //!< @todo use getters as soon as they are available
-        res =  ws_deserialize(proc->deserializer, &msg,
-                              proc->conn.inbuf.buffer, proc->conn.inbuf.data);
+        res = ws_deserialize(proc->deserializer, &msg,
+                             ws_connbuf_buffer(&proc->conn.inbuf),
+                             ws_connbuf_data(&proc->conn.inbuf));
         if (res < 0) {
             break;
         }
