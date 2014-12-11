@@ -90,7 +90,7 @@ ws_socket_init(
 
     s->fd = ws_socket_create(name);
     if (s->fd < 0) {
-        return -1;
+        return s->fd;
     }
 
     s->createconn_cb    = createconn_cb;
@@ -151,7 +151,7 @@ ws_socket_create(
 
     if (res < 0) {
         ws_log(&log_ctx, LOG_ERR, "Could not bind.");
-        return -1;
+        return -errno;
     }
 
     return sock;
