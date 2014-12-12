@@ -108,10 +108,6 @@ static const struct {
         .type = WS_VALUE_TYPE_INT,
     },
 
-    [WS_OBJ_ATTR_TYPE_DOUBLE]   = {
-        .type = WS_VALUE_TYPE_INT,
-    }, //!< @todo double?
-
     [WS_OBJ_ATTR_TYPE_STRING]   = {
         .type = WS_VALUE_TYPE_STRING,
     },
@@ -433,10 +429,6 @@ ws_object_attr_read(
     case WS_OBJ_ATTR_TYPE_UINT64:
         ws_value_int_set((struct ws_value_int*) dest,
                          (intmax_t) *((uint64_t*) member_pos));
-        break;
-
-    case WS_OBJ_ATTR_TYPE_DOUBLE:
-        //!< @todo implement casting to value type
         break;
 
     case WS_OBJ_ATTR_TYPE_STRING:
