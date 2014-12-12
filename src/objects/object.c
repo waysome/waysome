@@ -450,8 +450,7 @@ ws_object_attr_read(
         break;
 
     default:
-        //!< @todo Something strange happened in this case, maybe implementation
-        // missing here. What to do now?
+        ws_log(&log_ctx, LOG_EMERG, "Unhandleable value type identifier");
         break;
     };
 
