@@ -35,7 +35,7 @@ char*
 ws_errno_tostr(
     int errno
 ) {
-    //!< @todo implement
-    return NULL;
+    char* errstr = strerror(ABS(errno));
+    return (errstr ? strdup(errstr) : NULL);
 }
 
