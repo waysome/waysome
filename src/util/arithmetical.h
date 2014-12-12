@@ -71,6 +71,13 @@
  */
 #define ARYLEN(x) (sizeof((x))/sizeof((x)[0]))
 
+/**
+ * Get absolute value of number
+ *
+ * @returns absolute value of number
+ */
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
 #endif // __WS_UTIL_ARITHMETICAL_H__
 
 /**
