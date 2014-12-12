@@ -27,6 +27,7 @@
 
 #include <errno.h>
 #include <stddef.h>
+#include <string.h>
 
 #include "action/commands.h"
 #include "action/manager.h"
@@ -180,6 +181,7 @@ ws_action_manager_process(
         { // contain transaction retrieval in a scope to save stack
             // get the named object containing the event
             struct ws_named comparable;
+            memset(&comparable, 0, sizeof(comparable));
             ws_named_init(&comparable, name, NULL);
 
             struct ws_named* named;
