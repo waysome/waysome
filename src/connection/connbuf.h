@@ -188,6 +188,30 @@ ws_connbuf_discard(
     size_t amount //!< the amount of memory to release
 );
 
+/**
+ * Get the buffer from the ws_connbuf object
+ *
+ * @memberof ws_connbuf
+ *
+ * @return buffer char* or NULL on failure
+ */
+char*
+ws_connbuf_buffer(
+    struct ws_connbuf* self //!< The object
+);
+
+/**
+ * Get the amount of the used memory
+ *
+ * @memberof ws_connbuf
+ *
+ * @return amount of used memory or zero on failure
+ */
+size_t
+ws_connbuf_data(
+    struct ws_connbuf* self //!< The object
+);
+
 #endif // __WS_CONNBUF_H__
 
 /**
