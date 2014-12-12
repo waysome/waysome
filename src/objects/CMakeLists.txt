@@ -23,6 +23,7 @@ set(SOURCE_FILES
     message/value_reply.c
     named.c
     object.c
+    queue.c
     set.c
     string.c
     wayland_obj.c

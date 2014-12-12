@@ -43,6 +43,8 @@
 #include <stdbool.h>
 #include <wayland-util.h>
 
+#include "objects/object.h"
+
 /**
  * Queue type
  */
