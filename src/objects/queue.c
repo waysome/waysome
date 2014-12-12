@@ -101,7 +101,29 @@ ws_queue_push(
     struct ws_queue* q,
     struct ws_object* o
 ) {
-    //!< @todo implement
+    if (!q || !o) {
+        return -EINVAL;
+    }
+
+    if (!ws_object_lock_write(&q->obj)) {
+        return -EAGAIN;
+    }
+
+    struct queue_element* qe = calloc(1, sizeof(*qe));
+    if (!qe) {
+        ws_object_unlock(&q->obj);
+        return -ENOMEM;
+    }
+
+    qe->obj = getref(o);
+    if (!qe->obj) {
+        free(qe);
+        return -EINVAL;
+    }
+
+    wl_list_insert(&q->link, &qe->link);
+
+    ws_object_unlock(&q->obj);
     return 0;
 }
 
