@@ -122,7 +122,6 @@ complex objects as named values (sets can be passed as arrays).
         ^   ^               | <nil>,                |
         |   |               | <boolean>,            |
         |   |               | <integer>,            |
-        |   |               | <double>,             |
         |   |               | <string>              | "{"
         |   +---------------+                       |
         |                                           v

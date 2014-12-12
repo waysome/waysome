@@ -379,15 +379,6 @@ yajl_integer_cb(
 }
 
 int
-yajl_double_cb(
-    void* ctx,
-    double d
-) {
-    //!< @todo implement
-    return 0;
-}
-
-int
 yajl_string_cb(
     void* ctx,
     const unsigned char* str,
