@@ -57,6 +57,17 @@ ws_errno_tostr(
     int errno
 );
 
+/**
+ * Create a `struct ws_value_string` instance from the errno number using
+ * `ws_errno_tostr`
+ *
+ * @return `struct ws_value_string` for the errno number or NULL on failure
+ */
+struct ws_value_string*
+ws_errno_to_value_string(
+    int errno
+);
+
 #endif // __WS_UTIL_ERROR_H__
 
 /**

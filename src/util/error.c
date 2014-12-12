@@ -28,7 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "values/string.h"
 #include "util/arithmetical.h"
+#include "util/condition.h"
 #include "util/error.h"
 
 char*
@@ -37,5 +39,41 @@ ws_errno_tostr(
 ) {
     char* errstr = strerror(ABS(errno));
     return (errstr ? strdup(errstr) : NULL);
+}
+
+struct ws_value_string*
+ws_errno_to_value_string(
+    int errno
+) {
+    char* errstr = ws_errno_tostr(errno);
+    if (!errstr) {
+        return NULL;
+    }
+
+    struct ws_value_string* res = ws_value_string_new();
+    if (unlikely(!res)) {
+        goto cleanup_errstr;
+    }
+
+    struct ws_string* s = ws_value_string_get(res);
+    if (unlikely(!s)) {
+        goto cleanup_values;
+    }
+
+    if (ws_string_set_from_raw(s, errstr) != 0) {
+        goto cleanup_values;
+    }
+
+    goto out;
+
+cleanup_values:
+    ws_value_deinit((struct ws_value*) res);
+    res = NULL;
+
+cleanup_errstr:
+    free(errstr);
+
+out:
+    return res;
 }
 
