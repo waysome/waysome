@@ -122,17 +122,6 @@ yajl_integer_cb(
 );
 
 /**
- * YAJL callback: double
- *
- * @return zero on failure, else nonzero value
- */
-int
-yajl_double_cb(
-    void * ctx,
-    double d
-);
-
-/**
  * YAJL callback: string
  *
  * @return zero on failure, else nonzero value
