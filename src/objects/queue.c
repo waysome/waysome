@@ -31,6 +31,11 @@
 #include "objects/object.h"
 #include "objects/queue.h"
 
+static bool
+deinit_queue(
+    struct ws_object* const q
+);
+
 struct queue_element {
     struct wl_list link;
     struct ws_object* obj;
@@ -43,7 +48,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_QUEUE = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_queue",
 
-    .deinit_callback = NULL,
+    .deinit_callback = deinit_queue,
     .hash_callback = NULL,
     .cmp_callback = NULL,
     .uuid_callback = NULL,
@@ -108,3 +113,24 @@ ws_queue_empty(
     return false;
 }
 
+/*
+ *
+ * static function implementations
+ *
+ */
+
+static bool
+deinit_queue(
+    struct ws_object* const q
+) {
+    struct ws_queue* queue = (struct ws_queue*) q;
+
+    struct queue_element* iter;
+    struct queue_element* tmp;
+    wl_list_for_each_safe(iter, tmp, &queue->link, link) {
+        ws_object_unref(iter->obj);
+        wl_list_remove(&iter->link);
+    }
+
+    return true;
+}
