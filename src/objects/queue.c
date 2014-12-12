@@ -92,8 +92,22 @@ struct ws_object*
 ws_queue_pop(
     struct ws_queue* q
 ) {
-    //!< @todo implement
-    return NULL;
+    if (!q || wl_list_empty(&q->link)) {
+        return NULL;
+    }
+
+    if (!ws_object_lock_write(&q->obj)) {
+        return NULL;
+    }
+
+    struct queue_element* qe = wl_container_of(q->link.prev, qe, link);
+    struct ws_object* res = qe->obj;
+
+    wl_list_remove(&qe->link);
+    free(qe);
+
+    ws_object_unlock(&q->obj);
+    return res;
 }
 
 int
