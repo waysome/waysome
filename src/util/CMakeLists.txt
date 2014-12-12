@@ -19,6 +19,7 @@ set(SOURCE_FILES
     socket.c
     wayland.c
     exec.c
+    error.c
 )
 
 add_library(util STATIC
