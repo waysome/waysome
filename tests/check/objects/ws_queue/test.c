@@ -79,6 +79,36 @@ START_TEST (test_queue_push) {
 }
 END_TEST
 
+START_TEST (test_queue_pop) {
+    struct ws_queue* q = ws_queue_new();
+    ck_assert(q);
+
+    ck_assert(NULL == ws_queue_pop(q));
+    ck_assert(NULL == ws_queue_pop(NULL));
+
+    ck_assert(0 != ws_queue_push(q, NULL));
+    ck_assert(NULL == ws_queue_pop(q));
+
+    struct ws_object* o1 = ws_object_new_raw();
+    struct ws_object* o2 = ws_object_new_raw();
+    struct ws_object* o3 = ws_object_new_raw();
+
+    ck_assert(0 == ws_queue_push(q, o1));
+    ck_assert(0 == ws_queue_push(q, o2));
+    ck_assert(0 == ws_queue_push(q, o3));
+
+    ck_assert(o1 == ws_queue_pop(q));
+    ck_assert(o2 == ws_queue_pop(q));
+    ck_assert(o3 == ws_queue_pop(q));
+
+    ws_object_unref(o1);
+    ws_object_unref(o2);
+    ws_object_unref(o3);
+
+    ws_object_unref(&q->obj);
+}
+END_TEST
+
 static Suite*
 queue_suite(void)
 {
@@ -90,6 +120,8 @@ queue_suite(void)
     tcase_add_test(tc, test_queue_init);
     tcase_add_test(tc, test_queue_new);
     tcase_add_test(tc, test_queue_push);
+    tcase_add_test(tc, test_queue_pop);
+
     return s;
 }
 
