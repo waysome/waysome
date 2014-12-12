@@ -25,6 +25,9 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <wayland-util.h>
+
 #include "objects/object.h"
 #include "objects/queue.h"
 
@@ -52,7 +55,13 @@ int
 ws_queue_init(
     struct ws_queue* q
 ) {
-    //!< @todo implement
+    if (!ws_object_init(&q->obj)) {
+        return -EINVAL;
+    }
+    q->obj.id = &WS_OBJECT_TYPE_ID_QUEUE;
+
+    wl_list_init(&q->link);
+
     return 0;
 }
 
