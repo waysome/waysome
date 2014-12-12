@@ -68,8 +68,19 @@ ws_queue_init(
 struct ws_queue*
 ws_queue_new(void)
 {
-    //!< @todo implement
-    return NULL;
+    struct ws_queue* q = calloc(1, sizeof(*q));
+    if (!q) {
+        return NULL;
+    }
+
+    if (ws_queue_init(q) < 0) {
+        free(q);
+        return NULL;
+    }
+
+    q->obj.settings |= WS_OBJECT_HEAPALLOCED;
+
+    return q;
 }
 
 struct ws_object*
