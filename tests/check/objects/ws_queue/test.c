@@ -52,6 +52,13 @@ START_TEST (test_queue_init) {
 }
 END_TEST
 
+START_TEST (test_queue_new) {
+    struct ws_queue* q = ws_queue_new();
+    ck_assert(q);
+    ws_object_unref(&q->obj);
+}
+END_TEST
+
 static Suite*
 queue_suite(void)
 {
@@ -61,6 +68,7 @@ queue_suite(void)
     suite_add_tcase(s, tc);
 
     tcase_add_test(tc, test_queue_init);
+    tcase_add_test(tc, test_queue_new);
     return s;
 }
 
