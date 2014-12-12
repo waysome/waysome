@@ -145,8 +145,7 @@ bool
 ws_queue_empty(
     struct ws_queue* q
 ) {
-    //!< @todo implement
-    return false;
+    return (q ? wl_list_empty(&q->link) : true);
 }
 
 /*
