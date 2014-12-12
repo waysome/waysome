@@ -78,7 +78,6 @@ ws_named_init(
 
     }
     self->str.obj.id = &WS_OBJECT_TYPE_ID_NAMED;
-    self->str.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     if (!ws_string_set_from_str(&self->str, name)) {
         return -1;
@@ -105,6 +104,8 @@ ws_named_new(
         free(retval);
         return NULL;
     }
+
+    retval->str.obj.settings |= WS_OBJECT_HEAPALLOCED;
 
     return retval;
 }
