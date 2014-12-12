@@ -2,6 +2,7 @@ set(TEST_SUITES_OBJECTS
     ws_object
     ws_set
     ws_string
+    ws_queue
 )
 
 foreach(TEST IN LISTS TEST_SUITES_OBJECTS)
