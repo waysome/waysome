@@ -41,9 +41,14 @@
 #include <check.h>
 #include <stdbool.h>
 
+#include "objects/queue.h"
 #include "tests.h"
 
 START_TEST (test_queue_init) {
+    struct ws_queue q;
+    int res = ws_queue_init(&q);
+
+    ck_assert(res == 0);
 }
 END_TEST
 
