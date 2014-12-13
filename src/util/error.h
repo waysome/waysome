@@ -29,56 +29,50 @@
  * @addtogroup utils "(internal) utilities"
  *
  * @{
- *
- * @copydoc doc_utility
  */
-
-#ifndef __WS_UTIL_ARITHMETICAL_H__
-#define __WS_UTIL_ARITHMETICAL_H__
 
 /**
- * Returns the sign of the number put in
+ * @addtogroup utils_error "(internal) utils: error utilities"
  *
- * @returns 1 if x is positive, -1 if negative, and 0 if zero
+ * @{
  */
-#define signum(x) (((x) > 0) - ((x) < 0))
+
+#ifndef __WS_UTIL_ERROR_H__
+#define __WS_UTIL_ERROR_H__
 
 /**
- * Returns the bigger of the two numbers
+ * Translate an errno number to a char*.
  *
- * @returns x if x>y else y
+ * @note Both positive and negative errno values can be passed
+ *
+ * @note The returned value can be free()'d afterwards
+ *
+ * @note This function will change later on, to be able to translate custom
+ * errno number to sane error strings. Its interface won't change, though.
+ *
+ * @return Error description for the errno passed, NULL on failure (no memory)
  */
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
+char*
+ws_errno_tostr(
+    int errno
+);
 
 /**
- * Returns the smaller of the two numbers
+ * Create a `struct ws_value_string` instance from the errno number using
+ * `ws_errno_tostr`
  *
- * @returns x if x<y else y
+ * @return `struct ws_value_string` for the errno number or NULL on failure
  */
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
+struct ws_value_string*
+ws_errno_to_value_string(
+    int errno
+);
+
+#endif // __WS_UTIL_ERROR_H__
 
 /**
- * Returns the clamped value between the two arguments
- *
- * @returns y if x <= y <= z else if y > z, z else x
+ * @}
  */
-#define CLAMP(x,y,z) MAX(x,MIN(y,z))
-
-/**
- * Get the length of an array
- *
- * @returns The length of the array
- */
-#define ARYLEN(x) (sizeof((x))/sizeof((x)[0]))
-
-/**
- * Get absolute value of number
- *
- * @returns absolute value of number
- */
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
-#endif // __WS_UTIL_ARITHMETICAL_H__
 
 /**
  * @}
