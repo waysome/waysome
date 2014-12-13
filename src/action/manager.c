@@ -72,7 +72,8 @@ struct {
 static struct ws_reply*
 run_transaction(
     struct ws_transaction* transaction, //!< Transaction to run
-    struct ws_value* context //!< context to push on the stack
+    struct ws_value* context, //!< context to push on the stack
+    struct ws_value* connection_context //!< connection ctx to push on stack
 );
 
 /**
@@ -136,8 +137,17 @@ cleanup_transactions:
 
 struct ws_reply*
 ws_action_manager_process(
-    struct ws_message* message
+    struct ws_message* message,
+    struct ws_object* opt_ctx
 ) {
+    struct ws_value* vctx = NULL;
+    struct ws_value_object_id ctx;
+    if (opt_ctx) {
+        ws_value_object_id_init(&ctx);
+        ws_value_object_id_set(&ctx, opt_ctx);
+        vctx = &ctx.val;
+    }
+
     // check whether the message is a transaction
     if (message->obj.id == &WS_OBJECT_TYPE_ID_TRANSACTION) {
         struct ws_transaction* transaction;
@@ -161,7 +171,7 @@ ws_action_manager_process(
 
         if (flags & WS_TRANSACTION_FLAGS_EXEC) {
             // execute the transaction
-            return run_transaction(transaction, NULL);
+            return run_transaction(transaction, NULL, vctx);
         }
 
         return NULL;
@@ -214,7 +224,8 @@ ws_action_manager_process(
         // now, finally, run the transaction
         struct ws_reply* reply;
         reply = run_transaction(transaction,
-                                &ws_event_get_context(event)->value);
+                                &ws_event_get_context(event)->value,
+                                vctx);
         if (reply) {
             ws_object_unref((struct ws_object*) reply);
         }
@@ -319,7 +330,8 @@ ws_action_manager_unregister_transaction(
 static struct ws_reply*
 run_transaction(
     struct ws_transaction* transaction,
-    struct ws_value* context
+    struct ws_value* context,
+    struct ws_value* connection_ctx
 ) {
     struct ws_reply* retval = NULL;
     int res;
@@ -355,6 +367,14 @@ run_transaction(
         ++bottom;
         if (context) {
             ws_value_union_init_from_val(bottom, context);
+        } else {
+            ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL);
+        }
+
+        // initialize the connection context
+        ++bottom;
+        if (connection_ctx) {
+            ws_value_union_init_from_val(bottom, connection_ctx);
         } else {
             ws_value_union_reinit(bottom, WS_VALUE_TYPE_NIL);
         }
