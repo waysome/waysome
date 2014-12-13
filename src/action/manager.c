@@ -142,6 +142,8 @@ ws_action_manager_process(
 ) {
     struct ws_value* vctx = NULL;
     struct ws_value_object_id ctx;
+    memset(&ctx, 0, sizeof(ctx));
+
     if (opt_ctx) {
         ws_value_object_id_init(&ctx);
         ws_value_object_id_set(&ctx, opt_ctx);
@@ -208,6 +210,7 @@ ws_action_manager_process(
         if (!transaction) {
             // get the transaction directly
             struct ws_transaction comparable;
+            memset(&comparable, 0, sizeof(comparable));
             if (ws_transaction_init(&comparable, 0, name) < 0) {
                 goto cleanup_name;
             }
@@ -247,6 +250,8 @@ ws_action_manager_register(
 
     // get the transaction
     struct ws_transaction comparable;
+    memset(&comparable, 0, sizeof(comparable));
+
     res = ws_transaction_init(&comparable, 0, transaction_name);
     if (res < 0) {
         return res;
@@ -284,6 +289,8 @@ ws_action_manager_unregister_event(
 
     // construct a comparable for removal
     struct ws_named comparable;
+    memset(&comparable, 0, sizeof(comparable));
+
     res = ws_named_init(&comparable, event_name, NULL);
     if (res < 0) {
         return res;
@@ -306,6 +313,7 @@ ws_action_manager_unregister_transaction(
 
     // construct a comparable for removal
     struct ws_transaction comparable;
+    memset(&comparable, 0, sizeof(comparable));
     res = ws_transaction_init(&comparable, 0, transaction_name);
     if (res < 0) {
         return res;
@@ -338,6 +346,8 @@ run_transaction(
 
     // prepare the stack
     struct ws_processor_stack stack;
+    memset(&stack, 0, sizeof(stack));
+
     res = ws_processor_stack_init(&stack);
     if (res < 0) {
         retval = (struct ws_reply*)
@@ -395,6 +405,8 @@ run_transaction(
 
     // prepare the processor
     struct ws_processor proc;
+    memset(&proc, 0, sizeof(proc));
+
     res = ws_processor_init(&proc, &stack, commands);
     if (res < 0) {
         retval = (struct ws_reply*)
