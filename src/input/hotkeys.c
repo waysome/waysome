@@ -30,6 +30,7 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "action/manager.h"
 #include "input/hotkey_dag.h"
@@ -230,8 +231,12 @@ ws_hotkey_remove(
 
     // construct an event for the removal
     struct ws_string name;
+    memset(&name, 0, sizeof(name));
     ws_string_init(&name);
+
     struct ws_hotkey_event event;
+    memset(&event, 0, sizeof(event));
+
     res = ws_hotkey_event_init(&event, &name, codes, code_num);
     if (res < 0) {
         return res;
