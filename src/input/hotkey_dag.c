@@ -279,6 +279,8 @@ ws_hotkey_dag_remove(
 
     // get the point where we may start the removal and commence destruction!
     struct ws_hotkey_dag_tab tab;
+    memset(&tab, 0, sizeof(tab));
+
     tab = removal_point_in_tab_node(last_keep->table, rem_code);
     if (tab.nodes.tab) {
         // we have a node to return
@@ -443,6 +445,7 @@ removal_point_in_tab_node(
 ) {
     // prepare the return value
     struct ws_hotkey_dag_tab retval;
+    memset(&retval, 0, sizeof(retval));
     retval.nodes.tab = NULL;
     retval.depth = ~0;
 
