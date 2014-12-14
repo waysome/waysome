@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "action/manager.h"
 #include "command/util.h"
 #include "compositor/cursor.h"
 #include "compositor/keyboard.h"
@@ -125,6 +126,14 @@ func_set_kb_focus(
     union ws_value_union* stack
 );
 
+/**
+ * Register a transaction on an event
+ */
+static int
+func_register_transaction_on_event(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
@@ -136,6 +145,7 @@ static const struct ws_object_function functions[] = {
     { .name = "get_keyboard_focus", .func = func_get_kb_focus },
     { .name = "set_ms_focus", .func = func_set_ms_focus },
     { .name = "set_kb_focus", .func = func_set_kb_focus },
+    { .name = "reg_transaction", .func = func_register_transaction_on_event },
     { .name = NULL, .func = NULL }
 };
 
@@ -424,6 +434,29 @@ func_set_kb_focus(
 
     struct ws_surface* surface = (struct ws_surface*) maybe_surface;
     ws_keyboard_set_active_surface(keyboard, surface);
+
+    return 0;
+}
+
+static int
+func_register_transaction_on_event(
+    union ws_value_union* stack
+) {
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_STRING ||
+        ws_value_get_type(&stack[1].value) != WS_VALUE_TYPE_STRING) {
+        return -EINVAL;
+    }
+
+    struct ws_string* ev_name = ws_value_string_get(&stack[0].string);
+    struct ws_string* trans_name = ws_value_string_get(&stack[1].string);
+
+    bool res = 0 == ws_action_manager_register(ev_name, trans_name);
+
+    ws_object_unref((struct ws_object*) ev_name);
+    ws_object_unref((struct ws_object*) trans_name);
+
+    ws_value_union_reinit(stack, WS_VALUE_TYPE_BOOL);
+    ws_value_bool_set(&stack->bool_, res);
 
     return 0;
 }
