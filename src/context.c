@@ -134,6 +134,14 @@ func_register_transaction_on_event(
     union ws_value_union* stack
 );
 
+/**
+ * Unregister a transaction on an event
+ */
+static int
+func_unregister_transaction_on_event(
+    union ws_value_union* stack
+);
+
 static const struct ws_object_function functions[] = {
     { .name = "exit", .func = func_exit },
     { .name = "log", .func = func_log },
@@ -146,6 +154,8 @@ static const struct ws_object_function functions[] = {
     { .name = "set_ms_focus", .func = func_set_ms_focus },
     { .name = "set_kb_focus", .func = func_set_kb_focus },
     { .name = "reg_transaction", .func = func_register_transaction_on_event },
+    { .name = "unreg_transaction",
+      .func = func_unregister_transaction_on_event },
     { .name = NULL, .func = NULL }
 };
 
@@ -461,3 +471,22 @@ func_register_transaction_on_event(
     return 0;
 }
 
+static int
+func_unregister_transaction_on_event(
+    union ws_value_union* stack
+) {
+    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_STRING) {
+        return -EINVAL;
+    }
+
+    struct ws_string* trans_name = ws_value_string_get(&stack[0].string);
+
+    bool res = 0 == ws_action_manager_unregister_transaction(trans_name);
+
+    ws_object_unref((struct ws_object*) trans_name);
+
+    ws_value_union_reinit(stack, WS_VALUE_TYPE_BOOL);
+    ws_value_bool_set(&stack->bool_, res);
+
+    return 0;
+}
