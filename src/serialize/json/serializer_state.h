@@ -41,8 +41,6 @@
  * @addtogroup serializer_json_serializer "JSON backend serializer"
  *
  * @{
- *
- * @copydoc json_statemachine
  */
 
 #ifndef __WS_SERIALIZE_JSON_SERIALIZER_STATE_H__
