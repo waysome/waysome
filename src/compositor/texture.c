@@ -92,6 +92,15 @@ ws_texture_new() {
     return retval;
 }
 
+int
+ws_texture_bind(
+    struct ws_texture* self,
+    GLenum target
+) {
+    glBindTexture(target, self->texture);
+    return 0;
+}
+
 
 /*
  *

@@ -85,6 +85,20 @@ ws_texture_init(
 struct ws_texture*
 ws_texture_new();
 
+/**
+ * Bind the texture
+ *
+ * This function binds the texture, e.g. to make it availible for blitting.
+ * Essentially calls `glBindTexture()`
+ *
+ * @memberof ws_texture
+ */
+int
+ws_texture_bind(
+    struct ws_texture* self,    //!< object to modify
+    GLenum target               //!< target to bind the texture to
+);
+
 #endif // __WS_TEXTURE__
 
 /**
