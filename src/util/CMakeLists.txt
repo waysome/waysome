@@ -18,10 +18,11 @@ add_definitions(
 
 set(SOURCE_FILES
     cleaner.c
+    egl.c
+    error.c
+    exec.c
     socket.c
     wayland.c
-    exec.c
-    error.c
 )
 
 add_library(util STATIC
