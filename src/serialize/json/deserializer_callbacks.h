@@ -41,6 +41,8 @@
  * @addtogroup serializer_json_deserializer "JSON backend deserializer"
  *
  * @{
+ *
+ * @copydoc json_statemachine
  */
 
 #ifndef __WS_SERIALIZE_JSON_DESERIALIZER_CALLBACKS_H__
