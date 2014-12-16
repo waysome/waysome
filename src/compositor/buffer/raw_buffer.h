@@ -49,13 +49,13 @@
  * @extends ws_buffer
  */
 struct ws_raw_buffer {
-    struct ws_buffer obj;   //!< @protected Base class.
-    char* path;             //!< @protected
-    int bytesize;           //!< @protected
-    int height;             //!< @protected
-    int stride;             //!< @protected
-    int width;              //!< @protected
-    int size;               //!< @protected
+    struct ws_buffer obj;           //!< @protected Base class.
+    char* path;                     //!< @protected
+    int height;                     //!< @protected
+    int stride;                     //!< @protected
+    int width;                      //!< @protected
+    int size;                       //!< @protected
+    struct ws_egl_fmt const* fmt;   //!< @protected format
 };
 
 /**

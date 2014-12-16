@@ -31,6 +31,7 @@
 
 #include "compositor/wayland/buffer.h"
 #include "logger/module.h"
+#include "util/egl.h"
 
 /*
  *
@@ -83,18 +84,8 @@ get_stride(
  *
  * @return height of the buffer's contents
  */
-static uint32_t
+struct ws_egl_fmt const*
 get_format(
-    struct ws_buffer const* self
-);
-
-/**
- * Get the buffer's bpp
- *
- * @return bpp
- */
-static uint32_t
-get_bpp(
     struct ws_buffer const* self
 );
 
@@ -144,7 +135,6 @@ static ws_buffer_type_id buffer_type = {
     .get_height = get_height,
     .get_stride = get_stride,
     .get_format = get_format,
-    .get_bpp = get_bpp,
     .begin_access = begin_access,
     .end_access = end_access,
 };
@@ -290,7 +280,7 @@ get_stride(
     return wl_shm_buffer_get_stride(shm_buffer);
 }
 
-static uint32_t
+struct ws_egl_fmt const*
 get_format(
     struct ws_buffer const* self
 ) {
@@ -300,15 +290,7 @@ get_format(
 
     // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
-    return wl_shm_buffer_get_format(shm_buffer);
-}
-
-static uint32_t
-get_bpp(
-    struct ws_buffer const* self
-) {
-    // 4 Bytes per pixel (BGRA)
-    return 4;
+    return ws_egl_fmt_from_shm_fmt(wl_shm_buffer_get_format(shm_buffer));
 }
 
 static void

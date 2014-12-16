@@ -28,10 +28,10 @@
 #include <errno.h>
 #include <string.h>
 
-#include "util/arithmetical.h"
-
 #include "compositor/buffer/buffer.h"
 #include "compositor/internal_context.h"
+#include "util/arithmetical.h"
+#include "util/egl.h"
 
 ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
     .type = {
@@ -138,7 +138,7 @@ ws_buffer_stride(
     return type->get_stride(self);
 }
 
-uint32_t
+struct ws_egl_fmt const*
 ws_buffer_format(
     struct ws_buffer const* self
 ) {
@@ -148,28 +148,11 @@ ws_buffer_format(
     while (!type->get_format) {
         // we hit the basic, abstract buffer type, which does nothing
         if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
-            return 0; //!< @todo: return invalid format
+            return NULL;
         }
         type = (ws_buffer_type_id*) type->type.supertype;
     }
     return type->get_format(self);
-}
-
-uint32_t
-ws_buffer_bpp(
-    struct ws_buffer const* self
-) {
-    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
-
-    // search for an implementation in the base classes
-    while (!type->get_bpp) {
-        // we hit the basic, abstract buffer type, which does nothing
-        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
-            return 0; //!< @todo: return invalid format
-        }
-        type = (ws_buffer_type_id*) type->type.supertype;
-    }
-    return type->get_bpp(self);
 }
 
 void
@@ -217,13 +200,19 @@ ws_buffer_blit(
         return;
     }
 
+    struct ws_egl_fmt const* dest_fmt = ws_buffer_format(dest);
+    struct ws_egl_fmt const* src_fmt  = ws_buffer_format(src);
+    if (!(dest_fmt && src_fmt)) {
+        return;
+    }
+
     //!< @todo use byte-size instead of stride
     ws_log(&log_ctx, LOG_DEBUG, "Blitting image with dim: %dx%d with bpp:%d",
             ws_buffer_width(src),
             ws_buffer_height(src),
-            ws_buffer_bpp(src));
-    int min_x = MIN(ws_buffer_width(dest) * ws_buffer_bpp(dest),
-            ws_buffer_width(src) * ws_buffer_bpp(src));
+            src_fmt->bbp);
+    int min_x = MIN(ws_buffer_width(dest) * dest_fmt->bbp,
+            ws_buffer_width(src) * src_fmt->bbp);
     int min_y = MIN(ws_buffer_height(dest), ws_buffer_height(src));
 
     int stride_dst = ws_buffer_stride(dest);

@@ -74,16 +74,8 @@ get_stride(
 /**
  * Format getter callback for buffer type
  */
-static uint32_t
+static struct ws_egl_fmt const*
 get_format(
-    struct ws_buffer const* self
-);
-
-/**
- * BPP getter callback for buffer type
- */
-static uint32_t
-get_bpp(
     struct ws_buffer const* self
 );
 
@@ -111,7 +103,6 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_RAW_BUFFER = {
     .get_height     = get_height,
     .get_stride     = get_stride,
     .get_format     = get_format,
-    .get_bpp        = get_bpp,
     .begin_access   = NULL,
     .end_access     = NULL,
 };
@@ -157,19 +148,11 @@ get_stride(
     return buff->stride;
 }
 
-static uint32_t
+static struct ws_egl_fmt const*
 get_format(
     struct ws_buffer const* self
 ) {
-    //struct ws_raw_buffer* buff = (struct ws_raw_buffer*) self;
-    return 0; //!< @todo: unused (But maybe of use later)
-}
-
-static uint32_t
-get_bpp(
-    struct ws_buffer const* self
-) {
-    // This is the amount of bytes per pixel (BGRA)
-    return 4;
+    struct ws_raw_buffer* buff = (struct ws_raw_buffer*) self;
+    return buff->fmt;
 }
 
