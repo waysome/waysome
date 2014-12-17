@@ -96,3 +96,8 @@ ws_egl_fmt_advertise(
     return retval;
 }
 
+void
+ws_egl_flush_errors(void)
+{
+    while (glGetError() != GL_NO_ERROR);
+}
