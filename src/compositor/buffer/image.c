@@ -35,6 +35,7 @@
 #include "compositor/buffer/image.h"
 #include "logger/module.h"
 #include "util/arithmetical.h"
+#include "util/egl.h"
 
 /*
  *
@@ -108,11 +109,12 @@ ws_image_buffer_from_png(
         return NULL;
     }
 
-    img.format = PNG_FORMAT_BGRA;
+    img.format = PNG_FORMAT_RGBA;
     buff->buffer = calloc(1, PNG_IMAGE_SIZE(img));
     buff->raw.height = img.height;
     buff->raw.width = img.width;
     buff->raw.stride = PNG_IMAGE_ROW_STRIDE(img);
+    buff->raw.fmt = ws_egl_fmt_get_rgba();
 
     if (!buff->buffer) {
         ws_log(NULL, LOG_ERR, "Could not allocate memory for image: '%s'",
