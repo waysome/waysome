@@ -104,6 +104,7 @@ ws_socket_init(
 
     s->createconn_cb    = createconn_cb;
     s->io.data          = s; // self-ref here, to be forward compatible
+    s->path             = name;
 
     ev_io_init(&s->io, socket_build_connection_cb, s->fd, EV_READ);
     ev_io_start(loop, &s->io);
@@ -117,6 +118,7 @@ ws_socket_deinit(
 ) {
     struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
     ev_io_stop(loop, &sock->io);
+    unlink(sock->path);
     return (close(sock->fd) != 0) ? -errno : 0;
 }
 
@@ -157,6 +159,11 @@ ws_socket_create(
     }
 
     int res = bind(sock, (struct sockaddr*) &addr, sizeof(addr));
+
+    if (res == -1 && errno == EACCES) {
+        unlink(addr.sun_path);
+        res = bind(sock, (struct sockaddr*) &addr, sizeof(addr));
+    }
 
     if (res < 0) {
         ws_log(&log_ctx, LOG_ERR, "Could not bind.");

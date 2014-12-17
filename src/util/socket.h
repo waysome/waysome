@@ -55,6 +55,7 @@ struct ws_socket {
                                     //!< gets fd, returns zero on success, else
                                     //!< negative errno.h number
     int fd;                         //!< @protected fd of the created socket
+    char const* path;               //!< @protected path of the created socket
 };
 
 /**
