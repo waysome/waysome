@@ -54,7 +54,7 @@
  */
 char*
 ws_errno_tostr(
-    int errno
+    int errnr
 );
 
 /**

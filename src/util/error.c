@@ -35,9 +35,9 @@
 
 char*
 ws_errno_tostr(
-    int errno
+    int errnr
 ) {
-    char* errstr = strerror(ABS(errno));
+    char* errstr = strerror(ABS(errnr));
     return (errstr ? strdup(errstr) : NULL);
 }
 
