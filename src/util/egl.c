@@ -74,6 +74,11 @@ ws_egl_fmt_from_shm_fmt(
     return NULL;
 }
 
+struct ws_egl_fmt const*
+ws_egl_fmt_get_rgba() {
+    return mappings;
+}
+
 int
 ws_egl_fmt_advertise(
     struct wl_display* display

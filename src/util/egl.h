@@ -69,6 +69,15 @@ ws_egl_fmt_from_shm_fmt(
 );
 
 /**
+ * Get a "random" RGBA8888 format
+ *
+ * @return a RGBA8888 format or NULL, if no such mapping exists
+ */
+struct ws_egl_fmt const*
+ws_egl_fmt_get_rgba();
+
+
+/**
  * Add the formats to the list of formats advertised to clients
  *
  * @return 0 if at least one format could be added, a negative error code
