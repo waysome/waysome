@@ -52,6 +52,7 @@
  */
 
 struct ws_buffer;
+struct ws_egl_fmt;
 
 
 /*
@@ -65,14 +66,13 @@ struct ws_buffer;
  */
 struct ws_buffer_type {
     struct ws_object_type type; //!< regular object type
-    void*       (*get_data)(struct ws_buffer const*);
-    int32_t     (*get_width)(struct ws_buffer const*);
-    int32_t     (*get_height)(struct ws_buffer const*);
-    int32_t     (*get_stride)(struct ws_buffer const*);
-    uint32_t    (*get_format)(struct ws_buffer const*);
-    uint32_t    (*get_bpp)(struct ws_buffer const*);
-    void        (*begin_access)(struct ws_buffer*);
-    void        (*end_access)(struct ws_buffer*);
+    void*                       (*get_data)(struct ws_buffer const*);
+    int32_t                     (*get_width)(struct ws_buffer const*);
+    int32_t                     (*get_height)(struct ws_buffer const*);
+    int32_t                     (*get_stride)(struct ws_buffer const*);
+    struct ws_egl_fmt const*    (*get_format)(struct ws_buffer const*);
+    void                        (*begin_access)(struct ws_buffer*);
+    void                        (*end_access)(struct ws_buffer*);
 };
 
 typedef struct ws_buffer_type const ws_buffer_type_id;
@@ -188,29 +188,13 @@ __ws_nonnull__(1)
  *
  * @return format of the buffer's contents
  */
-uint32_t
+struct ws_egl_fmt const*
 ws_buffer_format(
     struct ws_buffer const* self //!< The buffer to query
 )
 __ws_nonnull__(1)
 ;
 
-/**
- * Get the buffer's bits per pixel
- *
- * @note Should be called with ref on argument already aquired!
- *
- * @memberof ws_buffer
- *
- * @return bits per pixel of this buffer
- */
-uint32_t
-ws_buffer_bpp(
-    struct ws_buffer const* self //!< The buffer to query
-)
-__ws_nonnull__(1)
-
-;
 /**
  * Begin buffer access
  *

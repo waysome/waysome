@@ -82,7 +82,6 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_EGL_BUFFER = {
     .get_height = get_height,
     .get_stride = NULL,
     .get_format = NULL,
-    .get_bpp = NULL,
     .begin_access = NULL,
     .end_access = NULL,
 };
