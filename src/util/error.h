@@ -43,16 +43,16 @@
 /**
  * Translate an errno number to a char*.
  *
- * @note Both positive and negative errno values can be passed
+ * @warning The returned value can't be free()'d afterwards
  *
- * @note The returned value can be free()'d afterwards
+ * @note Both positive and negative errno values can be passed
  *
  * @note This function will change later on, to be able to translate custom
  * errno number to sane error strings. Its interface won't change, though.
  *
  * @return Error description for the errno passed, NULL on failure (no memory)
  */
-char*
+const char*
 ws_errno_tostr(
     int errnr
 );
