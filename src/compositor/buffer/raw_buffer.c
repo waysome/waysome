@@ -98,13 +98,14 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_RAW_BUFFER = {
         .attribute_table    = NULL,
         .function_table     = NULL,
     },
-    .get_data       = NULL,
-    .get_width      = get_width,
-    .get_height     = get_height,
-    .get_stride     = get_stride,
-    .get_format     = get_format,
-    .begin_access   = NULL,
-    .end_access     = NULL,
+    .get_data           = NULL,
+    .get_width          = get_width,
+    .get_height         = get_height,
+    .get_stride         = get_stride,
+    .get_format         = get_format,
+    .transfer2texture   = NULL,
+    .begin_access       = NULL,
+    .end_access         = NULL,
 };
 
 /*

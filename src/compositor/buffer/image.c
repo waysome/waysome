@@ -82,6 +82,7 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
     .get_height = NULL,
     .get_stride = NULL,
     .get_format = NULL,
+    .transfer2texture = NULL,
     .begin_access = NULL,
     .end_access = NULL,
 };

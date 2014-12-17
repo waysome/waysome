@@ -135,6 +135,7 @@ static ws_buffer_type_id buffer_type = {
     .get_height = get_height,
     .get_stride = get_stride,
     .get_format = get_format,
+    .transfer2texture = NULL,
     .begin_access = begin_access,
     .end_access = end_access,
 };
