@@ -25,10 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <GLES2/gl2.h>
 #include <errno.h>
 #include <malloc.h>
 #include <wayland-server.h>
 
+#include "compositor/texture.h"
 #include "compositor/wayland/buffer.h"
 #include "logger/module.h"
 #include "util/egl.h"
@@ -90,6 +92,17 @@ shm_get_format(
 );
 
 /**
+ * Get the buffer's format
+ *
+ * @return height of the buffer's contents
+ */
+static int
+shm_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+);
+
+/**
  * Begin a transaction
  */
 static void
@@ -135,7 +148,7 @@ static ws_buffer_type_id shm_buffer_type = {
     .get_height = shm_get_height,
     .get_stride = shm_get_stride,
     .get_format = shm_get_format,
-    .transfer2texture = NULL,
+    .transfer2texture = shm_transfer2texture,
     .begin_access = shm_begin_access,
     .end_access = shm_end_access,
 };
@@ -289,6 +302,33 @@ shm_get_format(
 
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return ws_egl_fmt_from_shm_fmt(wl_shm_buffer_get_format(shm_buffer));
+}
+
+static int
+shm_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+) {
+    // get the resource
+    struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
+
+    // get the metadata
+    struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
+    struct ws_egl_fmt const* fmt;
+    fmt = ws_egl_fmt_from_shm_fmt(wl_shm_buffer_get_format(shm_buffer));
+
+    // bind texture
+    ws_texture_bind(texture, GL_TEXTURE_2D);
+
+    // perform the final update
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 wl_shm_buffer_get_stride(shm_buffer)/fmt->bpp,
+                 wl_shm_buffer_get_height(shm_buffer), 0,
+                 fmt->egl.fmt, fmt->egl.type,
+                 wl_shm_buffer_get_data(shm_buffer));
+
+    return glGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 static void
