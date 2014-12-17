@@ -36,6 +36,7 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 
+#include "input/hotkeys.h"
 #include "input/input_device.h"
 #include "input/module.h"
 #include "input/utils.h"
@@ -159,6 +160,12 @@ ws_input_init(void)
         return 0;
     }
     ws_set_init(&ws_input_ctx.devices);
+
+    int hk_init = ws_hotkeys_init();
+    if (hk_init < 0) {
+        ws_log(&log_ctx, LOG_CRIT, "Could not start hotkey subsystem");
+        return hk_init;
+    }
 
     int inotfd = inotify_init1(IN_NONBLOCK);
 
