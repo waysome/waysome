@@ -54,6 +54,7 @@ struct ws_egl_fmt {
         EGLenum fmt;            //!< @public egl format
         EGLenum type;           //!< @public egl type
     } egl;                      //!< @public egl format and type
+    uint32_t png_fmt;           //!< @public png format
     uint8_t bpp;                //!< @public bytes per pixel
 };
 

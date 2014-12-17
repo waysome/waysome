@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "png.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <wayland-server.h>
@@ -43,11 +44,13 @@ static struct ws_egl_fmt const mappings[] = {
     {
         .shm_fmt = WL_SHM_FORMAT_RGBA8888,
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
+        .png_fmt = PNG_FORMAT_RGBA,
         .bpp = 4
     },
     {
         .shm_fmt = WL_SHM_FORMAT_RGBX8888,
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
+        .png_fmt = PNG_FORMAT_RGBA,
         .bpp = 4
     }
 };
