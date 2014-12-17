@@ -27,6 +27,7 @@
 
 #include <EGL/egl.h>
 #include <gbm.h>
+#include <xf86drmMode.h>
 
 #include "logger/module.h"
 #include "objects/object.h"

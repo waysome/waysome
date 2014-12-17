@@ -170,7 +170,7 @@ ws_monitor_populate_fb(
         return;
     }
 
-    self->buffer = ws_frame_buffer_new(
+    self->buffer = ws_gbm_buffer_new(
             self->fb_dev,
             self->current_mode->mode.hdisplay,
             self->current_mode->mode.vdisplay
@@ -180,8 +180,9 @@ ws_monitor_populate_fb(
     }
     self->saved_crtc = drmModeGetCrtc(ws_comp_ctx.fb->fd, self->crtc);
 
-    int ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc, self->buffer->fb,
-            0, 0, &self->conn, 1, &self->current_mode->mode);
+    int ret = drmModeSetCrtc(ws_comp_ctx.fb->fd, self->crtc,
+                             self->buffer->fb, 0, 0, &self->conn, 1,
+                             &self->current_mode->mode);
     if (ret) {
         ws_log(&log_ctx, LOG_ERR, "Could not set the CRTC for self %d.",
                 self->crtc);
