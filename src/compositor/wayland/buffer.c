@@ -25,11 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <EGL/egl.h>
+#define EGL_EGLEXT_PROTOTYPES
+#include <EGL/eglext.h>
 #include <GLES2/gl2.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GLES2/gl2ext.h>
 #include <errno.h>
 #include <malloc.h>
 #include <wayland-server.h>
+#include <wayland-util.h>
 
+#include "compositor/internal_context.h"
 #include "compositor/texture.h"
 #include "compositor/wayland/buffer.h"
 #include "logger/module.h"
@@ -118,6 +125,32 @@ shm_end_access(
     struct ws_buffer* self
 );
 
+/**
+ * Get the (egl) buffer's format
+ *
+ * @return height of the buffer's contents
+ */
+static int
+egl_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+);
+
+/**
+ * Begin a transaction
+ */
+static void
+egl_begin_access(
+    struct ws_buffer* self
+);
+
+/**
+ * End a transaction
+ */
+static void
+egl_end_access(
+    struct ws_buffer* self
+);
 
 /*
  *
@@ -151,6 +184,29 @@ static ws_buffer_type_id shm_buffer_type = {
     .transfer2texture = shm_transfer2texture,
     .begin_access = shm_begin_access,
     .end_access = shm_end_access,
+};
+
+static ws_buffer_type_id egl_buffer_type = {
+    .type = {
+        .supertype  = (struct ws_object_type const*) &WS_OBJECT_TYPE_ID_BUFFER,
+        .typestr    = "anonymous",
+
+        .hash_callback = NULL,
+
+        .deinit_callback = NULL,
+        .cmp_callback = NULL,
+
+        .attribute_table = NULL,
+        .function_table = NULL,
+    },
+    .get_data           = NULL,
+    .get_width          = NULL,
+    .get_height         = NULL,
+    .get_stride         = NULL,
+    .get_format         = NULL,
+    .transfer2texture   = egl_transfer2texture,
+    .begin_access       = egl_begin_access,
+    .end_access         = egl_end_access,
 };
 
 /*
@@ -189,8 +245,7 @@ ws_wayland_buffer_init(
         return retval;
     }
 
-    // assume that we have a shm buffer
-    self->buf.obj.id = &shm_buffer_type.type;
+    ws_wayland_buffer_set_resource(self, r); // sets object type for buffer
 
     return 0;
 }
@@ -221,6 +276,12 @@ ws_wayland_buffer_set_resource(
     struct ws_wayland_buffer* self,
     struct wl_resource* r
 ) {
+    if (wl_shm_buffer_get(r) == NULL) { // we get NULL if it is not a SHM buffer
+        self->buf.obj.id = &egl_buffer_type.type;
+    } else { // ... kay... it's SHM
+        self->buf.obj.id = &shm_buffer_type.type;
+    }
+
     ws_wayland_obj_set_wl_resource(&self->wl_obj, r);
 }
 
@@ -355,6 +416,44 @@ shm_end_access(
 
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     wl_shm_buffer_end_access(shm_buffer);
+}
+
+static int
+egl_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+) {
+    struct ws_wayland_buffer* wbuf = (struct ws_wayland_buffer*) self;
+    EGLDisplay dpy = ws_comp_ctx.fb->egl_disp;
+    EGLImageKHR gltex = eglCreateImageKHR(dpy, NULL, EGL_WAYLAND_BUFFER_WL,
+                                          wbuf->wl_obj.resource, NULL);
+    if (gltex == NULL) {
+        return -ENOENT;
+    }
+
+    ws_egl_flush_errors();
+
+    ws_texture_bind(texture, GL_TEXTURE_2D);
+
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gltex);
+
+    return glGetError() == GL_NO_ERROR ? 0 : -1;
+}
+
+static void
+egl_begin_access(
+    struct ws_buffer* self
+) {
+    //!< @todo implement
+    return;
+}
+
+static void
+egl_end_access(
+    struct ws_buffer* self
+) {
+    //!< @todo implement
+    return;
 }
 
 void
