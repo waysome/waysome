@@ -321,6 +321,8 @@ shm_transfer2texture(
     // bind texture
     ws_texture_bind(texture, GL_TEXTURE_2D);
 
+    ws_egl_flush_errors();
+
     // perform the final update
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  wl_shm_buffer_get_stride(shm_buffer)/fmt->bpp,

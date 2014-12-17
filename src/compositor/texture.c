@@ -26,6 +26,7 @@
  */
 
 #include "compositor/texture.h"
+#include "util/egl.h"
 
 /*
  *
@@ -74,6 +75,8 @@ ws_texture_init(
         return res;
     }
     self->obj.id = &WS_OBJECT_TYPE_ID_TEXTURE;
+
+    ws_egl_flush_errors();
 
     // get texture
     glGenTextures(1, &self->texture);
