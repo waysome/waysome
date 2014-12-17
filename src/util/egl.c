@@ -52,6 +52,18 @@ static struct ws_egl_fmt const mappings[] = {
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
         .png_fmt = PNG_FORMAT_RGBA,
         .bpp = 4
+    },
+    {
+        .shm_fmt = WL_SHM_FORMAT_ARGB8888,
+        .egl = { .fmt = 0, .type = 0 },
+        .png_fmt = PNG_FORMAT_ARGB,
+        .bpp = 4
+    },
+    {
+        .shm_fmt = WL_SHM_FORMAT_XRGB8888,
+        .egl = { .fmt = 0, .type = 0 },
+        .png_fmt = PNG_FORMAT_ARGB,
+        .bpp = 4
     }
 };
 
