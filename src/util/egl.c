@@ -27,6 +27,7 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <wayland-server.h>
 
 #include "util/arithmetical.h"
 #include "util/egl.h"
@@ -71,5 +72,22 @@ ws_egl_fmt_from_shm_fmt(
     }
 
     return NULL;
+}
+
+int
+ws_egl_fmt_advertise(
+    struct wl_display* display
+) {
+    int retval = -1;
+
+    struct ws_egl_fmt const* mapping = mappings + ARYLEN(mappings);
+
+    while (mapping-- > mappings) {
+        if (wl_display_add_shm_format(display, mapping->shm_fmt)) {
+            retval = 0;
+        }
+    }
+
+    return retval;
 }
 

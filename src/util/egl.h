@@ -68,6 +68,18 @@ ws_egl_fmt_from_shm_fmt(
     enum wl_shm_format shm_fmt  //!< shared format for which to get the mapping
 );
 
+/**
+ * Add the formats to the list of formats advertised to clients
+ *
+ * @return 0 if at least one format could be added, a negative error code
+ *         otherwise
+ */
+int
+ws_egl_fmt_advertise(
+    struct wl_display* display  //!< display to advertise the formats on
+);
+
+
 #endif
 
 /**
