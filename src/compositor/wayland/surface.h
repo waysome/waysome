@@ -29,6 +29,7 @@
 #define __WS_WL_SURFACE_H__
 
 #include "compositor/wayland/buffer.h"
+#include "compositor/texture.h"
 #include "objects/wayland_obj.h"
 
 
@@ -45,6 +46,7 @@ struct wl_client;
  */
 struct ws_surface {
     struct ws_wayland_obj wl_obj; //!< @protected Base class.
+    struct ws_texture texture; //!< @protected texture
     struct ws_wayland_buffer img_buf; //!< @protected image buffer
     struct ws_region* input_region; //!< @protected input region
     struct wl_resource* frame_callback; //!< @protected frame callback
