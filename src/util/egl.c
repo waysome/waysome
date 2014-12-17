@@ -94,6 +94,12 @@ ws_egl_fmt_get_rgba() {
     return mappings;
 }
 
+struct ws_egl_fmt const*
+ws_egl_fmt_get_argb()
+{
+    return ws_egl_fmt_from_shm_fmt(WL_SHM_FORMAT_ARGB8888);
+}
+
 int
 ws_egl_fmt_advertise(
     struct wl_display* display
