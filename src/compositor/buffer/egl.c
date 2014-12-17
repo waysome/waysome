@@ -29,6 +29,10 @@
 #include <malloc.h>
 #include <gbm.h>
 
+#include <EGL/egl.h>
+#define EGL_EGLEXT_PROTOTYPES
+#include <EGL/eglext.h>
+
 #include "compositor/buffer/egl.h"
 #include "compositor/framebuffer_device.h"
 
@@ -132,7 +136,7 @@ ws_egl_buffer_init(
         goto cleanup_gbm;
     }
 
-    self->egl_surf = eglCreateWindowSurface(egl_disp, egl_conf,
+    self->egl_surf = eglCreatePlatformWindowSurfaceEXT(egl_disp, egl_conf,
                                               self->gbm_surf, NULL);
     if (!self->egl_surf) {
         goto cleanup_gbm;
