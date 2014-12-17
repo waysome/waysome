@@ -25,12 +25,18 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <EGL/egl.h>
+#define EGL_EGLEXT_PROTOTYPES
+#include <EGL/eglext.h>
 #include <GLES2/gl2.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GLES2/gl2ext.h>
 #include <errno.h>
 #include <malloc.h>
 #include <wayland-server.h>
 #include <wayland-util.h>
 
+#include "compositor/internal_context.h"
 #include "compositor/texture.h"
 #include "compositor/wayland/buffer.h"
 #include "logger/module.h"
@@ -417,8 +423,21 @@ egl_transfer2texture(
     struct ws_buffer const* self,
     struct ws_texture* texture
 ) {
-    //!< @todo implement
-    return 0;
+    struct ws_wayland_buffer* wbuf = (struct ws_wayland_buffer*) self;
+    EGLDisplay dpy = ws_comp_ctx.fb->egl_disp;
+    EGLImageKHR gltex = eglCreateImageKHR(dpy, NULL, EGL_WAYLAND_BUFFER_WL,
+                                          wbuf->wl_obj.resource, NULL);
+    if (gltex == NULL) {
+        return -ENOENT;
+    }
+
+    ws_egl_flush_errors();
+
+    ws_texture_bind(texture, GL_TEXTURE_2D);
+
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gltex);
+
+    return glGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 static void
