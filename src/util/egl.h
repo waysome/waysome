@@ -79,6 +79,11 @@ ws_egl_fmt_advertise(
     struct wl_display* display  //!< display to advertise the formats on
 );
 
+/**
+ * Flush all EGL errors
+ */
+void
+ws_egl_flush_errors(void);
 
 #endif
 
