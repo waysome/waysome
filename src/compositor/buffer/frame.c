@@ -37,6 +37,7 @@
 
 #include "logger/module.h"
 #include "objects/object.h"
+#include "util/egl.h"
 
 #include "compositor/buffer/frame.h"
 #include "compositor/buffer/raw_buffer.h"
@@ -118,6 +119,7 @@ ws_frame_buffer_new(
     tmp->obj.height = creq.height;
     tmp->obj.stride = creq.pitch;
     tmp->obj.size = creq.size;
+    tmp->obj.fmt = ws_egl_fmt_get_rgba(); //!< @todo: actually _get_ the format
     tmp->handle = creq.handle;
 
     ret = drmModeAddFB(ws_comp_ctx.fb->fd,
