@@ -160,6 +160,11 @@ ws_socket_create(
 
     int res = bind(sock, (struct sockaddr*) &addr, sizeof(addr));
 
+    if (res == -1 && errno == EACCES) {
+        unlink(addr.sun_path);
+        res = bind(sock, (struct sockaddr*) &addr, sizeof(addr));
+    }
+
     if (res < 0) {
         ws_log(&log_ctx, LOG_ERR, "Could not bind.");
         return -errno;
