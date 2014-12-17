@@ -33,6 +33,8 @@
 #include "util/arithmetical.h"
 #include "util/egl.h"
 
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Buffer] " };
+
 ws_buffer_type_id WS_OBJECT_TYPE_ID_BUFFER = {
     .type = {
         .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,

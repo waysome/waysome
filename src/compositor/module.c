@@ -56,7 +56,7 @@
 #include "util/wayland.h"
 
 struct ws_compositor_context ws_comp_ctx;
-struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor] " };
 
 
 /**

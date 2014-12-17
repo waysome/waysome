@@ -51,10 +51,6 @@ extern struct ws_compositor_context {
     struct ws_keyboard* keyboard; //!< The keyboard
 } ws_comp_ctx;
 
-// We make the object available for others to use
-extern struct ws_logger_context log_ctx;
-
-
 #endif // __WS_COMPOSITOR_INTERNAL_CONTEXT_H__
 
 /**

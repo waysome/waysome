@@ -45,6 +45,8 @@
 #include "objects/object.h"
 #include "util/wayland.h"
 
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Monitor] " };
+
 /*
  *
  *  Forward declarations
