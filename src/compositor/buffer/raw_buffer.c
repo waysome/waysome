@@ -25,12 +25,15 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <string.h>
 
 #include "compositor/buffer/buffer.h"
 #include "compositor/buffer/raw_buffer.h"
+#include "compositor/texture.h"
 #include "logger/module.h"
 #include "util/arithmetical.h"
+#include "util/egl.h"
 
 /*
  *
@@ -79,6 +82,13 @@ get_format(
     struct ws_buffer const* self
 );
 
+static int
+transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+);
+
+
 /*
  *
  * Type information variable
@@ -103,7 +113,7 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_RAW_BUFFER = {
     .get_height         = get_height,
     .get_stride         = get_stride,
     .get_format         = get_format,
-    .transfer2texture   = NULL,
+    .transfer2texture   = transfer2texture,
     .begin_access       = NULL,
     .end_access         = NULL,
 };
@@ -155,5 +165,28 @@ get_format(
 ) {
     struct ws_raw_buffer* buff = (struct ws_raw_buffer*) self;
     return buff->fmt;
+}
+
+static int
+transfer2texture(
+    struct ws_buffer const* self_,
+    struct ws_texture* texture
+) {
+    void const* data = ws_buffer_data(self_);
+    if (!data) {
+        return -EINVAL;
+    }
+
+    struct ws_raw_buffer* self = (struct ws_raw_buffer*) self_;
+
+    // bind texture
+    ws_texture_bind(texture, GL_TEXTURE_2D);
+
+    // perform the final update
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self->stride/self->fmt->bpp,
+                 self->height, 0, self->fmt->egl.fmt, self->fmt->egl.type,
+                 data);
+
+    return glGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
