@@ -118,6 +118,32 @@ shm_end_access(
     struct ws_buffer* self
 );
 
+/**
+ * Get the (egl) buffer's format
+ *
+ * @return height of the buffer's contents
+ */
+static int
+egl_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+);
+
+/**
+ * Begin a transaction
+ */
+static void
+egl_begin_access(
+    struct ws_buffer* self
+);
+
+/**
+ * End a transaction
+ */
+static void
+egl_end_access(
+    struct ws_buffer* self
+);
 
 /*
  *
@@ -151,6 +177,29 @@ static ws_buffer_type_id shm_buffer_type = {
     .transfer2texture = shm_transfer2texture,
     .begin_access = shm_begin_access,
     .end_access = shm_end_access,
+};
+
+static ws_buffer_type_id egl_buffer_type = {
+    .type = {
+        .supertype  = (struct ws_object_type const*) &WS_OBJECT_TYPE_ID_BUFFER,
+        .typestr    = "anonymous",
+
+        .hash_callback = NULL,
+
+        .deinit_callback = NULL,
+        .cmp_callback = NULL,
+
+        .attribute_table = NULL,
+        .function_table = NULL,
+    },
+    .get_data           = NULL,
+    .get_width          = NULL,
+    .get_height         = NULL,
+    .get_stride         = NULL,
+    .get_format         = NULL,
+    .transfer2texture   = egl_transfer2texture,
+    .begin_access       = egl_begin_access,
+    .end_access         = egl_end_access,
 };
 
 /*
@@ -355,6 +404,31 @@ shm_end_access(
 
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     wl_shm_buffer_end_access(shm_buffer);
+}
+
+static int
+egl_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+) {
+    //!< @todo implement
+    return 0;
+}
+
+static void
+egl_begin_access(
+    struct ws_buffer* self
+) {
+    //!< @todo implement
+    return;
+}
+
+static void
+egl_end_access(
+    struct ws_buffer* self
+) {
+    //!< @todo implement
+    return;
 }
 
 void
