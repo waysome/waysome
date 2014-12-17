@@ -96,7 +96,7 @@ ws_hotkeys_init(void) {
 
     res = ws_hotkey_dag_init(&ws_hotkeys_ctx.root);
     ws_hotkeys_ctx.state = NULL;
-    if (!res) {
+    if (res < 0) {
         goto cleanup;
     }
 
