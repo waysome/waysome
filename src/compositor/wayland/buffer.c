@@ -25,10 +25,12 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <GLES2/gl2.h>
 #include <errno.h>
 #include <malloc.h>
 #include <wayland-server.h>
 
+#include "compositor/texture.h"
 #include "compositor/wayland/buffer.h"
 #include "logger/module.h"
 #include "util/egl.h"
@@ -45,7 +47,7 @@
  * @return the buffer's contents
  */
 static void*
-get_data(
+shm_get_data(
     struct ws_buffer const* self
 );
 
@@ -55,7 +57,7 @@ get_data(
  * @return width of the buffer's contents
  */
 static int32_t
-get_width(
+shm_get_width(
     struct ws_buffer const* self
 );
 
@@ -65,7 +67,7 @@ get_width(
  * @return height of the buffer's contents
  */
 static int32_t
-get_height(
+shm_get_height(
     struct ws_buffer const* self
 );
 
@@ -75,7 +77,7 @@ get_height(
  * @return height of the buffer's contents
  */
 static int32_t
-get_stride(
+shm_get_stride(
     struct ws_buffer const* self
 );
 
@@ -85,15 +87,26 @@ get_stride(
  * @return height of the buffer's contents
  */
 struct ws_egl_fmt const*
-get_format(
+shm_get_format(
     struct ws_buffer const* self
+);
+
+/**
+ * Get the buffer's format
+ *
+ * @return height of the buffer's contents
+ */
+static int
+shm_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
 );
 
 /**
  * Begin a transaction
  */
 static void
-begin_access(
+shm_begin_access(
     struct ws_buffer* self
 );
 
@@ -101,7 +114,7 @@ begin_access(
  * End a transaction
  */
 static void
-end_access(
+shm_end_access(
     struct ws_buffer* self
 );
 
@@ -117,7 +130,7 @@ static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Surface] " };
 /**
  * Buffer type
  */
-static ws_buffer_type_id buffer_type = {
+static ws_buffer_type_id shm_buffer_type = {
     .type = {
         .supertype  = (struct ws_object_type const*) &WS_OBJECT_TYPE_ID_BUFFER,
         .typestr    = "anonymous",
@@ -130,13 +143,14 @@ static ws_buffer_type_id buffer_type = {
         .attribute_table = NULL,
         .function_table = NULL,
     },
-    .get_data = get_data,
-    .get_width = get_width,
-    .get_height = get_height,
-    .get_stride = get_stride,
-    .get_format = get_format,
-    .begin_access = begin_access,
-    .end_access = end_access,
+    .get_data = shm_get_data,
+    .get_width = shm_get_width,
+    .get_height = shm_get_height,
+    .get_stride = shm_get_stride,
+    .get_format = shm_get_format,
+    .transfer2texture = shm_transfer2texture,
+    .begin_access = shm_begin_access,
+    .end_access = shm_end_access,
 };
 
 /*
@@ -174,7 +188,9 @@ ws_wayland_buffer_init(
     if (retval < 0) {
         return retval;
     }
-    self->buf.obj.id = &buffer_type.type;
+
+    // assume that we have a shm buffer
+    self->buf.obj.id = &shm_buffer_type.type;
 
     return 0;
 }
@@ -223,20 +239,19 @@ ws_wayland_buffer_get_buffer(
  */
 
 static void*
-get_data(
+shm_get_data(
     struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_data(shm_buffer);
 }
 
 static int32_t
-get_width(
+shm_get_width(
     struct ws_buffer const* self
 ) {
     // get the resource
@@ -246,13 +261,12 @@ get_width(
     if (!res) {
         return 0;
     }
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_width(shm_buffer);
 }
 
 static int32_t
-get_height(
+shm_get_height(
     struct ws_buffer const* self
 ) {
     // get the resource
@@ -262,59 +276,81 @@ get_height(
     if (!res) {
         return 0;
     }
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_height(shm_buffer);
 }
 
 static int32_t
-get_stride(
+shm_get_stride(
     struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return wl_shm_buffer_get_stride(shm_buffer);
 }
 
 struct ws_egl_fmt const*
-get_format(
+shm_get_format(
     struct ws_buffer const* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     return ws_egl_fmt_from_shm_fmt(wl_shm_buffer_get_format(shm_buffer));
 }
 
+static int
+shm_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+) {
+    // get the resource
+    struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
+    struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
+
+    // get the metadata
+    struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
+    struct ws_egl_fmt const* fmt;
+    fmt = ws_egl_fmt_from_shm_fmt(wl_shm_buffer_get_format(shm_buffer));
+
+    // bind texture
+    ws_texture_bind(texture, GL_TEXTURE_2D);
+
+    // perform the final update
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 wl_shm_buffer_get_stride(shm_buffer)/fmt->bpp,
+                 wl_shm_buffer_get_height(shm_buffer), 0,
+                 fmt->egl.fmt, fmt->egl.type,
+                 wl_shm_buffer_get_data(shm_buffer));
+
+    return glGetError() == GL_NO_ERROR ? 0 : -1;
+}
+
 static void
-begin_access(
+shm_begin_access(
     struct ws_buffer* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     wl_shm_buffer_begin_access(shm_buffer);
 }
 
 static void
-end_access(
+shm_end_access(
     struct ws_buffer* self
 ) {
     // get the resource
     struct ws_wayland_buffer* buf = wl_container_of(self, buf, buf);
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(&buf->wl_obj);
 
-    // assume that we have a shm buffer
     struct wl_shm_buffer* shm_buffer = wl_shm_buffer_get(res);
     wl_shm_buffer_end_access(shm_buffer);
 }

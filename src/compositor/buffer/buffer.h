@@ -53,6 +53,7 @@
 
 struct ws_buffer;
 struct ws_egl_fmt;
+struct ws_texture;
 
 
 /*
@@ -71,6 +72,8 @@ struct ws_buffer_type {
     int32_t                     (*get_height)(struct ws_buffer const*);
     int32_t                     (*get_stride)(struct ws_buffer const*);
     struct ws_egl_fmt const*    (*get_format)(struct ws_buffer const*);
+    int                         (*transfer2texture)(struct ws_buffer const*,
+                                                    struct ws_texture*);
     void                        (*begin_access)(struct ws_buffer*);
     void                        (*end_access)(struct ws_buffer*);
 };
@@ -191,6 +194,23 @@ __ws_nonnull__(1)
 struct ws_egl_fmt const*
 ws_buffer_format(
     struct ws_buffer const* self //!< The buffer to query
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Blit the buffer on a texture
+ *
+ * @warning do not pass NULL to this function! It will crash!
+ *
+ * @memberof ws_buffer
+ *
+ * @return 0 if the operation was successful, a negative error code otherwise
+ */
+int
+ws_buffer_transfer2texture(
+    struct ws_buffer const* self, //!< the buffer to transfer
+    struct ws_texture* texture //!< the texture to which to transfer the data
 )
 __ws_nonnull__(1)
 ;

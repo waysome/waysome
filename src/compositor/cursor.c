@@ -108,13 +108,11 @@ get_surface_under_cursor(
 
     struct ws_surface* surface = (struct ws_surface*) _surface;
 
-    //<! @todo: Once a surface has a position, we can really check if the
     // cursor is inside
-    int x = 0;
-    int y = 0;
-    struct ws_buffer* buff = ws_wayland_buffer_get_buffer(&surface->img_buf);
-    int w = ws_buffer_width(buff);
-    int h = ws_buffer_height(buff);
+    int x = surface->x;
+    int y = surface->y;
+    int w = surface->width;
+    int h = surface->height;
 
     if (real_x < x || real_x > (x + w)) {
         return 0;
@@ -176,9 +174,8 @@ ws_cursor_set_active_surface(
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
 
         struct ws_deletable_resource* cursor = NULL;
-        //<! @todo once windows have a real position, set it here!
-        int surface_x = 0;
-        int surface_y = 0;
+        int surface_x = self->active_surface->x;
+        int surface_y = self->active_surface->y;
         wl_list_for_each(cursor, &client->resources, link) {
             int retval = ws_wayland_pointer_instance_of(cursor->resource);
             if (!retval) {
