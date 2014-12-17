@@ -271,7 +271,7 @@ ws_string_raw(
 int
 ws_string_set_from_raw(
     struct ws_string* self,
-    char* raw
+    const char* raw
 ){
     if (unlikely(!self)) {
         return -EINVAL;
