@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <malloc.h>
 #include <wayland-server.h>
+#include <wayland-util.h>
 
 #include "compositor/texture.h"
 #include "compositor/wayland/buffer.h"
@@ -238,8 +239,7 @@ ws_wayland_buffer_init(
         return retval;
     }
 
-    // assume that we have a shm buffer
-    self->buf.obj.id = &shm_buffer_type.type;
+    ws_wayland_buffer_set_resource(self, r); // sets object type for buffer
 
     return 0;
 }
@@ -270,6 +270,12 @@ ws_wayland_buffer_set_resource(
     struct ws_wayland_buffer* self,
     struct wl_resource* r
 ) {
+    if (wl_shm_buffer_get(r) == NULL) { // we get NULL if it is not a SHM buffer
+        self->buf.obj.id = &egl_buffer_type.type;
+    } else { // ... kay... it's SHM
+        self->buf.obj.id = &shm_buffer_type.type;
+    }
+
     ws_wayland_obj_set_wl_resource(&self->wl_obj, r);
 }
 
