@@ -56,6 +56,8 @@ struct ws_framebuffer_device {
     char* path; //!< @public The path to the device file
     struct gbm_device* gbm_dev; //!< @private gbm device
     EGLDisplay egl_disp; //!< @private EGL display
+    EGLConfig  egl_conf; //!< @private EGL Config
+    EGLContext  egl_ctx; //!< @private EGL Config
 };
 
 /**
