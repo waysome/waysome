@@ -144,6 +144,56 @@ ws_framebuffer_device_get_egl_display(
         return NULL;
     }
 
+    EGLint egl_config_attribs[] = {
+        EGL_BUFFER_SIZE,        32,
+        EGL_DEPTH_SIZE,         EGL_DONT_CARE,
+        EGL_STENCIL_SIZE,       EGL_DONT_CARE,
+        EGL_RENDERABLE_TYPE,    EGL_OPENGL_ES2_BIT,
+        EGL_SURFACE_TYPE,       EGL_WINDOW_BIT,
+        EGL_NONE,
+    };
+
+    EGLint num_configs;
+    int ret = eglGetConfigs(disp, NULL, 0, &num_configs);
+    if (!ret) {
+        ws_log(&log_ctx, LOG_ERR, "Could not get configs for egl display");
+        return NULL;
+    }
+
+    // This is a weird moment where we use /parts/ of the array, but can't free
+    // all of it!
+    EGLConfig* configs = calloc(num_configs, sizeof(*configs));
+
+    ret = eglChooseConfig(disp, egl_config_attribs, configs, num_configs,
+                            &num_configs);
+    if (!ret || !num_configs) {
+        ws_log(&log_ctx, LOG_ERR, "Could not get configs for egl display");
+        return NULL;
+    }
+
+    EGLConfig effective_config = NULL;
+
+    for (int i = 0; i < num_configs; ++i) {
+        EGLint gbm_format;
+
+        ret = eglGetConfigAttrib(disp, configs[i], EGL_NATIVE_VISUAL_ID,
+                                  &gbm_format);
+
+        if (!ret) {
+            ws_log(&log_ctx, LOG_ERR, "Could not get config attributes");
+            return NULL;
+        }
+
+        if (gbm_format == GBM_FORMAT_XRGB8888) {
+            effective_config = configs[i];
+            break;
+        }
+    }
+
+    self->egl_conf = effective_config;
+    self->egl_ctx  = eglCreateContext(disp, effective_config, NULL, NULL);
+
+    free(configs);
     return self->egl_disp = disp;
 }
 

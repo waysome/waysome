@@ -38,7 +38,7 @@
 #include <stdbool.h>
 #include <xf86drmMode.h>
 
-#include "compositor/buffer/frame.h"
+#include "compositor/buffer/gbm.h"
 #include "compositor/monitor_mode.h"
 #include "objects/object.h"
 #include "objects/set.h"
@@ -55,7 +55,7 @@ struct ws_monitor {
     bool connected; //!< @public is the monitor connected?
     int id; //!< @public the id of the monitor relative to the fb_dev
 
-    struct ws_frame_buffer* buffer; //!< @public The frame buffer
+    struct ws_gbm_buffer* buffer; //!< @public The frame buffer
 
     struct ws_framebuffer_device* fb_dev; //!< @public Framebuffer Device
     struct ws_monitor_mode* current_mode;
