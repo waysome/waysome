@@ -52,6 +52,7 @@
 #include "compositor/wayland/xdg_shell.h"
 #include "logger/module.h"
 #include "util/cleaner.h"
+#include "util/egl.h"
 #include "util/wayland.h"
 
 struct ws_compositor_context ws_comp_ctx;
@@ -198,6 +199,11 @@ ws_compositor_init(void) {
 
     // try to initialize the shared memory subsystem
     if (wl_display_init_shm(display) != 0) {
+        goto cleanup_display;
+    }
+
+    // force the shared memory subsystem to advertise RGBA only
+    if (ws_egl_fmt_advertise(display) < 0) {
         goto cleanup_display;
     }
 
