@@ -40,6 +40,9 @@
 #include "logger/module.h"
 #include "objects/object.h"
 
+static struct ws_logger_context log_ctx = {
+    .prefix = "[Compositor/FBDevice] "
+};
 
 /*
  *

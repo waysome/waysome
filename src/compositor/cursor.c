@@ -45,6 +45,8 @@
 #include "compositor/wayland/region.h"
 #include "util/wayland.h"
 
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Cursor] " };
+
 #define CURSOR_SIZE 64
 
 /**

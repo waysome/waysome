@@ -43,6 +43,7 @@
 #include "compositor/buffer/raw_buffer.h"
 #include "compositor/internal_context.h"
 
+static struct ws_logger_context log_ctx = { .prefix = "[Compositor/Frame] " };
 
 /*
  *
