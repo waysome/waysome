@@ -43,12 +43,12 @@ static struct ws_egl_fmt const mappings[] = {
     {
         .shm_fmt = WL_SHM_FORMAT_RGBA8888,
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
-        .bbp = 4
+        .bpp = 4
     },
     {
         .shm_fmt = WL_SHM_FORMAT_RGBX8888,
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
-        .bbp = 4
+        .bpp = 4
     }
 };
 

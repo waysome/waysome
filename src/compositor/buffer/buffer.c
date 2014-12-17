@@ -210,9 +210,9 @@ ws_buffer_blit(
     ws_log(&log_ctx, LOG_DEBUG, "Blitting image with dim: %dx%d with bpp:%d",
             ws_buffer_width(src),
             ws_buffer_height(src),
-            src_fmt->bbp);
-    int min_x = MIN(ws_buffer_width(dest) * dest_fmt->bbp,
-            ws_buffer_width(src) * src_fmt->bbp);
+            src_fmt->bpp);
+    int min_x = MIN(ws_buffer_width(dest) * dest_fmt->bpp,
+            ws_buffer_width(src) * src_fmt->bpp);
     int min_y = MIN(ws_buffer_height(dest), ws_buffer_height(src));
 
     int stride_dst = ws_buffer_stride(dest);
