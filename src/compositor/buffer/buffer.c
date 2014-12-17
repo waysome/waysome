@@ -155,6 +155,24 @@ ws_buffer_format(
     return type->get_format(self);
 }
 
+int
+ws_buffer_transfer2texture(
+    struct ws_buffer const* self,
+    struct ws_texture* texture
+) {
+    ws_buffer_type_id* type = (ws_buffer_type_id*) self->obj.id;
+
+    // search for an implementation in the base classes
+    while (!type->transfer2texture) {
+        // we hit the basic, abstract buffer type, which does nothing
+        if (type == &WS_OBJECT_TYPE_ID_BUFFER) {
+            return -ENOTSUP;
+        }
+        type = (ws_buffer_type_id*) type->type.supertype;
+    }
+    return type->transfer2texture(self, texture);
+}
+
 void
 ws_buffer_begin_access(
     struct ws_buffer* self
