@@ -29,6 +29,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "values/set.h"
 #include "values/union.h"
 #include "values/value_type.h"
 #include "util/string.h"
@@ -230,7 +231,18 @@ ws_value_union_tostr(
             break;
 
     case WS_VALUE_TYPE_SET:
-            //!< @todo implement
+            {
+                size_t card = ws_value_set_cardinality(&self->set);
+                char* fmt   = "{ ... }:%zi";
+                size_t len  = strlen(STR_OF(SIZE_MAX)) + strlen(fmt) - 3;
+
+                res = calloc(1, len + 1);
+                if (!res) {
+                    return NULL;
+                }
+
+                snprintf(res, len, fmt, card);
+            }
             break;
 
     default:
