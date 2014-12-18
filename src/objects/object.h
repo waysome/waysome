@@ -478,6 +478,24 @@ __ws_nonnull__(1, 2, 3)
 ;
 
 /**
+ * Write an attribute of an object
+ *
+ * @memberof wes_object
+ *
+ * How it works: \see ws_object_attr_read
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_object_attr_write(
+    struct ws_object* self, //!< The object
+    char const* ident, //!< The identifier for the attribute
+    struct ws_value* src //!< Source of the data
+)
+__ws_nonnull__(1, 2, 3)
+;
+
+/**
  * Get the type of an attribute identified by its name
  *
  * @memberof ws_object

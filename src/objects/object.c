@@ -458,6 +458,106 @@ ws_object_attr_read(
     return 0;
 }
 
+int
+ws_object_attr_write(
+    struct ws_object* self, //!< The object
+    char const* ident, //!< The identifier for the attribute
+    struct ws_value* src //!< Source of the data
+) {
+    if (unlikely(!self->id || !self->id->attribute_table)) {
+        return -EINVAL;
+    }
+
+    bool found = false;
+    size_t offset = 0;
+    enum ws_object_attribute_type type = WS_OBJ_ATTR_NO_TYPE;
+
+    ws_object_lock_write(self);
+
+    struct ws_object_attribute const* iter;
+    for (iter = &self->id->attribute_table[0]; iter->name && !found; iter++) {
+        if (ws_streq(iter->name, ident)) {
+            offset  = iter->offset_in_struct;
+            type    = iter->type;
+            found   = true;
+        }
+    }
+
+    if (unlikely(!found)) {
+        ws_object_unlock(self);
+        return -ECANCELED;
+    }
+
+    if (unlikely(type & WS_OBJ_ATTR_NO_TYPE)) {
+        ws_object_unlock(self);
+        return -EFAULT;
+    }
+
+    if (unlikely(ATTR_TYPE_VALUE_TYPE_MAP[type].type !=
+                ws_value_get_type(src))) {
+        /* Types not matching */
+        ws_object_unlock(self);
+        return -EINVAL;
+    }
+
+    void* member_pos = (void *) (((char *) self) + offset);
+
+    switch (type) {
+    case WS_OBJ_ATTR_TYPE_CHAR:
+        return -ENOTSUP;
+        break;
+
+    case WS_OBJ_ATTR_TYPE_INT32:
+        {
+            intmax_t i = ws_value_int_get((struct ws_value_int*) src);
+            *((int32_t*) member_pos) = (int32_t) i;
+        }
+        break;
+
+    case WS_OBJ_ATTR_TYPE_INT64:
+        {
+            intmax_t i = ws_value_int_get((struct ws_value_int*) src);
+            *((int64_t*) member_pos) = (int64_t) i;
+        }
+        break;
+
+    case WS_OBJ_ATTR_TYPE_UINT32:
+        {
+            intmax_t i = ws_value_int_get((struct ws_value_int*) src);
+            *((uint32_t*) member_pos) = (uint32_t) i;
+        }
+        break;
+
+    case WS_OBJ_ATTR_TYPE_UINT64:
+        {
+            intmax_t i = ws_value_int_get((struct ws_value_int*) src);
+            *((uint64_t*) member_pos) = (uint64_t) i;
+        }
+        break;
+
+    case WS_OBJ_ATTR_TYPE_STRING:
+        {
+            struct ws_value_string* _s = (struct ws_value_string*) src;
+            struct ws_string* s = ws_value_string_get(_s);
+            free(member_pos);
+            *((char**) member_pos) = ws_string_raw(s); // copies!
+        }
+        break;
+
+    case WS_OBJ_ATTR_TYPE_OBJ:
+        return -ENOTSUP;
+        break;
+
+    default:
+        ws_log(&log_ctx, LOG_EMERG, "Unhandleable value type identifier");
+        return -ENOTSUP;
+        break;
+    };
+
+    ws_object_unlock(self);
+    return 0;
+}
+
 enum ws_object_attribute_type
 ws_object_attr_type(
     struct ws_object* self,
