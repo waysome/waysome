@@ -49,6 +49,7 @@
 #include "util/attributes.h"
 #include "logger/module.h"
 #include "values/value.h"
+#include "values/value_type.h"
 #include "command/command.h"
 
 /*
@@ -134,7 +135,7 @@ struct ws_object_attribute {
     char const* const   name; //!< Name of the attribute
     size_t              offset_in_struct; //!< Offset in the struct
     enum ws_object_attribute_type type; //!< Attribute type
-
+    enum ws_value_type vtype; //!< Attribute type in ws_value_type shape
 };
 
 /**
@@ -511,6 +512,24 @@ ws_object_attr_type(
 )
 __ws_nonnull__(1, 2)
 ;
+
+
+/**
+ * Get the value-type of an attribute identified by its name
+ *
+ * @memberof ws_object
+ *
+ * @return The value-attribute type of the attribute identified by name or
+ * WS_VALUE_TYPE_NONE
+ */
+enum ws_value_type
+ws_object_attr_value_type(
+    struct ws_object* self, //!< The object
+    char* ident //!< The identifier for the attribute
+)
+__ws_nonnull__(1, 2)
+;
+
 
 /**
  * Compare two ws_object instances
