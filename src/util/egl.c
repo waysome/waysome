@@ -109,6 +109,10 @@ ws_egl_fmt_advertise(
     struct ws_egl_fmt const* mapping = mappings + ARYLEN(mappings);
 
     while (mapping-- > mappings) {
+        if (!mapping->egl.fmt || !mapping->egl.type) {
+            continue;
+        }
+
         if (wl_display_add_shm_format(display, mapping->shm_fmt)) {
             retval = 0;
         }
