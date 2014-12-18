@@ -429,8 +429,6 @@ egl_transfer2texture(
         return -ENOENT;
     }
 
-    ws_egl_flush_errors();
-
     ws_texture_bind(texture, GL_TEXTURE_2D);
 
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gltex);
