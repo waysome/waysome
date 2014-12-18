@@ -173,3 +173,22 @@ START_TEST (test_object_attribute_read) {
     ws_object_unref(&to->obj);
 }
 END_TEST
+
+START_TEST (test_object_attribute_write) {
+    struct ws_test_object* to = ws_test_object_new();
+    ck_assert(to);
+
+    struct ws_value_int* v = NULL;
+    int r = TEST_INT + 5;
+    v = calloc(1, sizeof(*v));
+
+    ws_value_int_init(v);
+    ws_value_int_set(v, r);
+    ck_assert(to->int_attribute == TEST_INT);
+    ws_object_attr_write(&to->obj, "int", &v->value);
+    ck_assert(to->int_attribute == r);
+
+    free(v);
+    ws_object_unref(&to->obj);
+}
+END_TEST

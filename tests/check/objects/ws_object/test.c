@@ -211,6 +211,7 @@ objects_suite(void)
 
     tcase_add_test(tca, test_object_attribute_type);
     tcase_add_test(tca, test_object_attribute_read);
+    tcase_add_test(tca, test_object_attribute_write);
 
     return s;
 }
