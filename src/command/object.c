@@ -35,6 +35,7 @@
 #include "values/string.h"
 #include "values/union.h"
 #include "values/value_type.h"
+#include "util/condition.h"
 
 /*
  *
@@ -150,6 +151,36 @@ ws_builtin_cmd_has_attr(
     ws_value_bool_set(&args[0].bool_, b);
 
     return 0;
+}
+
+int
+ws_builtin_cmd_get_attr(
+    union ws_value_union* args
+) {
+    if ((args[0].value.type != WS_VALUE_TYPE_OBJECT_ID) ||
+        (args[1].value.type != WS_VALUE_TYPE_STRING)) {
+        return -EINVAL;
+    }
+    int res = -EINVAL;
+
+    struct ws_object* obj = ws_value_object_id_get(&args[0].object_id);
+    struct ws_string* name = ws_value_string_get(&args[1].string);
+    if (unlikely(!name)) {
+        goto out;
+    }
+
+    char* ident = ws_string_raw(name); // copies!
+    ws_object_unref(&name->obj);
+
+    if (likely(ident)) {
+        res = ws_object_attr_read(obj, ident, &args->value);
+    }
+
+    free(ident);
+
+out:
+    ws_object_unref(obj);
+    return res;
 }
 
 int
