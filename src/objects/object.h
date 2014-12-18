@@ -469,6 +469,10 @@ ws_object_has_attr(
  *
  * @return zero on success, else negative error code from errno.h
  *      -EINVAL - if the passed `dest` type does not match the attribute type
+ *      -EINVAL - if there is no attribute table
+ *      -ECANCELED - if the requested member is not available
+ *      -EFAULT - If the member has no type (unlikely)
+ *      -ENOMEM - failed to allocate resources
  */
 int
 ws_object_attr_read(
