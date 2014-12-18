@@ -389,7 +389,7 @@ shm_transfer2texture(
                  fmt->egl.fmt, fmt->egl.type,
                  wl_shm_buffer_get_data(shm_buffer));
 
-    return glGetError() == GL_NO_ERROR ? 0 : -1;
+    return eglGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 static void
@@ -435,7 +435,7 @@ egl_transfer2texture(
 
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gltex);
 
-    return glGetError() == GL_NO_ERROR ? 0 : -1;
+    return eglGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 static void
