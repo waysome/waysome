@@ -184,6 +184,37 @@ out:
 }
 
 int
+ws_builtin_cmd_set_attr(
+    union ws_value_union* args
+) {
+    if ((args[0].value.type != WS_VALUE_TYPE_OBJECT_ID) ||
+        (args[1].value.type != WS_VALUE_TYPE_STRING) ||
+        (args[2].value.type == WS_VALUE_TYPE_NONE)) {
+        return -EINVAL;
+    }
+
+    int res = -EINVAL;
+
+    struct ws_object* obj = ws_value_object_id_get(&args[0].object_id);
+    struct ws_string* name = ws_value_string_get(&args[1].string);
+    if (unlikely(!name)) {
+        goto out;
+    }
+
+    char* ident = ws_string_raw(name); // copies!
+    ws_object_unref(&name->obj);
+    if (likely(ident)) {
+        res = ws_object_attr_write(obj, ident, &args[2].value);
+    }
+
+    free(ident);
+
+out:
+    ws_object_unref(obj);
+    return res;
+}
+
+int
 ws_builtin_cmd_is_instance_of(
     union ws_value_union* args
 ) {
