@@ -382,8 +382,6 @@ shm_transfer2texture(
     // bind texture
     ws_texture_bind(texture, GL_TEXTURE_2D);
 
-    ws_egl_flush_errors();
-
     // perform the final update
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  wl_shm_buffer_get_stride(shm_buffer)/fmt->bpp,
@@ -391,7 +389,7 @@ shm_transfer2texture(
                  fmt->egl.fmt, fmt->egl.type,
                  wl_shm_buffer_get_data(shm_buffer));
 
-    return glGetError() == GL_NO_ERROR ? 0 : -1;
+    return eglGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 static void
@@ -431,13 +429,11 @@ egl_transfer2texture(
         return -ENOENT;
     }
 
-    ws_egl_flush_errors();
-
     ws_texture_bind(texture, GL_TEXTURE_2D);
 
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gltex);
 
-    return glGetError() == GL_NO_ERROR ? 0 : -1;
+    return eglGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 static void

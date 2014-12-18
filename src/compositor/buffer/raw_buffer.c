@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <EGL/egl.h>
 #include <errno.h>
 #include <string.h>
 
@@ -182,12 +183,11 @@ transfer2texture(
     // bind texture
     ws_texture_bind(texture, GL_TEXTURE_2D);
 
-    ws_egl_flush_errors();
     // perform the final update
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self->stride/self->fmt->bpp,
                  self->height, 0, self->fmt->egl.fmt, self->fmt->egl.type,
                  data);
 
-    return glGetError() == GL_NO_ERROR ? 0 : -1;
+    return eglGetError() == GL_NO_ERROR ? 0 : -1;
 }
 

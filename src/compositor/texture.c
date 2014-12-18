@@ -25,8 +25,9 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <EGL/egl.h>
+
 #include "compositor/texture.h"
-#include "util/egl.h"
 
 /*
  *
@@ -76,12 +77,10 @@ ws_texture_init(
     }
     self->obj.id = &WS_OBJECT_TYPE_ID_TEXTURE;
 
-    ws_egl_flush_errors();
-
     // get texture
     glGenTextures(1, &self->texture);
 
-    return glGetError() == GL_NO_ERROR ? 0 : -1;
+    return eglGetError() == GL_NO_ERROR ? 0 : -1;
 }
 
 struct ws_texture*
