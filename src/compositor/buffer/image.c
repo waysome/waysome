@@ -96,7 +96,8 @@ ws_buffer_type_id WS_OBJECT_TYPE_ID_IMAGE_BUFFER = {
 
 struct ws_image_buffer*
 ws_image_buffer_from_png(
-    const char* filename
+    const char* filename,
+    const struct ws_egl_fmt* fmt
 ) {
     struct ws_image_buffer* buff = ws_image_buffer_new();
     png_image img;
@@ -109,7 +110,7 @@ ws_image_buffer_from_png(
         return NULL;
     }
 
-    img.format = PNG_FORMAT_RGBA;
+    img.format = fmt->png_fmt;
     buff->buffer = calloc(1, PNG_IMAGE_SIZE(img));
     buff->raw.height = img.height;
     buff->raw.width = img.width;

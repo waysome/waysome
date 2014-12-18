@@ -79,7 +79,8 @@ ws_image_buffer_new(void);
  */
 struct ws_image_buffer*
 ws_image_buffer_from_png(
-    const char* filename
+    const char* filename,
+    const struct ws_egl_fmt* fmt
 );
 
 #endif // __WS_BACKGROUND_SERVICE_H__

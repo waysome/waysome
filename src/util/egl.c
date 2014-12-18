@@ -25,6 +25,7 @@
  * along with waysome. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "png.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <wayland-server.h>
@@ -43,11 +44,25 @@ static struct ws_egl_fmt const mappings[] = {
     {
         .shm_fmt = WL_SHM_FORMAT_RGBA8888,
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
+        .png_fmt = PNG_FORMAT_RGBA,
         .bpp = 4
     },
     {
         .shm_fmt = WL_SHM_FORMAT_RGBX8888,
         .egl = { .fmt = GL_RGBA8_OES, .type = GL_UNSIGNED_INT },
+        .png_fmt = PNG_FORMAT_RGBA,
+        .bpp = 4
+    },
+    {
+        .shm_fmt = WL_SHM_FORMAT_ARGB8888,
+        .egl = { .fmt = 0, .type = 0 },
+        .png_fmt = PNG_FORMAT_ARGB,
+        .bpp = 4
+    },
+    {
+        .shm_fmt = WL_SHM_FORMAT_XRGB8888,
+        .egl = { .fmt = 0, .type = 0 },
+        .png_fmt = PNG_FORMAT_ARGB,
         .bpp = 4
     }
 };
@@ -79,6 +94,12 @@ ws_egl_fmt_get_rgba() {
     return mappings;
 }
 
+struct ws_egl_fmt const*
+ws_egl_fmt_get_argb()
+{
+    return ws_egl_fmt_from_shm_fmt(WL_SHM_FORMAT_ARGB8888);
+}
+
 int
 ws_egl_fmt_advertise(
     struct wl_display* display
@@ -88,6 +109,10 @@ ws_egl_fmt_advertise(
     struct ws_egl_fmt const* mapping = mappings + ARYLEN(mappings);
 
     while (mapping-- > mappings) {
+        if (!mapping->egl.fmt || !mapping->egl.type) {
+            continue;
+        }
+
         if (wl_display_add_shm_format(display, mapping->shm_fmt)) {
             retval = 0;
         }

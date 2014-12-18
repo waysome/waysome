@@ -29,6 +29,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <png.h>
 #include <stdbool.h>
 #include <string.h>
 #include <sys/mman.h>
@@ -183,8 +184,10 @@ ws_compositor_init(void) {
         return retval;
     }
 
+    const struct ws_egl_fmt* fmt = ws_egl_fmt_get_rgba();
+
     //!< @todo: Port to buffer code once it is implemented
-    struct ws_image_buffer* duck = ws_image_buffer_from_png("duck.png");
+    struct ws_image_buffer* duck = ws_image_buffer_from_png("duck.png", fmt);
 
     ws_log(&log_ctx, LOG_DEBUG, "Starting blitting");
     ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
@@ -234,9 +237,11 @@ ws_compositor_init(void) {
         return retval;
     }
 
+    fmt = ws_egl_fmt_get_argb();
+
     //!< @todo: Make this more abstract
     struct ws_image_buffer* cursor =
-        ws_image_buffer_from_png("share/waysome/cursor.png");
+        ws_image_buffer_from_png("share/waysome/cursor.png", fmt);
 
     ws_comp_ctx.cursor = ws_cursor_new(ws_comp_ctx.fb, cursor);
     struct ws_monitor* any =

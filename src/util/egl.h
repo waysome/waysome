@@ -54,6 +54,7 @@ struct ws_egl_fmt {
         EGLenum fmt;            //!< @public egl format
         EGLenum type;           //!< @public egl type
     } egl;                      //!< @public egl format and type
+    uint32_t png_fmt;           //!< @public png format
     uint8_t bpp;                //!< @public bytes per pixel
 };
 
@@ -75,6 +76,14 @@ ws_egl_fmt_from_shm_fmt(
  */
 struct ws_egl_fmt const*
 ws_egl_fmt_get_rgba();
+
+/**
+ * Get a "random" ARGB format
+ *
+ * @return a ARGB format or NULL, if no such mapping exists
+ */
+struct ws_egl_fmt const*
+ws_egl_fmt_get_argb();
 
 
 /**
