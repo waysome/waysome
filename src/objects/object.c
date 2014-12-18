@@ -406,6 +406,11 @@ ws_object_attr_read(
 
     void* member_pos = (void *) (((char *) self) + offset);
     switch (type) {
+    case WS_OBJ_ATTR_TYPE_BOOL:
+        ws_value_bool_set((struct ws_value_bool*) dest,
+                          (bool) *((bool*) member_pos));
+        break;
+
     case WS_OBJ_ATTR_TYPE_CHAR:
         ws_value_int_set((struct ws_value_int*) dest,
                          (char) *((int32_t*) member_pos));

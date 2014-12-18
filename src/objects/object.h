@@ -113,6 +113,7 @@ typedef uintmax_t (*ws_object_uuid_callback)(struct ws_object*);
 enum ws_object_attribute_type {
     WS_OBJ_ATTR_NO_TYPE = 0,
 
+    WS_OBJ_ATTR_TYPE_BOOL,
     WS_OBJ_ATTR_TYPE_CHAR,
     WS_OBJ_ATTR_TYPE_INT32,
     WS_OBJ_ATTR_TYPE_INT64,
