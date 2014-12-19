@@ -2,4 +2,6 @@ hastypename;regular
 call;regular
 has_meth;regular
 has_attr;regular
+get_attr;regular
+set_attr;regular
 is_instance_of;regular

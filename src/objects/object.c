@@ -42,6 +42,7 @@
 #include "values/object_id.h"
 #include "values/set.h"
 #include "values/string.h"
+#include "values/value_type.h"
 
 static struct ws_logger_context log_ctx = {
     .prefix = "[Object] ",
@@ -62,11 +63,13 @@ struct ws_object_attribute const WS_OBJECT_ATTRS_OBJECT[] = {
 //        .name = "id",
 //        .offset_in_struct = offsetof(struct ws_object, id),// stddef: offsetof
 //        .type = WS_OBJ_ATTR_NO_TYPE,
+//        .vtype = WS_VALUE_TYPE_NONE,
 //    }
     {
         .name = NULL,
         .offset_in_struct = 0,
-        .type = 0
+        .type = 0,
+        .vtype = WS_VALUE_TYPE_NONE,
     },
 };
 
@@ -406,6 +409,11 @@ ws_object_attr_read(
 
     void* member_pos = (void *) (((char *) self) + offset);
     switch (type) {
+    case WS_OBJ_ATTR_TYPE_BOOL:
+        ws_value_bool_set((struct ws_value_bool*) dest,
+                          (bool) *((bool*) member_pos));
+        break;
+
     case WS_OBJ_ATTR_TYPE_CHAR:
         ws_value_int_set((struct ws_value_int*) dest,
                          (char) *((int32_t*) member_pos));
@@ -580,6 +588,30 @@ ws_object_attr_type(
 err:
     ws_object_unlock(self);
     return WS_OBJ_ATTR_NO_TYPE;
+}
+
+enum ws_value_type
+ws_object_attr_value_type(
+    struct ws_object* self, //!< The object
+    char* ident //!< The identifier for the attribute
+) {
+    ws_object_lock_read(self);
+
+    if (!self->id || !self->id->attribute_table) {
+        goto err;
+    }
+
+    size_t i;
+    for (i = 0; self->id->attribute_table[i].name != NULL; i++) {
+        if (ws_streq(self->id->attribute_table[i].name, ident)) {
+            ws_object_unlock(self);
+            return self->id->attribute_table[i].vtype;
+        }
+    }
+
+err:
+    ws_object_unlock(self);
+    return WS_VALUE_TYPE_NONE;
 }
 
 int
