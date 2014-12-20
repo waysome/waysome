@@ -86,28 +86,111 @@ ws_object_type_id WS_OBJECT_TYPE_ID_TESTOBJ = {
     .attribute_table = WS_OBJECT_ATTRS_TEST_OBJ,
 };
 
+struct ws_test_inherited_object {
+    struct ws_test_object obj;
+
+    int     int_attribute;
+    char    char_attribute;
+
+    char*   string_attribute;
+    struct ws_object* object_attribute;
+    /* more types here */
+};
+
+struct ws_object_attribute const WS_OBJECT_ATTRS_TEST_INHERIT_OBJ[] = {
+    {
+        .name = "i_int",
+        .offset_in_struct = offsetof(struct ws_test_inherited_object,
+                                     int_attribute),
+        .type = WS_OBJ_ATTR_TYPE_INT32,
+    },
+    {
+        .name = "i_char",
+        .offset_in_struct = offsetof(struct ws_test_inherited_object,
+                                     char_attribute),
+        .type = WS_OBJ_ATTR_TYPE_CHAR,
+    },
+    {
+        .name = "i_string",
+        .offset_in_struct = offsetof(struct ws_test_inherited_object,
+                                     string_attribute),
+        .type = WS_OBJ_ATTR_TYPE_STRING,
+    },
+    {
+        .name = "i_object",
+        .offset_in_struct = offsetof(struct ws_test_inherited_object,
+                                     object_attribute),
+        .type = WS_OBJ_ATTR_TYPE_OBJ,
+    },
+    {
+        .name = NULL,
+        .offset_in_struct = 0,
+        .type = 0
+    },
+};
+
+ws_object_type_id WS_OBJECT_TYPE_ID_TESTOBJ_INHERIT = {
+    .supertype  = &WS_OBJECT_TYPE_ID_TESTOBJ,
+    .typestr    = "ws_test_inherited_object",
+
+    .deinit_callback    = NULL,
+    .hash_callback      = NULL,
+    .cmp_callback       = NULL,
+    .attribute_table = WS_OBJECT_ATTRS_TEST_INHERIT_OBJ,
+};
+
+static int
+ws_test_object_init(
+    struct ws_test_object* t
+) {
+    ws_object_init(&t->obj);
+
+    t->obj.id = &WS_OBJECT_TYPE_ID_TESTOBJ;
+    t->obj.settings |= WS_OBJECT_HEAPALLOCED;
+
+    t->int_attribute        = TEST_INT;
+    t->char_attribute       = TEST_CHR;
+    t->string_attribute     = TEST_STR;
+
+    t->object_attribute     = ws_object_new_raw();
+    if (!t->object_attribute) {
+        ws_object_unref(&t->obj);
+        return 0;
+    }
+    return 1;
+}
+
 static struct ws_test_object* ws_test_object_new(void)
 {
     struct ws_test_object* t = calloc(1, sizeof(*t));
 
-    if (t) {
-        ws_object_init(&t->obj);
+    if (!t) {
+        return NULL;
+    }
 
-        t->obj.id = &WS_OBJECT_TYPE_ID_TESTOBJ;
-        t->obj.settings |= WS_OBJECT_HEAPALLOCED;
-
-        t->int_attribute        = TEST_INT;
-        t->char_attribute       = TEST_CHR;
-        t->string_attribute     = TEST_STR;
-
-        t->object_attribute     = ws_object_new_raw();
-        if (!t->object_attribute) {
-            ws_object_unref(&t->obj);
-            return NULL;
-        }
+    if (!ws_test_object_init(t)) {
+        free(t);
+        return NULL;
     }
 
     return t;
+}
+
+static struct ws_test_inherited_object*
+ws_test_inherited_object_new(void)
+{
+    struct ws_test_inherited_object* to = calloc(1, sizeof(*to));
+
+    if (!ws_test_object_init(&to->obj)) {
+        free(to);
+        return NULL;
+    }
+
+    to->int_attribute = TEST_INT;
+    to->char_attribute = TEST_CHR;
+    to->string_attribute = TEST_STR;
+
+    return to;
 }
 
 /*
