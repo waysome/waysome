@@ -365,9 +365,9 @@ add_roots_for(
         if (!tab->nodes.tab) {
             return -ENOMEM;
         }
-        if (tab->depth == 0) {
-            tab->start = code & ~(DAG_TAB_CHILD_NUM - 1);
-        }
+        tab->depth = 0;
+        tab->start = code & ~(DAG_TAB_CHILD_NUM - 1);
+        return 0;
     }
 
     // step on which the node is based.
