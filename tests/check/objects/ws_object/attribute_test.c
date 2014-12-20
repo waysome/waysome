@@ -223,6 +223,38 @@ START_TEST (test_object_attribute_type) {
 }
 END_TEST
 
+START_TEST (test_object_attribute_type_basetype) {
+    struct ws_test_inherited_object* to = ws_test_inherited_object_new();
+    if (!to) { // If we fail to alloc, fail here
+        ck_assert(0 != 0);
+    }
+
+    enum ws_object_attribute_type type;
+
+    type = ws_object_attr_type(&to->obj.obj, "i_int");
+    ck_assert(WS_OBJ_ATTR_TYPE_INT32 == type || WS_OBJ_ATTR_TYPE_INT64 == type);
+    type = ws_object_attr_type(&to->obj.obj, "int");
+    ck_assert(WS_OBJ_ATTR_TYPE_INT32 == type || WS_OBJ_ATTR_TYPE_INT64 == type);
+
+    type = ws_object_attr_type(&to->obj.obj, "i_char");
+    ck_assert(WS_OBJ_ATTR_TYPE_CHAR == type);
+    type = ws_object_attr_type(&to->obj.obj, "char");
+    ck_assert(WS_OBJ_ATTR_TYPE_CHAR == type);
+
+    type = ws_object_attr_type(&to->obj.obj, "i_string");
+    ck_assert(WS_OBJ_ATTR_TYPE_STRING == type);
+    type = ws_object_attr_type(&to->obj.obj, "string");
+    ck_assert(WS_OBJ_ATTR_TYPE_STRING == type);
+
+    type = ws_object_attr_type(&to->obj.obj, "i_object");
+    ck_assert(WS_OBJ_ATTR_TYPE_OBJ == type);
+    type = ws_object_attr_type(&to->obj.obj, "object");
+    ck_assert(WS_OBJ_ATTR_TYPE_OBJ == type);
+
+    ws_object_unref(&to->obj.obj);
+}
+END_TEST
+
 START_TEST (test_object_attribute_read) {
     struct ws_test_object* to = ws_test_object_new();
     if (!to) { // If we fail to alloc, fail here
