@@ -289,6 +289,36 @@ START_TEST (test_object_attribute_read) {
 }
 END_TEST
 
+START_TEST (test_object_attribute_read_basetype) {
+    struct ws_test_inherited_object* to = ws_test_inherited_object_new();
+    if (!to) { // If we fail to alloc, fail here
+        ck_assert(0 != 0);
+    }
+
+    struct ws_value* v = NULL;
+    int r = 0;
+
+    v = calloc(1, sizeof(struct ws_value_int));
+    ws_value_int_init((struct ws_value_int*) v);
+    r = ws_object_attr_read(&to->obj.obj, "int", v);
+    ck_assert(r == 0);
+    ck_assert(v != NULL);
+    ck_assert(TEST_INT == ws_value_int_get((struct ws_value_int*) v));
+
+    // Setting to something invalid, to be able to do more checking
+    ws_value_int_set((struct ws_value_int*) v, TEST_INT + 1);
+
+    r = ws_object_attr_read(&to->obj.obj, "i_int", v);
+    ck_assert(r == 0);
+    ck_assert(v != NULL);
+    ck_assert(TEST_INT == ws_value_int_get((struct ws_value_int*) v));
+
+    free(v);
+
+    ws_object_unref(&to->obj.obj);
+}
+END_TEST
+
 START_TEST (test_object_attribute_write) {
     struct ws_test_object* to = ws_test_object_new();
     ck_assert(to);
