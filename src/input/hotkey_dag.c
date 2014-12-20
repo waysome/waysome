@@ -380,6 +380,9 @@ add_roots_for(
     while ((code < tab->start) || (pos > DAG_TAB_CHILD_NUM)) {
         // we have to create a new node
         void** tab_node = create_tab_node();
+        if (!tab_node) {
+            return -ENOMEM;
+        }
 
         size_t old_root_pos = (tab->start >> step);
 
