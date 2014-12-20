@@ -337,3 +337,32 @@ START_TEST (test_object_attribute_write) {
     ws_object_unref(&to->obj);
 }
 END_TEST
+
+START_TEST (test_object_attribute_write_basetype) {
+    struct ws_test_inherited_object* to = ws_test_inherited_object_new();
+    ck_assert(to);
+
+    struct ws_value_int* v = NULL;
+    int r = TEST_INT + 5;
+    v = calloc(1, sizeof(*v));
+
+    ws_value_int_init(v);
+    ws_value_int_set(v, r);
+
+    ck_assert(to->int_attribute == TEST_INT);
+    ws_object_attr_write(&to->obj.obj, "i_int", &v->value);
+    ck_assert(to->int_attribute == r);
+
+    to->int_attribute = TEST_INT;
+
+    ck_assert(to->int_attribute == TEST_INT);
+    ck_assert(to->obj.int_attribute == TEST_INT);
+    ws_object_attr_write(&to->obj.obj, "int", &v->value);
+    ck_assert(to->int_attribute == TEST_INT);
+    ck_assert(to->obj.int_attribute == r);
+
+    free(v);
+    ws_object_unref(&to->obj.obj);
+}
+END_TEST
+
