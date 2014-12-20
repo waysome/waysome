@@ -31,6 +31,7 @@
 
 #include "input/hotkey_dag.h"
 #include "input/hotkey_event.h"
+#include "util/arithmetical.h"
 
 
 #define DAG_TAB_CHILD_NUM_EXP (4)
@@ -370,30 +371,38 @@ add_roots_for(
         return 0;
     }
 
-    // step on which the node is based.
-    int step = DAG_TAB_CHILD_NUM_EXP * tab->depth;
+    // determine the number of nodes by which to extend the tree upwards
+    int_fast8_t step = 0;
+    {
+        // calculate the position of the current node relative to the new root
+        uint_fast16_t diff = ABS((code - tab->start)) >>
+                             (DAG_TAB_CHILD_NUM_EXP * tab->depth);
 
-    // position within the node
-    size_t pos = (code - tab->start) >> step;
+        // we "discard" one level-specific address-part per step
+        while (diff != 0) {
+            ++step;
+            diff >>= DAG_TAB_CHILD_NUM_EXP;
+        }
+    }
+
+    // calculate the "position" of the current node within the new tree
+    size_t pos = tab->start >> (DAG_TAB_CHILD_NUM_EXP * (tab->depth + 1));
 
     // extend the table "upwards", if necessary
-    while ((code < tab->start) || (pos > DAG_TAB_CHILD_NUM)) {
+    while (step-- > 0) {
         // we have to create a new node
         void** tab_node = create_tab_node();
         if (!tab_node) {
             return -ENOMEM;
         }
 
-        size_t old_root_pos = (tab->start >> step);
-
         // put in the new root
-        tab_node[old_root_pos  & (DAG_TAB_CHILD_NUM - 1)] = tab->nodes.tab;
+        tab_node[pos  & (DAG_TAB_CHILD_NUM - 1)] = tab->nodes.tab;
         tab->nodes.tab = tab_node;
-        ++tab->depth;
 
-        // regen step, pos and start
-        step += DAG_TAB_CHILD_NUM_EXP;
-        tab->start = old_root_pos << step;
+        // regen depth, start and pos
+        ++(tab->depth);
+        tab->start &= ~((1 << (DAG_TAB_CHILD_NUM_EXP * (tab->depth + 1))) - 1);
         pos >>= DAG_TAB_CHILD_NUM_EXP;
     }
 
