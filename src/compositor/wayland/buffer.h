@@ -46,6 +46,11 @@
 /**
  * Wayland buffer type
  *
+ * @warning This is __not__ a `ws_buffer`! To get the `ws_buffer` contained in
+ *          this object, use `ws_wayland_buffer_get_buffer()`. If you use an
+ *          object of this type as an argument for a `ws_buffer` method, Julian
+ *          Ganz will probably be mad at you and tell you to RTFM.
+ *
  * @extends ws_wayland_obj
  */
 struct ws_wayland_buffer {
