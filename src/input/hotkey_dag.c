@@ -77,16 +77,6 @@ static void**
 create_tab_node(void);
 
 /**
- * Destruct a DAG node
- */
-static void
-destruct_dag_node(
-    struct ws_hotkey_dag_node* node //!< node to destruct (and free)
-)
-__ws_nonnull__(1)
-;
-
-/**
  * Destruct a tab node
  */
 static void
@@ -412,15 +402,6 @@ add_roots_for(
 static void**
 create_tab_node(void) {
     return calloc(DAG_TAB_CHILD_NUM, sizeof(void*));
-}
-
-static void
-destruct_dag_node(
-    struct ws_hotkey_dag_node* node
-) {
-    // deinit and free
-    ws_hotkey_dag_deinit(node);
-    free(node);
 }
 
 static void
