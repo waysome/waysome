@@ -439,10 +439,11 @@ destruct_tab_node(
     // iterate over all the nodes
     while (cur_node-- > (void**) tab_node) {
         // destruct children
-        if (depth) {
+        if (depth >= 0) {
             destruct_tab_node(*cur_node, depth);
-        } else {
-            destruct_dag_node((struct ws_hotkey_dag_node*) cur_node);
+        } if (*cur_node) {
+            ws_hotkey_dag_deinit((struct ws_hotkey_dag_node*) *cur_node);
+            free(*cur_node);
         }
     }
 
