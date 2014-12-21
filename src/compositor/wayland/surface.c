@@ -388,7 +388,8 @@ surface_commit_cb(
         return;
     }
 
-    ws_buffer_transfer2texture((struct ws_buffer*) &s->img_buf, &s->texture);
+    ws_buffer_transfer2texture(ws_wayland_buffer_get_buffer(&s->img_buf),
+                               &s->texture);
 
     //!< @todo remove once the HW accelerated compositing is in place
     ws_set_select(&ws_comp_ctx.monitors, NULL, NULL,
