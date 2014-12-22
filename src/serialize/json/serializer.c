@@ -336,8 +336,7 @@ serialize_reply_value_reply(
 
     // We haven't serialized anything
     // generate the key for the value reply
-    if (gen_key(ctx, VALUE)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, VALUE))) {
         return -1;
     }
 
@@ -347,8 +346,7 @@ serialize_reply_value_reply(
         return -1;
     }
 
-    if (gen_key(ctx, TRANSACTION_ID)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, TRANSACTION_ID))) {
         return -1;
     }
 
