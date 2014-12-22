@@ -88,12 +88,10 @@ destruct_tab_node(
 /**
  * Remove an event from the tree given by it's root
  *
- * @note the removal is done by simple nullification.
- *
  * @return 0 on success, a negative error value on error
  */
-static struct ws_hotkey_dag_tab
-removal_point_in_tab_node(
+int
+remove_point_in_tab_node(
     struct ws_hotkey_dag_tab tab, //!< table to remove the event from
     uint_fast16_t code //!< remove a code from a node tree
 );
@@ -269,23 +267,8 @@ ws_hotkey_dag_remove(
     }
 
     // get the point where we may start the removal and commence destruction!
-    struct ws_hotkey_dag_tab tab;
-    memset(&tab, 0, sizeof(tab));
-
-    tab = removal_point_in_tab_node(last_keep->table, rem_code);
-    if (tab.nodes.tab) {
-        // we have a node to return
-        destruct_tab_node((void*) tab.nodes.tab, tab.depth);
-        flatten_tab(&last_keep->table);
-    } else if (last_keep->table.depth == 0) {
-        // the root node holds a ref to a DAG node which we have to remove
-        struct ws_hotkey_dag_node** to_del;
-        to_del = last_keep->table.nodes.dag +
-                 (rem_code - last_keep->table.start);
-
-        destruct_dag_node(*to_del);
-        *to_del = NULL;
-    }
+    remove_point_in_tab_node(last_keep->table, rem_code);
+    flatten_tab(&last_keep->table);
 
     return 0;
 }
@@ -430,54 +413,55 @@ destruct_tab_node(
     free(tab_node);
 }
 
-static struct ws_hotkey_dag_tab
-removal_point_in_tab_node(
+int
+remove_point_in_tab_node(
     struct ws_hotkey_dag_tab tab,
     uint_fast16_t code
 ) {
-    // prepare the return value
-    struct ws_hotkey_dag_tab retval;
-    memset(&retval, 0, sizeof(retval));
-    retval.nodes.tab = NULL;
-    retval.depth = ~0;
-
+    // this variable will hold the pointer to nullify
     void** rem_ptr = NULL;
+    uint_fast8_t rem_depth;
 
     // step on which the node is based.
     int step = DAG_TAB_CHILD_NUM_EXP * tab.depth;
 
     // move towards the bottom,
-    while (tab.depth) {
+    while (tab.depth-- > 0) {
         // determine where to go next...
         size_t pos = (code - tab.start) >> step;
         void** next_tab = tab.nodes.tab + pos;
         if (!*next_tab) {
-            return retval;
+            return -EEXIST;
         }
 
         // regenerage all the variables
         tab.nodes.tab = *next_tab;
         tab.start = code & ~((1 << step) - 1);
         step -= DAG_TAB_CHILD_NUM_EXP;
-        --tab.depth;
 
         // we consider clearing this node if we remove the _last_ child
-        if (get_tab_node_numof_children(tab.nodes.tab) > 1) {
-            // invalidate the retval
-            retval.nodes.tab = NULL;
-            retval.depth = ~0;
-        } else if (!retval.nodes.tab) {
-            retval = tab;
+        if (get_tab_node_numof_children(*next_tab) > 1) {
+            // invalidate the point of removal
+            rem_ptr = NULL;
+        } else if (!rem_ptr) {
             rem_ptr = next_tab;
+            rem_depth = tab.depth;
         }
     }
 
-    // unlink the tab we'll return from it's super-tree
+    // unlink the tab from it's super-tree
     if (rem_ptr) {
+        destruct_tab_node(*rem_ptr, rem_depth);
         *rem_ptr = NULL;
+    } else {
+        size_t pos = (code - tab.start) & (DAG_TAB_CHILD_NUM - 1);
+        ws_hotkey_dag_deinit(tab.nodes.dag[pos]);
+        free(tab.nodes.dag[pos]);
+        tab.nodes.dag[pos] = NULL;
     }
 
-    return retval;
+
+    return 0;
 }
 
 static void
