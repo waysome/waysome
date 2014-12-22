@@ -470,12 +470,12 @@ serialize_value(
         {
             stat = yajl_gen_map_open(ctx->yajlgen);
             if (stat != yajl_gen_status_ok) {
-                //!< @todo error?
+                ws_log(&log_ctx, LOG_DEBUG, "Error opening map");
                 return -1;
             }
 
-            if (gen_key(ctx, ws_value_type_get_name(val))) {
-                //!< @todo error?
+            if (unlikely(gen_key(ctx, ws_value_type_get_name(val)))) {
+                ws_log(&log_ctx, LOG_DEBUG, "Error generating map key");
                 return -1;
             }
 
@@ -495,7 +495,7 @@ serialize_value(
             case WS_VALUE_TYPE_SET:
                 stat = yajl_gen_array_open(ctx->yajlgen);
                 if (stat != yajl_gen_status_ok) {
-                    //!< @todo error?
+                    ws_log(&log_ctx, LOG_DEBUG, "Error opening array");
                     return -1;
                 }
 
@@ -509,12 +509,18 @@ serialize_value(
                 break;
 
             default:
-                //!< @todo error?
+                {
+                    const char* ty = ws_value_type_get_name(val);
+                    ws_log(&log_ctx, LOG_DEBUG,
+                           "Unable to serialize '%s' type", ty);
+                }
                 return -1;
             }
 
-            if (stat != yajl_gen_status_ok) {
-                //!< @todo error?
+            if (unlikely(stat != yajl_gen_status_ok)) {
+                const char* ty = ws_value_type_get_name(val);
+                ws_log(&log_ctx, LOG_DEBUG,
+                       "Unable to serialize '%s' type", ty);
                 return -1;
             }
 
@@ -523,7 +529,8 @@ serialize_value(
     }
 
     if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+        const char* vname = ws_value_type_get_name(val);
+        ws_log(&log_ctx, LOG_DEBUG, "Error serializing value: '%s'", vname);
         return -1;
     }
 
