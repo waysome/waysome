@@ -42,6 +42,7 @@
 #include <yajl/yajl_common.h>
 #include <yajl/yajl_gen.h>
 
+#include "logger/module.h"
 #include "objects/message/error_reply.h"
 #include "objects/message/event.h"
 #include "objects/message/message.h"
@@ -54,6 +55,10 @@
 #include "util/arithmetical.h"
 #include "values/object_id.h"
 #include "values/value.h"
+
+static struct ws_logger_context log_ctx = {
+    .prefix = "[Serializer/JSON] ",
+};
 
 /*
  *
