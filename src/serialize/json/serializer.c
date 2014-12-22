@@ -551,8 +551,8 @@ serialize_object_to_id_string(
     yajl_gen_status stat = yajl_gen_string(ctx->yajlgen,
                                            (unsigned char*) buff,
                                            bufflen - 1);
-    if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+    if (unlikely(stat != yajl_gen_status_ok)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Error serializing id string");
         return -1;
     }
 
