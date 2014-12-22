@@ -307,7 +307,7 @@ connection_processor_flush(
 
     // try to lock the object
     if (ws_object_lock_try_write(&proc->obj) != 0) {
-        goto unlock;
+        return;
     }
 
     // flush the buffer
