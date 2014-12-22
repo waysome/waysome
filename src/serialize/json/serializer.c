@@ -494,11 +494,18 @@ serialize_value(
                     return -1;
                 }
 
-                //!< @todo check return value ... might return before ready
-                ws_value_set_select((struct ws_value_set*) val, NULL, NULL,
-                        (int (*)(void*, void const*))
-                            serialize_object_to_id_string,
-                        ctx);
+                {
+                    int r = ws_value_set_select((struct ws_value_set*) val,
+                                                 NULL, NULL,
+                                                (int (*)(void*, void const*))
+                                                serialize_object_to_id_string,
+                                                ctx);
+
+                    if (unlikely(r < 0)) {
+                        ws_log(&log_ctx, LOG_DEBUG, "Error serializing set");
+                        return -1;
+                    }
+                }
 
                 stat = yajl_gen_array_close(ctx->yajlgen);
                 break;
