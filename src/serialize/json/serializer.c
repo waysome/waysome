@@ -298,8 +298,8 @@ serialize_reply_error_reply(
 
     yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen,
                                             ws_error_reply_get_code(r));
-    if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+    if (unlikely(stat != yajl_gen_status_ok)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Error generating int for error reply");
         return -1;
     }
 
@@ -309,8 +309,8 @@ serialize_reply_error_reply(
 
     char const* tmp = ws_error_reply_get_description(r);
     stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
-    if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+    if (unlikely(stat != yajl_gen_status_ok)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Error generating desc: '%s'", tmp);
         return -1;
     }
 
@@ -320,8 +320,8 @@ serialize_reply_error_reply(
 
     tmp = ws_error_reply_get_cause(r);
     stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
-    if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+    if (unlikely(stat != yajl_gen_status_ok)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Error generating cause: '%s'", tmp);
         return -1;
     }
 
