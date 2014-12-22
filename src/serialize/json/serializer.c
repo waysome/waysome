@@ -252,8 +252,8 @@ serialize(
 
     { // lets close the main map now.
         yajl_gen_status stat = yajl_gen_map_close(ctx->yajlgen);
-        if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
+        if (unlikely(stat != yajl_gen_status_ok)) {
+            ws_log(&log_ctx, LOG_DEBUG, "Error closing main map");
             return -1;
         }
     }
