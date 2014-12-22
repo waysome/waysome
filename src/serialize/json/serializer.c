@@ -292,8 +292,7 @@ serialize_reply_error_reply(
     struct ws_error_reply* r = (struct ws_error_reply*) self->buffer;
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
-    if (gen_key(ctx, ERROR_CODE)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, ERROR_CODE))) {
         return -1;
     }
 
@@ -304,8 +303,7 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    if (gen_key(ctx, ERROR_DESC)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, ERROR_DESC))) {
         return -1;
     }
 
@@ -316,8 +314,7 @@ serialize_reply_error_reply(
         return -1;
     }
 
-    if (gen_key(ctx, ERROR_CAUSE)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, ERROR_CAUSE))) {
         return -1;
     }
 
