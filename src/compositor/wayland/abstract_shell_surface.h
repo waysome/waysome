@@ -54,6 +54,7 @@ struct ws_abstract_shell_surface {
     struct ws_wayland_obj wl_obj; //!< @protected: The associated wayland object
     struct ws_surface* surface; //!< @public: The associated surface
     bool visible; //!< Flag for if the shell is visible
+    int32_t z; //!< @public z index of this surface
 };
 
 /**
