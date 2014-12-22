@@ -342,7 +342,6 @@ serialize_reply_value_reply(
 
     struct ws_value* v = &((struct ws_value_reply*) self->buffer)->value.value;
     if (serialize_value(ctx, v)) {
-        //!< @todo error?
         return -1;
     }
 
@@ -352,8 +351,8 @@ serialize_reply_value_reply(
 
     size_t id = ws_message_get_id(self->buffer);
     yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen, id);
-    if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+    if (unlikely(stat != yajl_gen_status_ok)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Error serializing msg id: %i", id);
         return -1;
     }
 
