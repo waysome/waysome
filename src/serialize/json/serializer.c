@@ -376,7 +376,7 @@ serialize_event(
     // We have a JSON Object "event"
     yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
     if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+        ws_log(&log_ctx, LOG_DEBUG, "Error opening map for event");
         return -1;
     }
 
@@ -389,7 +389,7 @@ serialize_event(
 
     // We have a '{ "event" : { "context" : ' in the buffer by now
     if (serialize_value(ctx, &ev->context.value) != 0) {
-        //!< @todo error?
+        ws_log(&log_ctx, LOG_DEBUG, "Error serializing value for event");
         return -1;
     }
 
@@ -407,7 +407,7 @@ serialize_event(
 
         stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) plain, len);
         if (stat != yajl_gen_status_ok) {
-            //!< @todo error?
+            ws_log(&log_ctx, LOG_DEBUG, "Error serializing event name");
             return -1;
         }
     }
@@ -415,7 +415,7 @@ serialize_event(
     // lets close the event map now.
     stat = yajl_gen_map_close(ctx->yajlgen);
     if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+        ws_log(&log_ctx, LOG_DEBUG, "Error closing map for event");
         return -1;
     }
 
