@@ -367,8 +367,7 @@ serialize_event(
 
     // We haven't serialized anything
     // generate the key for the event message
-    if (gen_key(ctx, EVENT)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, EVENT))) {
         return -1;
     }
     // We also know already what we have to serialize, so... let's try it
