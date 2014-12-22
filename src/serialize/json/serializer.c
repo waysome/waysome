@@ -194,7 +194,7 @@ serialize(
 
         yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
         if (stat != yajl_gen_status_ok) {
-            //!< @todo error opening map, what to do now?
+            ws_log(&log_ctx, LOG_DEBUG, "Error opening main map");
             return -1;
         }
 
