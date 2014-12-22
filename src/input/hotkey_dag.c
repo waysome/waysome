@@ -82,7 +82,7 @@ create_tab_node(void);
 static void
 destruct_tab_node(
     void* tab_node, //!< tab node to destruct
-    uint8_t depth //!< depth of the node to destruct
+    int_fast8_t depth //!< depth of the node to destruct
 );
 
 /**
@@ -407,22 +407,20 @@ create_tab_node(void) {
 static void
 destruct_tab_node(
     void* tab_node,
-    uint8_t depth
+    int_fast8_t depth
 ) {
-    if (!tab_node || (depth > DAG_TAB_MAX_DEPTH)) {
+    if (!tab_node) {
         // nothing to do
         return;
     }
-
-    --depth;
 
     void** cur_node = ((void**) tab_node) + DAG_TAB_CHILD_NUM;
     // iterate over all the nodes
     while (cur_node-- > (void**) tab_node) {
         // destruct children
-        if (depth >= 0) {
-            destruct_tab_node(*cur_node, depth);
-        } if (*cur_node) {
+        if (depth > 0) {
+            destruct_tab_node(*cur_node, depth - 1);
+        } else if (*cur_node) {
             ws_hotkey_dag_deinit((struct ws_hotkey_dag_node*) *cur_node);
             free(*cur_node);
         }
