@@ -483,7 +483,6 @@ serialize_value(
                     obj_id = (struct ws_value_object_id*) val;
                     struct ws_object* object = ws_value_object_id_get(obj_id);
                     if (serialize_object_to_id_string(ctx, object)) {
-                        //!< @todo error?
                         return -1;
                     }
                 }
