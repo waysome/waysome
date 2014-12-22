@@ -642,6 +642,18 @@ ws_object_has_cmd(
     char const* ident //!< Name of command to check the object for
 );
 
+/**
+ * Get the typename of the object
+ *
+ * @memberof ws_object
+ *
+ * @return Typename of passed object or NULL on failure
+ */
+const char*
+ws_object_typename(
+    struct ws_object const* self //!< The object
+);
+
 #endif // __WS_OBJECTS_OBJECT_H__
 
 /**
