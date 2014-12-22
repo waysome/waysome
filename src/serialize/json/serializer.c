@@ -381,8 +381,7 @@ serialize_event(
     }
 
     // We have a '{ "event" : {' in the buffer by now
-    if (gen_key(ctx, EVENT_CTX)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, EVENT_CTX))) {
         return -1;
     }
 
@@ -395,8 +394,7 @@ serialize_event(
     }
 
     // We have a '{ "event" : { <context:map> ' in the buffer by now
-    if (gen_key(ctx, EVENT_NAME)) {
-        //!< @todo error?
+    if (unlikely(gen_key(ctx, EVENT_NAME))) {
         return -1;
     }
 
