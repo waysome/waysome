@@ -53,6 +53,7 @@
 #include "serialize/json/serializer_state.h"
 #include "serialize/serializer.h"
 #include "util/arithmetical.h"
+#include "util/condition.h"
 #include "values/object_id.h"
 #include "values/value.h"
 
@@ -234,8 +235,10 @@ serialize(
             }
 
             int retval = FUNC_TAB[i].serf(self);
-            if (retval < 0) {
-                //!< @todo something went wrong serializing the event. Error?
+            if (unlikely(retval < 0)) {
+                char const* name = ws_object_typename(&self->buffer->obj);
+                ws_log(&log_ctx, LOG_DEBUG,
+                       "Serializing error when serializing '%s'", name);
                 return retval;
             }
             serialized = true;
