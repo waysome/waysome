@@ -566,8 +566,8 @@ gen_key(
                                            (const unsigned char*) str,
                                            strlen(str));
 
-    if (stat != yajl_gen_status_ok) {
-        //!< @todo error?
+    if (unlikely(stat != yajl_gen_status_ok)) {
+        ws_log(&log_ctx, LOG_DEBUG, "Error generating key: '%s'", str);
         return -EAGAIN;
     }
 
