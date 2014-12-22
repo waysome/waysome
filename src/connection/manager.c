@@ -155,6 +155,14 @@ out:
     return res;
 }
 
+int
+ws_connection_manager_close_connection(
+    struct ws_connection_processor* proc
+) {
+    return ws_set_remove(&connman.connections, (struct ws_object*) proc);
+}
+
+
 /*
  *
  * Interface implementation
