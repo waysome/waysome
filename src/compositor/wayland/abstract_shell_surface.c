@@ -111,6 +111,27 @@ cmd_func_set_visibility(
  *
  */
 
+struct ws_object_attribute const WS_OBJECT_ATTRS_ABSTRACT_SHELL_SURFACE[] = {
+    {
+        .name = "visible",
+        .offset_in_struct = offsetof(struct ws_abstract_shell_surface, visible),
+        .type = WS_OBJ_ATTR_TYPE_BOOL,
+        .vtype = WS_VALUE_TYPE_BOOL,
+    },
+    {
+        .name = "z",
+        .offset_in_struct = offsetof(struct ws_abstract_shell_surface, z),
+        .type = WS_OBJ_ATTR_TYPE_BOOL,
+        .vtype = WS_VALUE_TYPE_BOOL,
+    },
+    {
+        .name = NULL,
+        .offset_in_struct = 0,
+        .type = 0,
+        .vtype = WS_VALUE_TYPE_NONE,
+    }, // iteration stopper
+};
+
 static const struct ws_object_function FUNCTIONS[] = {
     { .name = "setwidth",           .func = cmd_func_set_width },
     { .name = "setheight",          .func = cmd_func_set_height },
@@ -127,7 +148,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_ABSTRACT_SHELL_SURFACE = {
     .hash_callback      = NULL,
     .cmp_callback       = NULL,
 
-    .attribute_table    = NULL,
+    .attribute_table    = WS_OBJECT_ATTRS_ABSTRACT_SHELL_SURFACE,
     .function_table     = FUNCTIONS,
 };
 
