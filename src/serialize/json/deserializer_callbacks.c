@@ -453,8 +453,14 @@ yajl_string_cb(
             int res;
             res = buff_to_string("Using as identifier for registration (%s)",
                                  state->register_name, str, len);
-            if (res != 0) {
-                //!< @todo indicate error
+            if (res < 0) {
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot deserialize string");
+
+                state->error.parser_error   = false;
+                state->error.error_num      = res;
+                ws_object_unref(&state->register_name->obj);
+                state->register_name = NULL;
+
                 return 0;
             }
 
