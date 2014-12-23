@@ -418,9 +418,13 @@ yajl_string_cb(
             struct ws_string* sstr = ws_value_string_get(s);
 
             int res = buff_to_string("Using as argument (%s)", sstr, str, len);
-            if (res != 0) {
-                //!< @todo indicate error
-                return 0;
+            if (res < 0) {
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot deserialize string");
+
+                ws_object_unref(&sstr->obj);
+                free(s);
+
+                return res;
             }
 
             ws_object_unref((struct ws_object*) sstr); //str is a copy
