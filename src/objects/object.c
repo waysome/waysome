@@ -382,12 +382,18 @@ ws_object_attr_read(
     enum ws_object_attribute_type type = WS_OBJ_ATTR_NO_TYPE;
 
     struct ws_object_attribute const* iter;
-    for (iter = &self->id->attribute_table[0]; iter->name && !found; iter++) {
-        if (ws_streq(iter->name, ident)) {
-            offset  = iter->offset_in_struct;
-            type    = iter->type;
-            found   = true;
+    ws_object_type_id* otype = self->id;
+    while (!found && otype != &WS_OBJECT_TYPE_ID_OBJECT) {
+        for (iter = &self->id->attribute_table[0];
+                iter->name && !found; iter++) {
+            if (ws_streq(iter->name, ident)) {
+                offset  = iter->offset_in_struct;
+                type    = iter->type;
+                found   = true;
+            }
         }
+
+        otype = otype->supertype;
     }
 
     if (unlikely(!found)) {
@@ -483,12 +489,18 @@ ws_object_attr_write(
     ws_object_lock_write(self);
 
     struct ws_object_attribute const* iter;
-    for (iter = &self->id->attribute_table[0]; iter->name && !found; iter++) {
-        if (ws_streq(iter->name, ident)) {
-            offset  = iter->offset_in_struct;
-            type    = iter->type;
-            found   = true;
+    ws_object_type_id* otype = self->id;
+    while (!found && otype != &WS_OBJECT_TYPE_ID_OBJECT) {
+        for (iter = &self->id->attribute_table[0];
+                iter->name && !found; iter++) {
+            if (ws_streq(iter->name, ident)) {
+                offset  = iter->offset_in_struct;
+                type    = iter->type;
+                found   = true;
+            }
         }
+
+        otype = otype->supertype;
     }
 
     if (unlikely(!found)) {
