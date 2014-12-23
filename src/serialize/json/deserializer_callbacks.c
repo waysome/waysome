@@ -483,7 +483,11 @@ yajl_string_cb(
             int res = buff_to_string("Using as event name (%s)",
                                      state->ev_name, str, len);
             if (res != 0) {
-                //!< @todo indicate error
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot deserialize string");
+
+                state->error.parser_error   = false;
+                state->error.error_num      = res;
+
                 return 0;
             }
 
