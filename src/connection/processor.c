@@ -33,10 +33,13 @@
 
 #include "action/manager.h"
 #include "connection/connector.h"
+#include "connection/manager.h"
 #include "connection/processor.h"
+#include "logger/module.h"
 #include "objects/object.h"
 #include "serialize/deserializer.h"
 #include "serialize/serializer.h"
+#include "util/error.h"
 
 /*
  *
@@ -110,6 +113,10 @@ ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
 
     .attribute_table = NULL,
     .function_table = NULL,
+};
+
+static struct ws_logger_context log_ctx = {
+    .prefix = "[Connection/Processor] ",
 };
 
 /*
@@ -307,23 +314,25 @@ connection_processor_flush(
 
     // try to lock the object
     if (ws_object_lock_try_write(&proc->obj) != 0) {
-        goto unlock;
+        return;
     }
 
     // flush the buffer
     int res = connection_processor_flush_msg(proc, NULL);
-    if ((res == 0) || (res == -EAGAIN) || (res == -EINTR)) {
-        goto unlock;
+    ws_object_unlock(&proc->obj);
+
+    if ((res == 0) || (res == -EAGAIN) || (res == -EWOULDBLOCK) ||
+            (res == -EINTR)) {
+        return;
     }
 
-    //!< @todo: error handling
-    connection_processor_deinit(&proc->obj);
-    ws_object_unlock(&proc->obj);
-    ws_object_unref(&proc->obj);
-    return;
-
-unlock:
-    ws_object_unlock(&proc->obj);
+    // some error occured
+    const char* errstr = ws_errno_tostr(res);
+    if (errstr) {
+        ws_log(&log_ctx, LOG_ERR, "Error during serialization/send %s",
+               errstr);
+    }
+    ws_connection_manager_close_connection(proc);
 }
 
 static int

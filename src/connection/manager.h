@@ -36,6 +36,9 @@
 
 #include <stdbool.h>
 
+// forward declarations
+struct ws_connection_processor;
+
 /**
  * Initialize the connection manager singleton
  *
@@ -55,6 +58,20 @@ int
 ws_connection_manager_open_connection(
     int fd, //!< File descriptor
     bool ro //!< Flag: true for read-only connection
+);
+
+/**
+ * Close a connection
+ *
+ * @memberof ws_connection_manager
+ *
+ * @note only for internal use
+ *
+ * @return zero on success, else negative errno.h number
+ */
+int
+ws_connection_manager_close_connection(
+    struct ws_connection_processor* proc //!< connection to remove
 );
 
 #endif // __WS_CONNECTION_MANAGER_H__
