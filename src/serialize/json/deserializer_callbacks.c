@@ -517,7 +517,13 @@ yajl_string_cb(
 
             int res = ws_string_set_from_raw(sstr, buff);
             if (res != 0) {
-                //!< @todo indicate error
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot set string");
+
+                state->error.parser_error   = false;
+                state->error.error_num      = res;
+                ws_object_unref(&sstr->obj);
+                free(s);
+
                 return 0;
             }
 
