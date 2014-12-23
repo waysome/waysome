@@ -282,25 +282,23 @@ connection_processor_dispatch(
     }
 
 error_handling:
-    switch(res) {
-    case -EAGAIN:
-    case -EINTR:
-        // we have to come back later
-        ws_object_unlock(&proc->obj);
+    ws_object_unlock(&proc->obj);
+
+    if ((res == -EAGAIN) || (res == -EWOULDBLOCK) || (res == -EINTR)) {
         return;
+    }
 
-    default:
-        //!< @todo report an error
-
-    case EOF:
-        // we reached the end of file
-        ;
+    if (res != EOF) {
+        // some error occured
+        const char* errstr = ws_errno_tostr(res);
+        if (errstr) {
+            ws_log(&log_ctx, LOG_ERR, "Error during serialization/send %s",
+                   errstr);
+        }
     }
 
 deinit:
-    connection_processor_deinit(&proc->obj);
-    ws_object_unlock(&proc->obj);
-    ws_object_unref(&proc->obj);
+    ws_connection_manager_close_connection(proc);
 }
 
 static void
