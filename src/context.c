@@ -413,7 +413,7 @@ func_set_ms_focus(
 
     struct ws_object* maybe_surface = ws_value_object_id_get(&stack->object_id);
 
-    if (maybe_surface->id != &WS_OBJECT_TYPE_ID_SURFACE) {
+    if (ws_object_get_type_id(maybe_surface) != &WS_OBJECT_TYPE_ID_SURFACE) {
         return -EINVAL;
     }
 
@@ -438,7 +438,7 @@ func_set_kb_focus(
 
     struct ws_object* maybe_surface = ws_value_object_id_get(&stack->object_id);
 
-    if (maybe_surface->id != &WS_OBJECT_TYPE_ID_SURFACE) {
+    if (ws_object_get_type_id(maybe_surface) != &WS_OBJECT_TYPE_ID_SURFACE) {
         return -EINVAL;
     }
 
