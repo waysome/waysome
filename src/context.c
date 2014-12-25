@@ -372,7 +372,7 @@ func_get_surface_under_cursor(
 ) {
     struct ws_surface* surface;
     surface = ws_cursor_get_surface_under_cursor(ws_cursor_get());
-    ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
+    ws_value_object_id_set(&stack[0].object_id, &surface->wl_obj.obj);
     return 0;
 }
 
@@ -382,7 +382,7 @@ func_get_ms_focus(
 ) {
     struct ws_surface* surface = ws_cursor_get()->active_surface;
 
-    ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
+    ws_value_object_id_set(&stack[0].object_id, &surface->wl_obj.obj);
 
     return 0;
 }
@@ -393,7 +393,7 @@ func_get_kb_focus(
 ) {
     struct ws_surface* surface = ws_keyboard_get()->active_surface;
 
-    ws_value_object_id_set(&stack[0].object_id, (struct ws_object*) surface);
+    ws_value_object_id_set(&stack[0].object_id, &surface->wl_obj.obj);
 
     return 0;
 }
@@ -462,8 +462,8 @@ func_register_transaction_on_event(
 
     bool res = 0 == ws_action_manager_register(ev_name, trans_name);
 
-    ws_object_unref((struct ws_object*) ev_name);
-    ws_object_unref((struct ws_object*) trans_name);
+    ws_object_unref(&ev_name->obj);
+    ws_object_unref(&trans_name->obj);
 
     ws_value_union_reinit(stack, WS_VALUE_TYPE_BOOL);
     ws_value_bool_set(&stack->bool_, res);
@@ -483,10 +483,11 @@ func_unregister_transaction_on_event(
 
     bool res = 0 == ws_action_manager_unregister_transaction(trans_name);
 
-    ws_object_unref((struct ws_object*) trans_name);
+    ws_object_unref(&trans_name->obj);
 
     ws_value_union_reinit(stack, WS_VALUE_TYPE_BOOL);
     ws_value_bool_set(&stack->bool_, res);
 
     return 0;
 }
+
