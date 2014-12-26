@@ -176,6 +176,8 @@ cleanup:
 
     ws_cleaner_run();
 
+    ws_object_deinit(&context);
+
     return retval;
 }
 

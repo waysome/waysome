@@ -442,6 +442,6 @@ action_manager_deinit(
 ) {
     ws_object_deinit(&actman_ctx.transactions.obj);
     ws_object_deinit(&actman_ctx.registrations.obj);
-    ws_object_deinit(actman_ctx.obj);
+    ws_object_unref(actman_ctx.obj);
 }
 
