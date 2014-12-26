@@ -157,7 +157,7 @@ ws_region_new(
                                    ws_object_getref(&self->wl_obj.obj),
                                    resource_destroy);
     // initialize the members
-    ws_buffer_init((struct ws_buffer*) &self->img_buf);
+    ws_buffer_init(&self->img_buf.raw.obj);
 
     return self;
 
@@ -222,7 +222,7 @@ ws_region_inside(
     if (!region) {
         return true;
     }
-    if (!ws_buffer_data((struct ws_buffer*) &region->img_buf)) {
+    if (!ws_buffer_data(&region->img_buf.raw.obj)) {
         return true;
     }
     //!< @todo Implement really bound checking
