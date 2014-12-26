@@ -196,7 +196,7 @@ serialize(
         yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
         if (stat != yajl_gen_status_ok) {
             ws_log(&log_ctx, LOG_DEBUG, "Error opening main map");
-            return -1;
+            return -EIO;
         }
 
         ctx->current_state = STATE_MESSAGE_STATE;
@@ -254,7 +254,7 @@ serialize(
         yajl_gen_status stat = yajl_gen_map_close(ctx->yajlgen);
         if (unlikely(stat != yajl_gen_status_ok)) {
             ws_log(&log_ctx, LOG_DEBUG, "Error closing main map");
-            return -1;
+            return -EIO;
         }
     }
 
@@ -292,36 +292,36 @@ serialize_reply_error_reply(
     struct serializer_context* ctx = (struct serializer_context*) self->state;
 
     if (unlikely(gen_key(ctx, ERROR_CODE))) {
-        return -1;
+        return -EIO;
     }
 
     yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen,
                                             ws_error_reply_get_code(r));
     if (unlikely(stat != yajl_gen_status_ok)) {
         ws_log(&log_ctx, LOG_DEBUG, "Error generating int for error reply");
-        return -1;
+        return -EIO;
     }
 
     if (unlikely(gen_key(ctx, ERROR_DESC))) {
-        return -1;
+        return -EIO;
     }
 
     char const* tmp = ws_error_reply_get_description(r);
     stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
     if (unlikely(stat != yajl_gen_status_ok)) {
         ws_log(&log_ctx, LOG_DEBUG, "Error generating desc: '%s'", tmp);
-        return -1;
+        return -EIO;
     }
 
     if (unlikely(gen_key(ctx, ERROR_CAUSE))) {
-        return -1;
+        return -EIO;
     }
 
     tmp = ws_error_reply_get_cause(r);
     stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) tmp, strlen(tmp));
     if (unlikely(stat != yajl_gen_status_ok)) {
         ws_log(&log_ctx, LOG_DEBUG, "Error generating cause: '%s'", tmp);
-        return -1;
+        return -EIO;
     }
 
     return 0;
@@ -336,23 +336,23 @@ serialize_reply_value_reply(
     // We haven't serialized anything
     // generate the key for the value reply
     if (unlikely(gen_key(ctx, VALUE))) {
-        return -1;
+        return -EIO;
     }
 
     struct ws_value* v = &((struct ws_value_reply*) self->buffer)->value.value;
     if (serialize_value(ctx, v)) {
-        return -1;
+        return -EIO;
     }
 
     if (unlikely(gen_key(ctx, TRANSACTION_ID))) {
-        return -1;
+        return -EIO;
     }
 
     size_t id = ws_message_get_id(self->buffer);
     yajl_gen_status stat = yajl_gen_integer(ctx->yajlgen, id);
     if (unlikely(stat != yajl_gen_status_ok)) {
         ws_log(&log_ctx, LOG_DEBUG, "Error serializing msg id: %i", id);
-        return -1;
+        return -EIO;
     }
 
     return 0;
@@ -367,7 +367,7 @@ serialize_event(
     // We haven't serialized anything
     // generate the key for the event message
     if (unlikely(gen_key(ctx, EVENT))) {
-        return -1;
+        return -EIO;
     }
     // We also know already what we have to serialize, so... let's try it
 
@@ -375,12 +375,12 @@ serialize_event(
     yajl_gen_status stat = yajl_gen_map_open(ctx->yajlgen);
     if (stat != yajl_gen_status_ok) {
         ws_log(&log_ctx, LOG_DEBUG, "Error opening map for event");
-        return -1;
+        return -EIO;
     }
 
     // We have a '{ "event" : {' in the buffer by now
     if (unlikely(gen_key(ctx, EVENT_CTX))) {
-        return -1;
+        return -EIO;
     }
 
     struct ws_event* ev = (struct ws_event*) self->buffer;
@@ -388,12 +388,12 @@ serialize_event(
     // We have a '{ "event" : { "context" : ' in the buffer by now
     if (serialize_value(ctx, &ev->context.value) != 0) {
         ws_log(&log_ctx, LOG_DEBUG, "Error serializing value for event");
-        return -1;
+        return -EIO;
     }
 
     // We have a '{ "event" : { <context:map> ' in the buffer by now
     if (unlikely(gen_key(ctx, EVENT_NAME))) {
-        return -1;
+        return -EIO;
     }
 
     // We have a
@@ -406,7 +406,7 @@ serialize_event(
         stat = yajl_gen_string(ctx->yajlgen, (unsigned char*) plain, len);
         if (stat != yajl_gen_status_ok) {
             ws_log(&log_ctx, LOG_DEBUG, "Error serializing event name");
-            return -1;
+            return -EIO;
         }
     }
 
@@ -414,7 +414,7 @@ serialize_event(
     stat = yajl_gen_map_close(ctx->yajlgen);
     if (stat != yajl_gen_status_ok) {
         ws_log(&log_ctx, LOG_DEBUG, "Error closing map for event");
-        return -1;
+        return -EIO;
     }
 
     ctx->current_state = STATE_READY;
@@ -466,12 +466,12 @@ serialize_value(
             stat = yajl_gen_map_open(ctx->yajlgen);
             if (stat != yajl_gen_status_ok) {
                 ws_log(&log_ctx, LOG_DEBUG, "Error opening map");
-                return -1;
+                return -EIO;
             }
 
             if (unlikely(gen_key(ctx, ws_value_type_get_name(val)))) {
                 ws_log(&log_ctx, LOG_DEBUG, "Error generating map key");
-                return -1;
+                return -EIO;
             }
 
             switch (ws_value_get_type(val)) {
@@ -481,7 +481,7 @@ serialize_value(
                     obj_id = (struct ws_value_object_id*) val;
                     struct ws_object* object = ws_value_object_id_get(obj_id);
                     if (serialize_object_to_id_string(ctx, object)) {
-                        return -1;
+                        return -EIO;
                     }
                 }
                 break;
@@ -490,7 +490,7 @@ serialize_value(
                 stat = yajl_gen_array_open(ctx->yajlgen);
                 if (stat != yajl_gen_status_ok) {
                     ws_log(&log_ctx, LOG_DEBUG, "Error opening array");
-                    return -1;
+                    return -EIO;
                 }
 
                 {
@@ -502,7 +502,7 @@ serialize_value(
 
                     if (unlikely(r < 0)) {
                         ws_log(&log_ctx, LOG_DEBUG, "Error serializing set");
-                        return -1;
+                        return -EIO;
                     }
                 }
 
@@ -515,14 +515,14 @@ serialize_value(
                     ws_log(&log_ctx, LOG_DEBUG,
                            "Unable to serialize '%s' type", ty);
                 }
-                return -1;
+                return -EIO;
             }
 
             if (unlikely(stat != yajl_gen_status_ok)) {
                 const char* ty = ws_value_type_get_name(val);
                 ws_log(&log_ctx, LOG_DEBUG,
                        "Unable to serialize '%s' type", ty);
-                return -1;
+                return -EIO;
             }
 
             stat = yajl_gen_map_close(ctx->yajlgen);
@@ -532,7 +532,7 @@ serialize_value(
     if (stat != yajl_gen_status_ok) {
         const char* vname = ws_value_type_get_name(val);
         ws_log(&log_ctx, LOG_DEBUG, "Error serializing value: '%s'", vname);
-        return -1;
+        return -EIO;
     }
 
     return 0;
@@ -554,7 +554,7 @@ serialize_object_to_id_string(
                                            bufflen - 1);
     if (unlikely(stat != yajl_gen_status_ok)) {
         ws_log(&log_ctx, LOG_DEBUG, "Error serializing id string");
-        return -1;
+        return -EIO;
     }
 
     return 0;
