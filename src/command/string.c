@@ -98,8 +98,8 @@ ws_builtin_cmd_substr(
 
     bool is_substr = ws_string_substr(str1, str2);
 
-    ws_object_unref((struct ws_object*) str1);
-    ws_object_unref((struct ws_object*) str2);
+    ws_object_unref(&str1->obj);
+    ws_object_unref(&str2->obj);
 
     ws_value_union_reinit(args, WS_VALUE_TYPE_BOOL);
     ws_value_bool_set(&args->bool_, is_substr);
@@ -123,8 +123,8 @@ ws_builtin_cmd_strcmp(
 
     res = ws_string_cmp(str1, str2);
 
-    ws_object_unref((struct ws_object*) str1);
-    ws_object_unref((struct ws_object*) str2);
+    ws_object_unref(&str1->obj);
+    ws_object_unref(&str2->obj);
 
     ws_value_union_reinit(args, WS_VALUE_TYPE_INT);
     ws_value_int_set(&args->int_, res);
