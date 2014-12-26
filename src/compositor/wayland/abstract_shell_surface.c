@@ -153,7 +153,7 @@ ws_abstract_shell_surface_init(
 
     retval = ws_surface_set_role(self->surface, role);
     if (retval < 0) {
-        ws_object_unref((struct ws_object*) self->surface);
+        ws_object_unref(&self->surface->wl_obj.obj);
         return retval;
     }
 
@@ -179,7 +179,7 @@ ws_abstract_shell_surface_set_width(
     int32_t width
 ) {
     static const uint32_t edges = 0; //!< @todo hardcoded?
-    struct ws_surface* s = (struct ws_surface*) self->surface;
+    struct ws_surface* s = self->surface;
     if (!s) {
         return -EINVAL;
     }
@@ -201,7 +201,7 @@ ws_abstract_shell_surface_set_height(
     int32_t height
 ) {
     static const uint32_t edges = 0; //!< @todo hardcoded?
-    struct ws_surface* s = (struct ws_surface*) self->surface;
+    struct ws_surface* s = self->surface;
     if (!s) {
         return -EINVAL;
     }
@@ -224,7 +224,7 @@ ws_abstract_shell_surface_set_width_and_height(
     int32_t height
 ) {
     static const uint32_t edges = 0; //!< @todo hardcoded?
-    struct ws_surface* s = (struct ws_surface*) self->surface;
+    struct ws_surface* s = self->surface;
     if (!s) {
         return -EINVAL;
     }
@@ -254,7 +254,7 @@ shell_surface_deinit(
     struct ws_abstract_shell_surface* shell_surf;
     shell_surf = (struct ws_abstract_shell_surface*) obj;
 
-    ws_object_unref((struct ws_object*) &shell_surf->surface);
+    ws_object_unref(&shell_surf->surface->wl_obj.obj);
     return true;
 }
 
@@ -273,18 +273,18 @@ cmd_func_set_width(
     // `1` is the command string itself
 
     if (ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT) {
-        ws_object_unref((struct ws_object*) self);
+        ws_object_unref(&self->wl_obj.obj);
         return -EINVAL;
     }
 
     if (ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_NONE) {
-        ws_object_unref((struct ws_object*) self);
+        ws_object_unref(&self->wl_obj.obj);
         return -E2BIG;
     }
 
     intmax_t width = ws_value_int_get(&stack[2].int_);
     if (width > INT32_MAX) {
-        ws_object_unref((struct ws_object*) self);
+        ws_object_unref(&self->wl_obj.obj);
         return -EINVAL;
     }
 
@@ -308,18 +308,18 @@ cmd_func_set_height(
     // `1` is the command string itself
 
     if (ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_INT) {
-        ws_object_unref((struct ws_object*) self);
+        ws_object_unref(&self->wl_obj.obj);
         return -EINVAL;
     }
 
     if (ws_value_get_type(&stack[3].value) != WS_VALUE_TYPE_NONE) {
-        ws_object_unref((struct ws_object*) self);
+        ws_object_unref(&self->wl_obj.obj);
         return -E2BIG;
     }
 
     intmax_t height = ws_value_int_get(&stack[2].int_);
     if (height > INT32_MAX) {
-        ws_object_unref((struct ws_object*) self);
+        ws_object_unref(&self->wl_obj.obj);
         return -EINVAL;
     }
 
