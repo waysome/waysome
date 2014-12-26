@@ -123,7 +123,7 @@ find_initial_devices(void) {
 
         struct ws_input_device* new_dev = ws_input_device_new(fd);
 
-        ws_set_insert(&ws_input_ctx.devices, (struct ws_object*) new_dev);
+        ws_set_insert(&ws_input_ctx.devices, &new_dev->obj);
 
     }
     closedir(d);
@@ -140,15 +140,15 @@ cleanup_input(
         struct ws_input_device* dev =
             (struct ws_input_device*) ws_set_select_any(&ws_input_ctx.devices);
 
-        ws_set_remove(&ws_input_ctx.devices, (struct ws_object*) dev);
+        ws_set_remove(&ws_input_ctx.devices, &dev->obj);
 
         libevdev_free(dev->dev);
         ev_io_stop(ev_default_loop(EVFLAG_AUTO), &dev->watcher);
         close(dev->fd);
-        ws_object_unref((struct ws_object*) dev);
+        ws_object_unref(&dev->obj);
     }
 
-    ws_object_deinit((struct ws_object*) &ws_input_ctx.devices);
+    ws_object_deinit(&ws_input_ctx.devices.obj);
 }
 
 int
