@@ -418,9 +418,13 @@ yajl_string_cb(
             struct ws_string* sstr = ws_value_string_get(s);
 
             int res = buff_to_string("Using as argument (%s)", sstr, str, len);
-            if (res != 0) {
-                //!< @todo indicate error
-                return 0;
+            if (res < 0) {
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot deserialize string");
+
+                ws_object_unref(&sstr->obj);
+                free(s);
+
+                return res;
             }
 
             ws_object_unref((struct ws_object*) sstr); //str is a copy
@@ -449,8 +453,14 @@ yajl_string_cb(
             int res;
             res = buff_to_string("Using as identifier for registration (%s)",
                                  state->register_name, str, len);
-            if (res != 0) {
-                //!< @todo indicate error
+            if (res < 0) {
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot deserialize string");
+
+                state->error.parser_error   = false;
+                state->error.error_num      = res;
+                ws_object_unref(&state->register_name->obj);
+                state->register_name = NULL;
+
                 return 0;
             }
 
@@ -473,7 +483,11 @@ yajl_string_cb(
             int res = buff_to_string("Using as event name (%s)",
                                      state->ev_name, str, len);
             if (res != 0) {
-                //!< @todo indicate error
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot deserialize string");
+
+                state->error.parser_error   = false;
+                state->error.error_num      = res;
+
                 return 0;
             }
 
@@ -503,7 +517,13 @@ yajl_string_cb(
 
             int res = ws_string_set_from_raw(sstr, buff);
             if (res != 0) {
-                //!< @todo indicate error
+                ws_log(&log_ctx, LOG_DEBUG, "Cannot set string");
+
+                state->error.parser_error   = false;
+                state->error.error_num      = res;
+                ws_object_unref(&sstr->obj);
+                free(s);
+
                 return 0;
             }
 
