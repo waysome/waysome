@@ -304,7 +304,7 @@ ws_compositor_deinit(
 
     if (ws_comp_ctx.cursor) {
         ws_cursor_unset(ws_comp_ctx.cursor);
-        ws_object_deinit((struct ws_object*) ws_comp_ctx.cursor);
+        ws_object_deinit(&ws_comp_ctx.cursor->obj);
     }
 
     //!< @todo: free all of the framebuffers
@@ -412,8 +412,8 @@ find_crtc(
 
     ws_log(&log_ctx, LOG_DEBUG,
             "Could not find suitable Encoder for crtc with dim: %dx%d.",
-            ws_buffer_width((struct ws_buffer*) connector->buffer),
-            ws_buffer_height((struct ws_buffer*) connector->buffer));
+            ws_buffer_width(&connector->buffer->obj.obj),
+            ws_buffer_height(&connector->buffer->obj.obj));
     return -ENOENT;
 }
 
@@ -469,7 +469,7 @@ populate_connectors(void) {
             struct ws_monitor_mode* mode =
                 ws_monitor_copy_mode(new_monitor, &conn->modes[j]);
 
-            ws_set_insert(&new_monitor->modes, (struct ws_object*)  mode);
+            ws_set_insert(&new_monitor->modes, &mode->obj);
 
             // ws_monitor_add_mode(new_monitor, conn->modes[j].hdisplay,
             //                        conn->modes[j].vdisplay);
@@ -487,7 +487,7 @@ populate_connectors(void) {
 
 insert:
         new_monitor->id = i;
-        ws_set_insert(&ws_comp_ctx.monitors, (struct ws_object*) new_monitor);
+        ws_set_insert(&ws_comp_ctx.monitors, &new_monitor->obj);
     }
     return 0;
 }
