@@ -238,7 +238,7 @@ static int add_surface_to_monitor(
     }
 
 cleanup_monitor:
-    ws_object_unref((struct ws_object*) monitor);
+    ws_object_unref(&monitor->obj);
     return 0;
 }
 
