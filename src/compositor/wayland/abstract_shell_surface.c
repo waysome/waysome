@@ -91,31 +91,37 @@ cmd_func_set_width_and_height(
     union ws_value_union* stack // The stack to use
 );
 
-/**
- * Callback command function for setting surface visibility
- *
- * @memberof ws_abstract_shell_surface
- *
- * Takes two parameters:
- *  1) The object id of the surface
- *  2) The visibility to set (true = visible)
- */
-static int
-cmd_func_set_visibility(
-    union ws_value_union* stack // The stack to use
-);
-
 /*
  *
  * Interface implementation
  *
  */
 
+struct ws_object_attribute const WS_OBJECT_ATTRS_ABSTRACT_SHELL_SURFACE[] = {
+    {
+        .name = "visible",
+        .offset_in_struct = offsetof(struct ws_abstract_shell_surface, visible),
+        .type = WS_OBJ_ATTR_TYPE_BOOL,
+        .vtype = WS_VALUE_TYPE_BOOL,
+    },
+    {
+        .name = "z",
+        .offset_in_struct = offsetof(struct ws_abstract_shell_surface, z),
+        .type = WS_OBJ_ATTR_TYPE_BOOL,
+        .vtype = WS_VALUE_TYPE_BOOL,
+    },
+    {
+        .name = NULL,
+        .offset_in_struct = 0,
+        .type = 0,
+        .vtype = WS_VALUE_TYPE_NONE,
+    }, // iteration stopper
+};
+
 static const struct ws_object_function FUNCTIONS[] = {
     { .name = "setwidth",           .func = cmd_func_set_width },
     { .name = "setheight",          .func = cmd_func_set_height },
     { .name = "setwidthheight",     .func = cmd_func_set_width_and_height },
-    { .name = "setvisibility",      .func = cmd_func_set_visibility },
     { .name = NULL,                 .func = NULL } // Iteration stopper
 };
 
@@ -127,7 +133,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_ABSTRACT_SHELL_SURFACE = {
     .hash_callback      = NULL,
     .cmp_callback       = NULL,
 
-    .attribute_table    = NULL,
+    .attribute_table    = WS_OBJECT_ATTRS_ABSTRACT_SHELL_SURFACE,
     .function_table     = FUNCTIONS,
 };
 
@@ -370,25 +376,3 @@ out:
     return res;
 }
 
-static int
-cmd_func_set_visibility(
-    union ws_value_union* stack // The stack to use
-) {
-    if (ws_value_get_type(&stack[0].value) != WS_VALUE_TYPE_OBJECT_ID) {
-        return -EINVAL;
-    }
-
-    // `1` is the command string itself
-
-    if (ws_value_get_type(&stack[2].value) != WS_VALUE_TYPE_BOOL) {
-        return -EINVAL;
-    }
-
-    struct ws_abstract_shell_surface* self;
-    self = (struct ws_abstract_shell_surface*)
-            ws_value_object_id_get(&stack[0].object_id);
-
-    self->visible = ws_value_bool_get(&stack[2].bool_);
-
-    return 0;
-}
