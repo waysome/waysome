@@ -37,7 +37,9 @@
 #include "input/hotkey_event.h"
 #include "input/hotkeys.h"
 #include "logger/module.h"
+#include "objects/string.h"
 #include "objects/message/event.h"
+#include "objects/message/reply.h"
 #include "util/cleaner.h"
 
 /**
@@ -195,9 +197,9 @@ ws_hotkeys_eval(
     }
 
     struct ws_reply* reply;
-    reply = ws_action_manager_process((struct ws_message*) event, NULL);
+    reply = ws_action_manager_process(&event->m, NULL);
     if (reply) {
-        ws_object_unref((struct ws_object*) reply);
+        ws_object_unref(&reply->m.obj);
     }
 
     // reset the eventlist
@@ -241,10 +243,10 @@ ws_hotkey_remove(
     if (res < 0) {
         return res;
     }
-    ws_object_deinit((struct ws_object*) &name);
+    ws_object_deinit(&name.obj);
 
     res = ws_hotkey_dag_remove(&ws_hotkeys_ctx.root, &event);
-    ws_object_deinit((struct ws_object*) &event);
+    ws_object_deinit(&event.obj);
     return res;
 }
 
