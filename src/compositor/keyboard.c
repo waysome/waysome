@@ -44,6 +44,7 @@
 #include "compositor/internal_context.h"
 #include "compositor/wayland/client.h"
 #include "compositor/wayland/keyboard.h"
+#include "compositor/wayland/surface.h"
 #include "util/wayland.h"
 
 static const char keymap_file_template[] = "waysome-xkb-keymap-XXXXXX";
@@ -143,8 +144,8 @@ ws_keyboard_send_keymap(
     struct ws_keyboard* self
 ) {
     // Did we leave the old surface? Well, send a leave event
-    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) self->active_surface);
+    struct wl_resource* res;
+    res = ws_wayland_obj_get_wl_resource(&self->active_surface->wl_obj);
 
     if (self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
@@ -174,8 +175,8 @@ ws_keyboard_send_enter(
     }
 
     // Did we leave the old surface? Well, send a leave event
-    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) self->active_surface);
+    struct wl_resource* res;
+    res = ws_wayland_obj_get_wl_resource(&self->active_surface->wl_obj);
 
     if (self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
@@ -207,7 +208,7 @@ ws_keyboard_send_leave(
 
     // Did we leave the old surface? Well, send a leave event
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) self->active_surface);
+            &self->active_surface->wl_obj);
 
     if (self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
@@ -261,8 +262,8 @@ ws_keyboard_send_key(
     group     = xkb_state_serialize_layout(self->xkb->state,
                                            XKB_STATE_LAYOUT_EFFECTIVE);
 
-    struct wl_resource* res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) self->active_surface);
+    struct wl_resource* res;
+    res = ws_wayland_obj_get_wl_resource(&self->active_surface->wl_obj);
 
     if (self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
