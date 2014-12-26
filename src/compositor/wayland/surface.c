@@ -372,7 +372,7 @@ surface_set_input_region_cb(
         return;
     }
     if (surface->input_region) {
-        ws_object_unref((struct ws_object*) surface->input_region);
+        ws_object_unref(&surface->input_region->wl_obj.obj);
     }
     surface->input_region = getref(ws_region_from_resource(region));
 }
@@ -416,11 +416,11 @@ sf_commit_blit(
     buffer = ws_wayland_buffer_get_buffer((struct ws_wayland_buffer*) buf);
 
     if (!monitor->buffer ||
-            !ws_buffer_data((struct ws_buffer*) monitor->buffer)) {
+            !ws_buffer_data(&monitor->buffer->obj.obj)) {
         return 0;
     }
 
-    ws_buffer_blit((struct ws_buffer *) monitor->buffer, buffer);
+    ws_buffer_blit(&monitor->buffer->obj.obj, buffer);
 
     return 0;
 }
@@ -453,7 +453,7 @@ sf_remove_surface(
 
     struct ws_set* surfaces = ws_monitor_surfaces(monitor);
 
-    ws_set_remove(surfaces, (struct ws_object*) surface);
+    ws_set_remove(surfaces, &surface->wl_obj.obj);
     ws_object_unref(&surface->wl_obj.obj);
 
     return 0;
