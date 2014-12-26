@@ -57,13 +57,13 @@ ws_builtin_cmd_land(
             continue;
         }
 
-        ws_value_deinit((struct ws_value*) base);
+        ws_value_deinit(base);
         ws_value_bool_init((struct ws_value_bool*) base);
         ws_value_bool_set((struct ws_value_bool*) base, false);
         return 0;
     }
 
-    ws_value_deinit((struct ws_value*) base);
+    ws_value_deinit(base);
     ws_value_bool_init((struct ws_value_bool*) base);
     ws_value_bool_set((struct ws_value_bool*) base, true);
     return 0;
@@ -93,7 +93,7 @@ ws_builtin_cmd_lor(
 
     while (ws_value_get_type(&args->value) != WS_VALUE_TYPE_NONE) {
         if (ws_value_is_true(&args->value)) {
-            ws_value_deinit((struct ws_value*) base);
+            ws_value_deinit(&base->value);
             ws_value_bool_init((struct ws_value_bool*) base);
             ws_value_bool_set(&base->bool_, true);
             return 0;
@@ -101,7 +101,7 @@ ws_builtin_cmd_lor(
         args++;
     }
 
-    ws_value_deinit((struct ws_value*) base);
+    ws_value_deinit(&base->value);
     ws_value_bool_init((struct ws_value_bool*) base);
     ws_value_bool_set(&base->bool_, false);
     return 0;
@@ -133,7 +133,7 @@ ws_builtin_cmd_lxor(
     while (ws_value_get_type(&args->value) != WS_VALUE_TYPE_NONE) {
         if (ws_value_is_true(&args->value)) {
             if (have_true) {
-                ws_value_deinit((struct ws_value*) base);
+                ws_value_deinit(&base->value);
                 ws_value_bool_init((struct ws_value_bool*) base);
                 ws_value_bool_set(&base->bool_, false);
                 return 0;
@@ -145,7 +145,7 @@ ws_builtin_cmd_lxor(
         args++;
     }
 
-    ws_value_deinit((struct ws_value*) base);
+    ws_value_deinit(&base->value);
     ws_value_bool_init((struct ws_value_bool*) base);
     ws_value_bool_set(&base->bool_, have_true);
     return 0;
