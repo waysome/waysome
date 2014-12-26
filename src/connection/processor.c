@@ -37,6 +37,8 @@
 #include "connection/processor.h"
 #include "logger/module.h"
 #include "objects/object.h"
+#include "objects/message/message.h"
+#include "objects/message/reply.h"
 #include "serialize/deserializer.h"
 #include "serialize/serializer.h"
 #include "util/error.h"
@@ -261,7 +263,7 @@ connection_processor_dispatch(
 
         // pass the message to the transaction manager
         struct ws_reply* reply = ws_action_manager_process(msg, &proc->obj);
-        ws_object_unref((struct ws_object*) msg);
+        ws_object_unref(&msg->obj);
         if (!reply) {
             // reply being `NULL` can have a number of reasons
             continue;
@@ -270,12 +272,12 @@ connection_processor_dispatch(
         // check whether we _can_ send a reply
         if (!proc->serializer) {
             // nope, we can't
-            ws_object_unref((struct ws_object*) reply);
+            ws_object_unref(&reply->m.obj);
             continue;
         }
 
         // flush the buffer
-        res = connection_processor_flush_msg(proc, (struct ws_message*) reply);
+        res = connection_processor_flush_msg(proc, &reply->m);
         if (res < 0) {
             break;
         }
