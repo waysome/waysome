@@ -191,7 +191,7 @@ frame_buffer_deinit(
         dreq.handle = self->handle;
         drmIoctl(self->fb_dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
     }
-    ws_object_unref((struct ws_object*) self->fb_dev);
+    ws_object_unref(&self->fb_dev->obj);
     return true;
 }
 
