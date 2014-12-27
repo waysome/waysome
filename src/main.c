@@ -56,6 +56,18 @@ handle_sig(
     ev_unloop(loop, EVUNLOOP_ALL);
 }
 
+static void
+handle_child(
+    EV_P_
+    ev_child* c,
+    int revents
+) {
+    ws_log(&log_main, LOG_INFO, "Process %d exited with status %x",
+            c->rpid, c->rstatus);
+
+    ev_child_stop(EV_A_ c);
+}
+
 int
 main(
     int argc,
@@ -85,6 +97,10 @@ main(
     struct ev_signal sigterm_watcher;
     ev_signal_init(&sigterm_watcher, handle_sig, SIGTERM);
     ev_signal_start(default_loop, &sigterm_watcher);
+
+    ev_child pid_ofile;
+    ev_child_init(&pid_ofile, handle_child, -1, 0);
+    ev_child_start(default_loop, &pid_ofile);
 
     retval = ws_logger_init();
     if (retval != 0) {
