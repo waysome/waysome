@@ -102,6 +102,15 @@ connection_processor_hash_callback(
     struct ws_object* const
 );
 
+/**
+ * Compare callback for commmand processor
+ */
+int
+connection_processor_cmp_callback(
+    struct ws_object const*,
+    struct ws_object const*
+);
+
 /*
  *
  * Interface implementation
@@ -117,7 +126,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
 
     .hash_callback = connection_processor_hash_callback,
     .deinit_callback = connection_processor_deinit,
-    .cmp_callback = NULL,
+    .cmp_callback = connection_processor_cmp_callback,
     .uuid_callback = NULL,
 
     .attribute_table = NULL,
@@ -421,5 +430,15 @@ connection_processor_hash_callback(
     struct ws_connector* const cn = (struct ws_connector* const) self;
 
     return (size_t) (SIZE_MAX / (ABS(cn->fd) + 1));
+}
+
+int
+connection_processor_cmp_callback(
+    struct ws_object const* self_,
+    struct ws_object const* other_
+) {
+    struct ws_connector* const self = (struct ws_connector* const) self_;
+    struct ws_connector* const other = (struct ws_connector* const) other_;
+    return signum(self->fd - other->fd);
 }
 
