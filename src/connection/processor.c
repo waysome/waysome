@@ -29,6 +29,7 @@
 #include <ev.h>
 #include <malloc.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <unistd.h>
 
 #include "action/manager.h"
@@ -42,6 +43,7 @@
 #include "serialize/deserializer.h"
 #include "serialize/serializer.h"
 #include "util/error.h"
+#include "util/arithmetical.h"
 
 /*
  *
@@ -94,6 +96,22 @@ connection_processor_deinit(
     struct ws_object * obj
 );
 
+/**
+ * Hash callback for command processor
+ */
+size_t
+connection_processor_hash_callback(
+    struct ws_object* const
+);
+
+/**
+ * Compare callback for commmand processor
+ */
+int
+connection_processor_cmp_callback(
+    struct ws_object const*,
+    struct ws_object const*
+);
 
 /*
  *
@@ -108,9 +126,9 @@ ws_object_type_id WS_OBJECT_TYPE_ID_COMMAND_PROCESSOR = {
     .supertype  = &WS_OBJECT_TYPE_ID_OBJECT,
     .typestr    = "ws_connection_processor",
 
-    .hash_callback = NULL,
+    .hash_callback = connection_processor_hash_callback,
     .deinit_callback = connection_processor_deinit,
-    .cmp_callback = NULL,
+    .cmp_callback = connection_processor_cmp_callback,
     .uuid_callback = NULL,
 
     .attribute_table = NULL,
@@ -399,5 +417,30 @@ connection_processor_deinit(
     }
 
     return true;
+}
+
+/*
+ *
+ * static function implementations
+ *
+ */
+
+size_t
+connection_processor_hash_callback(
+    struct ws_object* const self
+) {
+    struct ws_connector* const cn = (struct ws_connector* const) self;
+
+    return (size_t) (SIZE_MAX / (ABS(cn->fd) + 1));
+}
+
+int
+connection_processor_cmp_callback(
+    struct ws_object const* self_,
+    struct ws_object const* other_
+) {
+    struct ws_connector* const self = (struct ws_connector* const) self_;
+    struct ws_connector* const other = (struct ws_connector* const) other_;
+    return signum(self->fd - other->fd);
 }
 
