@@ -93,6 +93,20 @@ ws_connection_processor_start(
 __ws_nonnull__(1)
 ;
 
+/**
+ * Close a connection
+ *
+ * @note it's save to call this function multiple times
+ *
+ * @return 0 on success, a negative error value otherwise
+ */
+int
+ws_connection_processor_close(
+    struct ws_connection_processor* conn //!< connection processor to start
+)
+__ws_nonnull__(1)
+;
+
 #endif // __WS_CONNECTION_PROCESSOR_H__
 
 /**

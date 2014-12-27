@@ -163,6 +163,7 @@ int
 ws_connection_manager_close_connection(
     struct ws_connection_processor* proc
 ) {
+    ws_connection_processor_close(proc);
     return ws_set_remove(&connman.connections, &proc->obj);
 }
 
