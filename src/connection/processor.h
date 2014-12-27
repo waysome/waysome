@@ -54,7 +54,7 @@ struct ws_connection_processor {
     struct ws_serializer* serializer; //!< @protected serializer to use
     ev_io dispatcher; //!< @protected dispatching watcher
     ev_prepare flusher; //!< @protected flushing watcher
-    bool is_init; //!< @protected flag indicating whether it's started
+    bool is_started; //!< @protected flag indicating whether it's started
 };
 
 /**

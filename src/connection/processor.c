@@ -212,7 +212,7 @@ ws_connection_processor_start(
     }
 
     // mark the object as initialized
-    conn->is_init = true;
+    conn->is_started = true;
 
     ws_object_unlock(&conn->obj);
     return 0;
@@ -224,8 +224,8 @@ ws_connection_processor_close(
 ) {
     ws_object_lock_write(&conn->obj);
 
-    if (conn->is_init) {
-        conn->is_init = false;
+    if (conn->is_started) {
+        conn->is_started = false;
 
         ev_io_stop(EV_DEFAULT_ &conn->dispatcher);
         if (conn->serializer) {
