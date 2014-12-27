@@ -144,6 +144,10 @@ ws_connection_manager_open_connection(
         goto clean_deser;
     }
 
+    if (ws_connection_processor_start(p) < 0) {
+        goto clean_deser;
+    }
+
     goto out;
 clean_deser:
     ws_deserializer_deinit(deser);
@@ -159,6 +163,7 @@ int
 ws_connection_manager_close_connection(
     struct ws_connection_processor* proc
 ) {
+    ws_connection_processor_close(proc);
     return ws_set_remove(&connman.connections, &proc->obj);
 }
 

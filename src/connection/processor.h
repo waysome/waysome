@@ -54,7 +54,7 @@ struct ws_connection_processor {
     struct ws_serializer* serializer; //!< @protected serializer to use
     ev_io dispatcher; //!< @protected dispatching watcher
     ev_prepare flusher; //!< @protected flushing watcher
-    bool is_init; //!< @protected flag indicating whether it's initialized
+    bool is_started; //!< @protected flag indicating whether it's started
 };
 
 /**
@@ -79,6 +79,32 @@ ws_connection_processor_new(
     struct ws_serializer* serializer //!< serializer to use
 )
 __ws_nonnull__(2)
+;
+
+/**
+ * Start a connection
+ *
+ * @return 0 on success, a negative error value otherwise
+ */
+int
+ws_connection_processor_start(
+    struct ws_connection_processor* conn //!< connection processor to start
+)
+__ws_nonnull__(1)
+;
+
+/**
+ * Close a connection
+ *
+ * @note it's save to call this function multiple times
+ *
+ * @return 0 on success, a negative error value otherwise
+ */
+int
+ws_connection_processor_close(
+    struct ws_connection_processor* conn //!< connection processor to start
+)
+__ws_nonnull__(1)
 ;
 
 #endif // __WS_CONNECTION_PROCESSOR_H__

@@ -200,16 +200,11 @@ ws_connection_processor_new(
     // initialize watchers
     ev_io_init(&retval->dispatcher, connection_processor_dispatch, fd, EV_READ);
     retval->dispatcher.data = retval;
-    ev_io_start(loop, &retval->dispatcher);
 
     if (serializer) {
         ev_prepare_init(&retval->flusher, connection_processor_flush);
         retval->flusher.data    = retval;
-        ev_prepare_start(loop, &retval->flusher);
     }
-
-    // mark the object as initialized
-    retval->is_init = true;
 
     // return the command processor
     return retval;
@@ -221,6 +216,43 @@ cleanup_mem:
     free(retval);
 
     return NULL;
+}
+
+int
+ws_connection_processor_start(
+    struct ws_connection_processor* conn
+) {
+    ws_object_lock_write(&conn->obj);
+
+    ev_io_start(EV_DEFAULT_ &conn->dispatcher);
+    if (conn->serializer) {
+        ev_prepare_start(EV_DEFAULT_ &conn->flusher);
+    }
+
+    // mark the object as initialized
+    conn->is_started = true;
+
+    ws_object_unlock(&conn->obj);
+    return 0;
+}
+
+int
+ws_connection_processor_close(
+    struct ws_connection_processor* conn
+) {
+    ws_object_lock_write(&conn->obj);
+
+    if (conn->is_started) {
+        conn->is_started = false;
+
+        ev_io_stop(EV_DEFAULT_ &conn->dispatcher);
+        if (conn->serializer) {
+            ev_prepare_start(EV_DEFAULT_ &conn->flusher);
+        }
+    }
+
+    ws_object_unlock(&conn->obj);
+    return 0;
 }
 
 
@@ -392,28 +424,14 @@ connection_processor_deinit(
 ) {
     struct ws_connection_processor* proc = (struct ws_connection_processor*) obj;
 
-    if (!proc->is_init) {
-        return true;
-    }
-
-    proc->is_init = false;
+    // close for good messure
+    ws_connection_manager_close_connection(proc);
 
     ws_connector_deinit(&proc->conn);
 
     ws_deserializer_deinit(proc->deserializer);
     if (proc->serializer) {
         ws_serializer_deinit(proc->serializer);
-    }
-
-    // now get the libev loop
-    struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
-    if (!loop) {
-        return true;
-    }
-
-    ev_io_stop(loop, &proc->dispatcher);
-    if (proc->serializer) {
-        ev_prepare_start(loop, &proc->flusher);
     }
 
     return true;
