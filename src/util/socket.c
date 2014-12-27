@@ -148,13 +148,6 @@ int
 ws_socket_create(
     char const* name
 ) {
-    char* xdg_env = getenv(XDG_RUNTIME_DIR);
-
-    if (!xdg_env) {
-        ws_log(&log_ctx, LOG_WARNING, "XDG_RUNTIME_DIR is not set!");
-        xdg_env = "/tmp";
-    }
-
     /* Sock(et)s!
      *  mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm
      *  | |   | |   | |   | |   | |   | |   | |   | |   | |   | |   | |   | |
@@ -170,14 +163,14 @@ ws_socket_create(
     }
 
     struct sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+
     addr.sun_family = AF_UNIX;
 
-    int length = snprintf(addr.sun_path, UNIX_PATH_MAX, "%s/%s", xdg_env, name);
-
-    if (!length || length >= UNIX_PATH_MAX) {
-        ws_log(&log_ctx, LOG_ERR, "Could not create socket at %s/%s",
-                xdg_env, name);
-        return -1;
+    int retval = build_path(name, addr.sun_path);
+    if (retval < 0) {
+        ws_log(&log_ctx, LOG_ERR, "Couldn't create socket %s", addr.sun_path);
+        return retval;
     }
 
     int res = bind(sock, (struct sockaddr*) &addr, sizeof(addr));
