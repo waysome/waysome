@@ -111,7 +111,7 @@ ws_monitor_new(
     void
 ) {
     struct ws_monitor* tmp = calloc(1, sizeof(*tmp));
-    ws_object_init((struct ws_object*) tmp);
+    ws_object_init(&tmp->obj);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_MONITOR;
     tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
 
@@ -217,8 +217,8 @@ ws_monitor_set_mode_with_id(
     ws_log(&log_ctx, LOG_DEBUG, "Published a mode.");
 
     // Let's tell wayland that this is the current mode!
-    wl_output_send_mode((struct wl_resource*) self->resource,
-            WL_OUTPUT_MODE_CURRENT, self->current_mode->mode.hdisplay,
+    wl_output_send_mode(self->resource, WL_OUTPUT_MODE_CURRENT,
+            self->current_mode->mode.hdisplay,
             self->current_mode->mode.vdisplay,
             // The buffer and wayland differ on which unit to use
             self->current_mode->mode.vrefresh * 1000);
@@ -232,7 +232,7 @@ ws_monitor_copy_mode(
     struct ws_monitor_mode* mode = ws_monitor_mode_new();
     memcpy(&mode->mode, src, sizeof(*src));
     mode->id = self->mode_count++;
-    ws_set_insert(&self->modes, (struct ws_object*) mode);
+    ws_set_insert(&self->modes, &mode->obj);
     return mode;
 }
 
@@ -257,7 +257,7 @@ ws_monitor_add_mode(
     mode->mode.vdisplay = height;
     mode->mode.clock = 155;
     //!< @todo: Add more information like vsync etc...
-    ws_set_insert(&self->modes, (struct ws_object*) mode);
+    ws_set_insert(&self->modes, &mode->obj);
     return mode;
 }
 

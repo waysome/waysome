@@ -91,7 +91,7 @@ ws_builtin_cmd_call(
         }
 
         name = ws_string_raw(buf); //name is a copy
-        ws_object_unref((struct ws_object*) buf);
+        ws_object_unref(&buf->obj);
         if (!name) {
             return -EINVAL;
         }

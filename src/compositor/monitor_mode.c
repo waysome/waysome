@@ -74,7 +74,7 @@ ws_monitor_mode_new(
     void
 ) {
     struct ws_monitor_mode* tmp = calloc(1, sizeof(*tmp));
-    ws_object_init((struct ws_object*) tmp);
+    ws_object_init(&tmp->obj);
     tmp->obj.id = &WS_OBJECT_TYPE_ID_MONITOR_MODE;
     tmp->obj.settings |= WS_OBJECT_HEAPALLOCED;
 

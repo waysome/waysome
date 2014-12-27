@@ -148,10 +148,10 @@ cleanup_gbm:
     gbm_surface_destroy(self->gbm_surf);
 
 cleanup_ref:
-    ws_object_unref((struct ws_object*) self->dev);
+    ws_object_unref(&self->dev->obj);
 
 cleanup_obj:
-    ws_object_deinit((struct ws_object*) self);
+    ws_object_deinit(&self->buf.obj);
     return -1;
 }
 
@@ -197,7 +197,7 @@ egl_buffer_deinit(
 
     // deinitialize the GBM surface and the reference to the framebuffer device
     gbm_surface_destroy(self->gbm_surf);
-    ws_object_unref((struct ws_object*) self->dev);
+    ws_object_unref(&self->dev->obj);
 
     return true;
 }

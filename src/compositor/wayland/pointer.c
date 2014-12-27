@@ -182,7 +182,7 @@ set_cursor(
         return;
     }
     struct ws_surface* sf = ws_surface_from_resource(surface);
-    struct ws_buffer* buffer = (struct ws_buffer*) &sf->img_buf.buf;
+    struct ws_buffer* buffer = &sf->img_buf.buf;
 
     ws_surface_set_role(sf, &wl_pointer_interface);
 

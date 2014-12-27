@@ -260,7 +260,7 @@ ws_hotkey_dag_remove(
     if (!(node && node->event)) {
         return -EEXIST;
     }
-    ws_object_unref((struct ws_object*) node->event);
+    ws_object_unref(&node->event->obj);
     node->event = NULL;
 
     // check whether to keep the node

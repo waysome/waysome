@@ -89,15 +89,14 @@ ws_wayland_client_get(
 
     struct ws_wayland_client dum;
     memset(&dum, 0, sizeof(dum));
-    ws_object_init((struct ws_object*) &dum);
+    ws_object_init(&dum.obj);
     dum.obj.id = &WS_OBJECT_TYPE_ID_WAYLAND_CLIENT;
     dum.client = c;
 
-    struct ws_wayland_client* found = (struct ws_wayland_client*) ws_set_get(
-            &clients,
-            (struct ws_object*) &dum
-    );
-    ws_object_deinit((struct ws_object*) &dum);
+    struct ws_wayland_client* found;
+    found = (struct ws_wayland_client*) ws_set_get(&clients, &dum.obj);
+
+    ws_object_deinit(&dum.obj);
 
     if (found) {
         return found;
@@ -116,7 +115,7 @@ ws_wayland_client_get(
     self->client = c;
     wl_list_init(&self->resources);
 
-    ws_set_insert(&clients, (struct ws_object*) self);
+    ws_set_insert(&clients, &self->obj);
 
     return self;
 }

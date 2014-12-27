@@ -129,9 +129,9 @@ ws_action_manager_init(
     return 0;
 
 cleanup_registrations:
-    ws_object_deinit((struct ws_object*) &actman_ctx.registrations);
+    ws_object_deinit(&actman_ctx.registrations.obj);
 cleanup_transactions:
-    ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
+    ws_object_deinit(&actman_ctx.transactions.obj);
     ws_object_unref(actman_ctx.obj);
     return res;
 }
@@ -162,13 +162,13 @@ ws_action_manager_process(
         if (flags & WS_TRANSACTION_FLAGS_REGISTER) {
             // register the transaction for later invokation
             int res = ws_set_insert(&actman_ctx.transactions,
-                                    (struct ws_object*) transaction);
+                                    &transaction->m.obj);
             if (res < 0) {
                 struct ws_error_reply* rep;
                 rep = ws_error_reply_new(transaction, -res,
                                          "Could not register transaction",
                                          NULL);
-                return (struct ws_reply*) rep;
+                return &rep->reply;
             }
         }
 
@@ -200,7 +200,7 @@ ws_action_manager_process(
             struct ws_named* named;
             named = set_get(&actman_ctx.registrations, &comparable);
 
-            ws_object_deinit((struct ws_object*) &comparable);
+            ws_object_deinit(&comparable.str.obj);
 
             // extract the transaction to run
             if (named) {
@@ -217,7 +217,7 @@ ws_action_manager_process(
             }
 
             transaction = set_get(&actman_ctx.transactions, &comparable);
-            ws_object_deinit((struct ws_object*) &comparable);
+            ws_object_deinit(&comparable.m.obj);
         }
 
         // check whether we _have_ a transaction
@@ -231,11 +231,11 @@ ws_action_manager_process(
                                 &ws_event_get_context(event)->value,
                                 vctx);
         if (reply) {
-            ws_object_unref((struct ws_object*) reply);
+            ws_object_unref(&reply->m.obj);
         }
 
 cleanup_name:
-        ws_object_unref((struct ws_object*) name);
+        ws_object_unref(&name->obj);
         return NULL;
     }
 
@@ -260,22 +260,22 @@ ws_action_manager_register(
 
     struct ws_transaction* transaction;
     transaction = set_get(&actman_ctx.transactions, &comparable);
-    ws_object_deinit((struct ws_object*) &comparable);
+    ws_object_deinit(&comparable.m.obj);
     if (!transaction) {
         return -ENOENT;
     }
 
     // construct a named object
     struct ws_named* named = ws_named_new(event_name,
-                                          (struct ws_object*) transaction);
+                                          &transaction->m.obj);
     if (!named) {
         return -ENOMEM;
     }
 
     // finally, insert the new named object
-    res = ws_set_insert(&actman_ctx.registrations, (struct ws_object*) named);
+    res = ws_set_insert(&actman_ctx.registrations, &named->str.obj);
     if (res < 0) {
-        ws_object_unref((struct ws_object*) named);
+        ws_object_unref(&named->str.obj);
         return res;
     }
 
@@ -298,11 +298,10 @@ ws_action_manager_unregister_event(
     }
 
     // perform the removal
-    res = ws_set_remove(&actman_ctx.registrations,
-                            (struct ws_object*) &comparable);
+    res = ws_set_remove(&actman_ctx.registrations, &comparable.str.obj);
 
     // get rid of the comparable before returning
-    ws_object_deinit((struct ws_object*) &comparable);
+    ws_object_deinit(&comparable.str.obj);
     return res;
 }
 
@@ -321,11 +320,10 @@ ws_action_manager_unregister_transaction(
     }
 
     // perform the removal
-    res = ws_set_remove(&actman_ctx.transactions,
-                            (struct ws_object*) &comparable);
+    res = ws_set_remove(&actman_ctx.transactions, &comparable.m.obj);
 
     // get rid of the comparable before returning
-    ws_object_deinit((struct ws_object*) &comparable);
+    ws_object_deinit(&comparable.m.obj);
     return res;
 }
 
@@ -371,8 +369,7 @@ run_transaction(
 
         // initialize the global context
         ws_value_union_reinit(bottom, WS_VALUE_TYPE_OBJECT_ID);
-        ws_value_object_id_set((struct ws_value_object_id*) bottom,
-                               actman_ctx.obj);
+        ws_value_object_id_set(&bottom->object_id, actman_ctx.obj);
 
         // initialize the event context
         ++bottom;
@@ -443,8 +440,8 @@ static void
 action_manager_deinit(
     void* dummy
 ) {
-    ws_object_deinit((struct ws_object*) &actman_ctx.transactions);
-    ws_object_deinit((struct ws_object*) &actman_ctx.registrations);
-    ws_object_deinit((struct ws_object*) &actman_ctx);
+    ws_object_deinit(&actman_ctx.transactions.obj);
+    ws_object_deinit(&actman_ctx.registrations.obj);
+    ws_object_unref(actman_ctx.obj);
 }
 

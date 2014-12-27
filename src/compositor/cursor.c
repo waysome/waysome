@@ -82,7 +82,7 @@ ws_cursor_new(
     struct ws_image_buffer* cur
 ) {
     struct ws_cursor* self = calloc(1, sizeof(*self));
-    ws_object_init((struct ws_object*) self);
+    ws_object_init(&self->obj);
     self->obj.id = &WS_OBJECT_TYPE_ID_CURSOR;
     self->cur_fb_dev = dev;
     self->cursor_fb = ws_frame_buffer_new(dev, CURSOR_SIZE, CURSOR_SIZE);
@@ -92,8 +92,8 @@ ws_cursor_new(
     self->x = 350;
     self->y = 350;
     self->default_cursor = cur;
-    ws_buffer_blit((struct ws_buffer*) self->cursor_fb,
-                    (struct ws_buffer*) self->default_cursor);
+    ws_buffer_blit(&self->cursor_fb->obj.obj,
+                   &self->default_cursor->raw.obj);
 
     return self;
 }
@@ -151,7 +151,7 @@ ws_cursor_set_active_surface(
 
     // Did we leave the old surface? Well, send a leave event
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) old_surface);
+            &old_surface->wl_obj);
     if (old_surface != self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
 
@@ -170,8 +170,7 @@ ws_cursor_set_active_surface(
     }
 
     // Did we enter a new surface? Send a enter event!
-    res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) self->active_surface);
+    res = ws_wayland_obj_get_wl_resource(&self->active_surface->wl_obj);
     if (self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
 
@@ -201,8 +200,8 @@ ws_cursor_set_position(
     int x,
     int y
 ) {
-    int w = ws_buffer_width((struct ws_buffer*) self->cur_mon->buffer);
-    int h = ws_buffer_height((struct ws_buffer*) self->cur_mon->buffer);
+    int w = ws_buffer_width(&self->cur_mon->buffer->obj.obj);
+    int h = ws_buffer_height(&self->cur_mon->buffer->obj.obj);
 
     // We use the negative hotspot position because we don't want it to go
     // off screen.
@@ -253,8 +252,8 @@ void
 ws_cursor_redraw(
     struct ws_cursor* self
 ) {
-    int w = ws_buffer_width((struct ws_buffer*) self->cursor_fb);
-    int h = ws_buffer_height((struct ws_buffer*) self->cursor_fb);
+    int w = ws_buffer_width(&self->cursor_fb->obj.obj);
+    int h = ws_buffer_height(&self->cursor_fb->obj.obj);
 
     int retval = drmModeSetCursor2(self->cur_fb_dev->fd,
                                     self->cur_mon->crtc,
@@ -278,15 +277,15 @@ ws_cursor_set_image(
     struct ws_cursor* self,
     struct ws_buffer* img
 ) {
-    memset(ws_buffer_data((struct ws_buffer*) self->cursor_fb), 0,
-            ws_buffer_stride((struct ws_buffer*) self->cursor_fb) *
-            ws_buffer_height((struct ws_buffer*) self->cursor_fb));
+    memset(ws_buffer_data(&self->cursor_fb->obj.obj), 0,
+            ws_buffer_stride(&self->cursor_fb->obj.obj) *
+            ws_buffer_height(&self->cursor_fb->obj.obj));
     ws_log(&log_ctx, LOG_DEBUG, "Setting new cursor image");
     if (!img) {
         img = (struct ws_buffer*) self->default_cursor;
         ws_cursor_set_hotspot(self, 1, 1);
     }
-        ws_buffer_blit((struct ws_buffer*) self->cursor_fb, img);
+        ws_buffer_blit(&self->cursor_fb->obj.obj, img);
 }
 
 void
@@ -326,7 +325,7 @@ ws_cursor_set_button_state(
     }
 
     struct wl_resource* res = ws_wayland_obj_get_wl_resource(
-            (struct ws_wayland_obj*) self->active_surface);
+            &self->active_surface->wl_obj);
     if (self->active_surface && res) {
         struct ws_wayland_client* client = ws_wayland_client_get(res->client);
 
@@ -351,7 +350,7 @@ deinit_cursor(
         struct ws_object* s
 ) {
     struct ws_cursor* self = (struct ws_cursor*) s;
-    ws_object_unref((struct ws_object*) self->cursor_fb);
+    ws_object_unref(&self->cursor_fb->obj.obj.obj);
     return true;
 }
 

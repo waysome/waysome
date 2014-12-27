@@ -131,8 +131,7 @@ ws_hotkey_event_new(
     uint16_t* codes,
     uint16_t code_num
 ) {
-    struct ws_hotkey_event* retval;
-    retval = (struct ws_hotkey_event*) calloc(1, sizeof(*retval));
+    struct ws_hotkey_event* retval = calloc(1, sizeof(*retval));
     if (!retval) {
         return NULL;
     }
