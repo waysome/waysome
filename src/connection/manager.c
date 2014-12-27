@@ -144,6 +144,10 @@ ws_connection_manager_open_connection(
         goto clean_deser;
     }
 
+    if (ws_connection_processor_start(p) < 0) {
+        goto clean_deser;
+    }
+
     goto out;
 clean_deser:
     ws_deserializer_deinit(deser);

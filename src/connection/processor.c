@@ -182,16 +182,11 @@ ws_connection_processor_new(
     // initialize watchers
     ev_io_init(&retval->dispatcher, connection_processor_dispatch, fd, EV_READ);
     retval->dispatcher.data = retval;
-    ev_io_start(loop, &retval->dispatcher);
 
     if (serializer) {
         ev_prepare_init(&retval->flusher, connection_processor_flush);
         retval->flusher.data    = retval;
-        ev_prepare_start(loop, &retval->flusher);
     }
-
-    // mark the object as initialized
-    retval->is_init = true;
 
     // return the command processor
     return retval;
@@ -203,6 +198,24 @@ cleanup_mem:
     free(retval);
 
     return NULL;
+}
+
+int
+ws_connection_processor_start(
+    struct ws_connection_processor* conn
+) {
+    ws_object_lock_write(&conn->obj);
+
+    ev_io_start(EV_DEFAULT_ &conn->dispatcher);
+    if (conn->serializer) {
+        ev_prepare_start(EV_DEFAULT_ &conn->flusher);
+    }
+
+    // mark the object as initialized
+    conn->is_init = true;
+
+    ws_object_unlock(&conn->obj);
+    return 0;
 }
 
 
