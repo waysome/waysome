@@ -42,6 +42,17 @@
 
 static struct ws_logger_context log_ctx = { .prefix = "[Sockets Utils] " };
 
+/**
+ * Build a path with the file name, using the xdg runtime dir
+ *
+ * @return zero on success or negative errno.h on failure
+ */
+static int
+build_path(
+    const char* name, //!< The name of the file
+    char* dest //!< The destination for the path, must =< UNIX_PATH_MAX bytes
+);
+
 static void
 socket_build_connection_cb(
     struct ev_loop* loop,
@@ -171,5 +182,26 @@ ws_socket_create(
     }
 
     return sock;
+}
+
+static int
+build_path(
+    const char* name,
+    char* dest
+) {
+    char* xdg_env = getenv(XDG_RUNTIME_DIR);
+
+    if (!xdg_env) {
+        ws_log(&log_ctx, LOG_WARNING, "XDG_RUNTIME_DIR is not set!");
+        xdg_env = "/tmp";
+    }
+
+    int length = snprintf(dest, UNIX_PATH_MAX, "%s/%s", xdg_env, name);
+
+    if (length < 0) {
+        return length;
+    }
+
+    return 0;
 }
 
