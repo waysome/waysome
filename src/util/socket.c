@@ -129,7 +129,18 @@ ws_socket_deinit(
 ) {
     struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
     ev_io_stop(loop, &sock->io);
-    unlink(sock->path);
+
+    char sockname[UNIX_PATH_MAX];
+    memset(sockname, 0, UNIX_PATH_MAX);
+
+    int retval = build_path(sock->path, sockname);
+    if (retval < 0) {
+        return retval;
+    }
+
+    if (unlink(sockname) != 0) {
+        ws_log(&log_ctx, LOG_WARNING, "Could not unlink() -> errno: %i", errno);
+    }
     return (close(sock->fd) != 0) ? -errno : 0;
 }
 
