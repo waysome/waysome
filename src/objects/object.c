@@ -826,6 +826,13 @@ ws_object_has_cmd(
     return false;
 }
 
+const char*
+ws_object_typename(
+    struct ws_object const* self //!< The object
+) {
+    return (self ? self->id->typestr : NULL);
+}
+
 /*
  *
  * static function implementations
