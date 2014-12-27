@@ -489,8 +489,10 @@ flatten_tab(
         // if we have only one child, we can easily pull out the old root
         size_t pos = (child - tab->nodes.tab) <<
                      (DAG_TAB_CHILD_NUM_EXP * tab->depth);
+
+        void* new_val = *child;
         free(tab->nodes.tab);
-        tab->nodes.tab = child;
+        tab->nodes.tab = new_val;
 
         // we have to adjust depth and start
         --tab->depth;
