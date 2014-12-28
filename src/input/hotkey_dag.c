@@ -152,7 +152,7 @@ void
 ws_hotkey_dag_deinit(
     struct ws_hotkey_dag_node* entry_node
 ) {
-    destruct_tab_node(entry_node->table.nodes.tab, entry_node->table.start);
+    destruct_tab_node(entry_node->table.nodes.tab, entry_node->table.depth);
     entry_node->table.nodes.tab = NULL;
     entry_node->table.start = 0;
     entry_node->table.depth = 0;
