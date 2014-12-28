@@ -167,6 +167,7 @@ START_TEST (test_input_dag_insert_hotkey_events_into_dag) {
     nxt = ws_hotkey_dag_next(nxt,   trav_codes_5_fail[1]);
     ck_assert(nxt == NULL); // There is no keycode 1-3-15 combo
 
+    ws_hotkey_dag_deinit(node);
     ws_object_unref((struct ws_object*) tmpname);
     ws_object_unref((struct ws_object*) ev1);
     ws_object_unref((struct ws_object*) ev2);
@@ -226,6 +227,7 @@ START_TEST (test_input_dag_insert_traverse_remove_traverse) {
     nxt = ws_hotkey_dag_next(node, 1); // should return NULL
     ck_assert(nxt == NULL);
 
+    ws_hotkey_dag_deinit(node);
     ws_object_unref((struct ws_object*) tmpname);
     ws_object_unref((struct ws_object*) ev1);
     ws_object_unref((struct ws_object*) ev2);
@@ -251,6 +253,7 @@ START_TEST (test_input_dag_insert_multiple) {
     ck_assert(ws_hotkey_dag_remove(node, ev) == 0);
     ck_assert(ws_hotkey_dag_insert(node, ev) == 0);
 
+    ws_hotkey_dag_deinit(node);
     free(node);
     ws_object_unref((struct ws_object*) ev);
     ws_object_unref((struct ws_object*) name);
@@ -277,6 +280,7 @@ START_TEST (test_input_dag_insert) {
     ck_assert(ev_ref_count + 1 == ev->obj.ref_counting.refcnt);
     ws_object_unref((struct ws_object*) ev);
 
+    ws_hotkey_dag_deinit(node);
     free(node);
     ws_object_unref((struct ws_object*) name);
 }
