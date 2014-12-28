@@ -42,6 +42,17 @@
 
 static struct ws_logger_context log_ctx = { .prefix = "[Sockets Utils] " };
 
+/**
+ * Build a path with the file name, using the xdg runtime dir
+ *
+ * @return zero on success or negative errno.h on failure
+ */
+static int
+build_path(
+    const char* name, //!< The name of the file
+    char* dest //!< The destination for the path, must =< UNIX_PATH_MAX bytes
+);
+
 static void
 socket_build_connection_cb(
     struct ev_loop* loop,
@@ -118,7 +129,18 @@ ws_socket_deinit(
 ) {
     struct ev_loop* loop = ev_default_loop(EVFLAG_AUTO);
     ev_io_stop(loop, &sock->io);
-    unlink(sock->path);
+
+    char sockname[UNIX_PATH_MAX];
+    memset(sockname, 0, UNIX_PATH_MAX);
+
+    int retval = build_path(sock->path, sockname);
+    if (retval < 0) {
+        return retval;
+    }
+
+    if (unlink(sockname) != 0) {
+        ws_log(&log_ctx, LOG_WARNING, "Could not unlink() -> errno: %i", errno);
+    }
     return (close(sock->fd) != 0) ? -errno : 0;
 }
 
@@ -126,13 +148,6 @@ int
 ws_socket_create(
     char const* name
 ) {
-    char* xdg_env = getenv(XDG_RUNTIME_DIR);
-
-    if (!xdg_env) {
-        ws_log(&log_ctx, LOG_WARNING, "XDG_RUNTIME_DIR is not set!");
-        xdg_env = "/tmp";
-    }
-
     /* Sock(et)s!
      *  mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm   mmm
      *  | |   | |   | |   | |   | |   | |   | |   | |   | |   | |   | |   | |
@@ -148,14 +163,14 @@ ws_socket_create(
     }
 
     struct sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+
     addr.sun_family = AF_UNIX;
 
-    int length = snprintf(addr.sun_path, UNIX_PATH_MAX, "%s/%s", xdg_env, name);
-
-    if (!length || length >= UNIX_PATH_MAX) {
-        ws_log(&log_ctx, LOG_ERR, "Could not create socket at %s/%s",
-                xdg_env, name);
-        return -1;
+    int retval = build_path(name, addr.sun_path);
+    if (retval < 0) {
+        ws_log(&log_ctx, LOG_ERR, "Couldn't create socket %s", addr.sun_path);
+        return retval;
     }
 
     int res = bind(sock, (struct sockaddr*) &addr, sizeof(addr));
@@ -171,5 +186,26 @@ ws_socket_create(
     }
 
     return sock;
+}
+
+static int
+build_path(
+    const char* name,
+    char* dest
+) {
+    char* xdg_env = getenv(XDG_RUNTIME_DIR);
+
+    if (!xdg_env) {
+        ws_log(&log_ctx, LOG_WARNING, "XDG_RUNTIME_DIR is not set!");
+        xdg_env = "/tmp";
+    }
+
+    int length = snprintf(dest, UNIX_PATH_MAX, "%s/%s", xdg_env, name);
+
+    if (length < 0) {
+        return length;
+    }
+
+    return 0;
 }
 
