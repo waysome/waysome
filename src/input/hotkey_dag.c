@@ -31,6 +31,7 @@
 
 #include "input/hotkey_dag.h"
 #include "input/hotkey_event.h"
+#include "util/arithmetical.h"
 
 
 #define DAG_TAB_CHILD_NUM_EXP (4)
@@ -76,33 +77,21 @@ static void**
 create_tab_node(void);
 
 /**
- * Destruct a DAG node
- */
-static void
-destruct_dag_node(
-    struct ws_hotkey_dag_node* node //!< node to destruct (and free)
-)
-__ws_nonnull__(1)
-;
-
-/**
  * Destruct a tab node
  */
 static void
 destruct_tab_node(
     void* tab_node, //!< tab node to destruct
-    uint8_t depth //!< depth of the node to destruct
+    int_fast8_t depth //!< depth of the node to destruct
 );
 
 /**
  * Remove an event from the tree given by it's root
  *
- * @note the removal is done by simple nullification.
- *
  * @return 0 on success, a negative error value on error
  */
-static struct ws_hotkey_dag_tab
-removal_point_in_tab_node(
+int
+remove_point_in_tab_node(
     struct ws_hotkey_dag_tab tab, //!< table to remove the event from
     uint_fast16_t code //!< remove a code from a node tree
 );
@@ -152,7 +141,7 @@ void
 ws_hotkey_dag_deinit(
     struct ws_hotkey_dag_node* entry_node
 ) {
-    destruct_tab_node(entry_node->table.nodes.tab, entry_node->table.start);
+    destruct_tab_node(entry_node->table.nodes.tab, entry_node->table.depth);
     entry_node->table.nodes.tab = NULL;
     entry_node->table.start = 0;
     entry_node->table.depth = 0;
@@ -278,23 +267,8 @@ ws_hotkey_dag_remove(
     }
 
     // get the point where we may start the removal and commence destruction!
-    struct ws_hotkey_dag_tab tab;
-    memset(&tab, 0, sizeof(tab));
-
-    tab = removal_point_in_tab_node(last_keep->table, rem_code);
-    if (tab.nodes.tab) {
-        // we have a node to return
-        destruct_tab_node((void*) tab.nodes.tab, tab.depth);
-        flatten_tab(&last_keep->table);
-    } else if (last_keep->table.depth == 0) {
-        // the root node holds a ref to a DAG node which we have to remove
-        struct ws_hotkey_dag_node** to_del;
-        to_del = last_keep->table.nodes.dag +
-                 (rem_code - last_keep->table.start);
-
-        destruct_dag_node(*to_del);
-        *to_del = NULL;
-    }
+    remove_point_in_tab_node(last_keep->table, rem_code);
+    flatten_tab(&last_keep->table);
 
     return 0;
 }
@@ -365,32 +339,43 @@ add_roots_for(
         if (!tab->nodes.tab) {
             return -ENOMEM;
         }
-        if (tab->depth == 0) {
-            tab->start = code & ~(DAG_TAB_CHILD_NUM - 1);
+        tab->depth = 0;
+        tab->start = code & ~(DAG_TAB_CHILD_NUM - 1);
+        return 0;
+    }
+
+    // determine the number of nodes by which to extend the tree upwards
+    int_fast8_t step = 0;
+    {
+        // calculate the position of the current node relative to the new root
+        uint_fast16_t diff = ABS((code - tab->start)) >>
+                             (DAG_TAB_CHILD_NUM_EXP * tab->depth);
+
+        // we "discard" one level-specific address-part per step
+        while (diff != 0) {
+            ++step;
+            diff >>= DAG_TAB_CHILD_NUM_EXP;
         }
     }
 
-    // step on which the node is based.
-    int step = DAG_TAB_CHILD_NUM_EXP * tab->depth;
-
-    // position within the node
-    size_t pos = (code - tab->start) >> step;
+    // calculate the "position" of the current node within the new tree
+    size_t pos = tab->start >> (DAG_TAB_CHILD_NUM_EXP * (tab->depth + 1));
 
     // extend the table "upwards", if necessary
-    while ((code < tab->start) || (pos > DAG_TAB_CHILD_NUM)) {
+    while (step-- > 0) {
         // we have to create a new node
         void** tab_node = create_tab_node();
-
-        size_t old_root_pos = (tab->start >> step);
+        if (!tab_node) {
+            return -ENOMEM;
+        }
 
         // put in the new root
-        tab_node[old_root_pos  & (DAG_TAB_CHILD_NUM - 1)] = tab->nodes.tab;
+        tab_node[pos  & (DAG_TAB_CHILD_NUM - 1)] = tab->nodes.tab;
         tab->nodes.tab = tab_node;
-        ++tab->depth;
 
-        // regen step, pos and start
-        step += DAG_TAB_CHILD_NUM_EXP;
-        tab->start = old_root_pos << step;
+        // regen depth, start and pos
+        ++(tab->depth);
+        tab->start &= ~((1 << (DAG_TAB_CHILD_NUM_EXP * (tab->depth + 1))) - 1);
         pos >>= DAG_TAB_CHILD_NUM_EXP;
     }
 
@@ -403,34 +388,24 @@ create_tab_node(void) {
 }
 
 static void
-destruct_dag_node(
-    struct ws_hotkey_dag_node* node
-) {
-    // deinit and free
-    ws_hotkey_dag_deinit(node);
-    free(node);
-}
-
-static void
 destruct_tab_node(
     void* tab_node,
-    uint8_t depth
+    int_fast8_t depth
 ) {
-    if (!tab_node || (depth > DAG_TAB_MAX_DEPTH)) {
+    if (!tab_node) {
         // nothing to do
         return;
     }
-
-    --depth;
 
     void** cur_node = ((void**) tab_node) + DAG_TAB_CHILD_NUM;
     // iterate over all the nodes
     while (cur_node-- > (void**) tab_node) {
         // destruct children
-        if (depth) {
-            destruct_tab_node(*cur_node, depth);
-        } else {
-            destruct_dag_node((struct ws_hotkey_dag_node*) cur_node);
+        if (depth > 0) {
+            destruct_tab_node(*cur_node, depth - 1);
+        } else if (*cur_node) {
+            ws_hotkey_dag_deinit((struct ws_hotkey_dag_node*) *cur_node);
+            free(*cur_node);
         }
     }
 
@@ -438,54 +413,55 @@ destruct_tab_node(
     free(tab_node);
 }
 
-static struct ws_hotkey_dag_tab
-removal_point_in_tab_node(
+int
+remove_point_in_tab_node(
     struct ws_hotkey_dag_tab tab,
     uint_fast16_t code
 ) {
-    // prepare the return value
-    struct ws_hotkey_dag_tab retval;
-    memset(&retval, 0, sizeof(retval));
-    retval.nodes.tab = NULL;
-    retval.depth = ~0;
-
+    // this variable will hold the pointer to nullify
     void** rem_ptr = NULL;
+    uint_fast8_t rem_depth;
 
     // step on which the node is based.
     int step = DAG_TAB_CHILD_NUM_EXP * tab.depth;
 
     // move towards the bottom,
-    while (tab.depth) {
+    while (tab.depth-- > 0) {
         // determine where to go next...
         size_t pos = (code - tab.start) >> step;
         void** next_tab = tab.nodes.tab + pos;
         if (!*next_tab) {
-            return retval;
+            return -EEXIST;
         }
 
         // regenerage all the variables
         tab.nodes.tab = *next_tab;
         tab.start = code & ~((1 << step) - 1);
         step -= DAG_TAB_CHILD_NUM_EXP;
-        --tab.depth;
 
         // we consider clearing this node if we remove the _last_ child
-        if (get_tab_node_numof_children(tab.nodes.tab) > 1) {
-            // invalidate the retval
-            retval.nodes.tab = NULL;
-            retval.depth = ~0;
-        } else if (!retval.nodes.tab) {
-            retval = tab;
+        if (get_tab_node_numof_children(*next_tab) > 1) {
+            // invalidate the point of removal
+            rem_ptr = NULL;
+        } else if (!rem_ptr) {
             rem_ptr = next_tab;
+            rem_depth = tab.depth;
         }
     }
 
-    // unlink the tab we'll return from it's super-tree
+    // unlink the tab from it's super-tree
     if (rem_ptr) {
+        destruct_tab_node(*rem_ptr, rem_depth);
         *rem_ptr = NULL;
+    } else {
+        size_t pos = (code - tab.start) & (DAG_TAB_CHILD_NUM - 1);
+        ws_hotkey_dag_deinit(tab.nodes.dag[pos]);
+        free(tab.nodes.dag[pos]);
+        tab.nodes.dag[pos] = NULL;
     }
 
-    return retval;
+
+    return 0;
 }
 
 static void
@@ -513,8 +489,10 @@ flatten_tab(
         // if we have only one child, we can easily pull out the old root
         size_t pos = (child - tab->nodes.tab) <<
                      (DAG_TAB_CHILD_NUM_EXP * tab->depth);
+
+        void* new_val = *child;
         free(tab->nodes.tab);
-        tab->nodes.tab = child;
+        tab->nodes.tab = new_val;
 
         // we have to adjust depth and start
         --tab->depth;

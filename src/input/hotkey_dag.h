@@ -57,7 +57,7 @@ struct ws_hotkey_dag_tab {
         void** tab;
     } nodes; //!< @protected nodes in this tab
     uint16_t start; //!< @protected stating point in the code space
-    uint8_t depth; //!< @protected indicator on how far we are from dag nodes
+    int8_t depth; //!< @protected indicator on how far we are from dag nodes
 };
 
 /**
