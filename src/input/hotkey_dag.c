@@ -478,6 +478,11 @@ flatten_tab(
             }
         }
 
+        if (child < tab->nodes.tab) {
+            // there's no element at all, so we bail out
+            break;
+        }
+
         void** ck = child;
         while (ck-- > tab->nodes.tab) {
             if (*ck) {
