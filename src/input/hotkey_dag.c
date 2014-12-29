@@ -317,7 +317,7 @@ hotkey_dag_get(
 
     struct ws_hotkey_dag_node** retp = cur.nodes.dag + (code - cur.start);
     if (!*retp) {
-        *retp = malloc(sizeof(*retp));
+        *retp = malloc(sizeof(**retp));
         if (ws_hotkey_dag_init(*retp) < 0) {
             free(*retp);
             *retp = NULL;
