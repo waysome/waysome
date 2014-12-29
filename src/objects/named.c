@@ -57,6 +57,7 @@ ws_object_type_id WS_OBJECT_TYPE_ID_NAMED = {
     .uuid_callback = NULL,
 
     .attribute_table = NULL,
+    .function_table = NULL,
 };
 
 
